@@ -1,0 +1,34 @@
+{
+  "variants": {
+    "facing=north,half=lower": {
+      "model": "logicore:block/server_rack_bottom"
+    },
+    "facing=south,half=lower": {
+      "model": "logicore:block/server_rack_bottom",
+      "y": 180
+    },
+    "facing=west,half=lower": {
+      "model": "logicore:block/server_rack_bottom",
+      "y": 270
+    },
+    "facing=east,half=lower": {
+      "model": "logicore:block/server_rack_bottom",
+      "y": 90
+    },
+    "facing=north,half=upper": {
+      "model": "logicore:block/server_rack_top"
+    },
+    "facing=south,half=upper": {
+      "model": "logicore:block/server_rack_top",
+      "y": 180
+    },
+    "facing=west,half=upper": {
+      "model": "logicore:block/server_rack_top",
+      "y": 270
+    },
+    "facing=east,half=upper": {
+      "model": "logicore:block/server_rack_top",
+      "y": 90
+    }
+  }
+}

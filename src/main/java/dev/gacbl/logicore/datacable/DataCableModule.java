@@ -1,0 +1,30 @@
+package dev.gacbl.logicore.datacable;
+
+import dev.gacbl.logicore.LogiCore;
+import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.world.item.BlockItem;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.state.BlockBehaviour;
+import net.minecraft.world.level.material.MapColor;
+import net.neoforged.bus.api.IEventBus;
+import net.neoforged.neoforge.registries.DeferredRegister;
+
+public class DataCableModule {
+    public static final DeferredRegister<Block> BLOCKS =
+            DeferredRegister.create(BuiltInRegistries.BLOCK, LogiCore.MOD_ID);
+    public static final DeferredRegister<Item> ITEMS =
+            DeferredRegister.create(BuiltInRegistries.ITEM, LogiCore.MOD_ID);
+
+    public static final net.neoforged.neoforge.registries.DeferredHolder<Block, DataCableBlock> DATA_CABLE_BLOCK =
+            BLOCKS.register("data_cable", () -> new DataCableBlock(BlockBehaviour.Properties.of()
+                    .mapColor(MapColor.COLOR_CYAN).strength(0.5f).noOcclusion()));
+
+    public static final net.neoforged.neoforge.registries.DeferredHolder<Item, BlockItem> DATA_CABLE_ITEM =
+            ITEMS.register("data_cable", () -> new BlockItem(DATA_CABLE_BLOCK.get(), new Item.Properties()));
+
+    public static void register(IEventBus modEventBus) {
+        BLOCKS.register(modEventBus);
+        ITEMS.register(modEventBus);
+    }
+}
