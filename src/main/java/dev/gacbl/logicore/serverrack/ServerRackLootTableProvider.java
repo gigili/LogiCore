@@ -11,7 +11,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.Set;
 
-public class ServerRackLootTableProvider  extends BlockLootSubProvider {
+public class ServerRackLootTableProvider extends BlockLootSubProvider {
 
     public ServerRackLootTableProvider(HolderLookup.Provider registries) {
         super(Set.of(), FeatureFlags.REGISTRY.allFlags(), registries);

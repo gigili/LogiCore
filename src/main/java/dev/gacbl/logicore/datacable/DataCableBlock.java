@@ -1,7 +1,9 @@
 package dev.gacbl.logicore.datacable;
 
 import com.mojang.serialization.MapCodec;
+import dev.gacbl.logicore.cpucore.CPUCoreBlock;
 import dev.gacbl.logicore.network.NetworkManager;
+import dev.gacbl.logicore.serverrack.ServerRackBlock;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.server.level.ServerLevel;
@@ -20,7 +22,8 @@ import net.minecraft.world.phys.shapes.VoxelShape;
 import org.jetbrains.annotations.NotNull;
 
 public class DataCableBlock extends Block {
-    public static final VoxelShape CORE_SHAPE = Block.box(0.0D, 6.0D, 6.0D, 16.0D, 10.0D, 10.0D);
+    public static final VoxelShape CORE_SHAPE = Block.box(6.0D, 6.0D, 6.0D, 10.0D, 10.0D, 10.0D);
+
     public static final VoxelShape NORTH_SHAPE = Block.box(6.0D, 6.0D, 0.0D, 10.0D, 10.0D, 6.0D);
     public static final VoxelShape SOUTH_SHAPE = Block.box(6.0D, 6.0D, 10.0D, 10.0D, 10.0D, 16.0D);
     public static final VoxelShape WEST_SHAPE = Block.box(0.0D, 6.0D, 6.0D, 6.0D, 10.0D, 10.0D);
@@ -46,6 +49,7 @@ public class DataCableBlock extends Block {
                 .setValue(WEST, false)
                 .setValue(UP, false)
                 .setValue(DOWN, false)
+                .setValue(FACING, Direction.NORTH)
         );
     }
 
@@ -60,7 +64,7 @@ public class DataCableBlock extends Block {
     }
 
     @Override
-    public @NotNull BlockState rotate(BlockState state, Rotation rot) {
+    public @NotNull BlockState rotate(@NotNull BlockState state, @NotNull Rotation rot) {
         return state.setValue(FACING, rot.rotate(state.getValue(FACING)));
     }
 
@@ -116,13 +120,17 @@ public class DataCableBlock extends Block {
         }
 
         if (level instanceof LevelAccessor accessor) {
-            return canConnectToBlock(state, accessor, pos, direction.getOpposite());
+            return canConnectToBlock(accessor, pos);
         }
 
         return false;
     }
 
-    private boolean canConnectToBlock(BlockState neighborState, BlockGetter level, BlockPos pos, Direction direction) {
+    private boolean canConnectToBlock(LevelAccessor level, BlockPos pos) {
+        if (level instanceof ServerLevel server) {
+            Block block = server.getBlockState(pos).getBlock();
+            return block instanceof ServerRackBlock || block instanceof CPUCoreBlock;
+        }
         return false;
     }
 

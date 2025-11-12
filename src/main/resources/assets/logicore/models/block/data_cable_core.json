@@ -1,23 +1,106 @@
 {
-  "parent": "block/block",
+  "parent": "minecraft:block/block",
   "texture_size": [32, 32],
   "textures": {
-    "particle": "logicore:block/data_cable_texture",
-    "0": "logicore:block/data_cable_texture"
+    "all": "logicore:block/data_cable",
+    "particle": "logicore:block/data_cable"
   },
   "elements": [
     {
-      "from": [0, 6, 6],
-      "to": [16, 10, 10],
-      "rotation": {"angle": 0, "axis": "y", "origin": [8, 8, 8]},
+      "from": [
+        6,
+        6,
+        6
+      ],
+      "to": [
+        10,
+        10,
+        10
+      ],
       "faces": {
-        "north": {"uv": [0, 0, 8, 2], "texture": "#0"},
-        "east": {"uv": [8, 0, 10, 2], "texture": "#0"},
-        "south": {"uv": [0, 0, 8, 2], "texture": "#0"},
-        "west": {"uv": [8, 0, 10, 2], "texture": "#0"},
-        "up": {"uv": [0, 0, 8, 2], "texture": "#0"},
-        "down": {"uv": [0, 0, 8, 2], "texture": "#0"}
+        "down": {
+          "uv": [
+            0,
+            0,
+            2,
+            2
+          ],
+          "texture": "#all"
+        },
+        "up": {
+          "uv": [
+            0,
+            0,
+            2,
+            2
+          ],
+          "texture": "#all"
+        },
+        "north": {
+          "uv": [
+            0,
+            0,
+            2,
+            2
+          ],
+          "texture": "#all"
+        },
+        "south": {
+          "uv": [
+            0,
+            0,
+            2,
+            2
+          ],
+          "texture": "#all"
+        },
+        "west": {
+          "uv": [
+            0,
+            0,
+            2,
+            2
+          ],
+          "texture": "#all"
+        },
+        "east": {
+          "uv": [
+            0,
+            0,
+            2,
+            2
+          ],
+          "texture": "#all"
+        }
       }
     }
-  ]
+  ],
+  "display": {
+    "ground": {
+      "scale": [
+        1,
+        1,
+        1
+      ]
+    },
+    "gui": {
+      "rotation": [
+        24,
+        42,
+        0
+      ],
+      "scale": [
+        2,
+        2,
+        2
+      ]
+    },
+    "head": {
+      "translation": [
+        0,
+        8.5,
+        0
+      ]
+    }
+  }
 }
