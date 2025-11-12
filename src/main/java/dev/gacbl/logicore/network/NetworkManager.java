@@ -64,7 +64,9 @@ public class NetworkManager extends SavedData {
             return;
         }
 
-        BlockState startState = level.getBlockState(startPos);
+        return;
+
+        /*BlockState startState = level.getBlockState(startPos);
         if (!isNetworkComponent(level, startPos, startState)) {
             return;
         }
@@ -114,7 +116,7 @@ public class NetworkManager extends SavedData {
         }
 
         this.networks.add(newNetwork);
-        setDirty();
+        setDirty();*/
     }
 
     private boolean isNetworkComponent(Level level, BlockPos pos, BlockState state) {

@@ -8,5 +8,7 @@
   "tooltip.logicore.processors": "Processors: %s / %s",
   "config.jade.plugin_logicore.server_rack": "Server rack config",
   "config.jade.plugin_logicore.cpu_core": "CPU Core config",
-  "block.logicore.programmable_sorter": "Programmable Sorter"
+  "block.logicore.programmable_sorter": "Programmable Sorter",
+  "tooltip.logicore.max_racks_reached": "Maximum of %d racks can be connected to the CPU Core",
+  "tooltip.logicore.connected_racks": "Connected racks: %d / %d"
 }

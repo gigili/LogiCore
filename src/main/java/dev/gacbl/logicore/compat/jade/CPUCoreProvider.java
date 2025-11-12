@@ -2,6 +2,7 @@ package dev.gacbl.logicore.compat.jade;
 
 import dev.gacbl.logicore.LogiCore;
 import dev.gacbl.logicore.cpucore.CPUCoreBlockEntity;
+import net.minecraft.ChatFormatting;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
@@ -22,6 +23,16 @@ public class CPUCoreProvider implements IBlockComponentProvider, IServerDataProv
             long max = accessor.getServerData().getLong("MaxCycles");
             tooltip.add(Component.translatable("tooltip.logicore.cycles", String.format("%,d", cycles), String.format("%,d", max)));
         }
+
+        if (accessor.getServerData().contains("ConnectedRacks")) {
+            int connected = accessor.getServerData().getInt("ConnectedRacks");
+            tooltip.add(Component.translatable("tooltip.logicore.connected_racks", String.format("%,d", connected), String.format("%,d", CPUCoreBlockEntity.MAX_RACKS)));
+        }
+
+        if (accessor.getServerData().contains("MaxRacksReached") && accessor.getServerData().getBoolean("MaxRacksReached")) {
+            Component msg = Component.translatable("tooltip.logicore.max_racks_reached", CPUCoreBlockEntity.MAX_RACKS);
+            tooltip.add(msg.copy().setStyle(msg.getStyle().withColor(ChatFormatting.RED)));
+        }
     }
 
     @Override
@@ -30,6 +41,8 @@ public class CPUCoreProvider implements IBlockComponentProvider, IServerDataProv
         if (be instanceof CPUCoreBlockEntity cpuCore) {
             data.putLong("Cycles", cpuCore.getCycleStorage().getCyclesAvailable());
             data.putLong("MaxCycles", cpuCore.getCycleStorage().getCycleCapacity());
+            data.putBoolean("MaxRacksReached", cpuCore.getConnectedRacks().size() > CPUCoreBlockEntity.MAX_RACKS);
+            data.putInt("ConnectedRacks", cpuCore.getConnectedRacks().size());
         }
     }
 

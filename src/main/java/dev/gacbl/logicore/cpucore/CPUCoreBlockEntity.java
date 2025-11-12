@@ -5,6 +5,7 @@ import dev.gacbl.logicore.api.computation.CycleStorage;
 import dev.gacbl.logicore.api.computation.ICycleStorage;
 import dev.gacbl.logicore.datacable.DataCableBlock;
 import dev.gacbl.logicore.network.NetworkManager;
+import dev.gacbl.logicore.serverrack.ServerRackBlock;
 import dev.gacbl.logicore.serverrack.ServerRackBlockEntity;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -20,6 +21,7 @@ import net.neoforged.neoforge.energy.IEnergyStorage;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 public class CPUCoreBlockEntity extends BlockEntity {
@@ -27,7 +29,7 @@ public class CPUCoreBlockEntity extends BlockEntity {
     private static final int BASE_CYCLE_GENERATION = Config.CPU_CORE_BASE_CYCLE_GENERATION.get();
     private static final int CYCLES_PER_PROCESSOR = Config.CPU_CORE_CYCLES_PER_PROCESSOR.get();
     private static final int FE_PER_CYCLE = Config.CPU_CORE_FE_PER_CYCLE.get();
-    private static final int MAX_RACKS = Config.CPU_CORE_MAX_RACKS.get();
+    public static final int MAX_RACKS = Config.CPU_CORE_MAX_RACKS.get();
     private static final int SCAN_INTERVAL = Config.CPU_CORE_SCAN_INTERVAL.get();
 
     // --- Energy & Cycle Storage ---
@@ -54,6 +56,10 @@ public class CPUCoreBlockEntity extends BlockEntity {
         return this.cycleStorage;
     }
 
+    public List<BlockPos> getConnectedRacks() {
+        return Collections.unmodifiableList(this.connectedRacks);
+    }
+
     // --- Ticking Logic ---
     public static void serverTick(Level level, BlockPos pos, BlockState state, CPUCoreBlockEntity be) {
         be.scanCooldown--;
@@ -71,6 +77,8 @@ public class CPUCoreBlockEntity extends BlockEntity {
         if(this.cycleStorage.getCyclesAvailable() >= this.cycleStorage.getCycleCapacity()) return;
 
         if(this.connectedRacks.isEmpty()) return;
+
+        if (this.connectedRacks.size() > MAX_RACKS) return;
 
         int processorCount = 0;
         for (BlockPos rackPos : this.connectedRacks) {
@@ -121,9 +129,17 @@ public class CPUCoreBlockEntity extends BlockEntity {
             Block b = this.level.getBlockState(neighborPos).getBlock();
 
             if (be instanceof ServerRackBlockEntity rack) {
-                if (rack.getControllerPos() == null || rack.getControllerPos().equals(this.worldPosition)) {
+                if (!this.connectedRacks.contains(neighborPos)) {
                     rack.setControllerPos(this.worldPosition);
                     this.connectedRacks.add(neighborPos);
+                }
+            } else if (be == null && b instanceof ServerRackBlock) {
+                be = this.level.getBlockEntity(neighborPos.below());
+                if (be instanceof ServerRackBlockEntity rack) {
+                    if (!this.connectedRacks.contains(neighborPos.below())) {
+                        rack.setControllerPos(this.worldPosition);
+                        this.connectedRacks.add(neighborPos.below());
+                    }
                 }
             }else if(b instanceof DataCableBlock){
                 if(!this.cablesInQueue.contains(neighborPos)) {
@@ -151,5 +167,25 @@ public class CPUCoreBlockEntity extends BlockEntity {
         if (tag.contains("cycles", 10)) {
             this.cycleStorage.deserializeNBT(registries, (CompoundTag) tag.get("cycles"));
         }
+    }
+
+    public void unlinkAllRacks() {
+        if (this.level == null || this.level.isClientSide) return;
+        this.connectedRacks.forEach(pos -> {
+            BlockEntity be = level.getBlockEntity(pos);
+            Block block = level.getBlockState(pos).getBlock();
+            if (be instanceof ServerRackBlockEntity rack) {
+                rack.setControllerPos(null);
+            } else if (be == null && block instanceof ServerRackBlock) {
+                be = this.level.getBlockEntity(pos.below());
+                if (be instanceof ServerRackBlockEntity rack) {
+                    rack.setControllerPos(null);
+                }
+            }
+        });
+        this.connectedRacks.clear();
+        this.cablesInQueue.clear();
+        this.cycleStorage.setCycles(0L);
+        setChanged();
     }
 }

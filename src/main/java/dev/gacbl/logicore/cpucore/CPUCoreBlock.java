@@ -2,12 +2,9 @@ package dev.gacbl.logicore.cpucore;
 
 import com.mojang.serialization.MapCodec;
 import dev.gacbl.logicore.processorunit.ProcessorUnitModule;
-import dev.gacbl.logicore.serverrack.ServerRackModule;
 import net.minecraft.core.BlockPos;
 import net.minecraft.data.recipes.RecipeCategory;
 import net.minecraft.data.recipes.ShapedRecipeBuilder;
-import net.minecraft.resources.ResourceLocation;
-import net.minecraft.tags.ItemTags;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.level.BlockGetter;
@@ -97,5 +94,15 @@ public class CPUCoreBlock extends BaseEntityBlock {
             return createTickerHelper(type, CPUCoreModule.CPU_CORE_BLOCK_ENTITY.get(), CPUCoreBlockEntity::serverTick);
         }
         return null;
+    }
+
+    @Override
+    protected void onRemove(@NotNull BlockState state, @NotNull Level level, @NotNull BlockPos pos, @NotNull BlockState newState, boolean movedByPiston) {
+        if (level.isClientSide()) return;
+
+        BlockEntity be = level.getBlockEntity(pos);
+        if (be instanceof CPUCoreBlockEntity coreBlockEntity) {
+            coreBlockEntity.unlinkAllRacks();
+        }
     }
 }

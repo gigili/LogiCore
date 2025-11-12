@@ -3,10 +3,16 @@ package dev.gacbl.logicore.datacable;
 import com.mojang.serialization.MapCodec;
 import dev.gacbl.logicore.cpucore.CPUCoreBlock;
 import dev.gacbl.logicore.network.NetworkManager;
+import dev.gacbl.logicore.processorunit.ProcessorUnitModule;
 import dev.gacbl.logicore.serverrack.ServerRackBlock;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.data.recipes.RecipeCategory;
+import net.minecraft.data.recipes.ShapedRecipeBuilder;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.tags.ItemTags;
+import net.minecraft.world.item.Items;
 import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
@@ -49,8 +55,17 @@ public class DataCableBlock extends Block {
                 .setValue(WEST, false)
                 .setValue(UP, false)
                 .setValue(DOWN, false)
-                .setValue(FACING, Direction.NORTH)
         );
+    }
+
+    public static ShapedRecipeBuilder getRecipe() {
+        return ShapedRecipeBuilder.shaped(RecipeCategory.REDSTONE, DataCableModule.DATA_CABLE_ITEM.get())
+                .pattern("GGG")
+                .pattern("RPR")
+                .pattern("GGG")
+                .define('G', ItemTags.create(ResourceLocation.fromNamespaceAndPath("c", "glass_blocks")))
+                .define('R', Items.REDSTONE)
+                .define('P', ProcessorUnitModule.PROCESSOR_UNIT.get());
     }
 
     @Override

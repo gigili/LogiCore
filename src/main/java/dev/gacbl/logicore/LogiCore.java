@@ -6,6 +6,7 @@ import dev.gacbl.logicore.core.CreativeTabModule;
 import dev.gacbl.logicore.cpucore.CPUCoreModule;
 import dev.gacbl.logicore.datacable.DataCableModule;
 import dev.gacbl.logicore.processorunit.ProcessorUnitModule;
+import dev.gacbl.logicore.serverrack.ServerRackDataComponent;
 import dev.gacbl.logicore.serverrack.ServerRackModule;
 import dev.gacbl.logicore.serverrack.ui.ServerRackScreen;
 import net.neoforged.api.distmarker.Dist;
@@ -31,9 +32,14 @@ public class LogiCore {
         CreativeTabModule.register(modEventBus);
 
         CoreModule.register(modEventBus);
+
         ProcessorUnitModule.register(modEventBus);
+
         ServerRackModule.register(modEventBus);
+        ServerRackDataComponent.register(modEventBus);
+
         CPUCoreModule.register(modEventBus);
+
         DataCableModule.register(modEventBus);
 
         modContainer.registerConfig(ModConfig.Type.COMMON, Config.SPEC, "logicore.toml");
