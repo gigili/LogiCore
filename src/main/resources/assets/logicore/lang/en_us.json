@@ -10,5 +10,6 @@
   "config.jade.plugin_logicore.cpu_core": "CPU Core config",
   "block.logicore.programmable_sorter": "Programmable Sorter",
   "tooltip.logicore.max_racks_reached": "Maximum of %d racks can be connected to the CPU Core",
-  "tooltip.logicore.connected_racks": "Connected racks: %d / %d"
+  "tooltip.logicore.connected_racks": "Connected racks: %d / %d",
+  "block.logicore.computer": "Computer"
 }

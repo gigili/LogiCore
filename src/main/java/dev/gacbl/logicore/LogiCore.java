@@ -1,6 +1,7 @@
 package dev.gacbl.logicore;
 
 import com.mojang.logging.LogUtils;
+import dev.gacbl.logicore.computer.ComputerModule;
 import dev.gacbl.logicore.core.CoreModule;
 import dev.gacbl.logicore.core.CreativeTabModule;
 import dev.gacbl.logicore.cpucore.CPUCoreModule;
@@ -34,6 +35,8 @@ public class LogiCore {
         CoreModule.register(modEventBus);
 
         ProcessorUnitModule.register(modEventBus);
+
+        ComputerModule.register(modEventBus);
 
         ServerRackModule.register(modEventBus);
         ServerRackDataComponent.register(modEventBus);

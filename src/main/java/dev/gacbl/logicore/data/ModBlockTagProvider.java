@@ -1,6 +1,7 @@
 package dev.gacbl.logicore.data;
 
 import dev.gacbl.logicore.LogiCore;
+import dev.gacbl.logicore.computer.ComputerModule;
 import dev.gacbl.logicore.cpucore.CPUCoreModule;
 import dev.gacbl.logicore.datacable.DataCableModule;
 import dev.gacbl.logicore.serverrack.ServerRackModule;
@@ -29,5 +30,8 @@ public class ModBlockTagProvider extends BlockTagsProvider {
 
         tag(BlockTags.MINEABLE_WITH_PICKAXE).add(DataCableModule.DATA_CABLE_BLOCK.get());
         tag(BlockTags.NEEDS_IRON_TOOL).add(DataCableModule.DATA_CABLE_BLOCK.get());
+
+        tag(BlockTags.MINEABLE_WITH_PICKAXE).add(ComputerModule.COMPUTER_BLOCK.get());
+        tag(BlockTags.NEEDS_IRON_TOOL).add(ComputerModule.COMPUTER_BLOCK.get());
     }
 }

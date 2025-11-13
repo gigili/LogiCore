@@ -1,0 +1,19 @@
+{
+  "variants": {
+    "facing=north": {
+      "model": "logicore:block/computer"
+    },
+    "facing=east": {
+      "model": "logicore:block/computer",
+      "y": 90
+    },
+    "facing=south": {
+      "model": "logicore:block/computer",
+      "y": 180
+    },
+    "facing=west": {
+      "model": "logicore:block/computer",
+      "y": 270
+    }
+  }
+}

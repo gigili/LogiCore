@@ -1,6 +1,7 @@
 package dev.gacbl.logicore.data;
 
 import dev.gacbl.logicore.LogiCore;
+import dev.gacbl.logicore.computer.ComputeLootTableProvider;
 import dev.gacbl.logicore.cpucore.CPUCoreLootTableProvider;
 import dev.gacbl.logicore.datacable.DataCableLootTableProvider;
 import dev.gacbl.logicore.serverrack.ServerRackLootTableProvider;
@@ -36,7 +37,8 @@ public class DataGenerators {
                         List.of(
                                 new LootTableProvider.SubProviderEntry(ServerRackLootTableProvider::new, LootContextParamSets.BLOCK),
                                 new LootTableProvider.SubProviderEntry(CPUCoreLootTableProvider::new, LootContextParamSets.BLOCK),
-                                new LootTableProvider.SubProviderEntry(DataCableLootTableProvider::new, LootContextParamSets.BLOCK)
+                                new LootTableProvider.SubProviderEntry(DataCableLootTableProvider::new, LootContextParamSets.BLOCK),
+                                new LootTableProvider.SubProviderEntry(ComputeLootTableProvider::new, LootContextParamSets.BLOCK)
                         ),
                         lookupProvider
                 )
