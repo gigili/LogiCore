@@ -20,6 +20,8 @@ import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.LevelReader;
 import net.minecraft.world.level.block.*;
 import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.level.block.entity.BlockEntityTicker;
+import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
@@ -151,8 +153,8 @@ public class ServerRackBlock extends BaseEntityBlock {
     @Override
     protected boolean canSurvive(@NotNull BlockState state, @NotNull LevelReader level, @NotNull BlockPos pos) {
         if (state.getValue(HALF) == DoubleBlockHalf.LOWER) {
-            BlockPos posBelow = pos.below();
-            return level.getBlockState(posBelow).isFaceSturdy(level, posBelow, Direction.UP);
+            //BlockPos posBelow = pos.below();
+            return true; //level.getBlockState(posBelow).isFaceSturdy(level, posBelow, Direction.UP);
         } else {
             BlockPos posBelow = pos.below();
             BlockState stateBelow = level.getBlockState(posBelow);
@@ -185,5 +187,14 @@ public class ServerRackBlock extends BaseEntityBlock {
         }
 
         return super.updateShape(state, facing, facingState, level, currentPos, facingPos);
+    }
+
+    @Nullable
+    @Override
+    public <T extends BlockEntity> BlockEntityTicker<T> getTicker(Level level, @NotNull BlockState state, @NotNull BlockEntityType<T> type) {
+        if (!level.isClientSide()) {
+            return createTickerHelper(type, ServerRackModule.SERVER_RACK_BLOCK_ENTITY.get(), ServerRackBlockEntity::serverTick);
+        }
+        return null;
     }
 }

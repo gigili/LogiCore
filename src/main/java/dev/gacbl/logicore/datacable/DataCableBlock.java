@@ -1,8 +1,8 @@
 package dev.gacbl.logicore.datacable;
 
 import com.mojang.serialization.MapCodec;
-import dev.gacbl.logicore.cpucore.CPUCoreBlock;
-import dev.gacbl.logicore.network.NetworkManager;
+import dev.gacbl.logicore.computer.ComputerBlock;
+import dev.gacbl.logicore.datacable.network.NetworkManager;
 import dev.gacbl.logicore.processorunit.ProcessorUnitModule;
 import dev.gacbl.logicore.serverrack.ServerRackBlock;
 import net.minecraft.core.BlockPos;
@@ -25,7 +25,10 @@ import net.minecraft.world.level.block.state.properties.DirectionProperty;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
+import net.neoforged.neoforge.capabilities.Capabilities;
 import org.jetbrains.annotations.NotNull;
+
+import java.util.List;
 
 public class DataCableBlock extends Block {
     public static final VoxelShape CORE_SHAPE = Block.box(6.0D, 6.0D, 6.0D, 10.0D, 10.0D, 10.0D);
@@ -142,9 +145,11 @@ public class DataCableBlock extends Block {
     }
 
     private boolean canConnectToBlock(LevelAccessor level, BlockPos pos) {
+        List<Class<? extends Block>> allowedBlocks = List.of(ServerRackBlock.class, ComputerBlock.class);
         if (level instanceof ServerLevel server) {
             Block block = server.getBlockState(pos).getBlock();
-            return block instanceof ServerRackBlock || block instanceof CPUCoreBlock;
+            var cap = server.getCapability(Capabilities.EnergyStorage.BLOCK, pos, null);
+            return allowedBlocks.contains(block.getClass()) || (cap != null && cap.getMaxEnergyStored() > 0);
         }
         return false;
     }

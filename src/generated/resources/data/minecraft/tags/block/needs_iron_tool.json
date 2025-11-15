@@ -1,7 +1,6 @@
 {
   "values": [
     "logicore:server_rack",
-    "logicore:cpu_core",
     "logicore:data_cable",
     "logicore:computer"
   ]

@@ -1,7 +1,7 @@
 package dev.gacbl.logicore.compat.jade;
 
+import dev.gacbl.logicore.Config;
 import dev.gacbl.logicore.LogiCore;
-import dev.gacbl.logicore.cpucore.CPUCoreBlockEntity;
 import dev.gacbl.logicore.serverrack.ServerRackBlockEntity;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
@@ -19,25 +19,42 @@ public class ServerRackProvider implements IBlockComponentProvider, IServerDataP
     @Override
     public void appendTooltip(ITooltip tooltip, BlockAccessor accessor, IPluginConfig config) {
         int count = 0;
-        int max = ServerRackBlockEntity.RACK_CAPACITY;;
+        long cycles = 0;
+        long max = Config.SERVER_RACK_CYCLE_CAPACITY.get();
+
         if (accessor.getServerData().contains("Count")) {
             count = accessor.getServerData().getInt("Count");
         }
 
-        if(count == 0) {
-            BlockEntity be = accessor.getLevel().getBlockEntity(accessor.getPosition().below());
-            if (be instanceof ServerRackBlockEntity rackBlockEntity) {
-                count = rackBlockEntity.getProcessorCount();
-            }
+        if (accessor.getServerData().contains("Cycles") && accessor.getServerData().contains("MaxCycles")) {
+            cycles = accessor.getServerData().getLong("Cycles");
+            max = accessor.getServerData().getLong("MaxCycles");
         }
 
-        tooltip.add(Component.translatable("tooltip.logicore.processors", count, max));
+        tooltip.add(Component.translatable("tooltip.logicore.cycles", String.format("%,d", cycles), String.format("%,d", max)));
+        tooltip.add(Component.translatable("tooltip.logicore.processors", count, ServerRackBlockEntity.RACK_CAPACITY));
+    }
+
+    @Override
+    public boolean shouldRequestData(BlockAccessor accessor) {
+        BlockEntity be = accessor.getLevel().getBlockEntity(accessor.getPosition());
+        BlockEntity beBelow = accessor.getLevel().getBlockEntity(accessor.getPosition().below());
+        return be instanceof ServerRackBlockEntity || beBelow instanceof ServerRackBlockEntity;
     }
 
     @Override
     public void appendServerData(CompoundTag data, BlockAccessor accessor) {
         ServerRackBlockEntity rackBlockEntity = (ServerRackBlockEntity) accessor.getBlockEntity();
+
+        if (rackBlockEntity == null) {
+            rackBlockEntity = (ServerRackBlockEntity) accessor.getLevel().getBlockEntity(accessor.getPosition().below());
+        }
+
+        if (rackBlockEntity == null) return;
+
         data.putInt("Count", rackBlockEntity.getProcessorCount());
+        data.putLong("Cycles", rackBlockEntity.getCycleStorage().getCyclesAvailable());
+        data.putLong("MaxCycles", rackBlockEntity.getCycleStorage().getCycleCapacity());
     }
 
     @Override

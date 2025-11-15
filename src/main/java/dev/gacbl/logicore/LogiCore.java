@@ -4,7 +4,6 @@ import com.mojang.logging.LogUtils;
 import dev.gacbl.logicore.computer.ComputerModule;
 import dev.gacbl.logicore.core.CoreModule;
 import dev.gacbl.logicore.core.CreativeTabModule;
-import dev.gacbl.logicore.cpucore.CPUCoreModule;
 import dev.gacbl.logicore.datacable.DataCableModule;
 import dev.gacbl.logicore.processorunit.ProcessorUnitModule;
 import dev.gacbl.logicore.serverrack.ServerRackDataComponent;
@@ -40,8 +39,6 @@ public class LogiCore {
 
         ServerRackModule.register(modEventBus);
         ServerRackDataComponent.register(modEventBus);
-
-        CPUCoreModule.register(modEventBus);
 
         DataCableModule.register(modEventBus);
 

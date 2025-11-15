@@ -1,9 +1,12 @@
-package dev.gacbl.logicore.network;
+package dev.gacbl.logicore.datacable.network;
 
 import dev.gacbl.logicore.api.computation.ICycleConsumer;
 import dev.gacbl.logicore.api.computation.ICycleProvider;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.Level;
+import net.neoforged.neoforge.capabilities.Capabilities;
+import net.neoforged.neoforge.energy.IEnergyStorage;
+
 import java.util.HashSet;
 import java.util.Set;
 
@@ -110,8 +113,30 @@ public class ComputationNetwork {
         return level.getCapability(dev.gacbl.logicore.core.ModCapabilities.CYCLE_STORAGE, pos, null);
     }
 
+    private IEnergyStorage getEnergyProviderAt(Level level, BlockPos pos) {
+        var cap = level.getCapability(Capabilities.EnergyStorage.BLOCK, pos, null);
+        var cycleCap = level.getCapability(dev.gacbl.logicore.core.ModCapabilities.CYCLE_STORAGE, pos, null);
+
+        if(cycleCap == null && cap != null){
+            return cap;
+        }
+
+        return null;
+    }
+
     private ICycleConsumer getConsumerAt(Level level, BlockPos pos) {
         return level.getCapability(dev.gacbl.logicore.core.ModCapabilities.CYCLE_STORAGE, pos, null);
+    }
+
+    private IEnergyStorage getEnergyConsumerAt(Level level, BlockPos pos) {
+        var cap = level.getCapability(Capabilities.EnergyStorage.BLOCK, pos, null);
+        var cycleCap = level.getCapability(dev.gacbl.logicore.core.ModCapabilities.CYCLE_STORAGE, pos, null);
+
+        if(cycleCap != null && cap != null){
+            return cap;
+        }
+
+        return null;
     }
 
     public Set<BlockPos> getProviders() {

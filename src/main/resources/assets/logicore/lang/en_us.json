@@ -1,15 +1,10 @@
 {
   "creativetab.logicore.tab": "Logi Core",
-  "block.logicore.cpu_core": "CPU Core",
   "block.logicore.server_rack": "Server rack",
   "block.logicore.data_cable": "Data cable",
   "item.logicore.processor_unit": "Processor unit",
   "tooltip.logicore.cycles": "Cycles: %s / %s C",
   "tooltip.logicore.processors": "Processors: %s / %s",
   "config.jade.plugin_logicore.server_rack": "Server rack config",
-  "config.jade.plugin_logicore.cpu_core": "CPU Core config",
-  "block.logicore.programmable_sorter": "Programmable Sorter",
-  "tooltip.logicore.max_racks_reached": "Maximum of %d racks can be connected to the CPU Core",
-  "tooltip.logicore.connected_racks": "Connected racks: %d / %d",
   "block.logicore.computer": "Computer"
 }

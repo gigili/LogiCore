@@ -2,7 +2,6 @@ package dev.gacbl.logicore.data;
 
 import dev.gacbl.logicore.LogiCore;
 import dev.gacbl.logicore.computer.ComputeLootTableProvider;
-import dev.gacbl.logicore.cpucore.CPUCoreLootTableProvider;
 import dev.gacbl.logicore.datacable.DataCableLootTableProvider;
 import dev.gacbl.logicore.serverrack.ServerRackLootTableProvider;
 import net.minecraft.core.HolderLookup;
@@ -36,7 +35,6 @@ public class DataGenerators {
                         packOutput, Collections.emptySet(),
                         List.of(
                                 new LootTableProvider.SubProviderEntry(ServerRackLootTableProvider::new, LootContextParamSets.BLOCK),
-                                new LootTableProvider.SubProviderEntry(CPUCoreLootTableProvider::new, LootContextParamSets.BLOCK),
                                 new LootTableProvider.SubProviderEntry(DataCableLootTableProvider::new, LootContextParamSets.BLOCK),
                                 new LootTableProvider.SubProviderEntry(ComputeLootTableProvider::new, LootContextParamSets.BLOCK)
                         ),
@@ -44,7 +42,7 @@ public class DataGenerators {
                 )
         );
 
-        generator.addProvider(event.includeServer(), new ModRecipeProvider(packOutput,lookupProvider));
+        generator.addProvider(event.includeServer(), new ModRecipeProvider(packOutput, lookupProvider));
         generator.addProvider(event.includeServer(), new ModDataMapProvider(packOutput, lookupProvider));
 
         BlockTagsProvider blockTagsProvider = new ModBlockTagProvider(packOutput, lookupProvider, existingFileHelper);

@@ -1,4 +1,4 @@
-package dev.gacbl.logicore.network;
+package dev.gacbl.logicore.datacable.network;
 
 import dev.gacbl.logicore.datacable.DataCableBlock;
 import net.minecraft.core.BlockPos;
@@ -12,6 +12,7 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.saveddata.SavedData;
+import net.neoforged.neoforge.capabilities.Capabilities;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
@@ -63,8 +64,6 @@ public class NetworkManager extends SavedData {
         if (level.isClientSide || this.networksByCable.containsKey(startPos)) {
             return;
         }
-
-        return;
 
         /*BlockState startState = level.getBlockState(startPos);
         if (!isNetworkComponent(level, startPos, startState)) {
@@ -120,21 +119,43 @@ public class NetworkManager extends SavedData {
     }
 
     private boolean isNetworkComponent(Level level, BlockPos pos, BlockState state) {
-        return isCable(state.getBlock()) || isProvider(level, pos) || isConsumer(level, pos);
+        return isCable(state.getBlock()) || isProviderOrConsumer(level, pos);
     }
 
     private boolean isCable(Block block) {
         return block instanceof DataCableBlock;
     }
 
-    private boolean isProvider(Level level, BlockPos pos) {
-        var cap = level.getCapability(dev.gacbl.logicore.core.ModCapabilities.CYCLE_STORAGE, pos, null);
-        return cap != null && cap.getCycleCapacity() > 0;
+    private boolean isProviderOrConsumer(Level level, BlockPos pos) {
+        var capCycles = level.getCapability(dev.gacbl.logicore.core.ModCapabilities.CYCLE_STORAGE, pos, null);
+        var capFe = level.getCapability(Capabilities.EnergyStorage.BLOCK, pos, null);
+
+        if (capCycles == null && capFe == null) return false;
+
+        if(capCycles != null && capCycles.getCycleCapacity() > 0){
+            return true;
+        }
+
+        return capFe != null && capFe.getMaxEnergyStored() > 0;
     }
 
     private boolean isConsumer(Level level, BlockPos pos) {
-        var cap = level.getCapability(dev.gacbl.logicore.core.ModCapabilities.CYCLE_STORAGE, pos, null);
-        return cap != null;
+        var capCycles = level.getCapability(dev.gacbl.logicore.core.ModCapabilities.CYCLE_STORAGE, pos, null);
+        var capFe = level.getCapability(Capabilities.EnergyStorage.BLOCK, pos, null);
+        return capCycles != null && capFe != null;
+    }
+
+    private boolean isProvider(Level level, BlockPos pos) {
+        var capCycles = level.getCapability(dev.gacbl.logicore.core.ModCapabilities.CYCLE_STORAGE, pos, null);
+        var capFe = level.getCapability(Capabilities.EnergyStorage.BLOCK, pos, null);
+        return capCycles == null && capFe != null;
+    }
+
+    private boolean isProviderAndConsumer(Level level, BlockPos pos) {
+        var capCycles = level.getCapability(dev.gacbl.logicore.core.ModCapabilities.CYCLE_STORAGE, pos, null);
+        var capFe = level.getCapability(Capabilities.EnergyStorage.BLOCK, pos, null);
+
+        return (capCycles != null && capFe != null) && (capCycles.getCycleCapacity() > 0 || capFe.getMaxEnergyStored() > 0);
     }
 
     public static NetworkManager get(ServerLevel level) {

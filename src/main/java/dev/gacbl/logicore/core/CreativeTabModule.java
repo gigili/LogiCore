@@ -2,7 +2,6 @@ package dev.gacbl.logicore.core;
 
 import dev.gacbl.logicore.LogiCore;
 import dev.gacbl.logicore.computer.ComputerModule;
-import dev.gacbl.logicore.cpucore.CPUCoreModule;
 import dev.gacbl.logicore.datacable.DataCableModule;
 import dev.gacbl.logicore.processorunit.ProcessorUnitModule;
 import dev.gacbl.logicore.serverrack.ServerRackModule;
@@ -20,9 +19,8 @@ public class CreativeTabModule {
     public static final net.neoforged.neoforge.registries.DeferredHolder<CreativeModeTab, CreativeModeTab> LOGICORE_TAB =
             CREATIVE_MODE_TABS.register("logicore_tab", () -> CreativeModeTab.builder()
                     .title(Component.translatable("creativetab.logicore.tab"))
-                    .icon(() -> new ItemStack(CPUCoreModule.CPU_CORE_ITEM.get()))
+                    .icon(() -> new ItemStack(ProcessorUnitModule.PROCESSOR_UNIT.get()))
                     .displayItems((params, output) -> {
-                        output.accept(CPUCoreModule.CPU_CORE_ITEM.get());
                         output.accept(ServerRackModule.SERVER_RACK_ITEM.get());
                         output.accept(DataCableModule.DATA_CABLE_ITEM.get());
                         output.accept(ProcessorUnitModule.PROCESSOR_UNIT.get());
