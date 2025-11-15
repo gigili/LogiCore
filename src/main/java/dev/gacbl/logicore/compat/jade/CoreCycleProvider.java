@@ -13,8 +13,8 @@ import snownee.jade.api.IServerDataProvider;
 import snownee.jade.api.ITooltip;
 import snownee.jade.api.config.IPluginConfig;
 
-public class ServerRackProvider implements IBlockComponentProvider, IServerDataProvider<BlockAccessor> {
-    public static final ServerRackProvider INSTANCE = new ServerRackProvider();
+public class CoreCycleProvider implements IBlockComponentProvider, IServerDataProvider<BlockAccessor> {
+    public static final CoreCycleProvider INSTANCE = new CoreCycleProvider();
 
     @Override
     public void appendTooltip(ITooltip tooltip, BlockAccessor accessor, IPluginConfig config) {

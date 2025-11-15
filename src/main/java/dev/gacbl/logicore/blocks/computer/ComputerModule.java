@@ -46,7 +46,7 @@ public class ComputerModule {
     private static void registerCapabilities(RegisterCapabilitiesEvent event) {
         // Attach Cycle Storage capability to Computer
         event.registerBlockEntity(
-                ModCapabilities.CYCLE_STORAGE,
+                ModCapabilities.CYCLE_PROVIDER,
                 ComputerModule.COMPUTER_BLOCK_ENTITY.get(),
                 (be, context) -> be.getCycleStorage()
         );

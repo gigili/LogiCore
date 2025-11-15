@@ -16,13 +16,13 @@ public class LogiCoreJadePlugin implements IWailaPlugin {
 
     @Override
     public void registerClient(IWailaClientRegistration registration) {
-        registration.registerBlockComponent(ServerRackProvider.INSTANCE, ServerRackBlock.class);
-        registration.registerBlockComponent(ServerRackProvider.INSTANCE, ComputerBlock.class);
+        registration.registerBlockComponent(CoreCycleProvider.INSTANCE, ServerRackBlock.class);
+        registration.registerBlockComponent(CoreCycleProvider.INSTANCE, ComputerBlock.class);
     }
 
     @Override
     public void register(IWailaCommonRegistration registration) {
-        registration.registerBlockDataProvider(ServerRackProvider.INSTANCE, ServerRackBlockEntity.class);
-        registration.registerBlockDataProvider(ServerRackProvider.INSTANCE, ComputerBlockEntity.class);
+        registration.registerBlockDataProvider(CoreCycleProvider.INSTANCE, ServerRackBlockEntity.class);
+        registration.registerBlockDataProvider(CoreCycleProvider.INSTANCE, ComputerBlockEntity.class);
     }
 }

@@ -3,10 +3,10 @@ package dev.gacbl.logicore;
 import com.mojang.logging.LogUtils;
 import dev.gacbl.logicore.blocks.computer.ComputerModule;
 import dev.gacbl.logicore.blocks.datacable.DataCableModule;
-import dev.gacbl.logicore.blocks.serverrack.ServerRackDataComponent;
 import dev.gacbl.logicore.blocks.serverrack.ServerRackModule;
 import dev.gacbl.logicore.blocks.serverrack.ui.ServerRackScreen;
 import dev.gacbl.logicore.core.CreativeTabModule;
+import dev.gacbl.logicore.core.MyCommands;
 import dev.gacbl.logicore.items.processorunit.ProcessorUnitModule;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.IEventBus;
@@ -18,6 +18,7 @@ import net.neoforged.fml.config.ModConfig;
 import net.neoforged.fml.event.lifecycle.FMLClientSetupEvent;
 import net.neoforged.neoforge.client.event.RegisterMenuScreensEvent;
 import net.neoforged.neoforge.common.NeoForge;
+import net.neoforged.neoforge.event.RegisterCommandsEvent;
 import net.neoforged.neoforge.event.server.ServerStartingEvent;
 import org.slf4j.Logger;
 
@@ -28,18 +29,23 @@ public class LogiCore {
 
     public LogiCore(IEventBus modEventBus, ModContainer modContainer) {
         NeoForge.EVENT_BUS.register(this);
+
         CreativeTabModule.register(modEventBus);
 
         ProcessorUnitModule.register(modEventBus);
 
         ComputerModule.register(modEventBus);
-
         ServerRackModule.register(modEventBus);
-        ServerRackDataComponent.register(modEventBus);
-
         DataCableModule.register(modEventBus);
 
         modContainer.registerConfig(ModConfig.Type.COMMON, Config.SPEC, "logicore.toml");
+
+        //NeoForge.EVENT_BUS.register(new MyCommands());
+    }
+
+    @SubscribeEvent
+    public void onRegisterCommands(RegisterCommandsEvent event) {
+        MyCommands.register(event.getDispatcher(), event.getBuildContext(), event.getCommandSelection());
     }
 
 

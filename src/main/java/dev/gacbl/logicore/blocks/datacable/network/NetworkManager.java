@@ -1,6 +1,7 @@
 package dev.gacbl.logicore.blocks.datacable.network;
 
 import dev.gacbl.logicore.blocks.datacable.DataCableBlock;
+import dev.gacbl.logicore.core.ModCapabilities;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.HolderLookup;
@@ -23,6 +24,7 @@ public class NetworkManager extends SavedData {
 
     private final Map<BlockPos, ComputationNetwork> networksByCable = new HashMap<>();
     private final Set<ComputationNetwork> networks = new HashSet<>();
+    private final Map<String, List<BlockPos>> visitedNodes = new HashMap<>();
 
     public void tick(ServerLevel level) {
         for (ComputationNetwork network : this.networks) {
@@ -41,12 +43,15 @@ public class NetworkManager extends SavedData {
         ComputationNetwork oldNetwork = this.networksByCable.get(pos);
         if (oldNetwork == null) return;
 
+        oldNetwork.clearAll();
         this.networks.remove(oldNetwork);
+        this.visitedNodes.remove(oldNetwork.getNetworkUUID());
 
         Set<BlockPos> allBlocksInOldNetwork = new HashSet<>();
         allBlocksInOldNetwork.addAll(oldNetwork.getCables());
         allBlocksInOldNetwork.addAll(oldNetwork.getProviders());
         allBlocksInOldNetwork.addAll(oldNetwork.getConsumers());
+        allBlocksInOldNetwork.addAll(oldNetwork.getEnergySources());
 
         for (BlockPos blockPos : allBlocksInOldNetwork) {
             this.networksByCable.remove(blockPos);
@@ -54,7 +59,7 @@ public class NetworkManager extends SavedData {
 
         for (Direction dir : Direction.values()) {
             BlockPos neighborPos = pos.relative(dir);
-            if (allBlocksInOldNetwork.contains(neighborPos)) {
+            if (allBlocksInOldNetwork.contains(neighborPos) && isCable(level.getBlockState(neighborPos).getBlock())) {
                 scanAt(level, neighborPos);
             }
         }
@@ -65,7 +70,7 @@ public class NetworkManager extends SavedData {
             return;
         }
 
-        /*BlockState startState = level.getBlockState(startPos);
+        BlockState startState = level.getBlockState(startPos);
         if (!isNetworkComponent(level, startPos, startState)) {
             return;
         }
@@ -74,8 +79,13 @@ public class NetworkManager extends SavedData {
         Queue<BlockPos> toScan = new LinkedList<>();
         toScan.add(startPos);
 
+        visitedNodes.computeIfAbsent(newNetwork.getNetworkUUID(), (k) -> new ArrayList<>());
+        visitedNodes.get(newNetwork.getNetworkUUID()).clear();
+
         while (!toScan.isEmpty()) {
             BlockPos currentPos = toScan.poll();
+            if (currentPos == null) break;
+
             if (this.networksByCable.containsKey(currentPos)) {
                 ComputationNetwork existing = this.networksByCable.get(currentPos);
                 if (existing != newNetwork) {
@@ -83,9 +93,9 @@ public class NetworkManager extends SavedData {
                     for (BlockPos oldCablePos : existing.getCables()) {
                         this.networksByCable.remove(oldCablePos);
                     }
+                    existing.clearAll();
                     this.networks.remove(existing);
                 }
-                continue;
             }
 
             BlockState currentState = level.getBlockState(currentPos);
@@ -105,21 +115,28 @@ public class NetworkManager extends SavedData {
                 newNetwork.addConsumer(currentPos);
             }
 
+            if (isEnergySource(level, currentPos)) {
+                newNetwork.addEnergySource(currentPos);
+            }
+
             this.networksByCable.put(currentPos, newNetwork);
 
             if (isCable(currentState.getBlock())) {
                 for (Direction dir : Direction.values()) {
-                    toScan.add(currentPos.relative(dir));
+                    if (!visitedNodes.get(newNetwork.getNetworkUUID()).contains(currentPos.relative(dir)) && isNetworkComponent(level, currentPos.relative(dir), level.getBlockState(currentPos.relative(dir)))) {
+                        visitedNodes.get(newNetwork.getNetworkUUID()).add(currentPos.relative(dir));
+                        toScan.add(currentPos.relative(dir));
+                    }
                 }
             }
         }
 
         this.networks.add(newNetwork);
-        setDirty();*/
+        setDirty();
     }
 
     private boolean isNetworkComponent(Level level, BlockPos pos, BlockState state) {
-        return isCable(state.getBlock()) || isProviderOrConsumer(level, pos);
+        return isCable(state.getBlock()) || isProviderOrConsumer(level, pos) || isEnergySource(level, pos);
     }
 
     private boolean isCable(Block block) {
@@ -127,35 +144,25 @@ public class NetworkManager extends SavedData {
     }
 
     private boolean isProviderOrConsumer(Level level, BlockPos pos) {
-        var capCycles = level.getCapability(dev.gacbl.logicore.core.ModCapabilities.CYCLE_STORAGE, pos, null);
-        var capFe = level.getCapability(Capabilities.EnergyStorage.BLOCK, pos, null);
-
-        if (capCycles == null && capFe == null) return false;
-
-        if(capCycles != null && capCycles.getCycleCapacity() > 0){
-            return true;
-        }
-
-        return capFe != null && capFe.getMaxEnergyStored() > 0;
+        return isProvider(level, pos) || isConsumer(level, pos);
     }
 
     private boolean isConsumer(Level level, BlockPos pos) {
-        var capCycles = level.getCapability(dev.gacbl.logicore.core.ModCapabilities.CYCLE_STORAGE, pos, null);
+        var capCycles = level.getCapability(ModCapabilities.CYCLE_CONSUMER, pos, null);
         var capFe = level.getCapability(Capabilities.EnergyStorage.BLOCK, pos, null);
         return capCycles != null && capFe != null;
     }
 
     private boolean isProvider(Level level, BlockPos pos) {
-        var capCycles = level.getCapability(dev.gacbl.logicore.core.ModCapabilities.CYCLE_STORAGE, pos, null);
+        var capCycles = level.getCapability(ModCapabilities.CYCLE_PROVIDER, pos, null);
         var capFe = level.getCapability(Capabilities.EnergyStorage.BLOCK, pos, null);
-        return capCycles == null && capFe != null;
+        return capCycles != null && capFe != null;
     }
 
-    private boolean isProviderAndConsumer(Level level, BlockPos pos) {
-        var capCycles = level.getCapability(dev.gacbl.logicore.core.ModCapabilities.CYCLE_STORAGE, pos, null);
+    private boolean isEnergySource(Level level, BlockPos pos) {
+        var capCycles = isProviderOrConsumer(level, pos);
         var capFe = level.getCapability(Capabilities.EnergyStorage.BLOCK, pos, null);
-
-        return (capCycles != null && capFe != null) && (capCycles.getCycleCapacity() > 0 || capFe.getMaxEnergyStored() > 0);
+        return !capCycles && capFe != null;
     }
 
     public static NetworkManager get(ServerLevel level) {
@@ -195,6 +202,15 @@ public class NetworkManager extends SavedData {
                     manager.networksByCable.put(pos, network);
                 });
             }
+
+            ListTag energyTag = networkTag.getList("EnergySources", 10);
+            for (int j = 0; j < energyTag.size(); j++) {
+                Optional<BlockPos> posOpt = NbtUtils.readBlockPos(consumersTag.getCompound(j), POS_KEY);
+                posOpt.ifPresent(pos -> {
+                    network.addEnergySource(pos);
+                    manager.networksByCable.put(pos, network);
+                });
+            }
             manager.networks.add(network);
         }
         return manager;
@@ -230,9 +246,24 @@ public class NetworkManager extends SavedData {
             });
             networkTag.put("Consumers", consumersTag);
 
+            ListTag energyTag = new ListTag();
+            network.getEnergySources().forEach(pos -> {
+                CompoundTag posTag = new CompoundTag();
+                posTag.put(POS_KEY, NbtUtils.writeBlockPos(pos));
+                energyTag.add(posTag);
+            });
+            networkTag.put("EnergySources", energyTag);
+
             networksTag.add(networkTag);
         }
         tag.put("Networks", networksTag);
         return tag;
+    }
+
+    public void clearAll() {
+        this.networksByCable.clear();
+        this.networks.clear();
+        this.visitedNodes.clear();
+        setDirty();
     }
 }
