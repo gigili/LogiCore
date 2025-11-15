@@ -1,10 +1,10 @@
-package dev.gacbl.logicore.datacable;
+package dev.gacbl.logicore.blocks.datacable;
 
 import com.mojang.serialization.MapCodec;
-import dev.gacbl.logicore.computer.ComputerBlock;
-import dev.gacbl.logicore.datacable.network.NetworkManager;
-import dev.gacbl.logicore.processorunit.ProcessorUnitModule;
-import dev.gacbl.logicore.serverrack.ServerRackBlock;
+import dev.gacbl.logicore.blocks.computer.ComputerBlock;
+import dev.gacbl.logicore.blocks.datacable.network.NetworkManager;
+import dev.gacbl.logicore.blocks.serverrack.ServerRackBlock;
+import dev.gacbl.logicore.items.processorunit.ProcessorUnitModule;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.data.recipes.RecipeCategory;

@@ -13,6 +13,13 @@ public class Config {
     public static final ModConfigSpec.ConfigValue<Integer> SERVER_RACK_CYCLE_CAPACITY;
     public static final ModConfigSpec.ConfigValue<Integer> SERVER_RACK_FE_CAPACITY;
 
+    //Computer
+    public static final ModConfigSpec.ConfigValue<Integer> COMPUTER_BASE_CYCLE_GENERATION;
+    public static final ModConfigSpec.ConfigValue<Integer> COMPUTER_CYCLES_PER_PROCESSOR;
+    public static final ModConfigSpec.ConfigValue<Integer> COMPUTER_FE_PER_CYCLE;
+    public static final ModConfigSpec.ConfigValue<Integer> COMPUTER_CYCLE_CAPACITY;
+    public static final ModConfigSpec.ConfigValue<Integer> COMPUTER_FE_CAPACITY;
+
     static {
         BUILDER.comment("LogiCore Configuration");
 
@@ -40,6 +47,32 @@ public class Config {
 
         SERVER_RACK_FE_CAPACITY = BUILDER
                 .comment(" How much FE can be stored in the server rack")
+                .defineInRange("fe_capacity", 100_000, 1, 1_000_000);
+
+        BUILDER.pop();
+        //</editor-fold>
+
+        //<editor-fold desc="Computer">
+        BUILDER.push("Computer");
+
+        COMPUTER_BASE_CYCLE_GENERATION = BUILDER
+                .comment(" How many cycles are generated per tick")
+                .defineInRange("base_cycle_generation", 20, 1, 1_000_000_000);
+
+        COMPUTER_CYCLES_PER_PROCESSOR = BUILDER
+                .comment(" How many cycles are generated per cpu in the computer")
+                .defineInRange("base_cycle_generation", 10, 1, 1_000_000_000);
+
+        COMPUTER_FE_PER_CYCLE = BUILDER
+                .comment(" How much FE is consumed to generate a cycle")
+                .defineInRange("fe_per_cycle", 2, 1, Integer.MAX_VALUE);
+
+        COMPUTER_CYCLE_CAPACITY = BUILDER
+                .comment(" How many cycles can be stored in the computer")
+                .defineInRange("cycle_capacity", 500_000, 1, 1_000_000_000);
+
+        COMPUTER_FE_CAPACITY = BUILDER
+                .comment(" How much FE can be stored in the computer")
                 .defineInRange("fe_capacity", 100_000, 1, 1_000_000);
 
         BUILDER.pop();

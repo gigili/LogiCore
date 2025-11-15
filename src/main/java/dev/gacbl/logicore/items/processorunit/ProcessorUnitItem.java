@@ -1,4 +1,4 @@
-package dev.gacbl.logicore.processorunit;
+package dev.gacbl.logicore.items.processorunit;
 
 import net.minecraft.world.item.Item;
 

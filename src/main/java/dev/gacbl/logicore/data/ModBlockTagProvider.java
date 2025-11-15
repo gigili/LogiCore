@@ -1,9 +1,9 @@
 package dev.gacbl.logicore.data;
 
 import dev.gacbl.logicore.LogiCore;
-import dev.gacbl.logicore.computer.ComputerModule;
-import dev.gacbl.logicore.datacable.DataCableModule;
-import dev.gacbl.logicore.serverrack.ServerRackModule;
+import dev.gacbl.logicore.blocks.computer.ComputerModule;
+import dev.gacbl.logicore.blocks.datacable.DataCableModule;
+import dev.gacbl.logicore.blocks.serverrack.ServerRackModule;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.data.PackOutput;
 import net.minecraft.tags.BlockTags;

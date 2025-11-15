@@ -1,4 +1,4 @@
-package dev.gacbl.logicore.datacable.network;
+package dev.gacbl.logicore.blocks.datacable.network;
 
 import dev.gacbl.logicore.api.computation.ICycleConsumer;
 import dev.gacbl.logicore.api.computation.ICycleProvider;

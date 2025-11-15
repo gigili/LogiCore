@@ -1,10 +1,10 @@
 package dev.gacbl.logicore.core;
 
 import dev.gacbl.logicore.LogiCore;
-import dev.gacbl.logicore.computer.ComputerModule;
-import dev.gacbl.logicore.datacable.DataCableModule;
-import dev.gacbl.logicore.processorunit.ProcessorUnitModule;
-import dev.gacbl.logicore.serverrack.ServerRackModule;
+import dev.gacbl.logicore.blocks.computer.ComputerModule;
+import dev.gacbl.logicore.blocks.datacable.DataCableModule;
+import dev.gacbl.logicore.blocks.serverrack.ServerRackModule;
+import dev.gacbl.logicore.items.processorunit.ProcessorUnitModule;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.CreativeModeTab;

@@ -1,9 +1,9 @@
 package dev.gacbl.logicore.data;
 
 import dev.gacbl.logicore.LogiCore;
-import dev.gacbl.logicore.computer.ComputeLootTableProvider;
-import dev.gacbl.logicore.datacable.DataCableLootTableProvider;
-import dev.gacbl.logicore.serverrack.ServerRackLootTableProvider;
+import dev.gacbl.logicore.blocks.computer.ComputeLootTableProvider;
+import dev.gacbl.logicore.blocks.datacable.DataCableLootTableProvider;
+import dev.gacbl.logicore.blocks.serverrack.ServerRackLootTableProvider;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.data.DataGenerator;
 import net.minecraft.data.PackOutput;

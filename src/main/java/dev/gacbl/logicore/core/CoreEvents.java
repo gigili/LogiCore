@@ -1,7 +1,7 @@
 package dev.gacbl.logicore.core;
 
 import dev.gacbl.logicore.LogiCore;
-import dev.gacbl.logicore.datacable.network.NetworkManager;
+import dev.gacbl.logicore.blocks.datacable.network.NetworkManager;
 import net.minecraft.server.level.ServerLevel;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;

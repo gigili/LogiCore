@@ -1,4 +1,4 @@
-package dev.gacbl.logicore.processorunit;
+package dev.gacbl.logicore.items.processorunit;
 
 import dev.gacbl.logicore.LogiCore;
 import net.minecraft.core.registries.Registries;

@@ -1,4 +1,4 @@
-package dev.gacbl.logicore.serverrack;
+package dev.gacbl.logicore.blocks.serverrack;
 
 import dev.gacbl.logicore.LogiCore;
 import net.minecraft.core.BlockPos;

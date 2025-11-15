@@ -1,7 +1,7 @@
-package dev.gacbl.logicore.serverrack;
+package dev.gacbl.logicore.blocks.serverrack;
 
 import com.mojang.serialization.MapCodec;
-import dev.gacbl.logicore.processorunit.ProcessorUnitModule;
+import dev.gacbl.logicore.items.processorunit.ProcessorUnitModule;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.data.recipes.RecipeCategory;

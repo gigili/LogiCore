@@ -1,8 +1,9 @@
-package dev.gacbl.logicore.serverrack.ui;
+package dev.gacbl.logicore.blocks.serverrack.ui;
 
-import dev.gacbl.logicore.processorunit.ProcessorUnitModule;
-import dev.gacbl.logicore.serverrack.ServerRackBlockEntity;
-import dev.gacbl.logicore.serverrack.ServerRackModule;
+import dev.gacbl.logicore.blocks.serverrack.ServerRackBlockEntity;
+import dev.gacbl.logicore.blocks.serverrack.ServerRackModule;
+import dev.gacbl.logicore.core.CoreCycleProviderBlockEntity;
+import dev.gacbl.logicore.items.processorunit.ProcessorUnitModule;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.world.entity.player.Inventory;
@@ -10,12 +11,13 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.neoforged.neoforge.items.SlotItemHandler;
 import org.jetbrains.annotations.NotNull;
 
 public class ServerRackMenu extends AbstractContainerMenu {
-    private final ServerRackBlockEntity blockEntity;
+    private final CoreCycleProviderBlockEntity blockEntity;
 
     public ServerRackMenu(int containerId, Inventory playerInventory, BlockPos pos) {
         this(containerId, playerInventory, playerInventory.player.level().getBlockEntity(pos));
@@ -23,7 +25,7 @@ public class ServerRackMenu extends AbstractContainerMenu {
 
     public ServerRackMenu(int containerId, Inventory playerInventory, BlockEntity entity) {
         super(ServerRackModule.SERVER_RACK_MENU.get(), containerId);
-        this.blockEntity = (ServerRackBlockEntity) entity;
+        this.blockEntity = (CoreCycleProviderBlockEntity) entity;
 
         int rackSlots = ServerRackBlockEntity.RACK_CAPACITY;
         int slotSize = 18;
@@ -83,12 +85,12 @@ public class ServerRackMenu extends AbstractContainerMenu {
                     if (!this.moveItemStackTo(slotStack, 0, playerInvStart, false)) {
                         return ItemStack.EMPTY;
                     }
-                } else if (index >= playerInvStart && index < playerInvEnd) {
+                } else if (index < playerInvEnd) {
                     // Move from the main inventory to the hotbar
                     if (!this.moveItemStackTo(slotStack, playerInvEnd, playerHotbarEnd, false)) {
                         return ItemStack.EMPTY;
                     }
-                } else if (index >= playerInvEnd && index < playerHotbarEnd) {
+                } else if (index < playerHotbarEnd) {
                     // Move from the hotbar to the main inventory
                     if (!this.moveItemStackTo(slotStack, playerInvStart, playerInvEnd, false)) {
                         return ItemStack.EMPTY;
@@ -114,6 +116,8 @@ public class ServerRackMenu extends AbstractContainerMenu {
 
     @Override
     public boolean stillValid(@NotNull Player player) {
-        return this.blockEntity.stillValid(player);
+        Level level = player.level();
+        return level.getBlockEntity(this.blockEntity.getBlockPos()) == this.blockEntity &&
+                player.distanceToSqr(this.blockEntity.getBlockPos().getCenter()) <= 64.0;
     }
 }

@@ -1,14 +1,13 @@
 package dev.gacbl.logicore;
 
 import com.mojang.logging.LogUtils;
-import dev.gacbl.logicore.computer.ComputerModule;
-import dev.gacbl.logicore.core.CoreModule;
+import dev.gacbl.logicore.blocks.computer.ComputerModule;
+import dev.gacbl.logicore.blocks.datacable.DataCableModule;
+import dev.gacbl.logicore.blocks.serverrack.ServerRackDataComponent;
+import dev.gacbl.logicore.blocks.serverrack.ServerRackModule;
+import dev.gacbl.logicore.blocks.serverrack.ui.ServerRackScreen;
 import dev.gacbl.logicore.core.CreativeTabModule;
-import dev.gacbl.logicore.datacable.DataCableModule;
-import dev.gacbl.logicore.processorunit.ProcessorUnitModule;
-import dev.gacbl.logicore.serverrack.ServerRackDataComponent;
-import dev.gacbl.logicore.serverrack.ServerRackModule;
-import dev.gacbl.logicore.serverrack.ui.ServerRackScreen;
+import dev.gacbl.logicore.items.processorunit.ProcessorUnitModule;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.bus.api.SubscribeEvent;
@@ -25,13 +24,11 @@ import org.slf4j.Logger;
 @Mod(LogiCore.MOD_ID)
 public class LogiCore {
     public static final String MOD_ID = "logicore";
-    private static final Logger LOGGER = LogUtils.getLogger();
+    public static final Logger LOGGER = LogUtils.getLogger();
 
     public LogiCore(IEventBus modEventBus, ModContainer modContainer) {
         NeoForge.EVENT_BUS.register(this);
         CreativeTabModule.register(modEventBus);
-
-        CoreModule.register(modEventBus);
 
         ProcessorUnitModule.register(modEventBus);
 

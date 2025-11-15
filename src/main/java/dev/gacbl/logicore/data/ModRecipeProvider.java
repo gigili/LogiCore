@@ -1,8 +1,8 @@
 package dev.gacbl.logicore.data;
 
-import dev.gacbl.logicore.computer.ComputerBlock;
-import dev.gacbl.logicore.datacable.DataCableBlock;
-import dev.gacbl.logicore.serverrack.ServerRackBlock;
+import dev.gacbl.logicore.blocks.computer.ComputerBlock;
+import dev.gacbl.logicore.blocks.datacable.DataCableBlock;
+import dev.gacbl.logicore.blocks.serverrack.ServerRackBlock;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.data.PackOutput;
 import net.minecraft.data.recipes.RecipeOutput;

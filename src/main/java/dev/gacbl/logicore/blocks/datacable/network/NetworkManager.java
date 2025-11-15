@@ -1,6 +1,6 @@
-package dev.gacbl.logicore.datacable.network;
+package dev.gacbl.logicore.blocks.datacable.network;
 
-import dev.gacbl.logicore.datacable.DataCableBlock;
+import dev.gacbl.logicore.blocks.datacable.DataCableBlock;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.HolderLookup;

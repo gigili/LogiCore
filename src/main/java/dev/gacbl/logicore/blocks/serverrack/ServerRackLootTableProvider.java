@@ -1,4 +1,4 @@
-package dev.gacbl.logicore.serverrack;
+package dev.gacbl.logicore.blocks.serverrack;
 
 import net.minecraft.core.Holder;
 import net.minecraft.core.HolderLookup;

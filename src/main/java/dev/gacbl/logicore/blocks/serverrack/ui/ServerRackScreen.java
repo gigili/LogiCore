@@ -1,4 +1,4 @@
-package dev.gacbl.logicore.serverrack.ui;
+package dev.gacbl.logicore.blocks.serverrack.ui;
 
 import dev.gacbl.logicore.LogiCore;
 import net.minecraft.client.gui.GuiGraphics;
@@ -6,8 +6,9 @@ import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Inventory;
+import org.jetbrains.annotations.NotNull;
 
-public class ServerRackScreen extends AbstractContainerScreen<dev.gacbl.logicore.serverrack.ui.ServerRackMenu> {
+public class ServerRackScreen extends AbstractContainerScreen<dev.gacbl.logicore.blocks.serverrack.ui.ServerRackMenu> {
     private static final ResourceLocation TEXTURE =
             ResourceLocation.fromNamespaceAndPath(LogiCore.MOD_ID, "textures/gui/server_rack_gui.png");
 
@@ -26,7 +27,7 @@ public class ServerRackScreen extends AbstractContainerScreen<dev.gacbl.logicore
     }
 
     @Override
-    public void render(GuiGraphics graphics, int mouseX, int mouseY, float partialTicks) {
+    public void render(@NotNull GuiGraphics graphics, int mouseX, int mouseY, float partialTicks) {
         super.render(graphics, mouseX, mouseY, partialTicks);
         this.renderTooltip(graphics, mouseX, mouseY);
     }

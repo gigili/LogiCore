@@ -1,8 +1,8 @@
 package dev.gacbl.logicore.compat.jade;
 
-import dev.gacbl.logicore.Config;
 import dev.gacbl.logicore.LogiCore;
-import dev.gacbl.logicore.serverrack.ServerRackBlockEntity;
+import dev.gacbl.logicore.blocks.serverrack.ServerRackBlockEntity;
+import dev.gacbl.logicore.core.CoreCycleProviderBlockEntity;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
@@ -20,7 +20,7 @@ public class ServerRackProvider implements IBlockComponentProvider, IServerDataP
     public void appendTooltip(ITooltip tooltip, BlockAccessor accessor, IPluginConfig config) {
         int count = 0;
         long cycles = 0;
-        long max = Config.SERVER_RACK_CYCLE_CAPACITY.get();
+        long max = 0;
 
         if (accessor.getServerData().contains("Count")) {
             count = accessor.getServerData().getInt("Count");
@@ -39,15 +39,15 @@ public class ServerRackProvider implements IBlockComponentProvider, IServerDataP
     public boolean shouldRequestData(BlockAccessor accessor) {
         BlockEntity be = accessor.getLevel().getBlockEntity(accessor.getPosition());
         BlockEntity beBelow = accessor.getLevel().getBlockEntity(accessor.getPosition().below());
-        return be instanceof ServerRackBlockEntity || beBelow instanceof ServerRackBlockEntity;
+        return be instanceof CoreCycleProviderBlockEntity || beBelow instanceof CoreCycleProviderBlockEntity;
     }
 
     @Override
     public void appendServerData(CompoundTag data, BlockAccessor accessor) {
-        ServerRackBlockEntity rackBlockEntity = (ServerRackBlockEntity) accessor.getBlockEntity();
+        CoreCycleProviderBlockEntity rackBlockEntity = (CoreCycleProviderBlockEntity) accessor.getBlockEntity();
 
         if (rackBlockEntity == null) {
-            rackBlockEntity = (ServerRackBlockEntity) accessor.getLevel().getBlockEntity(accessor.getPosition().below());
+            rackBlockEntity = (CoreCycleProviderBlockEntity) accessor.getLevel().getBlockEntity(accessor.getPosition().below());
         }
 
         if (rackBlockEntity == null) return;

@@ -1,4 +1,4 @@
-package dev.gacbl.logicore.datacable;
+package dev.gacbl.logicore.blocks.datacable;
 
 import dev.gacbl.logicore.LogiCore;
 import net.minecraft.core.registries.BuiltInRegistries;
