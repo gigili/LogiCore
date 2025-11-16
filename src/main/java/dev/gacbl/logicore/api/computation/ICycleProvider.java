@@ -6,4 +6,6 @@ public interface ICycleProvider {
     long getCycleCapacity();
 
     long extractCycles(long maxExtract, boolean simulate);
+
+    long receiveCycles(long receive, boolean simulate);
 }

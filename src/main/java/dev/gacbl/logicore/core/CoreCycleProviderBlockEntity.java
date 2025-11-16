@@ -25,8 +25,8 @@ public class CoreCycleProviderBlockEntity extends BlockEntity implements ICycleP
     private static int CYCLE_CAPACITY;
     private static int FE_CAPACITY;
 
-    public final EnergyStorage energyStorage = new EnergyStorage(FE_CAPACITY);
-    private final CycleStorage cycleStorage = new CycleStorage(CYCLE_CAPACITY);
+    private EnergyStorage energyStorage;
+    private CycleStorage cycleStorage;
 
     public CoreCycleProviderBlockEntity(BlockEntityType<?> type, BlockPos pos, BlockState blockState) {
         super(type, pos, blockState);
@@ -39,6 +39,8 @@ public class CoreCycleProviderBlockEntity extends BlockEntity implements ICycleP
         FE_PER_CYCLE = fePerCycle;
         CYCLE_CAPACITY = cycleCapacity;
         FE_CAPACITY = feCapacity;
+        energyStorage = new EnergyStorage(FE_CAPACITY);
+        cycleStorage = new CycleStorage(CYCLE_CAPACITY);
     }
 
     public int getProcessorCount() {
@@ -58,6 +60,11 @@ public class CoreCycleProviderBlockEntity extends BlockEntity implements ICycleP
     @Override
     public long extractCycles(long maxExtract, boolean simulate) {
         return this.cycleStorage.extractCycles(maxExtract, simulate);
+    }
+
+    @Override
+    public long receiveCycles(long receive, boolean simulate) {
+        return this.cycleStorage.receiveCycles(receive, simulate);
     }
 
     @Override

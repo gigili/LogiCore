@@ -1,31 +1,52 @@
 package dev.gacbl.logicore.core;
 
 import com.mojang.brigadier.CommandDispatcher;
+import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import dev.gacbl.logicore.LogiCore;
-import dev.gacbl.logicore.blocks.datacable.network.NetworkManager;
+import dev.gacbl.logicore.blocks.datacable.cable_network.NetworkManager;
 import net.minecraft.commands.CommandBuildContext;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerLevel;
-import net.minecraft.server.level.ServerPlayer;
 import net.neoforged.fml.common.Mod;
 
 @Mod(LogiCore.MOD_ID)
 public class MyCommands {
     public static void register(CommandDispatcher<CommandSourceStack> dispatcher, CommandBuildContext context, net.minecraft.commands.Commands.CommandSelection selection) {
-        dispatcher.register(Commands.literal("clear_network")
-                .executes(ctx -> new MyCommands().clearNetwork(ctx.getSource().getPlayerOrException()))
+        LiteralArgumentBuilder<CommandSourceStack> networksCommand = Commands.literal("networks")
+                .requires(source -> source.hasPermission(2));
+
+        networksCommand.then(
+                Commands.literal("list")
+                        .executes(ctx -> listNetworks(ctx.getSource()))
         );
+
+        networksCommand.then(
+                Commands.literal("clear")
+                        .executes(ctx -> clearNetworks(ctx.getSource()))
+        );
+
+        dispatcher.register(networksCommand);
     }
 
-    private int clearNetwork(ServerPlayer player) {
-        ServerLevel level = player.serverLevel();
-        NetworkManager manager = NetworkManager.get(level);
+    private static int listNetworks(CommandSourceStack source) {
+        ServerLevel serverLevel = source.getLevel();
 
+        NetworkManager manager = NetworkManager.get(serverLevel);
+
+        int networkCount = manager.getNetworks().size();
+        source.sendSuccess(() -> Component.literal("Found " + networkCount + " computation networks."), false);
+
+        return 1;
+    }
+
+    private static int clearNetworks(CommandSourceStack source) {
+        ServerLevel serverLevel = source.getLevel();
+
+        NetworkManager manager = NetworkManager.get(serverLevel);
         manager.clearAll();
-
-        player.sendSystemMessage(Component.literal("ALL NETWORKS CLEARED!"));
+        source.sendSuccess(() -> Component.literal("All computation networks cleared."), true);
 
         return 1;
     }

@@ -156,6 +156,10 @@ dependencies {
 
     // Tags viewer
     runtimeOnly "curse.maven:tv-1119728:5807896"
+
+    // Pipez
+    runtimeOnly "curse.maven:pipez-443900:5609056"
+
 }
 
 // This block of code expands all declared replace properties in the specified resource targets.
