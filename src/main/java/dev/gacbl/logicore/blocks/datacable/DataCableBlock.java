@@ -17,6 +17,7 @@ import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LevelAccessor;
+import net.minecraft.world.level.LevelReader;
 import net.minecraft.world.level.block.*;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
@@ -169,5 +170,14 @@ public class DataCableBlock extends BaseEntityBlock {
     @Override
     public @Nullable BlockEntity newBlockEntity(@NotNull BlockPos blockPos, @NotNull BlockState blockState) {
         return new DataCableBlockEntity(blockPos, blockState );
+    }
+
+    @Override
+    public void onNeighborChange(@NotNull BlockState state, @NotNull LevelReader level, @NotNull BlockPos pos, @NotNull BlockPos neighbor) {
+        super.onNeighborChange(state, level, pos, neighbor);
+        DataCableBlockEntity blockEntity = (DataCableBlockEntity) level.getBlockEntity(pos);
+        if(level instanceof ServerLevel server && (blockEntity != null && blockEntity.getNetworkUUID() != null)) {
+            NetworkManager.get(server).neighborChanged(server, pos, neighbor);
+        }
     }
 }

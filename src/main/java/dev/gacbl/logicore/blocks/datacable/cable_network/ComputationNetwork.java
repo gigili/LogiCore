@@ -19,7 +19,7 @@ public class ComputationNetwork {
     private final Set<BlockPos> providers = new HashSet<>();
     private final Set<BlockPos> consumers = new HashSet<>();
     private final Set<BlockPos> energySources = new HashSet<>();
-    private final EnergyStorage networkEnergyBuffer = new EnergyStorage(1_000_000, 10000, 10000); // Added 10k out rate
+    private final EnergyStorage networkEnergyBuffer = new EnergyStorage(1_000_000, 10000, 10000);
 
     private UUID NETWORK_UUID = UUID.randomUUID();
 
@@ -116,7 +116,6 @@ public class ComputationNetwork {
         }
     }
 
-
     private void rebuild(Level level) {
         this.cycleDemand = 0;
         this.feDemand = 0;
@@ -134,7 +133,7 @@ public class ComputationNetwork {
 
 
         for (BlockPos pos : this.providers) {
-            IEnergyStorage energy = getEnergyConsumerAt(level, pos); // Get energy cap *of the provider*
+            IEnergyStorage energy = getEnergyConsumerAt(level, pos);
             if (energy != null) {
                 this.feDemand += (energy.getMaxEnergyStored() - energy.getEnergyStored());
             }
@@ -145,9 +144,13 @@ public class ComputationNetwork {
             if (consumer != null) {
                 this.cycleDemand += consumer.getCycleDemand();
             }
+
+            IEnergyStorage energy = getEnergyConsumerAt(level, pos);
+            if (energy != null) {
+                this.feDemand += (energy.getMaxEnergyStored() - energy.getEnergyStored());
+            }
         }
     }
-
 
     private void pullEnergy(Level level) {
         if (this.energySources.isEmpty()) return;
@@ -157,15 +160,26 @@ public class ComputationNetwork {
         List<BlockPos> sources = new ArrayList<>(this.energySources);
 
         for (int i = 0; i < sourcesToTry && energyNeeded > 0; i++) {
+            // This increments the index and wraps it around if it reaches the end
             this.energySourceIndex = (this.energySourceIndex + 1) % sources.size();
             BlockPos sourcePos = sources.get(this.energySourceIndex);
 
-            IEnergyStorage source = getEnergyProviderAt(level, sourcePos); // Use the correct method
+            IEnergyStorage source = getEnergyProviderAt(level, sourcePos);
             if (source != null && source.canExtract()) {
+                // Calculate how much to pull: min of (what the network needs, what this source can output, what this source has)
                 int pullAmount = Math.min(energyNeeded, MAX_PULL_PER_SOURCE_PER_TICK);
-                int received = source.extractEnergy(pullAmount, false);
-                if (received > 0) {
-                    energyNeeded -= this.networkEnergyBuffer.receiveEnergy(received, false);
+
+                // Simulate extraction to see what we'd get
+                int receivedSim = source.extractEnergy(pullAmount, true);
+                if (receivedSim > 0) {
+                    // Simulate receiving to see what buffer will take
+                    int acceptedSim = this.networkEnergyBuffer.receiveEnergy(receivedSim, true);
+                    if (acceptedSim > 0) {
+                        // Perform the actual extraction and reception
+                        int received = source.extractEnergy(acceptedSim, false);
+                        int accepted = this.networkEnergyBuffer.receiveEnergy(received, false);
+                        energyNeeded -= accepted;
+                    }
                 }
             }
         }
@@ -184,11 +198,14 @@ public class ComputationNetwork {
             this.providerIndex = (this.providerIndex + 1) % providers.size();
             BlockPos providerPos = providers.get(this.providerIndex);
 
-            IEnergyStorage providerEnergy = getEnergyConsumerAt(level, providerPos); // Get provider's internal buffer
+            // Use getEnergyConsumerAt to get the Server Rack's buffer
+            IEnergyStorage providerEnergy = getEnergyConsumerAt(level, providerPos);
             if (providerEnergy != null && providerEnergy.canReceive()) {
                 int energyNeeded = providerEnergy.getMaxEnergyStored() - providerEnergy.getEnergyStored();
                 if (energyNeeded > 0) {
+                    // Calculate how much to push: min of (what the network has, what this rack needs, max transfer rate)
                     int pushAmount = Math.min(Math.min(energyToDistribute, MAX_PULL_PER_SOURCE_PER_TICK), energyNeeded);
+
                     int accepted = providerEnergy.receiveEnergy(pushAmount, false);
                     if (accepted > 0) {
                         this.networkEnergyBuffer.extractEnergy(accepted, false);
@@ -199,13 +216,13 @@ public class ComputationNetwork {
         }
     }
 
-
     private void distributeCycles(Level level) {
         if (this.consumers.isEmpty() || this.providers.isEmpty()) return;
 
         List<BlockPos> consumers = new ArrayList<>(this.consumers);
         List<BlockPos> providers = new ArrayList<>(this.providers);
 
+        // Try one consumer per tick (round-robin)
         this.consumerIndex = (this.consumerIndex + 1) % consumers.size();
         BlockPos consumerPos = consumers.get(this.consumerIndex);
         ICycleConsumer consumer = getConsumerAt(level, consumerPos);
@@ -214,12 +231,14 @@ public class ComputationNetwork {
         long cyclesNeeded = consumer.getCycleDemand();
         if (cyclesNeeded <= 0) return;
 
-        for (int i = 0; i < providers.size() && cyclesNeeded > 0; i++) {
+        // Try all providers (round-robin) to fill that one consumer
+        int providersToTry = providers.size();
+        for (int i = 0; i < providersToTry && cyclesNeeded > 0; i++) {
             this.providerIndex = (this.providerIndex + 1) % providers.size();
             BlockPos providerPos = providers.get(this.providerIndex);
 
             ICycleProvider provider = getProviderAt(level, providerPos);
-            if (provider != null) {
+            if(provider != null) {
                 long extracted = provider.extractCycles(cyclesNeeded, false);
                 if (extracted > 0) {
                     long accepted = consumer.receiveCycles(extracted, false);
