@@ -41,7 +41,7 @@ public class ComputerBlockEntity extends CoreCycleProviderBlockEntity implements
     @Nullable
     @Override
     public AbstractContainerMenu createMenu(int containerId, @NotNull Inventory playerInventory, @NotNull Player player) {
-        return new ServerRackMenu(containerId, playerInventory, this);
+        return new ServerRackMenu(containerId, playerInventory, this, this.data);
     }
 
     @Override

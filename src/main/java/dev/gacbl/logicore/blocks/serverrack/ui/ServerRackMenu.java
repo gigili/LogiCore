@@ -9,6 +9,8 @@ import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
+import net.minecraft.world.inventory.ContainerData;
+import net.minecraft.world.inventory.SimpleContainerData;
 import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
@@ -17,30 +19,39 @@ import net.neoforged.neoforge.items.SlotItemHandler;
 import org.jetbrains.annotations.NotNull;
 
 public class ServerRackMenu extends AbstractContainerMenu {
-    private final CoreCycleProviderBlockEntity blockEntity;
+    public final CoreCycleProviderBlockEntity blockEntity;
+    private final ContainerData data;
 
     public ServerRackMenu(int containerId, Inventory playerInventory, BlockPos pos) {
-        this(containerId, playerInventory, playerInventory.player.level().getBlockEntity(pos));
+        this(containerId, playerInventory, playerInventory.player.level().getBlockEntity(pos), new SimpleContainerData(4));
     }
 
-    public ServerRackMenu(int containerId, Inventory playerInventory, BlockEntity entity) {
+    public ServerRackMenu(int containerId, Inventory playerInventory, BlockEntity entity, ContainerData data) {
         super(ServerRackModule.SERVER_RACK_MENU.get(), containerId);
         this.blockEntity = (CoreCycleProviderBlockEntity) entity;
+        this.data = data;
 
-        int rackSlots = ServerRackBlockEntity.RACK_CAPACITY;
         int slotSize = 18;
         int inventoryX = 8;
-        int inventoryY = 58;
+        int inventoryY = 107;
 
-        for (int i = 0; i < rackSlots; i++) {
-            int x = inventoryX + (i % ServerRackBlockEntity.RACK_CAPACITY) * slotSize;
-            int y = 18;
-            this.addSlot(new SlotItemHandler(this.blockEntity.getItemHandler(), i, x, y) {
-                @Override
-                public boolean mayPlace(@NotNull ItemStack stack) {
-                    return stack.is(ProcessorUnitModule.PROCESSOR_UNIT.get());
-                }
-            });
+        int startX = 62;
+        int startY = 28;
+
+        for (int row = 0; row < 3; row++) {
+            for (int col = 0; col < 3; col++) {
+                int index = col + row * 3;
+
+                int x = startX + col * slotSize;
+                int y = startY + row * slotSize;
+
+                this.addSlot(new SlotItemHandler(this.blockEntity.getItemHandler(), index, x, y) {
+                    @Override
+                    public boolean mayPlace(@NotNull ItemStack stack) {
+                        return stack.is(ProcessorUnitModule.PROCESSOR_UNIT.get());
+                    }
+                });
+            }
         }
 
         // Add Player Inventory Slots
@@ -54,6 +65,8 @@ public class ServerRackMenu extends AbstractContainerMenu {
         for (int i = 0; i < 9; i++) {
             this.addSlot(new Slot(playerInventory, i, inventoryX + i * slotSize, inventoryY + 58));
         }
+
+        addDataSlots(this.data);
     }
 
     public ServerRackMenu(int i, Inventory inventory, RegistryFriendlyByteBuf registryFriendlyByteBuf) {
@@ -119,5 +132,21 @@ public class ServerRackMenu extends AbstractContainerMenu {
         Level level = player.level();
         return level.getBlockEntity(this.blockEntity.getBlockPos()) == this.blockEntity &&
                 player.distanceToSqr(this.blockEntity.getBlockPos().getCenter()) <= 64.0;
+    }
+
+    public int getEnergy() {
+        return this.data.get(0);
+    }
+
+    public int getMaxEnergy() {
+        return this.data.get(1);
+    }
+
+    public int getCycles() {
+        return this.data.get(2);
+    }
+
+    public int getMaxCycles() {
+        return this.data.get(3);
     }
 }

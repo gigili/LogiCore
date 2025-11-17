@@ -6,6 +6,7 @@ import dev.gacbl.logicore.api.computation.ICycleStorage;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.world.inventory.ContainerData;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityType;
@@ -41,6 +42,34 @@ public class CoreCycleProviderBlockEntity extends BlockEntity implements ICycleP
         FE_CAPACITY = feCapacity;
         energyStorage = new EnergyStorage(FE_CAPACITY);
         cycleStorage = new CycleStorage(CYCLE_CAPACITY);
+    }
+
+    protected final ContainerData data = new ContainerData() {
+        @Override
+        public int get(int index) {
+            return (int) switch (index) {
+                case 0 -> CoreCycleProviderBlockEntity.this.energyStorage.getEnergyStored();
+                case 1 -> CoreCycleProviderBlockEntity.this.energyStorage.getMaxEnergyStored();
+                case 2 -> CoreCycleProviderBlockEntity.this.cycleStorage.getCyclesAvailable();
+                case 3 -> CoreCycleProviderBlockEntity.this.cycleStorage.getCycleCapacity();
+                default -> 0;
+            };
+        }
+
+        @Override
+        public void set(int index, int value) {
+            // We generally don't set energy from the client side GUI, so this can be empty
+            // or used if you need specific logic.
+        }
+
+        @Override
+        public int getCount() {
+            return 4;
+        }
+    };
+
+    public ContainerData getContainerData() {
+        return this.data;
     }
 
     public int getProcessorCount() {
