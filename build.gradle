@@ -30,6 +30,10 @@ repositories {
         name = "Modrinth Maven"
         url = "https://api.modrinth.com/maven"
     }
+
+    repositories {
+        maven { url 'https://maven.blamejared.com' }
+    }
 }
 
 base {
@@ -159,7 +163,10 @@ dependencies {
 
     // Pipez
     runtimeOnly "curse.maven:pipez-443900:5609056"
-
+    
+    // Patchouli
+    compileOnly "vazkii.patchouli:Patchouli:1.21.1-92-NEOFORGE:api"
+    runtimeOnly "vazkii.patchouli:Patchouli:1.21.1-92-NEOFORGE"
 }
 
 // This block of code expands all declared replace properties in the specified resource targets.

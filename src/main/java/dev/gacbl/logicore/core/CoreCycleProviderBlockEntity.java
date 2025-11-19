@@ -19,12 +19,12 @@ import org.jetbrains.annotations.NotNull;
 import java.util.Objects;
 
 public class CoreCycleProviderBlockEntity extends BlockEntity implements ICycleProvider {
-    private static int BASE_CYCLE_GENERATION;
-    private static int CYCLES_PER_PROCESSOR;
-    private static int FE_PER_CYCLE;
+    private int BASE_CYCLE_GENERATION;
+    private int CYCLES_PER_PROCESSOR;
+    private int FE_PER_CYCLE;
 
-    private static int CYCLE_CAPACITY;
-    private static int FE_CAPACITY;
+    private int CYCLE_CAPACITY;
+    private int FE_CAPACITY;
 
     private EnergyStorage energyStorage;
     private CycleStorage cycleStorage;
@@ -52,6 +52,10 @@ public class CoreCycleProviderBlockEntity extends BlockEntity implements ICycleP
                 case 1 -> CoreCycleProviderBlockEntity.this.energyStorage.getMaxEnergyStored();
                 case 2 -> CoreCycleProviderBlockEntity.this.cycleStorage.getCyclesAvailable();
                 case 3 -> CoreCycleProviderBlockEntity.this.cycleStorage.getCycleCapacity();
+                case 4 -> CoreCycleProviderBlockEntity.this.BASE_CYCLE_GENERATION;
+                case 5 -> CoreCycleProviderBlockEntity.this.CYCLES_PER_PROCESSOR;
+                case 6 -> CoreCycleProviderBlockEntity.this.FE_PER_CYCLE;
+                case 7 -> getProcessorCount();
                 default -> 0;
             };
         }
@@ -64,7 +68,7 @@ public class CoreCycleProviderBlockEntity extends BlockEntity implements ICycleP
 
         @Override
         public int getCount() {
-            return 4;
+            return 8;
         }
     };
 
@@ -122,6 +126,9 @@ public class CoreCycleProviderBlockEntity extends BlockEntity implements ICycleP
     private void generateCycles() {
         if (this.level == null) return;
 
+        boolean isReceivingRedstoneSignal = level.hasNeighborSignal(this.getBlockPos());
+
+        if(isReceivingRedstoneSignal) return;
         if (this.cycleStorage.getCyclesAvailable() >= this.cycleStorage.getCycleCapacity()) return;
         if (this.energyStorage.getEnergyStored() < FE_PER_CYCLE) return;
 

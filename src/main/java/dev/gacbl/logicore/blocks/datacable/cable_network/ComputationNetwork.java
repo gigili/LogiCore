@@ -134,19 +134,23 @@ public class ComputationNetwork {
 
         for (BlockPos pos : this.providers) {
             IEnergyStorage energy = getEnergyConsumerAt(level, pos);
-            if (energy != null) {
+            boolean isReceivingRedstoneSignal = level.hasNeighborSignal(pos);
+
+            if (energy != null && !isReceivingRedstoneSignal) {
                 this.feDemand += (energy.getMaxEnergyStored() - energy.getEnergyStored());
             }
         }
 
         for (BlockPos pos : this.consumers) {
             ICycleConsumer consumer = getConsumerAt(level, pos);
-            if (consumer != null) {
+            boolean isReceivingRedstoneSignal = level.hasNeighborSignal(pos);
+
+            if (consumer != null && !isReceivingRedstoneSignal) {
                 this.cycleDemand += consumer.getCycleDemand();
             }
 
             IEnergyStorage energy = getEnergyConsumerAt(level, pos);
-            if (energy != null) {
+            if (energy != null && !isReceivingRedstoneSignal) {
                 this.feDemand += (energy.getMaxEnergyStored() - energy.getEnergyStored());
             }
         }

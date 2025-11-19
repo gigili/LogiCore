@@ -180,4 +180,14 @@ public class DataCableBlock extends BaseEntityBlock {
             NetworkManager.get(server).neighborChanged(server, pos, neighbor);
         }
     }
+
+    @Override
+    public float getShadeBrightness(@NotNull BlockState blockState, @NotNull BlockGetter blockGetter, @NotNull BlockPos blockPos) {
+        return 1.0F;
+    }
+
+    @Override
+    public boolean propagatesSkylightDown(@NotNull BlockState blockState, @NotNull BlockGetter blockGetter, @NotNull BlockPos blockPos) {
+        return true;
+    }
 }

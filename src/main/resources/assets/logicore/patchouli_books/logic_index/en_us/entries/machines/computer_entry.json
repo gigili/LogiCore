@@ -1,0 +1,12 @@
+{
+  "name": "Computer",
+  "icon": "logicore:computer",
+  "category": "logicore:machines_category",
+  "pages": [
+    {
+      "type": "patchouli:crafting",
+      "recipe": "logicore:computer",
+      "text": "A fancy description about the computer"
+    }
+  ]
+}

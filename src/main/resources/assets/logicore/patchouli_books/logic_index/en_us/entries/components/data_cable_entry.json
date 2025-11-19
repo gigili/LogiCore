@@ -1,0 +1,12 @@
+{
+  "name": "Data cable",
+  "icon": "logicore:data_cable",
+  "category": "logicore:components_category",
+  "pages": [
+    {
+      "type": "patchouli:crafting",
+      "recipe": "logicore:data_cable",
+      "text": "A fancy description about the data cable"
+    }
+  ]
+}

@@ -23,7 +23,7 @@ public class ServerRackMenu extends AbstractContainerMenu {
     private final ContainerData data;
 
     public ServerRackMenu(int containerId, Inventory playerInventory, BlockPos pos) {
-        this(containerId, playerInventory, playerInventory.player.level().getBlockEntity(pos), new SimpleContainerData(4));
+        this(containerId, playerInventory, playerInventory.player.level().getBlockEntity(pos), new SimpleContainerData(8));
     }
 
     public ServerRackMenu(int containerId, Inventory playerInventory, BlockEntity entity, ContainerData data) {
@@ -32,13 +32,13 @@ public class ServerRackMenu extends AbstractContainerMenu {
         this.data = data;
 
         int slotSize = 18;
-        int inventoryX = 33;
-        int inventoryY = 166;
+        int inventoryX = 36;
+        int inventoryY = 157;
 
-        int startX = 51;
-        int startY = 76;
+        int startX = 36;
+        int startY = 133;
 
-        for (int row = 0; row < 3; row++) {
+        /*for (int row = 0; row < 3; row++) {
             for (int col = 0; col < 3; col++) {
                 int index = col + row * 3;
 
@@ -52,6 +52,15 @@ public class ServerRackMenu extends AbstractContainerMenu {
                     }
                 });
             }
+        }*/
+
+        for (int row = 0; row < 9; row++) {
+            this.addSlot(new SlotItemHandler(this.blockEntity.getItemHandler(), row, startX + row * slotSize, startY) {
+                @Override
+                public boolean mayPlace(@NotNull ItemStack stack) {
+                    return stack.is(ProcessorUnitModule.PROCESSOR_UNIT.get());
+                }
+            });
         }
 
         // Add Player Inventory Slots
@@ -148,5 +157,21 @@ public class ServerRackMenu extends AbstractContainerMenu {
 
     public int getMaxCycles() {
         return this.data.get(3);
+    }
+
+    public int getBaseCycleGeneration() {
+        return this.data.get(4);
+    }
+
+    public int getCyclesPerProcessor() {
+        return this.data.get(5);
+    }
+
+    public int getFePerCycle() {
+        return this.data.get(6);
+    }
+
+    public int getProcessorCount() {
+        return this.data.get(7);
     }
 }

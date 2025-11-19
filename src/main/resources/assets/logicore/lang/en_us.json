@@ -9,5 +9,9 @@
   "block.logicore.computer": "Computer",
   "tooltip.logicore.energy_stored": "Energy: %d / %d FE",
   "ui.tooltip.logicore.cycles": "Cycles:",
-  "ui.tooltip.logicore.cycles_storage": "%s / %s"
+  "ui.tooltip.logicore.cycles_storage": "%s / %s",
+  "ui.tooltip.logicore.base_cycles_generation": "Base:",
+  "ui.tooltip.logicore.cycles_modifier": "Modifier:",
+  "ui.tooltip.logicore.cycles_produced": "Produced:",
+  "ui.tooltip.logicore.fe_per_tick": "Fe per tick:"
 }
