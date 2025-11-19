@@ -7,5 +7,7 @@
   "tooltip.logicore.processors": "Processors: %s / %s",
   "config.jade.plugin_logicore.server_rack": "Server rack config",
   "block.logicore.computer": "Computer",
-  "tooltip.logicore.energy_stored": "Energy: %d / %d FE"
+  "tooltip.logicore.energy_stored": "Energy: %d / %d FE",
+  "ui.tooltip.logicore.cycles": "Cycles:",
+  "ui.tooltip.logicore.cycles_storage": "%s / %s"
 }

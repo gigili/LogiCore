@@ -32,11 +32,11 @@ public class ServerRackMenu extends AbstractContainerMenu {
         this.data = data;
 
         int slotSize = 18;
-        int inventoryX = 8;
-        int inventoryY = 107;
+        int inventoryX = 33;
+        int inventoryY = 166;
 
-        int startX = 62;
-        int startY = 28;
+        int startX = 51;
+        int startY = 76;
 
         for (int row = 0; row < 3; row++) {
             for (int col = 0; col < 3; col++) {
@@ -63,7 +63,7 @@ public class ServerRackMenu extends AbstractContainerMenu {
 
         // Add Player Hotbar Slots
         for (int i = 0; i < 9; i++) {
-            this.addSlot(new Slot(playerInventory, i, inventoryX + i * slotSize, inventoryY + 58));
+            this.addSlot(new Slot(playerInventory, i, inventoryX + i * slotSize, inventoryY + 56));
         }
 
         addDataSlots(this.data);
