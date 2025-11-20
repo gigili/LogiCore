@@ -1,0 +1,28 @@
+{
+  "name": "Server Rack",
+  "icon": "logicore:server_rack",
+  "category": "logicore:machines_category",
+  "pages": [
+    {
+      "type": "patchouli:spotlight",
+      "item": "logicore:server_rack",
+      "title": "Server Rack",
+      "text": "The heavy lifter of the LogiCore network. While the $(l:logicore:machines/computer)Computer$() is suitable for small tasks, the Server Rack is designed for high-density parallel processing, generating significantly more $(l:logicore:architecture/cycles)Cycles$() per tick."
+    },
+    {
+      "type": "patchouli:text",
+      "title": "Configuration",
+      "text": "To operate, the rack requires a $(l:logicore:components/processor_unit)Processor Unit$() installed in its bay and a connection to the network via $(l:logicore:components/data_cable)Data Cable$().$(br)$(br)Due to its high throughput, ensure your power generation can sustain its energy demands."
+    },
+    {
+      "type": "patchouli:text",
+      "title": "Redstone Control",
+      "text": "Like other LogiCore machines, the Server Rack is $(l)redstone Sensitive$().$(br)$(br)Applying a steady Redstone signal will trigger a hardware interrupt. This pauses all calculation threads, stopping $(l:logicore:architecture/cycles)Cycle$() production and cutting power draw to zero—ideal for demand-based automation."
+    },
+    {
+      "type": "patchouli:crafting",
+      "recipe": "logicore:server_rack",
+      "text": "An industrial-grade housing unit designed for maximum airflow and component density."
+    }
+  ]
+}

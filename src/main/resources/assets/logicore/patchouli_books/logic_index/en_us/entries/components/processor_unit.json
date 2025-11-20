@@ -1,0 +1,23 @@
+{
+  "name": "Processor Unit",
+  "icon": "logicore:processor_unit",
+  "category": "logicore:components_category",
+  "pages": [
+    {
+      "type": "patchouli:spotlight",
+      "item": "logicore:processor_unit",
+      "title": "Processor Unit",
+      "text": "The silicon heart of your operations. The Processor Unit is the primary component responsible for generating $(l:logicore:architecture/cycles)Cycles$().$(br)$(br)It must be installed in $(l:logicore:machines/server_rack)Server Racks$() or $(l:logicore:machines/computer)Computers$(). Without a processor, these machines are inert—producing nothing even if connected to power."
+    },
+    {
+      "type": "patchouli:text",
+      "title": "Operational Control",
+      "text": "Machines equipped with a Processor Unit are $(l)redstone sensitive$().$(br)$(br)Applying a redstone signal acts as a hardware interrupt. The machine will immediately cease all operations, halting $(l:logicore:architecture/cycles)Cycle$() production and stopping energy consumption. This is useful for automating power efficiency."
+    },
+    {
+      "type": "patchouli:crafting",
+      "recipe": "logicore:processor_unit",
+      "text": "Precision engineering is required to turn raw silicon into a functional logic gate array."
+    }
+  ]
+}

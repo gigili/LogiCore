@@ -1,5 +1,5 @@
 {
   "name": "Machines",
-  "description": "All the fancy machines",
-  "icon": "logicore:computer"
+  "description": "Advanced hardware for generating Cycles and processing network tasks.",
+  "icon": "logicore:server_rack"
 }

@@ -3,11 +3,6 @@
   "landing_text": "Welcome to LogiCore - Where tech goes up",
   "version": 1,
   "creative_tab": "logicore:logicore_tab",
-  "use_resource_pack": true,
-  "book_texture": "patchouli:textures/gui/book_blue.png",
-  "macros": {
-    "<b>": "$(l)",
-    "<i>": "$(o)",
-    "</>": "$()"
-  }
+  "getCreatorModId": "logicore",
+  "use_resource_pack": "true"
 }

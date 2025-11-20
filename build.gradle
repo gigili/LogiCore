@@ -163,7 +163,7 @@ dependencies {
 
     // Pipez
     runtimeOnly "curse.maven:pipez-443900:5609056"
-    
+
     // Patchouli
     compileOnly "vazkii.patchouli:Patchouli:1.21.1-92-NEOFORGE:api"
     runtimeOnly "vazkii.patchouli:Patchouli:1.21.1-92-NEOFORGE"

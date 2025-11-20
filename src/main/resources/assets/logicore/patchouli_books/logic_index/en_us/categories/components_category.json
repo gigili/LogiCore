@@ -1,5 +1,5 @@
 {
   "name": "Components",
-  "description": "All the fancy computer parts",
+  "description": "Fundamental parts, cabling, and logic units required for system construction.",
   "icon": "logicore:processor_unit"
 }

@@ -1,0 +1,28 @@
+{
+  "name": "Computer",
+  "icon": "logicore:computer",
+  "category": "logicore:machines_category",
+  "pages": [
+    {
+      "type": "patchouli:spotlight",
+      "item": "logicore:computer",
+      "title": "Computer",
+      "text": "The personal workstation of the LogiCore network. While it lacks the raw parallel processing power of a $(l:logicore:machines/server_rack)Server Rack$(), the Computer is a reliable entry-level machine for generating $(l:logicore:architecture/cycles)Cycles$()."
+    },
+    {
+      "type": "patchouli:text",
+      "title": "System Requirements",
+      "text": "To function, the Computer requires a valid $(l:logicore:components/processor_unit)Processor Unit$() installed in its chassis and a connection to a power source via $(l:logicore:components/data_cable)Data Cable$().$(br)$(br)$(l)Performance:$()$(br)Expect lower cycle generation rates compared to industrial hardware."
+    },
+    {
+      "type": "patchouli:text",
+      "title": "Redstone Control",
+      "text": "The Computer features a standard hardware interrupt port.$(br)$(br)Applying a $(l)redstone signal$() will force the system into standby mode. While in standby, the machine stops generating $(l:logicore:architecture/cycles)Cycles$() but also halts all energy consumption."
+    },
+    {
+      "type": "patchouli:crafting",
+      "recipe": "logicore:computer",
+      "text": "A compact chassis capable of housing standard processor units."
+    }
+  ]
+}

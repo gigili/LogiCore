@@ -1,0 +1,23 @@
+{
+  "name": "Data Cable",
+  "icon": "logicore:data_cable",
+  "category": "logicore:components_category",
+  "pages": [
+    {
+      "type": "patchouli:spotlight",
+      "item": "logicore:data_cable",
+      "title": "Data Cable",
+      "text": "The backbone of any computing infrastructure. The Data Cable is a hybrid conduit capable of interfacing with both internal machines and external power sources.$(br)$(br)It provides a bidirectional link: delivering energy to your hardware and retrieving computational $(l:logicore:architecture/cycles)Cycles$() in return."
+    },
+    {
+      "type": "patchouli:text",
+      "title": "Network Topology",
+      "text": "Data Cables handle network creation automatically.$(br)$(br)Placing a cable in isolation instantiates a new, unique network. However, placing a cable adjacent to an existing line will cause it to merge instantly with that network.$(br)$(br)Use this to link power generators to your $(l:logicore:machines/server_rack)Server Racks$() and $(l:logicore:machines/computer)Computers$()."
+    },
+    {
+      "type": "patchouli:crafting",
+      "recipe": "logicore:data_cable",
+      "text": "Cheap and efficient, these cables allow for complex routing between your power generation and your server room."
+    }
+  ]
+}
