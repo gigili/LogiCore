@@ -44,7 +44,8 @@ public class ServerRackBlock extends BaseEntityBlock {
         super(properties);
         this.registerDefaultState(this.stateDefinition.any()
                 .setValue(FACING, Direction.NORTH)
-                .setValue(HALF, DoubleBlockHalf.LOWER));
+                .setValue(HALF, DoubleBlockHalf.LOWER)
+                .setValue(ServerRackModule.GENERATING, false));
     }
 
     public static ShapedRecipeBuilder getRecipe() {
@@ -65,7 +66,7 @@ public class ServerRackBlock extends BaseEntityBlock {
 
     @Override
     protected void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> builder) {
-        builder.add(FACING, HALF);
+        builder.add(FACING, HALF, ServerRackModule.GENERATING);
     }
 
     @Nullable
@@ -76,7 +77,8 @@ public class ServerRackBlock extends BaseEntityBlock {
         if (pos.getY() < level.getMaxBuildHeight() - 1 && level.getBlockState(pos.above()).canBeReplaced(context)) {
             return this.defaultBlockState()
                     .setValue(FACING, context.getHorizontalDirection().getOpposite())
-                    .setValue(HALF, DoubleBlockHalf.LOWER);
+                    .setValue(HALF, DoubleBlockHalf.LOWER)
+                    .setValue(ServerRackModule.GENERATING, false);
         }
         return null;
     }

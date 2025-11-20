@@ -201,7 +201,7 @@ public class ServerRackScreen extends AbstractContainerScreen<ServerRackMenu> {
 
         int cycleModifier = (this.menu.getCyclesPerProcessor() * this.menu.getProcessorCount());
         int cyclesToGenerate = cycleModifier + this.menu.getBaseCycleGeneration();
-        if(this.menu.getProcessorCount() == 0){
+        if (this.menu.getProcessorCount() == 0) {
             cyclesToGenerate = 0;
         }
         graphics.drawString(this.font, Component.literal(String.valueOf(this.menu.getCyclesPerProcessor() * this.menu.getProcessorCount())), labelSectionX, labelSectionY, textColor, false);

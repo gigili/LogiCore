@@ -1,0 +1,6 @@
+{
+  "parent": "logicore:block/server_rack_bottom",
+  "textures": {
+	"front": "logicore:block/server_rack_front_bottom_on"
+  }
+}

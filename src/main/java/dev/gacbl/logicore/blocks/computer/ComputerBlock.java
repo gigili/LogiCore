@@ -24,6 +24,7 @@ import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.level.block.state.properties.DirectionProperty;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.shapes.CollisionContext;
+import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -31,7 +32,40 @@ import org.jetbrains.annotations.Nullable;
 public class ComputerBlock extends BaseEntityBlock {
     public static final MapCodec<ComputerBlock> CODEC = simpleCodec(ComputerBlock::new);
     public static final DirectionProperty FACING = BlockStateProperties.HORIZONTAL_FACING;
-    public static final VoxelShape SHAPE = Block.box(0.0D, 0.0D, 0.0D, 16.0D, 16.0D, 16.0D);
+    protected static final VoxelShape[] SHAPES = new VoxelShape[6];
+
+    static {
+        // 1. BOTTOM PART: 16x7x16 (Width x Height x Depth)
+        VoxelShape bottom = Block.box(0, 0, 0, 16, 7, 16);
+
+        // 2. TOP PARTS: 16x9x9 (Width x Height x Depth)
+
+        // NORTH (Default): Face points -Z. Screen is at Back (+Z).
+        // Box: X(0-16), Y(7-16), Z(7-16) -> Depth is 16-7 = 9.
+        VoxelShape topNorth = Block.box(0, 7, 7, 16, 16, 16);
+
+        // SOUTH: Face points +Z. Screen is at Back (-Z).
+        // Box: X(0-16), Y(7-16), Z(0-9).
+        VoxelShape topSouth = Block.box(0, 7, 0, 16, 16, 9);
+
+        // EAST: Face points +X. Screen is at Back (-X).
+        // Box: X(0-9), Y(7-16), Z(0-16).
+        VoxelShape topEast = Block.box(0, 7, 0, 9, 16, 16);
+
+        // WEST: Face points -X. Screen is at Back (+X).
+        // Box: X(7-16), Y(7-16), Z(0-16).
+        VoxelShape topWest = Block.box(7, 7, 0, 16, 16, 16);
+
+        // 3. COMBINE SHAPES
+        SHAPES[2] = Shapes.or(bottom, topNorth); // North
+        SHAPES[3] = Shapes.or(bottom, topSouth); // South
+        SHAPES[4] = Shapes.or(bottom, topWest);  // West
+        SHAPES[5] = Shapes.or(bottom, topEast);  // East
+
+        // Fallback for UP/DOWN
+        SHAPES[0] = SHAPES[2];
+        SHAPES[1] = SHAPES[2];
+    }
 
     public ComputerBlock(Properties properties) {
         super(properties);
@@ -76,7 +110,7 @@ public class ComputerBlock extends BaseEntityBlock {
 
     @Override
     protected @NotNull VoxelShape getShape(@NotNull BlockState state, @NotNull BlockGetter level, @NotNull BlockPos pos, @NotNull CollisionContext context) {
-        return SHAPE;
+        return SHAPES[state.getValue(FACING).get3DDataValue()];
     }
 
     @Override

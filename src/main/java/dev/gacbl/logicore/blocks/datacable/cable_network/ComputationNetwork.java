@@ -13,13 +13,13 @@ import net.neoforged.neoforge.energy.IEnergyStorage;
 import java.util.*;
 
 public class ComputationNetwork {
-    private static final int MAX_PULL_PER_SOURCE_PER_TICK = 1000;
+    private static final int MAX_PULL_PER_SOURCE_PER_TICK = 20000;
 
     private final Set<BlockPos> cables = new HashSet<>();
     private final Set<BlockPos> providers = new HashSet<>();
     private final Set<BlockPos> consumers = new HashSet<>();
     private final Set<BlockPos> energySources = new HashSet<>();
-    private final EnergyStorage networkEnergyBuffer = new EnergyStorage(1_000_000, 10000, 10000);
+    private final EnergyStorage networkEnergyBuffer = new EnergyStorage(1_000_000, MAX_PULL_PER_SOURCE_PER_TICK, MAX_PULL_PER_SOURCE_PER_TICK);
 
     private UUID NETWORK_UUID = UUID.randomUUID();
 
@@ -29,7 +29,6 @@ public class ComputationNetwork {
     private int energySourceIndex = 0;
     private int providerIndex = 0;
     private int consumerIndex = 0;
-
 
     public void merge(ComputationNetwork other) {
         if (other == null) return;
@@ -131,26 +130,21 @@ public class ComputationNetwork {
             return isCycleDevice || energy == null || !energy.canExtract();
         });
 
-
         for (BlockPos pos : this.providers) {
             IEnergyStorage energy = getEnergyConsumerAt(level, pos);
-            boolean isReceivingRedstoneSignal = level.hasNeighborSignal(pos);
-
-            if (energy != null && !isReceivingRedstoneSignal) {
+            if (energy != null) {
                 this.feDemand += (energy.getMaxEnergyStored() - energy.getEnergyStored());
             }
         }
 
         for (BlockPos pos : this.consumers) {
             ICycleConsumer consumer = getConsumerAt(level, pos);
-            boolean isReceivingRedstoneSignal = level.hasNeighborSignal(pos);
-
-            if (consumer != null && !isReceivingRedstoneSignal) {
+            if (consumer != null) {
                 this.cycleDemand += consumer.getCycleDemand();
             }
 
             IEnergyStorage energy = getEnergyConsumerAt(level, pos);
-            if (energy != null && !isReceivingRedstoneSignal) {
+            if (energy != null) {
                 this.feDemand += (energy.getMaxEnergyStored() - energy.getEnergyStored());
             }
         }
@@ -242,7 +236,7 @@ public class ComputationNetwork {
             BlockPos providerPos = providers.get(this.providerIndex);
 
             ICycleProvider provider = getProviderAt(level, providerPos);
-            if(provider != null) {
+            if (provider != null) {
                 long extracted = provider.extractCycles(cyclesNeeded, false);
                 if (extracted > 0) {
                     long accepted = consumer.receiveCycles(extracted, false);

@@ -3,6 +3,8 @@ package dev.gacbl.logicore.core;
 import dev.gacbl.logicore.api.computation.CycleStorage;
 import dev.gacbl.logicore.api.computation.ICycleProvider;
 import dev.gacbl.logicore.api.computation.ICycleStorage;
+import dev.gacbl.logicore.blocks.serverrack.ServerRackBlock;
+import dev.gacbl.logicore.blocks.serverrack.ServerRackModule;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
@@ -11,6 +13,7 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.block.state.properties.DoubleBlockHalf;
 import net.neoforged.neoforge.energy.EnergyStorage;
 import net.neoforged.neoforge.energy.IEnergyStorage;
 import net.neoforged.neoforge.items.ItemStackHandler;
@@ -28,6 +31,8 @@ public class CoreCycleProviderBlockEntity extends BlockEntity implements ICycleP
 
     private EnergyStorage energyStorage;
     private CycleStorage cycleStorage;
+
+    public boolean isGenerating = false;
 
     public CoreCycleProviderBlockEntity(BlockEntityType<?> type, BlockPos pos, BlockState blockState) {
         super(type, pos, blockState);
@@ -105,6 +110,7 @@ public class CoreCycleProviderBlockEntity extends BlockEntity implements ICycleP
         super.saveAdditional(tag, registries);
         tag.put("energy", this.energyStorage.serializeNBT(registries));
         tag.put("cycles", this.cycleStorage.serializeNBT(registries));
+        tag.putBoolean("isGenerating", isGenerating);
     }
 
     @Override
@@ -116,30 +122,74 @@ public class CoreCycleProviderBlockEntity extends BlockEntity implements ICycleP
         if (tag.contains("cycles", 10)) {
             this.cycleStorage.deserializeNBT(registries, (CompoundTag) tag.get("cycles"));
         }
+
+        if (tag.contains("isGenerating")) {
+            isGenerating = tag.getBoolean("isGenerating");
+        }
     }
 
     public static void serverTick(Level level, BlockPos pos, BlockState state, CoreCycleProviderBlockEntity be) {
         if (level.isClientSide) return;
         be.generateCycles();
+
+        if (state.hasProperty(ServerRackModule.GENERATING)) {
+            boolean currentGeneratingState = state.getValue(ServerRackModule.GENERATING);
+
+            if (be.isGenerating != currentGeneratingState) {
+                level.setBlock(pos, state.setValue(ServerRackModule.GENERATING, be.isGenerating), 3);
+                if (state.hasProperty(ServerRackBlock.HALF)) {
+                    updateOtherHalf(level, pos, state, be.isGenerating);
+                }
+            }
+        }
+    }
+
+    private static void updateOtherHalf(Level level, BlockPos pos, BlockState state, boolean isWorking) {
+        DoubleBlockHalf half = state.getValue(ServerRackBlock.HALF);
+        BlockPos otherPos = (half == DoubleBlockHalf.LOWER) ? pos.above() : pos.below();
+
+        BlockState otherState = level.getBlockState(otherPos);
+
+        if (otherState.getBlock() instanceof ServerRackBlock) {
+            level.setBlock(otherPos, otherState.setValue(ServerRackModule.GENERATING, isWorking), 3);
+        }
     }
 
     private void generateCycles() {
-        if (this.level == null) return;
+        if (this.level == null || this.level.isClientSide) {
+            isGenerating = false;
+            return;
+        }
 
         boolean isReceivingRedstoneSignal = level.hasNeighborSignal(this.getBlockPos());
 
-        if(isReceivingRedstoneSignal) return;
-        if (this.cycleStorage.getCyclesAvailable() >= this.cycleStorage.getCycleCapacity()) return;
-        if (this.energyStorage.getEnergyStored() < FE_PER_CYCLE) return;
+        if (isReceivingRedstoneSignal) {
+            isGenerating = false;
+            return;
+        }
+
+        if (this.cycleStorage.getCyclesAvailable() >= this.cycleStorage.getCycleCapacity()) {
+            isGenerating = false;
+            return;
+
+        }
+        if (this.energyStorage.getEnergyStored() < FE_PER_CYCLE) {
+            isGenerating = false;
+            return;
+        }
 
         int processorCount = getProcessorCount();
 
-        if (processorCount == 0) return;
+        if (processorCount == 0) {
+            isGenerating = false;
+            return;
+        }
 
         long cyclesToGenerate = BASE_CYCLE_GENERATION + ((long) processorCount * CYCLES_PER_PROCESSOR);
         long feCost = cyclesToGenerate * FE_PER_CYCLE;
 
         if (this.energyStorage.extractEnergy((int) feCost, true) == feCost) {
+            isGenerating = true;
             this.energyStorage.extractEnergy((int) feCost, false);
             this.cycleStorage.receiveCycles(cyclesToGenerate, false);
             setChanged();

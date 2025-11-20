@@ -34,9 +34,9 @@ public class DataCableBlockEntity extends BlockEntity {
     @Override
     protected void saveAdditional(@NotNull CompoundTag tag, @NotNull HolderLookup.Provider registries) {
         super.saveAdditional(tag, registries);
-        if(NETWORK_UUID != null) {
+        if (NETWORK_UUID != null) {
             tag.putUUID("network_uuid", NETWORK_UUID);
-        }else if(tag.contains("network_uuid")) {
+        } else if (tag.contains("network_uuid")) {
             tag.remove("network_uuid");
         }
     }
@@ -44,7 +44,7 @@ public class DataCableBlockEntity extends BlockEntity {
     @Override
     protected void loadAdditional(@NotNull CompoundTag tag, @NotNull HolderLookup.Provider registries) {
         super.loadAdditional(tag, registries);
-        if(tag.contains("network_uuid")){
+        if (tag.contains("network_uuid")) {
             NETWORK_UUID = tag.getUUID("network_uuid");
         }
     }

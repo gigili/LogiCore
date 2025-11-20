@@ -10,6 +10,7 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockBehaviour;
+import net.minecraft.world.level.block.state.properties.BooleanProperty;
 import net.minecraft.world.level.material.MapColor;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.neoforge.capabilities.Capabilities;
@@ -24,6 +25,8 @@ public class ServerRackModule {
             DeferredRegister.create(BuiltInRegistries.ITEM, LogiCore.MOD_ID);
     public static final DeferredRegister<BlockEntityType<?>> BLOCK_ENTITIES = DeferredRegister.create(BuiltInRegistries.BLOCK_ENTITY_TYPE, LogiCore.MOD_ID);
     public static final DeferredRegister<MenuType<?>> MENUS = DeferredRegister.create(BuiltInRegistries.MENU, LogiCore.MOD_ID);
+
+    public static final BooleanProperty GENERATING = BooleanProperty.create("generating");
 
     public static final net.neoforged.neoforge.registries.DeferredHolder<Block, ServerRackBlock> SERVER_RACK_BLOCK =
             BLOCKS.register("server_rack", () -> new ServerRackBlock(BlockBehaviour.Properties.of()

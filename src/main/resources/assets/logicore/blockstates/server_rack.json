@@ -1,34 +1,64 @@
 {
   "variants": {
-    "facing=north,half=lower": {
+	"facing=north,half=lower,generating=false": {
       "model": "logicore:block/server_rack_bottom"
     },
-    "facing=south,half=lower": {
+	"facing=south,half=lower,generating=false": {
       "model": "logicore:block/server_rack_bottom",
       "y": 180
     },
-    "facing=west,half=lower": {
+	"facing=west,half=lower,generating=false": {
       "model": "logicore:block/server_rack_bottom",
       "y": 270
     },
-    "facing=east,half=lower": {
+	"facing=east,half=lower,generating=false": {
       "model": "logicore:block/server_rack_bottom",
       "y": 90
     },
-    "facing=north,half=upper": {
+	"facing=north,half=upper,generating=false": {
       "model": "logicore:block/server_rack_top"
     },
-    "facing=south,half=upper": {
+	"facing=south,half=upper,generating=false": {
       "model": "logicore:block/server_rack_top",
       "y": 180
     },
-    "facing=west,half=upper": {
+	"facing=west,half=upper,generating=false": {
       "model": "logicore:block/server_rack_top",
       "y": 270
     },
-    "facing=east,half=upper": {
+	"facing=east,half=upper,generating=false": {
       "model": "logicore:block/server_rack_top",
       "y": 90
-    }
+	},
+	"facing=north,half=lower,generating=true": {
+	  "model": "logicore:block/server_rack_bottom_on"
+	},
+	"facing=south,half=lower,generating=true": {
+	  "model": "logicore:block/server_rack_bottom_on",
+	  "y": 180
+	},
+	"facing=west,half=lower,generating=true": {
+	  "model": "logicore:block/server_rack_bottom_on",
+	  "y": 270
+	},
+	"facing=east,half=lower,generating=true": {
+	  "model": "logicore:block/server_rack_bottom_on",
+	  "y": 90
+	},
+	"facing=north,half=upper,generating=true": {
+	  "model": "logicore:block/server_rack_top_on"
+	},
+	"facing=south,half=upper,generating=true": {
+	  "model": "logicore:block/server_rack_top_on",
+	  "y": 180
+	},
+	"facing=west,half=upper,generating=true": {
+	  "model": "logicore:block/server_rack_top_on",
+	  "y": 270
+	},
+	"facing=east,half=upper,generating=true": {
+	  "model": "logicore:block/server_rack_top_on",
+	  "y": 90
+	}
   }
 }

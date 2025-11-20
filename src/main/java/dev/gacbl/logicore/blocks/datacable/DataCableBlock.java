@@ -22,8 +22,11 @@ import net.minecraft.world.level.block.*;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
+import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.level.block.state.properties.BooleanProperty;
 import net.minecraft.world.level.block.state.properties.DirectionProperty;
+import net.minecraft.world.level.material.FluidState;
+import net.minecraft.world.level.material.Fluids;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
@@ -33,7 +36,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 
-public class DataCableBlock extends BaseEntityBlock {
+public class DataCableBlock extends BaseEntityBlock implements SimpleWaterloggedBlock {
     public static final VoxelShape CORE_SHAPE = Block.box(6.0D, 6.0D, 6.0D, 10.0D, 10.0D, 10.0D);
 
     public static final VoxelShape NORTH_SHAPE = Block.box(6.0D, 6.0D, 0.0D, 10.0D, 10.0D, 6.0D);
@@ -52,6 +55,8 @@ public class DataCableBlock extends BaseEntityBlock {
     public static final MapCodec<DataCableBlock> CODEC = simpleCodec(DataCableBlock::new);
     public static final DirectionProperty FACING = HorizontalDirectionalBlock.FACING;
 
+    public static final BooleanProperty WATERLOGGED;
+
     public DataCableBlock(Properties properties) {
         super(properties);
         this.registerDefaultState(this.stateDefinition.any()
@@ -61,6 +66,7 @@ public class DataCableBlock extends BaseEntityBlock {
                 .setValue(WEST, false)
                 .setValue(UP, false)
                 .setValue(DOWN, false)
+                .setValue(WATERLOGGED, false)
         );
     }
 
@@ -81,7 +87,7 @@ public class DataCableBlock extends BaseEntityBlock {
 
     @Override
     protected void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> builder) {
-        builder.add(NORTH, EAST, SOUTH, WEST, UP, DOWN);
+        builder.add(NORTH, EAST, SOUTH, WEST, UP, DOWN, WATERLOGGED);
     }
 
     @Override
@@ -117,13 +123,17 @@ public class DataCableBlock extends BaseEntityBlock {
         Level level = context.getLevel();
         BlockPos pos = context.getClickedPos();
 
+        FluidState fluidstate = context.getLevel().getFluidState(context.getClickedPos());
+        boolean flag = fluidstate.getType() == Fluids.WATER;
+
         return this.defaultBlockState()
                 .setValue(NORTH, this.canConnectTo(level, pos.north(), Direction.NORTH))
                 .setValue(EAST, this.canConnectTo(level, pos.east(), Direction.EAST))
                 .setValue(SOUTH, this.canConnectTo(level, pos.south(), Direction.SOUTH))
                 .setValue(WEST, this.canConnectTo(level, pos.west(), Direction.WEST))
                 .setValue(UP, this.canConnectTo(level, pos.above(), Direction.UP))
-                .setValue(DOWN, this.canConnectTo(level, pos.below(), Direction.DOWN));
+                .setValue(DOWN, this.canConnectTo(level, pos.below(), Direction.DOWN))
+                .setValue(WATERLOGGED, flag);
     }
 
     @Override
@@ -169,14 +179,14 @@ public class DataCableBlock extends BaseEntityBlock {
 
     @Override
     public @Nullable BlockEntity newBlockEntity(@NotNull BlockPos blockPos, @NotNull BlockState blockState) {
-        return new DataCableBlockEntity(blockPos, blockState );
+        return new DataCableBlockEntity(blockPos, blockState);
     }
 
     @Override
     public void onNeighborChange(@NotNull BlockState state, @NotNull LevelReader level, @NotNull BlockPos pos, @NotNull BlockPos neighbor) {
         super.onNeighborChange(state, level, pos, neighbor);
         DataCableBlockEntity blockEntity = (DataCableBlockEntity) level.getBlockEntity(pos);
-        if(level instanceof ServerLevel server && (blockEntity != null && blockEntity.getNetworkUUID() != null)) {
+        if (level instanceof ServerLevel server && (blockEntity != null && blockEntity.getNetworkUUID() != null)) {
             NetworkManager.get(server).neighborChanged(server, pos, neighbor);
         }
     }
@@ -189,5 +199,24 @@ public class DataCableBlock extends BaseEntityBlock {
     @Override
     public boolean propagatesSkylightDown(@NotNull BlockState blockState, @NotNull BlockGetter blockGetter, @NotNull BlockPos blockPos) {
         return true;
+    }
+
+    protected @NotNull FluidState getFluidState(BlockState state) {
+        return state.getValue(WATERLOGGED) ? Fluids.WATER.getSource(false) : super.getFluidState(state);
+    }
+
+    public boolean placeLiquid(@NotNull LevelAccessor level, @NotNull BlockPos pos, BlockState state, @NotNull FluidState fluidState) {
+        if (!(Boolean) state.getValue(WATERLOGGED) && fluidState.getType() == Fluids.WATER) {
+            BlockState blockstate = state.setValue(WATERLOGGED, true);
+            level.setBlock(pos, blockstate, 3);
+            level.scheduleTick(pos, fluidState.getType(), fluidState.getType().getTickDelay(level));
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    static {
+        WATERLOGGED = BlockStateProperties.WATERLOGGED;
     }
 }

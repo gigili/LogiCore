@@ -45,7 +45,7 @@ public class LogiCore {
 
         modContainer.registerConfig(ModConfig.Type.COMMON, Config.SPEC, "logicore.toml");
 
-        var guide = Guide.builder(ResourceLocation.parse("logicore:guide")).build();
+        Guide.builder(ResourceLocation.parse("logicore:guide")).build();
     }
 
     @SubscribeEvent
