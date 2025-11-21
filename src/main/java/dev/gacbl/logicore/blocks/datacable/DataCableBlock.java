@@ -139,7 +139,17 @@ public class DataCableBlock extends BaseEntityBlock implements SimpleWaterlogged
     @Override
     public @NotNull BlockState updateShape(BlockState state, @NotNull Direction direction, @NotNull BlockState neighborState, @NotNull LevelAccessor level, @NotNull BlockPos currentPos, @NotNull BlockPos neighborPos) {
         BooleanProperty property = PipeBlock.PROPERTY_BY_DIRECTION.get(direction);
-        return state.setValue(property, this.canConnectTo(level, neighborPos, direction));
+
+        boolean canConnectTo = this.canConnectTo(level, neighborPos, direction);
+
+        if (!level.isClientSide() && level instanceof ServerLevel server && canConnectTo) {
+            DataCableBlockEntity blockEntity = (DataCableBlockEntity) level.getBlockEntity(currentPos);
+            if (blockEntity != null && blockEntity.getNetworkUUID() != null) {
+                NetworkManager.get(server).neighborChanged(server, currentPos, neighborPos);
+            }
+        }
+
+        return state.setValue(property, canConnectTo);
     }
 
     private boolean canConnectTo(BlockGetter level, BlockPos pos, Direction direction) {
@@ -185,10 +195,10 @@ public class DataCableBlock extends BaseEntityBlock implements SimpleWaterlogged
     @Override
     public void onNeighborChange(@NotNull BlockState state, @NotNull LevelReader level, @NotNull BlockPos pos, @NotNull BlockPos neighbor) {
         super.onNeighborChange(state, level, pos, neighbor);
-        DataCableBlockEntity blockEntity = (DataCableBlockEntity) level.getBlockEntity(pos);
+        /*DataCableBlockEntity blockEntity = (DataCableBlockEntity) level.getBlockEntity(pos);
         if (level instanceof ServerLevel server && (blockEntity != null && blockEntity.getNetworkUUID() != null)) {
             NetworkManager.get(server).neighborChanged(server, pos, neighbor);
-        }
+        }*/
     }
 
     @Override

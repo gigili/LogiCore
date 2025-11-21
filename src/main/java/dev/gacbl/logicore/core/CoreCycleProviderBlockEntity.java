@@ -76,8 +76,6 @@ public class CoreCycleProviderBlockEntity extends BlockEntity implements ICycleP
 
         @Override
         public void set(int index, int value) {
-            // We generally don't set energy from the client side GUI, so this can be empty
-            // or used if you need specific logic.
         }
 
         @Override

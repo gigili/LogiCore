@@ -57,14 +57,12 @@ public class ServerRackModule {
                 (be, context) -> be.getItemHandler()
         );
 
-        // Attach Cycle Storage capability to Server Rack
         event.registerBlockEntity(
                 ModCapabilities.CYCLE_PROVIDER,
                 ServerRackModule.SERVER_RACK_BLOCK_ENTITY.get(),
                 (be, context) -> be.getCycleStorage()
         );
 
-        // Attach Energy capability to Server Rack
         event.registerBlockEntity(
                 Capabilities.EnergyStorage.BLOCK,
                 ServerRackModule.SERVER_RACK_BLOCK_ENTITY.get(),

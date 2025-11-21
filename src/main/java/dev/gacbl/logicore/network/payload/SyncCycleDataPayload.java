@@ -33,7 +33,6 @@ public record SyncCycleDataPayload(BlockPos pos, int energy, long cycles,
 
     public static final IPayloadHandler<SyncCycleDataPayload> HANDLER = (payload, context) -> {
         context.enqueueWork(() -> {
-            // We are on the client here
             var level = Minecraft.getInstance().level;
             if (level != null) {
                 BlockEntity be = level.getBlockEntity(payload.pos());

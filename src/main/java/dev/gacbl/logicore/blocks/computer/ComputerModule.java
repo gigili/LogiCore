@@ -44,21 +44,18 @@ public class ComputerModule {
     }
 
     private static void registerCapabilities(RegisterCapabilitiesEvent event) {
-        // Attach Cycle Storage capability to Computer
         event.registerBlockEntity(
                 ModCapabilities.CYCLE_PROVIDER,
                 ComputerModule.COMPUTER_BLOCK_ENTITY.get(),
                 (be, context) -> be.getCycleStorage()
         );
 
-        // Attach Energy capability to Computer
         event.registerBlockEntity(
                 Capabilities.EnergyStorage.BLOCK,
                 ComputerModule.COMPUTER_BLOCK_ENTITY.get(),
                 (be, context) -> be.getEnergyStorage()
         );
 
-        // Attach Item Handler capability to Computer
         event.registerBlockEntity(
                 Capabilities.ItemHandler.BLOCK,
                 ComputerModule.COMPUTER_BLOCK_ENTITY.get(),

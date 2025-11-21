@@ -124,10 +124,8 @@ public class NetworkManager extends SavedData {
         Set<BlockPos> cablesToRescan = new HashSet<>(network.getCables());
         cablesToRescan.remove(pos); // Don't rescan the block that was removed
 
-        // Remove the old network completely
         this.networks.remove(networkUUID);
 
-        // Invalidate all BEs from that network
         for (BlockPos cablePos : cablesToRescan) {
             if (level.getBlockEntity(cablePos) instanceof DataCableBlockEntity dbe) {
                 dbe.setNetworkUUID(null);
@@ -170,7 +168,6 @@ public class NetworkManager extends SavedData {
             if (level.getBlockEntity(pos) != null) {
                 // This block is a device, check if a cable was removed next to it
                 if (!(level.getBlockState(fromPos).getBlock() instanceof DataCableBlock)) {
-                    // The block that changed *wasn't* a cable, so we don't care
                     return;
                 }
 
@@ -190,7 +187,7 @@ public class NetworkManager extends SavedData {
         }
     }
 
-    private void scanForDevices(Level level, BlockPos cablePos, UUID networkUUID) {
+    public void scanForDevices(Level level, BlockPos cablePos, UUID networkUUID) {
         if (networkUUID == null) return;
         ComputationNetwork network = this.networks.get(networkUUID);
         if (network == null) return;
@@ -261,22 +258,18 @@ public class NetworkManager extends SavedData {
             CompoundTag networkTag = new CompoundTag();
             networkTag.putUUID("NetworkID", network.getNetworkID());
 
-            // Save Cables
             ListTag cablesTag = new ListTag();
             network.getCables().forEach(pos -> cablesTag.add(NbtUtils.writeBlockPos(pos)));
             networkTag.put("Cables", cablesTag);
 
-            // Save Providers
             ListTag providersTag = new ListTag();
             network.getProviders().forEach(pos -> providersTag.add(NbtUtils.writeBlockPos(pos)));
             networkTag.put("Providers", providersTag);
 
-            // Save Consumers
             ListTag consumersTag = new ListTag();
             network.getConsumers().forEach(pos -> consumersTag.add(NbtUtils.writeBlockPos(pos)));
             networkTag.put("Consumers", consumersTag);
 
-            // Save EnergySources
             ListTag energyTag = new ListTag();
             network.getEnergySources().forEach(pos -> energyTag.add(NbtUtils.writeBlockPos(pos)));
             networkTag.put("EnergySources", energyTag);

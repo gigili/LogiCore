@@ -22,6 +22,10 @@ public class Config {
     public static final ModConfigSpec.ConfigValue<Integer> COMPUTER_FE_CAPACITY;
     public static final ModConfigSpec.ConfigValue<Integer> COMPUTER_DATACENTER_BOOST;
 
+    //Data center
+    public static final ModConfigSpec.ConfigValue<Integer> DATACENTER_MIN_MULTIBLOCK_SIZE;
+    public static final ModConfigSpec.ConfigValue<Integer> DATACENTER_MAX_MULTIBLOCK_SIZE;
+
     static {
         BUILDER.comment("LogiCore Configuration");
 
@@ -90,6 +94,18 @@ public class Config {
 
         BUILDER.pop();
         //</editor-fold>
+
+        BUILDER.push("Data center");
+
+        DATACENTER_MIN_MULTIBLOCK_SIZE = BUILDER
+                .comment(" Min dimensions for datacenter multiblock structure (ex: value: 5 is 5x5x5)")
+                .defineInRange("min_datacenter_size", 7, 1, 64);
+
+        DATACENTER_MAX_MULTIBLOCK_SIZE = BUILDER
+                .comment(" Max dimensions for datacenter multiblock structure (ex: value: 5 is 5x5x5)")
+                .defineInRange("max_datacenter_size", 32, 1, 64);
+
+        BUILDER.pop();
 
         SPEC = BUILDER.build();
     }

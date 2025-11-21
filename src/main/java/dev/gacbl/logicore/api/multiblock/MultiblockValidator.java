@@ -21,7 +21,6 @@ public class MultiblockValidator {
         }
     }
 
-    // UPDATED: Now throws MultiblockValidationException
     public static ValidationResult detectRoom(Level level, BlockPos controllerPos, Direction facing,
                                               Predicate<BlockState> isFrame,
                                               Predicate<BlockState> isWall,
@@ -29,8 +28,7 @@ public class MultiblockValidator {
                                               Predicate<BlockState> isController,
                                               int minSize, int maxSize) throws MultiblockValidationException {
 
-        Direction inward = facing;
-        BlockPos start = controllerPos.relative(inward);
+        BlockPos start = controllerPos.relative(facing);
 
         Predicate<BlockState> anyOuterBlock = state -> isFrame.test(state) || isWall.test(state);
 
@@ -71,7 +69,6 @@ public class MultiblockValidator {
             throw new MultiblockValidationException("errors.logicore.multiblock.controller_misplaced");
         }
 
-        // --- DETAILED VALIDATION LOOP ---
         for (int x = wallMin.getX(); x <= wallMax.getX(); x++) {
             for (int y = wallMin.getY(); y <= wallMax.getY(); y++) {
                 for (int z = wallMin.getZ(); z <= wallMax.getZ(); z++) {

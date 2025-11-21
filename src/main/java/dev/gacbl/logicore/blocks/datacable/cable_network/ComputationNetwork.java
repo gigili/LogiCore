@@ -96,7 +96,6 @@ public class ComputationNetwork {
         }
 
         if (be == null) {
-            // The device was removed, mark as dirty
             this.providers.remove(pos);
             this.consumers.remove(pos);
             this.energySources.remove(pos);
@@ -209,7 +208,6 @@ public class ComputationNetwork {
             this.providerIndex = (this.providerIndex + 1) % providers.size();
             BlockPos providerPos = providers.get(this.providerIndex);
 
-            // Use getEnergyConsumerAt to get the Server Rack's buffer
             IEnergyStorage providerEnergy = getEnergyConsumerAt(level, providerPos);
             if (providerEnergy != null && providerEnergy.canReceive()) {
                 int energyNeeded = providerEnergy.getMaxEnergyStored() - providerEnergy.getEnergyStored();
@@ -268,14 +266,12 @@ public class ComputationNetwork {
         return level.getCapability(ModCapabilities.CYCLE_PROVIDER, pos, null);
     }
 
-    // Check if a block is a provider OR consumer
     private boolean isProviderOrConsumer(Level level, BlockPos pos) {
         var capCyclesP = level.getCapability(ModCapabilities.CYCLE_PROVIDER, pos, null);
         var capCyclesC = level.getCapability(ModCapabilities.CYCLE_CONSUMER, pos, null);
         return capCyclesP != null || capCyclesC != null;
     }
 
-    // Gets energy from a block IF it is NOT a cycle device (e.g., generator)
     private IEnergyStorage getEnergyProviderAt(Level level, BlockPos pos) {
         var cap = level.getCapability(Capabilities.EnergyStorage.BLOCK, pos, null);
         if (cap == null) return null;
@@ -286,7 +282,6 @@ public class ComputationNetwork {
         return null;
     }
 
-    // Gets energy from a block IF it IS a cycle device (e.g., server rack)
     private IEnergyStorage getEnergyConsumerAt(Level level, BlockPos pos) {
         var cap = level.getCapability(Capabilities.EnergyStorage.BLOCK, pos, null);
         if (cap == null) return null;

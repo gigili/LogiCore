@@ -120,7 +120,6 @@ public class ServerRackScreen extends AbstractContainerScreen<ServerRackMenu> {
             // Only render if we are in the top 5% of power (0.95 to 1.0)
             if (rawRatio > 0.97f) {
                 // Normalize the 0.95-1.0 range to 0.0-1.0
-                // Example: 0.96 energy -> (0.96 - 0.95) / 0.05 = 0.2 (20% full bar)
                 float scaledRatio = (rawRatio - 0.97f) / 0.02f;
 
                 // Clamp to 1.0 in case of tiny overflows

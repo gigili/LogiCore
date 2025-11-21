@@ -4,10 +4,12 @@ import com.mojang.serialization.MapCodec;
 import dev.gacbl.logicore.items.processorunit.ProcessorUnitModule;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.data.recipes.RecipeCategory;
 import net.minecraft.data.recipes.ShapedRecipeBuilder;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.ItemTags;
+import net.minecraft.util.RandomSource;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
@@ -155,8 +157,7 @@ public class ServerRackBlock extends BaseEntityBlock {
     @Override
     protected boolean canSurvive(@NotNull BlockState state, @NotNull LevelReader level, @NotNull BlockPos pos) {
         if (state.getValue(HALF) == DoubleBlockHalf.LOWER) {
-            //BlockPos posBelow = pos.below();
-            return true; //level.getBlockState(posBelow).isFaceSturdy(level, posBelow, Direction.UP);
+            return true;
         } else {
             BlockPos posBelow = pos.below();
             BlockState stateBelow = level.getBlockState(posBelow);
@@ -198,5 +199,56 @@ public class ServerRackBlock extends BaseEntityBlock {
             return createTickerHelper(type, ServerRackModule.SERVER_RACK_BLOCK_ENTITY.get(), ServerRackBlockEntity::serverTick);
         }
         return null;
+    }
+
+    @Override
+    public int getLightEmission(@NotNull BlockState state, @NotNull BlockGetter level, @NotNull BlockPos pos) {
+        return (state.getValue(ServerRackModule.GENERATING)) ? 12 : 0;
+    }
+
+    @Override
+    protected void onPlace(@NotNull BlockState state, @NotNull Level level, @NotNull BlockPos pos, @NotNull BlockState oldState, boolean movedByPiston) {
+        super.onPlace(state, level, pos, oldState, movedByPiston);
+        if (level.isClientSide) return;
+
+        level.updateNeighborsAt(pos, this);
+        level.updateNeighborsAt(pos.above(), this);
+        level.updateNeighborsAt(pos.below(), this);
+    }
+
+    @Override
+    public void animateTick(BlockState state, @NotNull Level level, @NotNull BlockPos pos, @NotNull RandomSource random) {
+        if (!state.getValue(ServerRackModule.GENERATING)) {
+            return;
+        }
+
+        if (random.nextInt(5) == 0) {
+            Direction facing = state.getValue(FACING);
+            Direction left = facing.getCounterClockWise();
+            Direction right = facing.getClockWise();
+
+            BlockPos leftPos = pos.relative(left);
+            if (level.getBlockState(leftPos).isAir()) {
+                spawnSmokeAt(level, pos, left, random);
+            }
+
+            BlockPos rightPos = pos.relative(right);
+            if (level.getBlockState(rightPos).isAir()) {
+                spawnSmokeAt(level, pos, right, random);
+            }
+        }
+    }
+
+    private void spawnSmokeAt(Level level, BlockPos pos, Direction direction, RandomSource random) {
+        double x = pos.getX() + 0.5D;
+        double y = pos.getY();
+        double z = pos.getZ() + 0.5D;
+
+        x += direction.getStepX() * 0.6D;
+        z += direction.getStepZ() * 0.6D;
+
+        y += (random.nextDouble() * 0.8D) + 0.1D;
+
+        level.addParticle(ParticleTypes.LARGE_SMOKE, x, y, z, 0.0D, 0.0D, 0.0D);
     }
 }

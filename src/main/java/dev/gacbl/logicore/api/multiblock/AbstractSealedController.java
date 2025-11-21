@@ -20,8 +20,6 @@ public abstract class AbstractSealedController extends BlockEntity {
     public boolean isFormed = false;
     protected BlockPos minPos = BlockPos.ZERO;
     protected BlockPos maxPos = BlockPos.ZERO;
-
-    // Mathematical Index (Efficient memory usage)
     private int validationIndex = 0;
 
     @Nullable

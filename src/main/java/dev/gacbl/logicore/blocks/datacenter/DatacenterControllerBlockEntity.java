@@ -1,5 +1,6 @@
 package dev.gacbl.logicore.blocks.datacenter;
 
+import dev.gacbl.logicore.Config;
 import dev.gacbl.logicore.api.multiblock.AbstractSealedController;
 import dev.gacbl.logicore.api.multiblock.MultiblockValidationException;
 import dev.gacbl.logicore.api.multiblock.MultiblockValidator;
@@ -73,15 +74,12 @@ public class DatacenterControllerBlockEntity extends AbstractSealedController {
                     this::isWallBlock,
                     this::isInteriorBlock,
                     this::isControllerBlock,
-                    7,
-                    32
+                    Config.DATACENTER_MIN_MULTIBLOCK_SIZE.get(),
+                    Config.DATACENTER_MAX_MULTIBLOCK_SIZE.get()
             );
-
-            // If detectRoom returns (doesn't throw), it was successful
             formStructure(result.min, result.max);
 
         } catch (MultiblockValidationException e) {
-            // Capture the specific error (e.g., "Duplicate Controller at X,Y,Z")
             breakStructure(e);
         }
     }

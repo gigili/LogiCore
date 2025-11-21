@@ -4,13 +4,16 @@ import dev.gacbl.logicore.blocks.datacable.DataCableModule;
 import dev.gacbl.logicore.items.processorunit.ProcessorUnitModule;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.data.recipes.RecipeCategory;
 import net.minecraft.data.recipes.ShapedRecipeBuilder;
 import net.minecraft.network.chat.Component;
+import net.minecraft.util.RandomSource;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.context.BlockPlaceContext;
+import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.EntityBlock;
@@ -29,13 +32,11 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 public class DatacenterControllerBlock extends Block implements EntityBlock {
-    // UPDATED: Use generic FACING (6 directions) instead of HORIZONTAL_FACING
     public static final DirectionProperty FACING = BlockStateProperties.FACING;
     public static final BooleanProperty FORMED = BooleanProperty.create("formed");
 
     public DatacenterControllerBlock(Properties properties) {
         super(properties);
-        // Default state facing NORTH, but supports all directions now
         this.registerDefaultState(this.stateDefinition.any().setValue(FACING, Direction.NORTH).setValue(FORMED, false));
     }
 
@@ -57,11 +58,9 @@ public class DatacenterControllerBlock extends Block implements EntityBlock {
     @Nullable
     @Override
     public BlockState getStateForPlacement(BlockPlaceContext context) {
-        // UPDATED: Allow placement on ceilings/floors by looking at the nearest looking direction
         return this.defaultBlockState().setValue(FACING, context.getNearestLookingDirection().getOpposite());
     }
 
-    // Added rotation support for 6-way facing
     @Override
     public @NotNull BlockState rotate(BlockState state, Rotation rotation) {
         return state.setValue(FACING, rotation.rotate(state.getValue(FACING)));
@@ -77,7 +76,6 @@ public class DatacenterControllerBlock extends Block implements EntityBlock {
         if (!level.isClientSide) {
             BlockEntity be = level.getBlockEntity(pos);
             if (be instanceof DatacenterControllerBlockEntity controller) {
-                // Toggle formation or open GUI
                 if (!state.getValue(FORMED)) {
                     controller.attemptFormation();
                     if (level.getServer() != null) {
@@ -93,7 +91,6 @@ public class DatacenterControllerBlock extends Block implements EntityBlock {
                         });
                     }
                 } else {
-                    // Open GUI logic here later
                     player.displayClientMessage(Component.translatable("message.logicore.datacenter.formed"), true);
                 }
             }
@@ -115,5 +112,37 @@ public class DatacenterControllerBlock extends Block implements EntityBlock {
                 controller.tick(lvl, pos, st);
             }
         };
+    }
+
+    @Override
+    public int getLightEmission(@NotNull BlockState state, @NotNull BlockGetter level, @NotNull BlockPos pos) {
+        return (state.getValue(FORMED)) ? 15 : 0;
+    }
+
+    @Override
+    public void animateTick(@NotNull BlockState state, @NotNull Level level, @NotNull BlockPos pos, @NotNull RandomSource random) {
+        super.animateTick(state, level, pos, random);
+        if (!state.getValue(FORMED)) return;
+
+        if (random.nextInt(3) == 0) {
+            Direction facing = state.getValue(FACING);
+            Direction back = facing.getOpposite();
+
+            double x = pos.getX() + 0.5D + (back.getStepX() * 0.9D);
+            double y = pos.getY() + 0.5D + (back.getStepY() * 0.55D);
+            double z = pos.getZ() + 0.5D + (back.getStepZ() * 0.9D);
+
+            level.addParticle(ParticleTypes.LARGE_SMOKE, x, y, z, 0.0D, 0.0D, 0.0D);
+            /*level.playLocalSound(
+                    (double)pos.getX() + 0.5,
+                    (double)pos.getY() + 0.5,
+                    (double)pos.getZ() + 0.5,
+                    SoundEvents.BEE_LOOP,
+                    SoundSource.BLOCKS,
+                    0.5F + random.nextFloat(),
+                    random.nextFloat() * 0.7F + 0.6F,
+                    false
+            );*/
+        }
     }
 }
