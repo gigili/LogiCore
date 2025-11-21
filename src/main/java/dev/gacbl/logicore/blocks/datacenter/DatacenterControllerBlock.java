@@ -1,6 +1,5 @@
 package dev.gacbl.logicore.blocks.datacenter;
 
-import dev.gacbl.logicore.blocks.datacable.DataCableModule;
 import dev.gacbl.logicore.items.processorunit.ProcessorUnitModule;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -41,7 +40,7 @@ public class DatacenterControllerBlock extends Block implements EntityBlock {
     }
 
     public static ShapedRecipeBuilder getRecipe() {
-        return ShapedRecipeBuilder.shaped(RecipeCategory.REDSTONE, DataCableModule.DATA_CABLE_ITEM.get())
+        return ShapedRecipeBuilder.shaped(RecipeCategory.REDSTONE, DatacenterModule.DATACENTER_CONTROLLER.get())
                 .pattern("III")
                 .pattern("OPO")
                 .pattern("III")
