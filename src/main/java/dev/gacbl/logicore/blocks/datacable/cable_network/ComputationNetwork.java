@@ -6,6 +6,10 @@ import dev.gacbl.logicore.core.ModCapabilities;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.block.state.properties.BlockStateProperties;
+import net.minecraft.world.level.block.state.properties.DoubleBlockHalf;
+import net.minecraft.world.level.block.state.properties.EnumProperty;
 import net.neoforged.neoforge.capabilities.Capabilities;
 import net.neoforged.neoforge.energy.EnergyStorage;
 import net.neoforged.neoforge.energy.IEnergyStorage;
@@ -20,6 +24,8 @@ public class ComputationNetwork {
     private final Set<BlockPos> consumers = new HashSet<>();
     private final Set<BlockPos> energySources = new HashSet<>();
     private final EnergyStorage networkEnergyBuffer = new EnergyStorage(1_000_000, MAX_PULL_PER_SOURCE_PER_TICK, MAX_PULL_PER_SOURCE_PER_TICK);
+
+    EnumProperty<DoubleBlockHalf> HALF = BlockStateProperties.DOUBLE_BLOCK_HALF;
 
     private UUID NETWORK_UUID = UUID.randomUUID();
 
@@ -82,6 +88,13 @@ public class ComputationNetwork {
 
     public void scanDevice(Level level, BlockPos pos) {
         BlockEntity be = level.getBlockEntity(pos);
+        BlockState state = level.getBlockState(pos);
+
+        if (state.hasProperty(HALF) && state.getValue(HALF) != DoubleBlockHalf.LOWER) {
+            pos = pos.below();
+            be = level.getBlockEntity(pos);
+        }
+
         if (be == null) {
             // The device was removed, mark as dirty
             this.providers.remove(pos);

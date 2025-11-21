@@ -2,6 +2,7 @@ package dev.gacbl.logicore.data;
 
 import dev.gacbl.logicore.blocks.computer.ComputerBlock;
 import dev.gacbl.logicore.blocks.datacable.DataCableBlock;
+import dev.gacbl.logicore.blocks.datacenter.DatacenterControllerBlock;
 import dev.gacbl.logicore.blocks.serverrack.ServerRackBlock;
 import dev.gacbl.logicore.items.processorunit.ProcessorUnitItem;
 import net.minecraft.core.HolderLookup;
@@ -25,5 +26,6 @@ public class ModRecipeProvider extends RecipeProvider implements IConditionBuild
         DataCableBlock.getRecipe().unlockedBy("has_redstone", has(Items.REDSTONE)).save(recipeOutput);
         ComputerBlock.getRecipe().unlockedBy("has_redstone", has(Items.REDSTONE)).save(recipeOutput);
         ProcessorUnitItem.getRecipe().unlockedBy("has_redstone", has(Items.REDSTONE)).save(recipeOutput);
+        DatacenterControllerBlock.getRecipe().unlockedBy("has_redstone", has(Items.REDSTONE)).save(recipeOutput);
     }
 }

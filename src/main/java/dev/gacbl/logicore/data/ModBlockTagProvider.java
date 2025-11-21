@@ -3,6 +3,7 @@ package dev.gacbl.logicore.data;
 import dev.gacbl.logicore.LogiCore;
 import dev.gacbl.logicore.blocks.computer.ComputerModule;
 import dev.gacbl.logicore.blocks.datacable.DataCableModule;
+import dev.gacbl.logicore.blocks.datacenter.DatacenterModule;
 import dev.gacbl.logicore.blocks.serverrack.ServerRackModule;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.data.PackOutput;
@@ -29,5 +30,8 @@ public class ModBlockTagProvider extends BlockTagsProvider {
 
         tag(BlockTags.MINEABLE_WITH_PICKAXE).add(ComputerModule.COMPUTER_BLOCK.get());
         tag(BlockTags.NEEDS_IRON_TOOL).add(ComputerModule.COMPUTER_BLOCK.get());
+
+        tag(BlockTags.MINEABLE_WITH_PICKAXE).add(DatacenterModule.DATACENTER_CONTROLLER.get());
+        tag(BlockTags.NEEDS_IRON_TOOL).add(DatacenterModule.DATACENTER_CONTROLLER.get());
     }
 }

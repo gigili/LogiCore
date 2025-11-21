@@ -163,7 +163,7 @@ public class ServerRackScreen extends AbstractContainerScreen<ServerRackMenu> {
         int powerSectionX = leftPos + 36;
         int powerSectionY = topPos + 70;
 
-        if (mouseX >= powerSectionX && mouseY >= powerSectionY && mouseX <= powerSectionX + 15 && mouseY <= powerSectionY + 70) {
+        if (mouseX >= powerSectionX && mouseY >= powerSectionY && mouseX <= powerSectionX + 16 && mouseY <= powerSectionY + 56) {
             int current = this.menu.getEnergy();
             int max = this.menu.getMaxEnergy();
             guiGraphics.renderTooltip(this.font, Component.translatable("tooltip.logicore.energy_stored", formatEnergy(current), formatEnergy(max)), mouseX, mouseY);
@@ -200,16 +200,22 @@ public class ServerRackScreen extends AbstractContainerScreen<ServerRackMenu> {
         labelSectionY += 12;
 
         int cycleModifier = (this.menu.getCyclesPerProcessor() * this.menu.getProcessorCount());
+        if (this.menu.hasDataCenterBoost()) {
+            cycleModifier += this.menu.getDataCenterBoost();
+        }
         int cyclesToGenerate = cycleModifier + this.menu.getBaseCycleGeneration();
         if (this.menu.getProcessorCount() == 0) {
             cyclesToGenerate = 0;
         }
-        graphics.drawString(this.font, Component.literal(String.valueOf(this.menu.getCyclesPerProcessor() * this.menu.getProcessorCount())), labelSectionX, labelSectionY, textColor, false);
+        graphics.drawString(this.font, Component.literal(String.valueOf(cycleModifier)), labelSectionX, labelSectionY, textColor, false);
         graphics.drawString(this.font, Component.literal(String.valueOf(cyclesToGenerate)), labelSectionX + 85, labelSectionY, textColor, false);
         labelSectionY += 18;
 
         graphics.drawString(this.font, Component.translatable("ui.tooltip.logicore.fe_per_tick").plainCopy().withStyle(ChatFormatting.BOLD), labelSectionX, labelSectionY, textColor, false);
         labelSectionY += 12;
+        if (this.menu.hasDataCenterBoost() && cyclesToGenerate > 0) {
+            cyclesToGenerate -= this.menu.getDataCenterBoost();
+        }
         graphics.drawString(this.font, Component.literal(String.valueOf(cyclesToGenerate * this.menu.getFePerCycle())), labelSectionX, labelSectionY, textColor, false);
     }
 }

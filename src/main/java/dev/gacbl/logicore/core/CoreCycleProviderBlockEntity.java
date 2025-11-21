@@ -5,9 +5,11 @@ import dev.gacbl.logicore.api.computation.ICycleProvider;
 import dev.gacbl.logicore.api.computation.ICycleStorage;
 import dev.gacbl.logicore.blocks.serverrack.ServerRackBlock;
 import dev.gacbl.logicore.blocks.serverrack.ServerRackModule;
+import dev.gacbl.logicore.multiblock.AbstractSealedController;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.NbtUtils;
 import net.minecraft.world.inventory.ContainerData;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
@@ -34,11 +36,17 @@ public class CoreCycleProviderBlockEntity extends BlockEntity implements ICycleP
 
     public boolean isGenerating = false;
 
+    public BlockPos dataCenterController = null;
+
+    private boolean hasDataCenterBoost = false;
+
+    private int dataCenterBoost = 0;
+
     public CoreCycleProviderBlockEntity(BlockEntityType<?> type, BlockPos pos, BlockState blockState) {
         super(type, pos, blockState);
     }
 
-    public CoreCycleProviderBlockEntity(Integer baseCycleGeneration, Integer cyclePerProcessor, Integer fePerCycle, Integer cycleCapacity, Integer feCapacity, BlockEntityType<? extends CoreCycleProviderBlockEntity> blockEntityType, BlockPos pos, BlockState state) {
+    public CoreCycleProviderBlockEntity(Integer baseCycleGeneration, Integer cyclePerProcessor, Integer fePerCycle, Integer cycleCapacity, Integer feCapacity, Integer dataCenterBoost, BlockEntityType<? extends CoreCycleProviderBlockEntity> blockEntityType, BlockPos pos, BlockState state) {
         this(blockEntityType, pos, state);
         BASE_CYCLE_GENERATION = baseCycleGeneration;
         CYCLES_PER_PROCESSOR = cyclePerProcessor;
@@ -47,6 +55,7 @@ public class CoreCycleProviderBlockEntity extends BlockEntity implements ICycleP
         FE_CAPACITY = feCapacity;
         energyStorage = new EnergyStorage(FE_CAPACITY);
         cycleStorage = new CycleStorage(CYCLE_CAPACITY);
+        this.dataCenterBoost = dataCenterBoost;
     }
 
     protected final ContainerData data = new ContainerData() {
@@ -61,6 +70,8 @@ public class CoreCycleProviderBlockEntity extends BlockEntity implements ICycleP
                 case 5 -> CoreCycleProviderBlockEntity.this.CYCLES_PER_PROCESSOR;
                 case 6 -> CoreCycleProviderBlockEntity.this.FE_PER_CYCLE;
                 case 7 -> getProcessorCount();
+                case 8 -> CoreCycleProviderBlockEntity.this.hasDataCenterBoost ? 1 : 0;
+                case 9 -> CoreCycleProviderBlockEntity.this.dataCenterBoost;
                 default -> 0;
             };
         }
@@ -73,7 +84,7 @@ public class CoreCycleProviderBlockEntity extends BlockEntity implements ICycleP
 
         @Override
         public int getCount() {
-            return 8;
+            return 10;
         }
     };
 
@@ -111,6 +122,10 @@ public class CoreCycleProviderBlockEntity extends BlockEntity implements ICycleP
         tag.put("energy", this.energyStorage.serializeNBT(registries));
         tag.put("cycles", this.cycleStorage.serializeNBT(registries));
         tag.putBoolean("isGenerating", isGenerating);
+        if (dataCenterController != null) {
+            tag.put("dataCenterController", NbtUtils.writeBlockPos(dataCenterController));
+        }
+        tag.putBoolean("hasDataCenterBoost", hasDataCenterBoost);
     }
 
     @Override
@@ -126,10 +141,24 @@ public class CoreCycleProviderBlockEntity extends BlockEntity implements ICycleP
         if (tag.contains("isGenerating")) {
             isGenerating = tag.getBoolean("isGenerating");
         }
+
+        if (tag.contains("dataCenterController")) {
+            dataCenterController = NbtUtils.readBlockPos(tag, "dataCenterController").orElse(null);
+        }
+
+        hasDataCenterBoost = tag.getBoolean("hasDataCenterBoost");
     }
 
     public static void serverTick(Level level, BlockPos pos, BlockState state, CoreCycleProviderBlockEntity be) {
         if (level.isClientSide) return;
+        be.hasDataCenterBoost = false;
+        if (be.dataCenterController != null) {
+            if (level.getBlockEntity(be.dataCenterController) instanceof AbstractSealedController abc) {
+                if (abc.isFormed) {
+                    be.hasDataCenterBoost = true;
+                }
+            }
+        }
         be.generateCycles();
 
         if (state.hasProperty(ServerRackModule.GENERATING)) {
@@ -187,6 +216,9 @@ public class CoreCycleProviderBlockEntity extends BlockEntity implements ICycleP
 
         long cyclesToGenerate = BASE_CYCLE_GENERATION + ((long) processorCount * CYCLES_PER_PROCESSOR);
         long feCost = cyclesToGenerate * FE_PER_CYCLE;
+        if (hasDataCenterBoost) {
+            cyclesToGenerate += 100;
+        }
 
         if (this.energyStorage.extractEnergy((int) feCost, true) == feCost) {
             isGenerating = true;
@@ -206,5 +238,10 @@ public class CoreCycleProviderBlockEntity extends BlockEntity implements ICycleP
 
     public ItemStackHandler getItemHandler() {
         return null;
+    }
+
+    public void setDataCenterController(BlockPos controllerPos) {
+        this.dataCenterController = controllerPos;
+        setChanged();
     }
 }

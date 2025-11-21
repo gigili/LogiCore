@@ -12,6 +12,7 @@ public class Config {
     public static final ModConfigSpec.ConfigValue<Integer> SERVER_RACK_FE_PER_CYCLE;
     public static final ModConfigSpec.ConfigValue<Integer> SERVER_RACK_CYCLE_CAPACITY;
     public static final ModConfigSpec.ConfigValue<Integer> SERVER_RACK_FE_CAPACITY;
+    public static final ModConfigSpec.ConfigValue<Integer> SERVER_RACK_DATACENTER_BOOST;
 
     //Computer
     public static final ModConfigSpec.ConfigValue<Integer> COMPUTER_BASE_CYCLE_GENERATION;
@@ -19,6 +20,7 @@ public class Config {
     public static final ModConfigSpec.ConfigValue<Integer> COMPUTER_FE_PER_CYCLE;
     public static final ModConfigSpec.ConfigValue<Integer> COMPUTER_CYCLE_CAPACITY;
     public static final ModConfigSpec.ConfigValue<Integer> COMPUTER_FE_CAPACITY;
+    public static final ModConfigSpec.ConfigValue<Integer> COMPUTER_DATACENTER_BOOST;
 
     static {
         BUILDER.comment("LogiCore Configuration");
@@ -49,6 +51,10 @@ public class Config {
                 .comment(" How much FE can be stored in the server rack")
                 .defineInRange("fe_capacity", 100_000, 1, 1_000_000);
 
+        SERVER_RACK_DATACENTER_BOOST = BUILDER
+                .comment(" How much of a boost in cycle production the server rack gets from being in datacenter")
+                .defineInRange("datacenter_boost", 500, 1, Integer.MAX_VALUE);
+
         BUILDER.pop();
         //</editor-fold>
 
@@ -74,6 +80,10 @@ public class Config {
         COMPUTER_FE_CAPACITY = BUILDER
                 .comment(" How much FE can be stored in the computer")
                 .defineInRange("fe_capacity", 100_000, 1, 1_000_000);
+
+        COMPUTER_DATACENTER_BOOST = BUILDER
+                .comment(" How much of a boost in cycle production the computer gets from being in datacenter")
+                .defineInRange("datacenter_boost", 100, 1, Integer.MAX_VALUE);
 
         BUILDER.pop();
         //</editor-fold>

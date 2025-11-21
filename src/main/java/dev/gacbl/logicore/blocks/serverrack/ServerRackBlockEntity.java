@@ -29,6 +29,7 @@ public class ServerRackBlockEntity extends CoreCycleProviderBlockEntity implemen
                 Config.SERVER_RACK_FE_PER_CYCLE.get(),
                 Config.SERVER_RACK_CYCLE_CAPACITY.get(),
                 Config.SERVER_RACK_FE_CAPACITY.get(),
+                Config.SERVER_RACK_DATACENTER_BOOST.get(),
                 ServerRackModule.SERVER_RACK_BLOCK_ENTITY.get(), pos, state
         );
     }

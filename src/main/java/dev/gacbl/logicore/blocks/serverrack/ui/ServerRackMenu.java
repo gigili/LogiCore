@@ -23,7 +23,7 @@ public class ServerRackMenu extends AbstractContainerMenu {
     private final ContainerData data;
 
     public ServerRackMenu(int containerId, Inventory playerInventory, BlockPos pos) {
-        this(containerId, playerInventory, playerInventory.player.level().getBlockEntity(pos), new SimpleContainerData(8));
+        this(containerId, playerInventory, playerInventory.player.level().getBlockEntity(pos), new SimpleContainerData(10));
     }
 
     public ServerRackMenu(int containerId, Inventory playerInventory, BlockEntity entity, ContainerData data) {
@@ -173,5 +173,13 @@ public class ServerRackMenu extends AbstractContainerMenu {
 
     public int getProcessorCount() {
         return this.data.get(7);
+    }
+
+    public boolean hasDataCenterBoost() {
+        return this.data.get(8) == 1;
+    }
+
+    public int getDataCenterBoost() {
+        return this.data.get(9);
     }
 }

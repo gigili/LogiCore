@@ -29,6 +29,7 @@ public class ComputerBlockEntity extends CoreCycleProviderBlockEntity implements
                 Config.COMPUTER_FE_PER_CYCLE.get(),
                 Config.COMPUTER_CYCLE_CAPACITY.get(),
                 Config.COMPUTER_FE_CAPACITY.get(),
+                Config.COMPUTER_DATACENTER_BOOST.get(),
                 ComputerModule.COMPUTER_BLOCK_ENTITY.get(), pos, state
         );
     }

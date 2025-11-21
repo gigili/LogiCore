@@ -1,0 +1,24 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "redstone",
+  "key": {
+	"I": {
+	  "item": "minecraft:iron_block"
+	},
+	"O": {
+	  "item": "minecraft:obsidian"
+	},
+	"P": {
+	  "item": "logicore:processor_unit"
+	}
+  },
+  "pattern": [
+	"III",
+	"OPO",
+	"III"
+  ],
+  "result": {
+	"count": 1,
+	"id": "logicore:datacenter_controller"
+  }
+}

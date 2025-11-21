@@ -3,6 +3,7 @@ package dev.gacbl.logicore.data;
 import dev.gacbl.logicore.LogiCore;
 import dev.gacbl.logicore.blocks.computer.ComputeLootTableProvider;
 import dev.gacbl.logicore.blocks.datacable.DataCableLootTableProvider;
+import dev.gacbl.logicore.blocks.datacenter.DataCenterControllerLootTableProvider;
 import dev.gacbl.logicore.blocks.serverrack.ServerRackLootTableProvider;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.data.DataGenerator;
@@ -36,7 +37,8 @@ public class DataGenerators {
                         List.of(
                                 new LootTableProvider.SubProviderEntry(ServerRackLootTableProvider::new, LootContextParamSets.BLOCK),
                                 new LootTableProvider.SubProviderEntry(DataCableLootTableProvider::new, LootContextParamSets.BLOCK),
-                                new LootTableProvider.SubProviderEntry(ComputeLootTableProvider::new, LootContextParamSets.BLOCK)
+                                new LootTableProvider.SubProviderEntry(ComputeLootTableProvider::new, LootContextParamSets.BLOCK),
+                                new LootTableProvider.SubProviderEntry(DataCenterControllerLootTableProvider::new, LootContextParamSets.BLOCK)
                         ),
                         lookupProvider
                 )

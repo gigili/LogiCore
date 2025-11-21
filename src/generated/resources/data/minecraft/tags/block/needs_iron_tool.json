@@ -2,6 +2,7 @@
   "values": [
     "logicore:server_rack",
     "logicore:data_cable",
-    "logicore:computer"
+	"logicore:computer",
+	"logicore:datacenter_controller"
   ]
 }

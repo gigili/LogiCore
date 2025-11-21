@@ -220,28 +220,32 @@ public class NetworkManager extends SavedData {
             ListTag cablesTag = networkTag.getList("Cables", CompoundTag.TAG_INT_ARRAY);
             cablesTag.forEach(nbt -> {
                 int[] arrayTag = ((IntArrayTag) nbt).getAsIntArray();
-                network.addCable(new BlockPos(arrayTag[0], arrayTag[1], arrayTag[2]));
+                BlockPos pos = new BlockPos(arrayTag[0], arrayTag[1], arrayTag[2]);
+                network.addCable(pos);
             });
 
             // Load Providers
             ListTag providersTag = networkTag.getList("Providers", CompoundTag.TAG_INT_ARRAY);
             providersTag.forEach(nbt -> {
                 int[] arrayTag = ((IntArrayTag) nbt).getAsIntArray();
-                network.addProvider(new BlockPos(arrayTag[0], arrayTag[1], arrayTag[2]));
+                BlockPos pos = new BlockPos(arrayTag[0], arrayTag[1], arrayTag[2]);
+                network.addProvider(pos);
             });
 
             // Load Consumers
             ListTag consumersTag = networkTag.getList("Consumers", CompoundTag.TAG_INT_ARRAY);
             consumersTag.forEach(nbt -> {
                 int[] arrayTag = ((IntArrayTag) nbt).getAsIntArray();
-                network.addConsumer(new BlockPos(arrayTag[0], arrayTag[1], arrayTag[2]));
+                BlockPos pos = new BlockPos(arrayTag[0], arrayTag[1], arrayTag[2]);
+                network.addConsumer(pos);
             });
 
             // Load EnergySources
             ListTag energyTag = networkTag.getList("EnergySources", CompoundTag.TAG_INT_ARRAY);
             energyTag.forEach(nbt -> {
                 int[] arrayTag = ((IntArrayTag) nbt).getAsIntArray();
-                network.addEnergySource(new BlockPos(arrayTag[0], arrayTag[1], arrayTag[2]));
+                BlockPos pos = new BlockPos(arrayTag[0], arrayTag[1], arrayTag[2]);
+                network.addEnergySource(pos);
             });
 
             network.setDirty(); // Mark as dirty to force a rebuild on the next tick
