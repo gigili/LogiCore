@@ -1,4 +1,4 @@
-package dev.gacbl.logicore.multiblock;
+package dev.gacbl.logicore.api.multiblock;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -35,7 +35,7 @@ public class MultiblockValidator {
         Predicate<BlockState> anyOuterBlock = state -> isFrame.test(state) || isWall.test(state);
 
         if (anyOuterBlock.test(level.getBlockState(start))) {
-            throw new MultiblockValidationException("errors.logicore.multiblock.blocked_start", start, level.getBlockState(start));
+            throw new MultiblockValidationException("errors.logicore.multiblock.multiple_controllers", start, level.getBlockState(start));
         }
 
         // We scan for limits. If we don't find a wall within maxSize, it's too big/open.

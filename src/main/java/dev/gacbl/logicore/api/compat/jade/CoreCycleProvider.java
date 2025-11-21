@@ -1,4 +1,4 @@
-package dev.gacbl.logicore.compat.jade;
+package dev.gacbl.logicore.api.compat.jade;
 
 import dev.gacbl.logicore.LogiCore;
 import dev.gacbl.logicore.blocks.serverrack.ServerRackBlockEntity;

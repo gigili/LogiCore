@@ -1,6 +1,8 @@
-package dev.gacbl.logicore.multiblock;
+package dev.gacbl.logicore.api.multiblock;
 
 import dev.gacbl.logicore.core.CoreCycleProviderBlockEntity;
+import dev.gacbl.logicore.network.PacketHandler;
+import dev.gacbl.logicore.network.payload.SyncMultiblockDataPayload;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
@@ -58,7 +60,7 @@ public abstract class AbstractSealedController extends BlockEntity {
         }
 
         int totalBlocks = width * height * depth;
-        int checksPerTick = Math.max(4, totalBlocks / 100); // Scan full structure every ~5 seconds
+        int checksPerTick = Math.max(4, totalBlocks / 100);
 
         for (int i = 0; i < checksPerTick; i++) {
             validationIndex++;
@@ -66,7 +68,6 @@ public abstract class AbstractSealedController extends BlockEntity {
                 validationIndex = 0;
             }
 
-            // Calculate X,Y,Z from Index
             int x = (validationIndex % width) + minPos.getX();
             int y = ((validationIndex / width) % height) + minPos.getY();
             int z = (validationIndex / (width * height)) + minPos.getZ();
@@ -78,7 +79,6 @@ public abstract class AbstractSealedController extends BlockEntity {
 
             BlockState checkState = level.getBlockState(p);
 
-            // Validation Logic
             boolean onMinX = x == minPos.getX();
             boolean onMaxX = x == maxPos.getX();
             boolean onMinY = y == minPos.getY();
@@ -116,7 +116,6 @@ public abstract class AbstractSealedController extends BlockEntity {
                     return;
                 } else {
                     if (level.getBlockEntity(p) instanceof CoreCycleProviderBlockEntity cBe) {
-                        //TODO: This should be a packet
                         if (cBe.dataCenterController != controllerPos) {
                             cBe.setDataCenterController(controllerPos);
                         }
@@ -134,6 +133,7 @@ public abstract class AbstractSealedController extends BlockEntity {
         this.lastException = null;
         onStructureFormed();
         setChanged();
+        syncData();
     }
 
     public void breakStructure(@Nullable MultiblockValidationException e) {
@@ -141,6 +141,37 @@ public abstract class AbstractSealedController extends BlockEntity {
         this.lastException = e;
         onStructureBroken();
         setChanged();
+        syncData();
+    }
+
+    public void syncData() {
+        if (level != null && !level.isClientSide) {
+            String errorMsg = "";
+            BlockPos errorPos = BlockPos.ZERO;
+
+            if (lastException != null) {
+                errorMsg = lastException.message;
+                if (lastException.pos != null) {
+                    errorPos = lastException.pos;
+                }
+            }
+
+            PacketHandler.sendToClientsTrackingChunk(level, this.worldPosition,
+                    new SyncMultiblockDataPayload(this.worldPosition, this.isFormed, this.minPos, this.maxPos, errorMsg, errorPos)
+            );
+        }
+    }
+
+    public void setClientData(boolean isFormed, BlockPos min, BlockPos max, String errorMsg, BlockPos errorPos) {
+        this.isFormed = isFormed;
+        this.minPos = min;
+        this.maxPos = max;
+
+        if (errorMsg != null && !errorMsg.isEmpty()) {
+            this.lastException = new MultiblockValidationException(errorMsg, errorPos, null);
+        } else {
+            this.lastException = null;
+        }
     }
 
     @Override

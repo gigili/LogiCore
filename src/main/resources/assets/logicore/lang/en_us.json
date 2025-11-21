@@ -13,5 +13,18 @@
   "ui.tooltip.logicore.base_cycles_generation": "Base:",
   "ui.tooltip.logicore.cycles_modifier": "Modifier:",
   "ui.tooltip.logicore.cycles_produced": "Produced:",
-  "ui.tooltip.logicore.fe_per_tick": "Fe per tick:"
+  "ui.tooltip.logicore.fe_per_tick": "Fe per tick:",
+  "block.logicore.datacenter_controller": "Datacenter controller",
+  "message.logicore.datacenter.formed": "Datacenter is active",
+  "errors.logicore.multiblock.general_error": "Invalid structure",
+  "errors.logicore.datacenter.invalid_form": "Invalid structure: Ensure Controller faces Interior Air",
+  "errors.logicore.multiblock.multiple_controllers": "Invalid structure: Multiple controllers present",
+  "errors.logicore.multiblock.too_large_or_open": "Invalid structure: It's not a valid size or not complete",
+  "errors.logicore.multiblock.too_small": "Invalid structure: It's too small",
+  "errors.logicore.multiblock.too_large": "Invalid structure: It's too large",
+  "errors.logicore.multiblock.controller_misplaced": "Invalid structure: Invalid controller position at %s",
+  "errors.logicore.multiblock.duplicate_controller": "Invalid structure: Multiple controllers present",
+  "errors.logicore.multiblock.invalid_frame": "Invalid structure: Invalid frame block at %s",
+  "errors.logicore.multiblock.invalid_wall": "Invalid structure: Invalid wall block at %s",
+  "errors.logicore.multiblock.invalid_interior": "Invalid structure: Invalid interior block at %s"
 }

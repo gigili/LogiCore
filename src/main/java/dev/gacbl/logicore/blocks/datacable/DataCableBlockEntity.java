@@ -1,15 +1,19 @@
 package dev.gacbl.logicore.blocks.datacable;
 
 import dev.gacbl.logicore.blocks.datacable.cable_network.NetworkManager;
+import dev.gacbl.logicore.network.PacketHandler;
+import dev.gacbl.logicore.network.payload.SyncCableDataPayload;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.Optional;
 import java.util.UUID;
 
 public class DataCableBlockEntity extends BlockEntity {
@@ -56,5 +60,28 @@ public class DataCableBlockEntity extends BlockEntity {
     public void setNetworkUUID(UUID networkUUID) {
         NETWORK_UUID = networkUUID;
         setChanged();
+        syncData();
+    }
+
+    public void setClientNetworkUUID(UUID uuid) {
+        this.NETWORK_UUID = uuid;
+    }
+
+    public void syncData() {
+        if (level != null && !level.isClientSide) {
+            PacketHandler.sendToClientsTrackingChunk(level, this.worldPosition, new SyncCableDataPayload(this.worldPosition, Optional.ofNullable(this.NETWORK_UUID)));
+        }
+    }
+
+    @Override
+    public @NotNull CompoundTag getUpdateTag(HolderLookup.@NotNull Provider registries) {
+        CompoundTag tag = new CompoundTag();
+        saveAdditional(tag, registries);
+        return tag;
+    }
+
+    @Override
+    public ClientboundBlockEntityDataPacket getUpdatePacket() {
+        return ClientboundBlockEntityDataPacket.create(this);
     }
 }

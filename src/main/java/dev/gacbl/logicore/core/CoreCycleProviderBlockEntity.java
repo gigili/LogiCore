@@ -3,13 +3,16 @@ package dev.gacbl.logicore.core;
 import dev.gacbl.logicore.api.computation.CycleStorage;
 import dev.gacbl.logicore.api.computation.ICycleProvider;
 import dev.gacbl.logicore.api.computation.ICycleStorage;
+import dev.gacbl.logicore.api.multiblock.AbstractSealedController;
 import dev.gacbl.logicore.blocks.serverrack.ServerRackBlock;
 import dev.gacbl.logicore.blocks.serverrack.ServerRackModule;
-import dev.gacbl.logicore.multiblock.AbstractSealedController;
+import dev.gacbl.logicore.network.PacketHandler;
+import dev.gacbl.logicore.network.payload.SyncCycleDataPayload;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.NbtUtils;
+import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket;
 import net.minecraft.world.inventory.ContainerData;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
@@ -27,9 +30,6 @@ public class CoreCycleProviderBlockEntity extends BlockEntity implements ICycleP
     private int BASE_CYCLE_GENERATION;
     private int CYCLES_PER_PROCESSOR;
     private int FE_PER_CYCLE;
-
-    private int CYCLE_CAPACITY;
-    private int FE_CAPACITY;
 
     private EnergyStorage energyStorage;
     private CycleStorage cycleStorage;
@@ -51,10 +51,8 @@ public class CoreCycleProviderBlockEntity extends BlockEntity implements ICycleP
         BASE_CYCLE_GENERATION = baseCycleGeneration;
         CYCLES_PER_PROCESSOR = cyclePerProcessor;
         FE_PER_CYCLE = fePerCycle;
-        CYCLE_CAPACITY = cycleCapacity;
-        FE_CAPACITY = feCapacity;
-        energyStorage = new EnergyStorage(FE_CAPACITY);
-        cycleStorage = new CycleStorage(CYCLE_CAPACITY);
+        energyStorage = new EnergyStorage(feCapacity);
+        cycleStorage = new CycleStorage(cycleCapacity);
         this.dataCenterBoost = dataCenterBoost;
     }
 
@@ -220,11 +218,19 @@ public class CoreCycleProviderBlockEntity extends BlockEntity implements ICycleP
             cyclesToGenerate += 100;
         }
 
+        boolean prevGenerating = isGenerating;
+
         if (this.energyStorage.extractEnergy((int) feCost, true) == feCost) {
             isGenerating = true;
             this.energyStorage.extractEnergy((int) feCost, false);
             this.cycleStorage.receiveCycles(cyclesToGenerate, false);
             setChanged();
+        } else {
+            isGenerating = false;
+        }
+
+        if (prevGenerating != isGenerating) {
+            syncData();
         }
     }
 
@@ -243,5 +249,37 @@ public class CoreCycleProviderBlockEntity extends BlockEntity implements ICycleP
     public void setDataCenterController(BlockPos controllerPos) {
         this.dataCenterController = controllerPos;
         setChanged();
+    }
+
+    public void setClientData(int energy, long cycles, boolean isGenerating) {
+        this.energyStorage.receiveEnergy(energy - this.energyStorage.getEnergyStored(), false);
+        long currentCycles = this.cycleStorage.getCyclesAvailable();
+        if (cycles > currentCycles) {
+            this.cycleStorage.receiveCycles(cycles - currentCycles, false);
+        } else {
+            this.cycleStorage.extractCycles(currentCycles - cycles, false);
+        }
+
+        this.isGenerating = isGenerating;
+    }
+
+    public void syncData() {
+        if (this.level != null && !this.level.isClientSide) {
+            PacketHandler.sendToClientsTrackingChunk(
+                    this.level,
+                    this.getBlockPos(),
+                    new SyncCycleDataPayload(this.worldPosition, this.energyStorage.getEnergyStored(), this.cycleStorage.getCyclesAvailable(), this.isGenerating)
+            );
+        }
+    }
+
+    @Override
+    public @NotNull CompoundTag getUpdateTag(HolderLookup.@NotNull Provider registries) {
+        return saveWithoutMetadata(registries);
+    }
+
+    @Override
+    public ClientboundBlockEntityDataPacket getUpdatePacket() {
+        return ClientboundBlockEntityDataPacket.create(this);
     }
 }

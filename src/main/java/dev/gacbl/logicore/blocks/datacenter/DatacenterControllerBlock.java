@@ -80,16 +80,21 @@ public class DatacenterControllerBlock extends Block implements EntityBlock {
                 // Toggle formation or open GUI
                 if (!state.getValue(FORMED)) {
                     controller.attemptFormation();
-                    if (state.getValue(FORMED)) {
-                        String msg = controller.lastException != null ? controller.lastException.message : "Datacenter Formed!";
-                        player.displayClientMessage(Component.literal(msg), true);
-                    } else {
-                        String msg = controller.lastException != null ? controller.lastException.message : "Structure Invalid: Ensure Controller faces Interior Air";
-                        player.displayClientMessage(Component.literal(msg), true);
+                    if (level.getServer() != null) {
+                        level.getServer().executeIfPossible(() -> {
+                            if (state.getValue(FORMED)) {
+                                Component msg = Component.translatable("message.logicore.datacenter.formed");
+                                player.displayClientMessage(msg, true);
+                            } else {
+                                String errorPos = controller.lastException != null && controller.lastException.pos != null ? controller.lastException.pos.toShortString() : "";
+                                Component msg = controller.lastException != null ? Component.translatable(controller.lastException.message, errorPos) : Component.translatable("errors.logicore.datacenter.invalid_form");
+                                player.displayClientMessage(msg, true);
+                            }
+                        });
                     }
                 } else {
                     // Open GUI logic here later
-                    player.displayClientMessage(Component.literal("Datacenter is Active"), true);
+                    player.displayClientMessage(Component.translatable("message.logicore.datacenter.formed"), true);
                 }
             }
         }

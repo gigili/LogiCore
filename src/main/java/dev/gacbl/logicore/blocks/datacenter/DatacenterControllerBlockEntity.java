@@ -1,20 +1,24 @@
 package dev.gacbl.logicore.blocks.datacenter;
 
+import dev.gacbl.logicore.api.multiblock.AbstractSealedController;
+import dev.gacbl.logicore.api.multiblock.MultiblockValidationException;
+import dev.gacbl.logicore.api.multiblock.MultiblockValidator;
 import dev.gacbl.logicore.blocks.computer.ComputerModule;
 import dev.gacbl.logicore.blocks.datacable.DataCableModule;
 import dev.gacbl.logicore.blocks.serverrack.ServerRackModule;
-import dev.gacbl.logicore.multiblock.AbstractSealedController;
-import dev.gacbl.logicore.multiblock.MultiblockValidationException;
-import dev.gacbl.logicore.multiblock.MultiblockValidator;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.core.HolderLookup;
 import net.minecraft.core.registries.Registries;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
+import org.jetbrains.annotations.NotNull;
 
 public class DatacenterControllerBlockEntity extends AbstractSealedController {
 
@@ -94,5 +98,15 @@ public class DatacenterControllerBlockEntity extends AbstractSealedController {
         if (level != null) {
             level.setBlock(worldPosition, getBlockState().setValue(DatacenterControllerBlock.FORMED, false), 3);
         }
+    }
+
+    @Override
+    public @NotNull CompoundTag getUpdateTag(HolderLookup.@NotNull Provider registries) {
+        return saveWithoutMetadata(registries);
+    }
+
+    @Override
+    public ClientboundBlockEntityDataPacket getUpdatePacket() {
+        return ClientboundBlockEntityDataPacket.create(this);
     }
 }

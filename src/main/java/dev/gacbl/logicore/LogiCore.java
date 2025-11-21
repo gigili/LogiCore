@@ -10,6 +10,7 @@ import dev.gacbl.logicore.blocks.serverrack.ui.ServerRackScreen;
 import dev.gacbl.logicore.core.CreativeTabModule;
 import dev.gacbl.logicore.core.MyCommands;
 import dev.gacbl.logicore.items.processorunit.ProcessorUnitModule;
+import dev.gacbl.logicore.network.PacketHandler;
 import guideme.Guide;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
@@ -45,6 +46,8 @@ public class LogiCore {
         DataCableModule.register(modEventBus);
 
         DatacenterModule.register(modEventBus);
+
+        PacketHandler.register(modEventBus);
 
         modContainer.registerConfig(ModConfig.Type.COMMON, Config.SPEC, "logicore.toml");
 
