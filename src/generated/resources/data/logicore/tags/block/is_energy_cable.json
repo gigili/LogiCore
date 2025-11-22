@@ -1,0 +1,32 @@
+{
+  "values": [
+	{
+	  "id": "mekanism:quantum_entagloporter",
+	  "required": false
+	},
+	{
+	  "id": "flux_networks:flux_point",
+	  "required": false
+	},
+	{
+	  "id": "pipez:energy_pipe",
+	  "required": false
+	},
+	{
+	  "id": "mekanism:basic_universal_cable",
+	  "required": false
+	},
+	{
+	  "id": "mekanism:advanced_universal_cable",
+	  "required": false
+	},
+	{
+	  "id": "mekanism:elite_universal_cable",
+	  "required": false
+	},
+	{
+	  "id": "mekanism:ultimate_universal_cable",
+	  "required": false
+	}
+  ]
+}

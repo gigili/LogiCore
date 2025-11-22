@@ -4,19 +4,12 @@ import dev.gacbl.logicore.Config;
 import dev.gacbl.logicore.api.multiblock.AbstractSealedController;
 import dev.gacbl.logicore.api.multiblock.MultiblockValidationException;
 import dev.gacbl.logicore.api.multiblock.MultiblockValidator;
-import dev.gacbl.logicore.blocks.computer.ComputerModule;
-import dev.gacbl.logicore.blocks.datacable.DataCableModule;
-import dev.gacbl.logicore.blocks.serverrack.ServerRackModule;
+import dev.gacbl.logicore.core.ModTags;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.HolderLookup;
-import net.minecraft.core.registries.Registries;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket;
-import net.minecraft.resources.ResourceKey;
-import net.minecraft.resources.ResourceLocation;
-import net.minecraft.tags.BlockTags;
-import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import org.jetbrains.annotations.NotNull;
@@ -29,31 +22,17 @@ public class DatacenterControllerBlockEntity extends AbstractSealedController {
 
     @Override
     protected boolean isFrameBlock(BlockState state) {
-        return state.is(Blocks.IRON_BLOCK)
-                || state.is(BlockTags.create(ResourceLocation.fromNamespaceAndPath("c", "obsidians")));
+        return state.is(ModTags.Blocks.VALID_DATACENTER_FRAME_BLOCK);
     }
 
     @Override
     protected boolean isWallBlock(BlockState state) {
-        return state.is(Blocks.IRON_BLOCK)
-                || state.is(BlockTags.create(ResourceLocation.fromNamespaceAndPath("c", "glass_blocks")))
-                || state.is(BlockTags.create(ResourceLocation.fromNamespaceAndPath("c", "obsidians")))
-                || state.is(Blocks.IRON_DOOR)
-                || state.is(DatacenterModule.DATACENTER_CONTROLLER.get())
-                || state.is(Blocks.GLOWSTONE)
-                || state.is(Blocks.REDSTONE_LAMP);
+        return state.is(ModTags.Blocks.VALID_DATACENTER_WALL_BLOCK);
     }
 
     @Override
     protected boolean isInteriorBlock(BlockState state) {
-        return state.isAir()
-                || state.is(BlockTags.PRESSURE_PLATES)
-                || state.is(BlockTags.BUTTONS)
-                || state.is(Blocks.LEVER)
-                || state.is(ServerRackModule.SERVER_RACK_BLOCK.get())
-                || state.is(DataCableModule.DATA_CABLE_BLOCK.get())
-                || state.is(ComputerModule.COMPUTER_BLOCK.get())
-                || state.is(ResourceKey.create(Registries.BLOCK, ResourceLocation.fromNamespaceAndPath("justdirethings", "generatort1")));
+        return state.isAir() || state.is(ModTags.Blocks.VALID_DATACENTER_INNER_BLOCK);
     }
 
     private boolean isControllerBlock(BlockState state) {

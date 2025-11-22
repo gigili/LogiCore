@@ -26,5 +26,6 @@
   "errors.logicore.multiblock.duplicate_controller": "Invalid structure: Multiple controllers present",
   "errors.logicore.multiblock.invalid_frame": "Invalid structure: Invalid frame block at %s",
   "errors.logicore.multiblock.invalid_wall": "Invalid structure: Invalid wall block at %s",
-  "errors.logicore.multiblock.invalid_interior": "Invalid structure: Invalid interior block at %s"
+  "errors.logicore.multiblock.invalid_interior": "Invalid structure: Invalid interior block at %s",
+  "sounds.logicore.datacenter.ambient": "Datacenter hum"
 }

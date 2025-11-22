@@ -1,0 +1,90 @@
+{
+  "values": [
+	"logicore:server_rack",
+	"logicore:computer",
+	"logicore:data_cable",
+	"minecraft:torch",
+	"minecraft:light",
+	"minecraft:glow_lichen",
+	"minecraft:redstone_block",
+	"minecraft:glowstone",
+	"minecraft:shroomlight",
+	"minecraft:copper_grate",
+	"minecraft:exposed_copper_grate",
+	"minecraft:oxidized_copper_grate",
+	"minecraft:waxed_copper_grate",
+	"minecraft:weathered_copper_grate",
+	"minecraft:waxed_exposed_copper_grate",
+	"minecraft:waxed_oxidized_copper_grate",
+	"minecraft:waxed_weathered_copper_grate",
+	{
+	  "id": "#logicore:is_energy_cable",
+	  "required": false
+	},
+	{
+	  "id": "#logicore:is_energy_generator",
+	  "required": false
+	},
+	"#minecraft:pressure_plates",
+	"#minecraft:buttons",
+	"#minecraft:stairs",
+	"#c:fences",
+	"#c:fence_gates",
+	{
+	  "id": "#powah:reactors",
+	  "required": false
+	},
+	{
+	  "id": "#powah:energy_cable",
+	  "required": false
+	},
+	{
+	  "id": "#powah:ender_gates",
+	  "required": false
+	},
+	{
+	  "id": "#powah:ender_cells",
+	  "required": false
+	},
+	{
+	  "id": "#powah:energy_cells",
+	  "required": false
+	},
+	{
+	  "id": "#ae2:controller",
+	  "required": false
+	},
+	{
+	  "id": "#ae2:glass_cable",
+	  "required": false
+	},
+	{
+	  "id": "#ae2:smart_cable",
+	  "required": false
+	},
+	{
+	  "id": "#ae2:covered_cable",
+	  "required": false
+	},
+	{
+	  "id": "#ae2:smart_dense_cable",
+	  "required": false
+	},
+	{
+	  "id": "#ae2:covered_dense_cable",
+	  "required": false
+	},
+	{
+	  "id": "ae2:quantum_ring",
+	  "required": false
+	},
+	{
+	  "id": "ae2:quantum_link",
+	  "required": false
+	},
+	{
+	  "id": "ae2:quartz_fiber",
+	  "required": false
+	}
+  ]
+}

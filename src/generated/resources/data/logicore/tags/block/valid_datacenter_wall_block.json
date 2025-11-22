@@ -1,0 +1,10 @@
+{
+  "values": [
+	"minecraft:iron_block",
+	"minecraft:iron_door",
+	"logicore:datacenter_controller",
+	"#c:concretes",
+	"#c:stones",
+	"#c:glass_blocks"
+  ]
+}

@@ -1,0 +1,12 @@
+{
+  "values": [
+	{
+	  "id": "justdirethings:generatort1",
+	  "required": false
+	},
+	{
+	  "id": "justdirethings:generatortfluid1",
+	  "required": false
+	}
+  ]
+}

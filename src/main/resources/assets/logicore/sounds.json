@@ -1,0 +1,8 @@
+{
+  "datacenter_ambient": {
+	"subtitle": "sounds.logicore.datacenter.ambient",
+	"sounds": [
+	  "logicore:datacenter_ambient"
+	]
+  }
+}

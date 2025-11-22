@@ -7,6 +7,7 @@ import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.data.recipes.RecipeCategory;
 import net.minecraft.data.recipes.ShapedRecipeBuilder;
 import net.minecraft.network.chat.Component;
+import net.minecraft.sounds.SoundSource;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.player.Player;
@@ -123,7 +124,7 @@ public class DatacenterControllerBlock extends Block implements EntityBlock {
         super.animateTick(state, level, pos, random);
         if (!state.getValue(FORMED)) return;
 
-        if (random.nextInt(3) == 0) {
+        if (random.nextInt(5) == 0) {
             Direction facing = state.getValue(FACING);
             Direction back = facing.getOpposite();
 
@@ -132,16 +133,16 @@ public class DatacenterControllerBlock extends Block implements EntityBlock {
             double z = pos.getZ() + 0.5D + (back.getStepZ() * 0.9D);
 
             level.addParticle(ParticleTypes.LARGE_SMOKE, x, y, z, 0.0D, 0.0D, 0.0D);
-            /*level.playLocalSound(
+            level.playLocalSound(
                     (double)pos.getX() + 0.5,
                     (double)pos.getY() + 0.5,
                     (double)pos.getZ() + 0.5,
-                    SoundEvents.BEE_LOOP,
+                    DatacenterModule.DATACENTER_AMBIENT.get(),
                     SoundSource.BLOCKS,
                     0.5F + random.nextFloat(),
                     random.nextFloat() * 0.7F + 0.6F,
                     false
-            );*/
+            );
         }
     }
 }
