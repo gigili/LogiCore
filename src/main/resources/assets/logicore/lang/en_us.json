@@ -17,7 +17,7 @@
   "block.logicore.datacenter_controller": "Datacenter controller",
   "message.logicore.datacenter.formed": "Datacenter is active",
   "errors.logicore.multiblock.general_error": "Invalid structure",
-  "errors.logicore.datacenter.invalid_form": "Invalid structure: Ensure Controller faces Interior Air",
+  "errors.logicore.datacenter.invalid_form": "Invalid structure: Ensure controller faces interior",
   "errors.logicore.multiblock.multiple_controllers": "Invalid structure: Multiple controllers present",
   "errors.logicore.multiblock.too_large_or_open": "Invalid structure: It's not a valid size or not complete",
   "errors.logicore.multiblock.too_small": "Invalid structure: It's too small",

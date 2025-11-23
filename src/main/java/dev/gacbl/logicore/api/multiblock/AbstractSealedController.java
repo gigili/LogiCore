@@ -2,7 +2,9 @@ package dev.gacbl.logicore.api.multiblock;
 
 import dev.gacbl.logicore.core.CoreCycleProviderBlockEntity;
 import dev.gacbl.logicore.network.PacketHandler;
+import dev.gacbl.logicore.network.payload.SyncDataCenterPositionPayload;
 import dev.gacbl.logicore.network.payload.SyncMultiblockDataPayload;
+import net.minecraft.client.Minecraft;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
@@ -21,6 +23,8 @@ public abstract class AbstractSealedController extends BlockEntity {
     protected BlockPos minPos = BlockPos.ZERO;
     protected BlockPos maxPos = BlockPos.ZERO;
     private int validationIndex = 0;
+
+    private int lastTickCheck = 0;
 
     @Nullable
     public MultiblockValidationException lastException = null;
@@ -43,6 +47,13 @@ public abstract class AbstractSealedController extends BlockEntity {
         if (level.isClientSide) return;
 
         if (isFormed) {
+            if (this.lastTickCheck % 300 == 0) {
+                this.lastTickCheck++;
+                return;
+            }
+
+            this.lastTickCheck = 0;
+
             validateBatch(level, pos);
         }
     }
@@ -114,8 +125,10 @@ public abstract class AbstractSealedController extends BlockEntity {
                     return;
                 } else {
                     if (level.getBlockEntity(p) instanceof CoreCycleProviderBlockEntity cBe) {
-                        if (cBe.dataCenterController != controllerPos) {
-                            cBe.setDataCenterController(controllerPos);
+                        if (cBe.dataCenterController != controllerPos && level.getServer() != null) {
+                            if (Minecraft.getInstance().player != null) {
+                                Minecraft.getInstance().player.connection.send(new SyncDataCenterPositionPayload(controllerPos, p));
+                            }
                         }
                     }
                 }

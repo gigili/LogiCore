@@ -42,6 +42,8 @@ public class CoreCycleProviderBlockEntity extends BlockEntity implements ICycleP
 
     private int dataCenterBoost = 0;
 
+    protected int cachedProcessorCount = 0;
+
     public CoreCycleProviderBlockEntity(BlockEntityType<?> type, BlockPos pos, BlockState blockState) {
         super(type, pos, blockState);
     }
@@ -51,7 +53,7 @@ public class CoreCycleProviderBlockEntity extends BlockEntity implements ICycleP
         BASE_CYCLE_GENERATION = baseCycleGeneration;
         CYCLES_PER_PROCESSOR = cyclePerProcessor;
         FE_PER_CYCLE = fePerCycle;
-        energyStorage = new EnergyStorage(feCapacity);
+        energyStorage = new EnergyStorage(feCapacity, 10_000, 10_000);
         cycleStorage = new CycleStorage(cycleCapacity);
         this.dataCenterBoost = dataCenterBoost;
     }
@@ -182,13 +184,6 @@ public class CoreCycleProviderBlockEntity extends BlockEntity implements ICycleP
 
     private void generateCycles() {
         if (this.level == null || this.level.isClientSide) {
-            isGenerating = false;
-            return;
-        }
-
-        boolean isReceivingRedstoneSignal = level.hasNeighborSignal(this.getBlockPos());
-
-        if (isReceivingRedstoneSignal) {
             isGenerating = false;
             return;
         }

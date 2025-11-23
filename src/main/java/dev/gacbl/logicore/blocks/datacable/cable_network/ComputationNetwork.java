@@ -17,7 +17,7 @@ import net.neoforged.neoforge.energy.IEnergyStorage;
 import java.util.*;
 
 public class ComputationNetwork {
-    private static final int MAX_PULL_PER_SOURCE_PER_TICK = 20000;
+    private static final int MAX_PULL_PER_SOURCE_PER_TICK = 50000;
 
     private final Set<BlockPos> cables = new HashSet<>();
     private final Set<BlockPos> providers = new HashSet<>();

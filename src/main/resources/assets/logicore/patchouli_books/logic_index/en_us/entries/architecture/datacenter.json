@@ -1,0 +1,38 @@
+{
+  "name": "Datacenter",
+  "category": "logicore:architecture_category",
+  "icon": "logicore:datacenter_controller",
+  "pages": [
+	{
+	  "type": "patchouli:text",
+	  "text": "The Datacenter is a massive sealed structure used to house Server Racks and regulate their temperature.$(br)$(br)It is a hollow cuboid.$(br)$(li)Min Size: 7x7x7$(li)Max Size: 32x32x32$(br2)Unless the configs were changed. The edges must be $(thing)Frames$(). The faces must be $(thing)Walls$()."
+	},
+	{
+	  "type": "patchouli:multiblock",
+	  "multiblock": {
+		"pattern": [
+		  ["FFFFFFF", "FWWWWWF", "FWWWWWF", "FWW0WWF", "FWWWWWF", "FWWWWWF", "FFFFFFF"],
+		  ["FWWWWWF", "W     W", "W     W", "W     W", "W     W", "W     W", "FWWWWWF"],
+		  ["FWWWWWF", "W     W", "W     W", "W     W", "W     W", "W     W", "FWWWWWF"],
+		  ["FWWWWWF", "W     W", "W     W", "W     W", "W     W", "W     W", "FWWWWWF"],
+		  ["FWWWWWF", "W     W", "W     W", "W     W", "W     W", "W     W", "FWAWWWF"],
+		  ["FWWWWWF", "W     W", "W     W", "W     W", "W     W", "W     W", "FWBWWWF"],
+		  ["FFFFFFF", "FFFFFFF", "FFFFFFF", "FFFFFFF", "FFFFFFF", "FFFFFFF", "FFFFFFF"]
+		],
+		"mapping": {
+		  "F": "#logicore:valid_datacenter_frame_block",
+		  "W": "#logicore:valid_datacenter_wall_block",
+		  "0": "logicore:datacenter_controller[facing=down]",
+		  "A": "minecraft:iron_door[half=upper,open=true,facing=south]",
+		  "B": "minecraft:iron_door[half=lower,open=true,facing=south]"
+		},
+		"symmetrical": false
+	  },
+	  "text": "The Controller replaces one of the wall blocks."
+	},
+	{
+	  "type": "patchouli:text",
+	  "text": "Walls must be any block with the tag $(thing)logicore:valid_datacenter_wall_block$().$(br2)Frames must be any block with the tag $(thing)logicore:valid_datacenter_frame_block$().$(br2)Inside can only contain blocks with the tag: $(thing)logicore:valid_datacenter_inner_block$()."
+	}
+  ]
+}

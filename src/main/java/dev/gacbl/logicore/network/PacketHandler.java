@@ -3,6 +3,7 @@ package dev.gacbl.logicore.network;
 import dev.gacbl.logicore.LogiCore;
 import dev.gacbl.logicore.network.payload.SyncCableDataPayload;
 import dev.gacbl.logicore.network.payload.SyncCycleDataPayload;
+import dev.gacbl.logicore.network.payload.SyncDataCenterPositionPayload;
 import dev.gacbl.logicore.network.payload.SyncMultiblockDataPayload;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
@@ -40,6 +41,12 @@ public class PacketHandler {
                 SyncCableDataPayload.TYPE,
                 SyncCableDataPayload.STREAM_CODEC,
                 SyncCableDataPayload.HANDLER
+        );
+
+        registrar.playToServer(
+                SyncDataCenterPositionPayload.TYPE,
+                SyncDataCenterPositionPayload.STREAM_CODEC,
+                SyncDataCenterPositionPayload.HANDLER
         );
     }
 

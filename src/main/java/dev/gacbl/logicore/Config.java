@@ -13,6 +13,7 @@ public class Config {
     public static final ModConfigSpec.ConfigValue<Integer> SERVER_RACK_CYCLE_CAPACITY;
     public static final ModConfigSpec.ConfigValue<Integer> SERVER_RACK_FE_CAPACITY;
     public static final ModConfigSpec.ConfigValue<Integer> SERVER_RACK_DATACENTER_BOOST;
+    public static final ModConfigSpec.ConfigValue<Boolean> SERVER_RACK_PRODUCES_PARTICLES;
 
     //Computer
     public static final ModConfigSpec.ConfigValue<Integer> COMPUTER_BASE_CYCLE_GENERATION;
@@ -25,6 +26,8 @@ public class Config {
     //Data center
     public static final ModConfigSpec.ConfigValue<Integer> DATACENTER_MIN_MULTIBLOCK_SIZE;
     public static final ModConfigSpec.ConfigValue<Integer> DATACENTER_MAX_MULTIBLOCK_SIZE;
+    public static final ModConfigSpec.ConfigValue<Boolean> DATACENTER_PRODUCES_SOUND;
+    public static final ModConfigSpec.ConfigValue<Boolean> DATACENTER_PRODUCES_PARTICLES;
 
     static {
         BUILDER.comment("LogiCore Configuration");
@@ -58,6 +61,10 @@ public class Config {
         SERVER_RACK_DATACENTER_BOOST = BUILDER
                 .comment(" How much of a boost in cycle production the server rack gets from being in datacenter")
                 .defineInRange("datacenter_boost", 500, 1, Integer.MAX_VALUE);
+
+        SERVER_RACK_PRODUCES_PARTICLES = BUILDER
+                .comment(" If the server rack produces particles when it's generating cycles")
+                .define("produce_particles", true);
 
         BUILDER.pop();
         //</editor-fold>
@@ -95,6 +102,7 @@ public class Config {
         BUILDER.pop();
         //</editor-fold>
 
+        //<editor-fold desc="Datacenter">
         BUILDER.push("Data center");
 
         DATACENTER_MIN_MULTIBLOCK_SIZE = BUILDER
@@ -105,7 +113,16 @@ public class Config {
                 .comment(" Max dimensions for datacenter multiblock structure (ex: value: 5 is 5x5x5)")
                 .defineInRange("max_datacenter_size", 32, 1, 64);
 
+        DATACENTER_PRODUCES_SOUND = BUILDER
+                .comment(" If the datacenter produces ambient sound when it's formed")
+                .define("produce_sound", true);
+
+        DATACENTER_PRODUCES_PARTICLES = BUILDER
+                .comment(" If the datacenter produces particles when it's formed")
+                .define("produce_particles", true);
+
         BUILDER.pop();
+        //</editor-fold>
 
         SPEC = BUILDER.build();
     }

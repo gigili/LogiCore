@@ -1,6 +1,7 @@
 package dev.gacbl.logicore.blocks.serverrack;
 
 import com.mojang.serialization.MapCodec;
+import dev.gacbl.logicore.Config;
 import dev.gacbl.logicore.items.processorunit.ProcessorUnitModule;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -202,11 +203,6 @@ public class ServerRackBlock extends BaseEntityBlock {
     }
 
     @Override
-    public int getLightEmission(@NotNull BlockState state, @NotNull BlockGetter level, @NotNull BlockPos pos) {
-        return (state.getValue(ServerRackModule.GENERATING)) ? 12 : 0;
-    }
-
-    @Override
     protected void onPlace(@NotNull BlockState state, @NotNull Level level, @NotNull BlockPos pos, @NotNull BlockState oldState, boolean movedByPiston) {
         super.onPlace(state, level, pos, oldState, movedByPiston);
         if (level.isClientSide) return;
@@ -218,7 +214,7 @@ public class ServerRackBlock extends BaseEntityBlock {
 
     @Override
     public void animateTick(BlockState state, @NotNull Level level, @NotNull BlockPos pos, @NotNull RandomSource random) {
-        if (!state.getValue(ServerRackModule.GENERATING)) {
+        if (!state.getValue(ServerRackModule.GENERATING) || !Config.SERVER_RACK_PRODUCES_PARTICLES.get()) {
             return;
         }
 

@@ -1,5 +1,6 @@
 package dev.gacbl.logicore.blocks.datacenter;
 
+import dev.gacbl.logicore.Config;
 import dev.gacbl.logicore.items.processorunit.ProcessorUnitModule;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -78,17 +79,16 @@ public class DatacenterControllerBlock extends Block implements EntityBlock {
             if (be instanceof DatacenterControllerBlockEntity controller) {
                 if (!state.getValue(FORMED)) {
                     controller.attemptFormation();
+                    BlockState newState = level.getBlockState(pos);
                     if (level.getServer() != null) {
-                        level.getServer().executeIfPossible(() -> {
-                            if (state.getValue(FORMED)) {
-                                Component msg = Component.translatable("message.logicore.datacenter.formed");
-                                player.displayClientMessage(msg, true);
-                            } else {
-                                String errorPos = controller.lastException != null && controller.lastException.pos != null ? controller.lastException.pos.toShortString() : "";
-                                Component msg = controller.lastException != null ? Component.translatable(controller.lastException.message, errorPos) : Component.translatable("errors.logicore.datacenter.invalid_form");
-                                player.displayClientMessage(msg, true);
-                            }
-                        });
+                        if (newState.getValue(FORMED)) {
+                            Component msg = Component.translatable("message.logicore.datacenter.formed");
+                            player.displayClientMessage(msg, true);
+                        } else {
+                            String errorPos = controller.lastException != null && controller.lastException.pos != null ? controller.lastException.pos.toShortString() : "";
+                            Component msg = controller.lastException != null ? Component.translatable(controller.lastException.message, errorPos) : Component.translatable("errors.logicore.datacenter.invalid_form");
+                            player.displayClientMessage(msg, true);
+                        }
                     }
                 } else {
                     player.displayClientMessage(Component.translatable("message.logicore.datacenter.formed"), true);
@@ -132,17 +132,22 @@ public class DatacenterControllerBlock extends Block implements EntityBlock {
             double y = pos.getY() + 0.5D + (back.getStepY() * 0.55D);
             double z = pos.getZ() + 0.5D + (back.getStepZ() * 0.9D);
 
-            level.addParticle(ParticleTypes.LARGE_SMOKE, x, y, z, 0.0D, 0.0D, 0.0D);
-            level.playLocalSound(
-                    (double)pos.getX() + 0.5,
-                    (double)pos.getY() + 0.5,
-                    (double)pos.getZ() + 0.5,
-                    DatacenterModule.DATACENTER_AMBIENT.get(),
-                    SoundSource.BLOCKS,
-                    0.5F + random.nextFloat(),
-                    random.nextFloat() * 0.7F + 0.6F,
-                    false
-            );
+            if (Config.DATACENTER_PRODUCES_PARTICLES.get()) {
+                level.addParticle(ParticleTypes.LARGE_SMOKE, x, y, z, 0.0D, 0.0D, 0.0D);
+            }
+
+            if (Config.DATACENTER_PRODUCES_SOUND.get()) {
+                level.playLocalSound(
+                        (double) pos.getX() + 0.5,
+                        (double) pos.getY() + 0.5,
+                        (double) pos.getZ() + 0.5,
+                        DatacenterModule.DATACENTER_AMBIENT.get(),
+                        SoundSource.BLOCKS,
+                        0.5F + random.nextFloat(),
+                        random.nextFloat() * 0.7F + 0.6F,
+                        false
+                );
+            }
         }
     }
 }

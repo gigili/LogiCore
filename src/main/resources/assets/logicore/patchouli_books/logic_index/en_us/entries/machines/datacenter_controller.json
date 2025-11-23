@@ -1,0 +1,18 @@
+{
+  "name": "Datacenter controller",
+  "icon": "logicore:datacenter_controller",
+  "category": "logicore:machines_category",
+  "pages": [
+	{
+	  "type": "patchouli:spotlight",
+	  "item": "logicore:datacenter_controller",
+	  "title": "Datacenter controller",
+	  "text": "This block is a heart of the datacenter. It check if the structure if formed correctly and is used to check the overall production and usages of your datacenter.$(br2)Checkout $(l:logicore:architecture/datacenter)Datacenter$() page for multiblock guide."
+	},
+	{
+	  "type": "patchouli:crafting",
+	  "recipe": "logicore:datacenter_controller",
+	  "text": "A machines used for constructing the multiblock."
+	}
+  ]
+}

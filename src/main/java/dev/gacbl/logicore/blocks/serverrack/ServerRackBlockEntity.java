@@ -47,13 +47,7 @@ public class ServerRackBlockEntity extends CoreCycleProviderBlockEntity implemen
 
     @Override
     public int getProcessorCount() {
-        int count = 0;
-        for (int i = 0; i < itemHandler.getSlots(); i++) {
-            if (!itemHandler.getStackInSlot(i).isEmpty()) {
-                count++;
-            }
-        }
-        return count;
+        return this.cachedProcessorCount;
     }
 
     @Override
@@ -66,11 +60,13 @@ public class ServerRackBlockEntity extends CoreCycleProviderBlockEntity implemen
     protected void loadAdditional(@NotNull CompoundTag tag, @NotNull HolderLookup.Provider registries) {
         super.loadAdditional(tag, registries);
         itemHandler.deserializeNBT(registries, tag.getCompound("inventory"));
+        updateProcessorCountCache();
     }
 
     private final ItemStackHandler itemHandler = new ItemStackHandler(RACK_CAPACITY) {
         @Override
         protected void onContentsChanged(int slot) {
+            updateProcessorCountCache();
             setChanged();
         }
 
@@ -95,5 +91,15 @@ public class ServerRackBlockEntity extends CoreCycleProviderBlockEntity implemen
         for (int i = 0; i < itemHandler.getSlots(); i++) {
             Containers.dropItemStack(this.level, this.worldPosition.getX(), this.worldPosition.getY(), this.worldPosition.getZ(), itemHandler.getStackInSlot(i));
         }
+    }
+
+    private void updateProcessorCountCache() {
+        int count = 0;
+        for (int i = 0; i < itemHandler.getSlots(); i++) {
+            if (!itemHandler.getStackInSlot(i).isEmpty()) {
+                count++;
+            }
+        }
+        this.cachedProcessorCount = count;
     }
 }
