@@ -1,6 +1,5 @@
 package dev.gacbl.logicore;
 
-import com.mojang.logging.LogUtils;
 import dev.gacbl.logicore.blocks.computer.ComputerModule;
 import dev.gacbl.logicore.blocks.datacable.DataCableModule;
 import dev.gacbl.logicore.blocks.datacable.cable_network.NetworkManager;
@@ -27,12 +26,10 @@ import net.neoforged.neoforge.common.NeoForge;
 import net.neoforged.neoforge.event.RegisterCommandsEvent;
 import net.neoforged.neoforge.event.server.ServerStartingEvent;
 import net.neoforged.neoforge.event.tick.LevelTickEvent;
-import org.slf4j.Logger;
 
 @Mod(LogiCore.MOD_ID)
 public class LogiCore {
     public static final String MOD_ID = "logicore";
-    public static final Logger LOGGER = LogUtils.getLogger();
 
     public LogiCore(IEventBus modEventBus, ModContainer modContainer) {
         NeoForge.EVENT_BUS.register(this);
@@ -44,7 +41,6 @@ public class LogiCore {
         ComputerModule.register(modEventBus);
         ServerRackModule.register(modEventBus);
         DataCableModule.register(modEventBus);
-
         DatacenterModule.register(modEventBus);
 
         PacketHandler.register(modEventBus);

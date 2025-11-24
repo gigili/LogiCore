@@ -14,7 +14,7 @@ import org.jetbrains.annotations.NotNull;
 
 public record SyncDataCenterPositionPayload(BlockPos controllerPos, BlockPos entityPos) implements CustomPacketPayload {
 
-    public static final Type<SyncDataCenterPositionPayload> TYPE = new Type<>(ResourceLocation.fromNamespaceAndPath(LogiCore.MOD_ID, "sync_cycle_data"));
+    public static final Type<SyncDataCenterPositionPayload> TYPE = new Type<>(ResourceLocation.fromNamespaceAndPath(LogiCore.MOD_ID, "sync_datacenter_position"));
 
     public static final StreamCodec<ByteBuf, SyncDataCenterPositionPayload> STREAM_CODEC = StreamCodec.composite(
             BlockPos.STREAM_CODEC, SyncDataCenterPositionPayload::controllerPos,
