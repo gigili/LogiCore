@@ -26,7 +26,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.Objects;
 
-public class CoreCycleProviderBlockEntity extends BlockEntity implements ICycleProvider {
+public abstract class CoreCycleProviderBlockEntity extends BlockEntity implements ICycleProvider {
     private int BASE_CYCLE_GENERATION;
     private int CYCLES_PER_PROCESSOR;
     private int FE_PER_CYCLE;
@@ -90,9 +90,7 @@ public class CoreCycleProviderBlockEntity extends BlockEntity implements ICycleP
         return this.data;
     }
 
-    public int getProcessorCount() {
-        return 0;
-    }
+    public abstract int getProcessorCount();
 
     @Override
     public long getCyclesAvailable() {

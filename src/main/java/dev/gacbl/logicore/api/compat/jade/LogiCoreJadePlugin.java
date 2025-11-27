@@ -1,6 +1,8 @@
 package dev.gacbl.logicore.api.compat.jade;
 
 import dev.gacbl.logicore.LogiCore;
+import dev.gacbl.logicore.blocks.compiler.CompilerBlock;
+import dev.gacbl.logicore.blocks.compiler.CompilerBlockEntity;
 import dev.gacbl.logicore.blocks.computer.ComputerBlock;
 import dev.gacbl.logicore.blocks.computer.ComputerBlockEntity;
 import dev.gacbl.logicore.blocks.serverrack.ServerRackBlock;
@@ -18,11 +20,13 @@ public class LogiCoreJadePlugin implements IWailaPlugin {
     public void registerClient(IWailaClientRegistration registration) {
         registration.registerBlockComponent(CoreCycleProvider.INSTANCE, ServerRackBlock.class);
         registration.registerBlockComponent(CoreCycleProvider.INSTANCE, ComputerBlock.class);
+        registration.registerBlockComponent(CompilerProvider.INSTANCE, CompilerBlock.class);
     }
 
     @Override
     public void register(IWailaCommonRegistration registration) {
         registration.registerBlockDataProvider(CoreCycleProvider.INSTANCE, ServerRackBlockEntity.class);
         registration.registerBlockDataProvider(CoreCycleProvider.INSTANCE, ComputerBlockEntity.class);
+        registration.registerBlockDataProvider(CompilerProvider.INSTANCE, CompilerBlockEntity.class);
     }
 }

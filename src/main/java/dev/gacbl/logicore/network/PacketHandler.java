@@ -16,14 +16,13 @@ import net.neoforged.neoforge.network.event.RegisterPayloadHandlersEvent;
 import net.neoforged.neoforge.network.registration.PayloadRegistrar;
 
 public class PacketHandler {
-    private static PayloadRegistrar registrar;
 
     public static void register(final IEventBus modEventBus) {
         modEventBus.addListener(PacketHandler::onRegisterPayloadHandlers);
     }
 
     private static void onRegisterPayloadHandlers(final RegisterPayloadHandlersEvent event) {
-        registrar = event.registrar(LogiCore.MOD_ID).versioned("1.0");
+        PayloadRegistrar registrar = event.registrar(LogiCore.MOD_ID).versioned("1.0");
 
         registrar.playToClient(
                 SyncCycleDataPayload.TYPE,

@@ -1,0 +1,13 @@
+{
+  "type": "logicore:compiler",
+  "input": {
+	"item": "minecraft:stick",
+	"count": 4
+  },
+  "output": {
+	"id": "minecraft:oak_planks",
+	"count": 1,
+	"chance": 0.65
+  },
+  "cycles": 200
+}

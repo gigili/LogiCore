@@ -1,6 +1,7 @@
 package dev.gacbl.logicore.core;
 
 import dev.gacbl.logicore.LogiCore;
+import dev.gacbl.logicore.blocks.compiler.CompilerModule;
 import dev.gacbl.logicore.blocks.computer.ComputerModule;
 import dev.gacbl.logicore.blocks.datacable.DataCableModule;
 import dev.gacbl.logicore.blocks.datacenter.DatacenterModule;
@@ -27,6 +28,7 @@ public class CreativeTabModule {
                         output.accept(ProcessorUnitModule.PROCESSOR_UNIT.get());
                         output.accept(ComputerModule.COMPUTER_ITEM.get());
                         output.accept(DatacenterModule.DATACENTER_CONTROLLER.get());
+                        output.accept(CompilerModule.COMPILER_ITEM.get());
                     })
                     .build());
 

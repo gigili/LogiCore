@@ -1,6 +1,7 @@
 package dev.gacbl.logicore.data;
 
 import dev.gacbl.logicore.LogiCore;
+import dev.gacbl.logicore.blocks.compiler.CompilerModule;
 import dev.gacbl.logicore.blocks.computer.ComputerModule;
 import dev.gacbl.logicore.blocks.datacable.DataCableModule;
 import dev.gacbl.logicore.blocks.datacenter.DatacenterModule;
@@ -57,7 +58,18 @@ public class ModBlockTagProvider extends BlockTagsProvider {
         tag(BlockTags.create(ResourceLocation.fromNamespaceAndPath("c", "relocation_not_supported"))).add(DatacenterModule.DATACENTER_CONTROLLER.get());
         tag(BlockTags.create(ResourceLocation.fromNamespaceAndPath("mekanism", "cardboard_blacklist"))).add(DatacenterModule.DATACENTER_CONTROLLER.get());
 
-        // Optional other mod tag setups
+        tag(BlockTags.MINEABLE_WITH_PICKAXE).add(CompilerModule.COMPILER_BLOCK.get());
+        tag(BlockTags.NEEDS_IRON_TOOL).add(CompilerModule.COMPILER_BLOCK.get());
+        tag(BlockTags.create(ResourceLocation.fromNamespaceAndPath("justdirethings", "eclipsegate_deny"))).add(CompilerModule.COMPILER_BLOCK.get());
+        tag(BlockTags.create(ResourceLocation.fromNamespaceAndPath("justdirethings", "phase_deny"))).add(CompilerModule.COMPILER_BLOCK.get());
+        tag(BlockTags.create(ResourceLocation.fromNamespaceAndPath("justdirethings", "swapper_deny"))).add(CompilerModule.COMPILER_BLOCK.get());
+        tag(BlockTags.create(ResourceLocation.fromNamespaceAndPath("c", "relocation_not_supported"))).add(CompilerModule.COMPILER_BLOCK.get());
+        tag(BlockTags.create(ResourceLocation.fromNamespaceAndPath("mekanism", "cardboard_blacklist"))).add(CompilerModule.COMPILER_BLOCK.get());
+
+        setupOptionalTags();
+    }
+
+    private void setupOptionalTags() {
         tag(ModTags.Blocks.IS_ENERGY_GENERATOR).addOptional(ResourceLocation.fromNamespaceAndPath("justdirethings", "generatort1"));
         tag(ModTags.Blocks.IS_ENERGY_GENERATOR).addOptional(ResourceLocation.fromNamespaceAndPath("justdirethings", "generatortfluid1"));
         tag(ModTags.Blocks.IS_ENERGY_CABLE).addOptional(ResourceLocation.fromNamespaceAndPath("mekanism", "quantum_entagloporter"));
@@ -120,5 +132,6 @@ public class ModBlockTagProvider extends BlockTagsProvider {
         tag(ModTags.Blocks.VALID_DATACENTER_INNER_BLOCK).addOptional(ResourceLocation.fromNamespaceAndPath("ae2", "quantum_ring"));
         tag(ModTags.Blocks.VALID_DATACENTER_INNER_BLOCK).addOptional(ResourceLocation.fromNamespaceAndPath("ae2", "quantum_link"));
         tag(ModTags.Blocks.VALID_DATACENTER_INNER_BLOCK).addOptional(ResourceLocation.fromNamespaceAndPath("ae2", "quartz_fiber"));
+        tag(ModTags.Blocks.VALID_DATACENTER_INNER_BLOCK).addOptional(ResourceLocation.fromNamespaceAndPath("torchmaster", "invisible_light"));
     }
 }

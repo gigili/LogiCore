@@ -6,6 +6,7 @@
   "tooltip.logicore.cycles": "Cycles: %s / %s C",
   "tooltip.logicore.processors": "Processors: %s / %s",
   "config.jade.plugin_logicore.server_rack": "Server rack config",
+  "config.jade.plugin_logicore.compiler": "Compiler",
   "block.logicore.computer": "Computer",
   "tooltip.logicore.energy_stored": "Energy: %d / %d FE",
   "ui.tooltip.logicore.cycles": "Cycles:",
@@ -27,5 +28,7 @@
   "errors.logicore.multiblock.invalid_frame": "Invalid structure: Invalid frame block at %s",
   "errors.logicore.multiblock.invalid_wall": "Invalid structure: Invalid wall block at %s",
   "errors.logicore.multiblock.invalid_interior": "Invalid structure: Invalid interior block at %s",
-  "sounds.logicore.datacenter.ambient": "Datacenter hum"
+  "sounds.logicore.datacenter.ambient": "Datacenter hum",
+  "block.logicore.compiler": "Compiler",
+  "item.logicore.compiler": "Compiler"
 }

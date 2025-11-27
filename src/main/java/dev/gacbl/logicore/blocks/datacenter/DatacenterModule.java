@@ -1,6 +1,7 @@
 package dev.gacbl.logicore.blocks.datacenter;
 
 import dev.gacbl.logicore.LogiCore;
+import dev.gacbl.logicore.core.ModCapabilities;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceLocation;
@@ -12,6 +13,7 @@ import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.material.MapColor;
 import net.neoforged.bus.api.IEventBus;
+import net.neoforged.neoforge.capabilities.RegisterCapabilitiesEvent;
 import net.neoforged.neoforge.registries.DeferredBlock;
 import net.neoforged.neoforge.registries.DeferredHolder;
 import net.neoforged.neoforge.registries.DeferredRegister;
@@ -49,5 +51,14 @@ public class DatacenterModule {
         ITEMS.register(eventBus);
         BLOCK_ENTITIES.register(eventBus);
         SOUND_EVENTS.register(eventBus);
+        eventBus.addListener(DatacenterModule::registerCapabilities);
+    }
+
+    private static void registerCapabilities(RegisterCapabilitiesEvent event) {
+        event.registerBlockEntity(
+                ModCapabilities.CYCLE_PROVIDER,
+                DatacenterModule.DATACENTER_CONTROLLER_BE.get(),
+                (blockEntity, context) -> blockEntity
+        );
     }
 }

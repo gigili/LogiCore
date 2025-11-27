@@ -63,6 +63,11 @@ public class CycleStorage implements ICycleStorage {
         return cyclesReceived;
     }
 
+    @Override
+    public long getCyclesStored() {
+        return this.cycles;
+    }
+
     public void setCycleDemand(long cycleDemand) {
         this.cycleDemand = cycleDemand;
     }

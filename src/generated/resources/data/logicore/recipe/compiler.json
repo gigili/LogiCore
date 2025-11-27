@@ -1,0 +1,24 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "redstone",
+  "key": {
+	"N": {
+	  "item": "minecraft:nether_star"
+	},
+	"P": {
+	  "item": "logicore:processor_unit"
+	},
+	"R": {
+	  "item": "minecraft:redstone"
+	}
+  },
+  "pattern": [
+	"RPR",
+	"PNP",
+	"RPR"
+  ],
+  "result": {
+	"count": 1,
+	"id": "logicore:compiler"
+  }
+}

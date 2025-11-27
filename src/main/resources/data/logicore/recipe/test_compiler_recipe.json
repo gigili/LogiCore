@@ -1,0 +1,13 @@
+{
+  "type": "logicore:compiler",
+  "input": {
+	"item": "minecraft:cobblestone",
+	"count": 4
+  },
+  "output": {
+	"id": "minecraft:diamond",
+	"count": 1,
+	"chance": 1
+  },
+  "cycles": 200
+}

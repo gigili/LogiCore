@@ -1,5 +1,7 @@
 package dev.gacbl.logicore;
 
+import dev.gacbl.logicore.blocks.compiler.CompilerModule;
+import dev.gacbl.logicore.blocks.compiler.ui.CompilerScreen;
 import dev.gacbl.logicore.blocks.computer.ComputerModule;
 import dev.gacbl.logicore.blocks.datacable.DataCableModule;
 import dev.gacbl.logicore.blocks.datacable.cable_network.NetworkManager;
@@ -35,14 +37,12 @@ public class LogiCore {
         NeoForge.EVENT_BUS.register(this);
 
         CreativeTabModule.register(modEventBus);
-
         ProcessorUnitModule.register(modEventBus);
-
         ComputerModule.register(modEventBus);
         ServerRackModule.register(modEventBus);
         DataCableModule.register(modEventBus);
         DatacenterModule.register(modEventBus);
-
+        CompilerModule.register(modEventBus);
         PacketHandler.register(modEventBus);
 
         modContainer.registerConfig(ModConfig.Type.COMMON, Config.SPEC, "logicore.toml");
@@ -76,6 +76,7 @@ public class LogiCore {
         @SubscribeEvent
         public static void registerScreens(RegisterMenuScreensEvent event) {
             event.register(ServerRackModule.SERVER_RACK_MENU.get(), ServerRackScreen::new);
+            event.register(CompilerModule.COMPILER_MENU.get(), CompilerScreen::new);
         }
     }
 }

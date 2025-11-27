@@ -85,6 +85,10 @@
 	{
 	  "id": "ae2:quartz_fiber",
 	  "required": false
+	},
+	{
+	  "id": "torchmaster:invisible_light",
+	  "required": false
 	}
   ]
 }

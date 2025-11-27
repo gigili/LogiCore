@@ -1,5 +1,6 @@
 package dev.gacbl.logicore.data;
 
+import dev.gacbl.logicore.blocks.compiler.CompilerBlock;
 import dev.gacbl.logicore.blocks.computer.ComputerBlock;
 import dev.gacbl.logicore.blocks.datacable.DataCableBlock;
 import dev.gacbl.logicore.blocks.datacenter.DatacenterControllerBlock;
@@ -27,5 +28,6 @@ public class ModRecipeProvider extends RecipeProvider implements IConditionBuild
         ComputerBlock.getRecipe().unlockedBy("has_redstone", has(Items.REDSTONE)).save(recipeOutput);
         ProcessorUnitItem.getRecipe().unlockedBy("has_redstone", has(Items.REDSTONE)).save(recipeOutput);
         DatacenterControllerBlock.getRecipe().unlockedBy("has_redstone", has(Items.REDSTONE)).save(recipeOutput);
+        CompilerBlock.getRecipe().unlockedBy("has_redstone", has(Items.REDSTONE)).save(recipeOutput);
     }
 }
