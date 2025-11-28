@@ -2,13 +2,10 @@ package dev.gacbl.logicore.blocks.compiler.ui;
 
 import dev.gacbl.logicore.blocks.compiler.CompilerBlockEntity;
 import dev.gacbl.logicore.blocks.compiler.CompilerModule;
-import net.minecraft.core.BlockPos;
-import net.minecraft.network.RegistryFriendlyByteBuf;
+import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.inventory.AbstractContainerMenu;
-import net.minecraft.world.inventory.ContainerLevelAccess;
-import net.minecraft.world.inventory.Slot;
+import net.minecraft.world.inventory.*;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
@@ -17,6 +14,8 @@ import org.jetbrains.annotations.NotNull;
 
 public class CompilerMenu extends AbstractContainerMenu {
     public final CompilerBlockEntity blockEntity;
+    private final Level level;
+    private final ContainerData data;
 
     // CREDIT GOES TO: diesieben07 | https://github.com/diesieben07/SevenCommons
     // must assign a slot number to each of the slots used by the GUI.
@@ -34,23 +33,36 @@ public class CompilerMenu extends AbstractContainerMenu {
     private static final int TE_INVENTORY_FIRST_SLOT_INDEX = VANILLA_FIRST_SLOT_INDEX + VANILLA_SLOT_COUNT;
     private static final int TE_INVENTORY_SLOT_COUNT = 2;  // must be the number of slots you have!
 
-    public CompilerMenu(int containerId, Inventory playerInventory, BlockPos pos) {
-        this(containerId, playerInventory, playerInventory.player.level().getBlockEntity(pos));
+    public CompilerMenu(int pContainerId, Inventory inv, FriendlyByteBuf extraData) {
+        this(pContainerId, inv, inv.player.level().getBlockEntity(extraData.readBlockPos()), new SimpleContainerData(2));
     }
 
-    public CompilerMenu(int containerId, Inventory playerInventory, BlockEntity entity) {
-        super(CompilerModule.COMPILER_MENU.get(), containerId);
-        this.blockEntity = (CompilerBlockEntity) entity;
+    public CompilerMenu(int pContainerId, Inventory inv, BlockEntity entity, ContainerData data) {
+        super(CompilerModule.COMPILER_MENU.get(), pContainerId);
+        checkContainerSize(inv, 2);
+        blockEntity = ((CompilerBlockEntity) entity);
+        this.level = inv.player.level();
+        this.data = data;
 
-        addPlayerInventory(playerInventory);
-        addPlayerHotbar(playerInventory);
+        addPlayerInventory(inv);
+        addPlayerHotbar(inv);
 
         this.addSlot(new SlotItemHandler(this.blockEntity.getItemHandler(null), 0, 37, 43));
         this.addSlot(new SlotItemHandler(this.blockEntity.getItemHandler(null), 1, 121, 43));
+
+        addDataSlots(data);
     }
 
-    public CompilerMenu(int i, Inventory inventory, RegistryFriendlyByteBuf registryFriendlyByteBuf) {
-        this(i, inventory, registryFriendlyByteBuf.readBlockPos());
+    public boolean isCrafting() {
+        return data.get(0) > 0;
+    }
+
+    public int getScaledArrowProgress() {
+        int progress = this.data.get(0);
+        int maxProgress = this.data.get(1);
+        int arrowSize = 43;
+
+        return maxProgress != 0 && progress != 0 ? progress * arrowSize / maxProgress : 0;
     }
 
     @Override

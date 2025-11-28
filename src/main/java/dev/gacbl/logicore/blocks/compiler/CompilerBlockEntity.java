@@ -18,6 +18,7 @@ import net.minecraft.world.MenuProvider;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
+import net.minecraft.world.inventory.ContainerData;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.RecipeHolder;
 import net.minecraft.world.level.Level;
@@ -50,6 +51,26 @@ public class CompilerBlockEntity extends BlockEntity implements ICycleConsumer, 
     public CompilerBlockEntity(BlockPos pos, BlockState blockState) {
         super(CompilerModule.COMPILER_BLOCK_ENTITY.get(), pos, blockState);
     }
+
+    protected final ContainerData data = new ContainerData() {
+        @Override
+        public int get(int index) {
+            return switch (index) {
+                case 0 -> CompilerBlockEntity.this.progress;
+                case 1 -> CompilerBlockEntity.this.recipe != null ? CompilerBlockEntity.this.recipe.getTime() : 10;
+                default -> 0;
+            };
+        }
+
+        @Override
+        public void set(int index, int value) {
+        }
+
+        @Override
+        public int getCount() {
+            return 2;
+        }
+    };
 
     private final ItemStackHandler itemHandler = new ItemStackHandler(2) {
         @Override
@@ -235,7 +256,7 @@ public class CompilerBlockEntity extends BlockEntity implements ICycleConsumer, 
 
     @Override
     public @Nullable AbstractContainerMenu createMenu(int containerId, @NotNull Inventory playerInventory, @NotNull Player player) {
-        return new CompilerMenu(containerId, playerInventory, this);
+        return new CompilerMenu(containerId, playerInventory, this, this.data);
     }
 
     @Override

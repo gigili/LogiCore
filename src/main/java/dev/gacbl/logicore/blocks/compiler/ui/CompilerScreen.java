@@ -28,5 +28,9 @@ public class CompilerScreen extends AbstractContainerScreen<CompilerMenu> {
         int y = (this.height - this.imageHeight) / 2;
         graphics.blit(TEXTURE, x, y, 0, 0, 175, 188);
         renderTooltip(graphics, mouseX, mouseY);
+
+        if (menu.isCrafting()) {
+            graphics.blit(TEXTURE, x + 63, y + 36, 176, 0, menu.getScaledArrowProgress(), 29);
+        }
     }
 }
