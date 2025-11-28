@@ -1,11 +1,9 @@
 package dev.gacbl.logicore.blocks.compiler;
 
 import dev.gacbl.logicore.api.computation.ICycleConsumer;
-import dev.gacbl.logicore.blocks.compiler.recipe.CompilerRecipe;
-import dev.gacbl.logicore.blocks.compiler.recipe.CompilerRecipeInput;
+import dev.gacbl.logicore.api.cycles.CycleValueManager;
 import dev.gacbl.logicore.blocks.compiler.ui.CompilerMenu;
 import dev.gacbl.logicore.blocks.datacable.DataCableBlockEntity;
-import dev.gacbl.logicore.blocks.datacable.cable_network.ComputationNetwork;
 import dev.gacbl.logicore.blocks.datacable.cable_network.NetworkManager;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -20,7 +18,6 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.inventory.ContainerData;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.crafting.RecipeHolder;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
@@ -30,40 +27,35 @@ import net.neoforged.neoforge.items.wrapper.RangedWrapper;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.Optional;
 import java.util.UUID;
 
 public class CompilerBlockEntity extends BlockEntity implements ICycleConsumer, MenuProvider {
-    private static final int MAX_PROGRESS = 10;
     public static final int INPUT_SLOT = 0;
     public static final int OUTPUT_SLOT = 1;
+    private static final int PROCESSING_TIME = 20;
 
     private long currentCycles = 0;
     private int progress = 0;
-    private CompilerRecipe recipe;
 
-    public int getProgress() {
-        return progress;
-    }
-
-    private RecipeHolder<CompilerRecipe> cachedRecipe = null;
-
-    public CompilerBlockEntity(BlockPos pos, BlockState blockState) {
-        super(CompilerModule.COMPILER_BLOCK_ENTITY.get(), pos, blockState);
+    public long getCurrentCycles() {
+        return this.currentCycles;
     }
 
     protected final ContainerData data = new ContainerData() {
         @Override
-        public int get(int index) {
-            return switch (index) {
+        public int get(int pIndex) {
+            return switch (pIndex) {
                 case 0 -> CompilerBlockEntity.this.progress;
-                case 1 -> CompilerBlockEntity.this.recipe != null ? CompilerBlockEntity.this.recipe.getTime() : 10;
+                case 1 -> PROCESSING_TIME;
                 default -> 0;
             };
         }
 
         @Override
-        public void set(int index, int value) {
+        public void set(int pIndex, int pValue) {
+            if (pIndex == 0) {
+                CompilerBlockEntity.this.progress = pValue;
+            }
         }
 
         @Override
@@ -71,6 +63,10 @@ public class CompilerBlockEntity extends BlockEntity implements ICycleConsumer, 
             return 2;
         }
     };
+
+    public CompilerBlockEntity(BlockPos pos, BlockState blockState) {
+        super(CompilerModule.COMPILER_BLOCK_ENTITY.get(), pos, blockState);
+    }
 
     private final ItemStackHandler itemHandler = new ItemStackHandler(2) {
         @Override
@@ -83,7 +79,12 @@ public class CompilerBlockEntity extends BlockEntity implements ICycleConsumer, 
 
         @Override
         public boolean isItemValid(int slot, @NotNull ItemStack stack) {
-            return slot == INPUT_SLOT;
+            return slot == INPUT_SLOT && CycleValueManager.hasCycleValue(stack);
+        }
+
+        @Override
+        public int getSlotLimit(int slot) {
+            return slot == INPUT_SLOT ? 1 : super.getSlotLimit(slot);
         }
     };
 
@@ -102,14 +103,8 @@ public class CompilerBlockEntity extends BlockEntity implements ICycleConsumer, 
     };
 
     public IItemHandler getItemHandler(@Nullable Direction side) {
-        if (side == null) {
-            return itemHandler;
-        }
-
-        if (side == Direction.DOWN) {
-            return automationOutputHandler;
-        }
-
+        if (side == null) return itemHandler;
+        if (side == Direction.DOWN) return automationOutputHandler;
         return automationInputHandler;
     }
 
@@ -120,22 +115,25 @@ public class CompilerBlockEntity extends BlockEntity implements ICycleConsumer, 
 
     @Override
     public long getCycleDemand() {
-        RecipeHolder<CompilerRecipe> recipe = getRecipe();
-        if (recipe != null && canInsertOutput(recipe.value())) {
-            return recipe.value().cycles();
+        ItemStack template = itemHandler.getStackInSlot(INPUT_SLOT);
+        if (template.isEmpty()) return 0;
+
+        int cost = CycleValueManager.getCycleValue(template);
+        if (cost <= 0) return 0;
+
+        if (canInsertOutput(template)) {
+            return cost;
         }
         return 0;
     }
 
     @Override
     public long receiveCycles(long maxReceive, boolean simulate) {
-        RecipeHolder<CompilerRecipe> recipe = getRecipe();
-        if (recipe == null) return 0;
+        long cap = 1000000;
+        long space = cap - currentCycles;
+        long accepted = Math.min(maxReceive, space);
 
-        long required = recipe.value().cycles();
-        long accepted = Math.min(maxReceive, required);
-
-        if (!simulate) {
+        if (!simulate && accepted > 0) {
             this.currentCycles += accepted;
             setChanged();
         }
@@ -145,77 +143,48 @@ public class CompilerBlockEntity extends BlockEntity implements ICycleConsumer, 
     public static void serverTick(Level level, BlockPos pos, BlockState state, CompilerBlockEntity be) {
         if (level.isClientSide) return;
 
-        RecipeHolder<CompilerRecipe> recipeHolder = be.getRecipe();
-
-        if (recipeHolder != null && be.canInsertOutput(recipeHolder.value())) {
-            be.recipe = recipeHolder.value();
-
-            if (be.currentCycles >= be.recipe.cycles()) {
-                be.progress++;
-                be.currentCycles -= be.recipe.cycles();
-
-                if (be.progress >= be.recipe.getTime()) {
-                    be.craftItem(be.recipe);
-                    be.progress = 0;
-                }
-                be.setChanged();
-            }
-        } else {
+        ItemStack template = be.itemHandler.getStackInSlot(INPUT_SLOT);
+        if (template.isEmpty() || !CycleValueManager.hasCycleValue(template)) {
             if (be.progress > 0) {
                 be.progress = 0;
-                be.recipe = null;
                 be.setChanged();
-            }
-        }
-    }
-
-    public RecipeHolder<CompilerRecipe> getRecipe() {
-        if (this.level == null) return null;
-
-        ItemStack input = itemHandler.getStackInSlot(INPUT_SLOT);
-        if (input.isEmpty()) return null;
-
-        if (cachedRecipe != null && cachedRecipe.value().matches(new CompilerRecipeInput(input), level)) {
-            return cachedRecipe;
-        }
-
-        Optional<RecipeHolder<CompilerRecipe>> recipe = level.getRecipeManager()
-                .getRecipeFor(CompilerModule.COMPILER_TYPE.get(), new CompilerRecipeInput(input), level);
-
-        cachedRecipe = recipe.orElse(null);
-        return cachedRecipe;
-    }
-
-    private boolean canInsertOutput(CompilerRecipe recipe) {
-        if (level == null) return false;
-        ItemStack result = recipe.getResultItem(level.registryAccess());
-        ItemStack outputStack = itemHandler.getStackInSlot(OUTPUT_SLOT);
-
-        if (outputStack.isEmpty()) return true;
-        if (!ItemStack.isSameItemSameComponents(outputStack, result)) return false;
-
-        return outputStack.getCount() + result.getCount() <= outputStack.getMaxStackSize();
-    }
-
-    private void craftItem(CompilerRecipe recipe) {
-        if (level == null) return;
-
-        itemHandler.extractItem(INPUT_SLOT, recipe.inputCount(), false);
-
-        if (recipe.chance() < 1f) {
-            if (this.level.random.nextFloat() <= recipe.chance()) {
-                craftItems(recipe);
             }
             return;
         }
 
-        craftItems(recipe);
+        int cost = CycleValueManager.getCycleValue(template);
+
+        if (be.currentCycles >= cost && be.canInsertOutput(template)) {
+            be.progress++;
+
+            if (be.progress >= PROCESSING_TIME) {
+                be.currentCycles -= cost;
+
+                ItemStack result = template.copy();
+                result.setCount(1);
+                be.addToOutput(result);
+
+                be.progress = 0;
+            }
+            be.setChanged();
+        } else {
+            if (be.progress > 0) {
+                be.progress = 0;
+                be.setChanged();
+            }
+        }
     }
 
-    private void craftItems(CompilerRecipe recipe) {
-        if (level == null) return;
-        ItemStack result = recipe.getResultItem(level.registryAccess()).copy();
+    private boolean canInsertOutput(ItemStack template) {
+        ItemStack outputStack = itemHandler.getStackInSlot(OUTPUT_SLOT);
+        if (outputStack.isEmpty()) return true;
 
+        if (!ItemStack.isSameItemSameComponents(outputStack, template)) return false;
+
+        return outputStack.getCount() < outputStack.getMaxStackSize();
+    }
+
+    private void addToOutput(ItemStack result) {
         ItemStack existing = itemHandler.getStackInSlot(OUTPUT_SLOT);
         if (existing.isEmpty()) {
             itemHandler.setStackInSlot(OUTPUT_SLOT, result);
@@ -226,9 +195,7 @@ public class CompilerBlockEntity extends BlockEntity implements ICycleConsumer, 
 
     public void dropContents() {
         if (this.level == null) return;
-        for (int i = 0; i < itemHandler.getSlots(); i++) {
-            Containers.dropItemStack(this.level, this.worldPosition.getX(), this.worldPosition.getY(), this.worldPosition.getZ(), itemHandler.getStackInSlot(i));
-        }
+        Containers.dropItemStack(this.level, this.worldPosition.getX(), this.worldPosition.getY(), this.worldPosition.getZ(), itemHandler.getStackInSlot(OUTPUT_SLOT));
     }
 
     @Override
@@ -275,20 +242,14 @@ public class CompilerBlockEntity extends BlockEntity implements ICycleConsumer, 
 
     private void requestCycles() {
         if (level == null || level.isClientSide || level.getServer() == null) return;
-
         NetworkManager manager = NetworkManager.get(level.getServer().overworld());
-
         for (Direction dir : Direction.values()) {
             BlockPos neighborPos = this.worldPosition.relative(dir);
             BlockEntity neighborBE = level.getBlockEntity(neighborPos);
             if (neighborBE instanceof DataCableBlockEntity dcbe) {
                 UUID networkID = dcbe.getNetworkUUID();
-                if (networkID == null) continue;
-
-                if (manager.getNetworks().containsKey(networkID)) {
-                    ComputationNetwork network = manager.getNetworks().get(networkID);
-                    network.setDirty();
-                    break;
+                if (networkID != null && manager.getNetworks().containsKey(networkID)) {
+                    manager.getNetworks().get(networkID).setDirty();
                 }
             }
         }

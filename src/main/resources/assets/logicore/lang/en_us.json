@@ -30,5 +30,9 @@
   "errors.logicore.multiblock.invalid_interior": "Invalid structure: Invalid interior block at %s",
   "sounds.logicore.datacenter.ambient": "Datacenter hum",
   "block.logicore.compiler": "Compiler",
-  "item.logicore.compiler": "Compiler"
+  "item.logicore.compiler": "Compiler",
+  "tooltip.logicore.items.cycles": "%s cycles",
+  "tooltip.logicore.cycles_stored": "Cycle stored: %s",
+  "tooltip.logicore.cycles_demand": "Cycle demand: %s",
+  "config.jade.plugin_logicore.datacenter_controller": "Datacenter controller"
 }

@@ -2,6 +2,7 @@ package dev.gacbl.logicore.api.compat.jade;
 
 import dev.gacbl.logicore.LogiCore;
 import dev.gacbl.logicore.blocks.compiler.CompilerBlockEntity;
+import dev.gacbl.logicore.core.Utils;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
@@ -25,11 +26,11 @@ public class CompilerProvider implements IBlockComponentProvider, IServerDataPro
         }
 
         if (accessor.getServerData().contains("CyclesStored")) {
-            cycles = accessor.getServerData().getLong("CyclesStored");
+            cyclesStored = accessor.getServerData().getLong("CyclesStored");
         }
 
-        tooltip.add(Component.literal(String.format("Cycle demand: %s", cycles)));
-        tooltip.add(Component.literal(String.format("Cycle stored: %s", cyclesStored)));
+        tooltip.add(Component.translatable("tooltip.logicore.cycles_stored", Utils.formatValues(cyclesStored)));
+        tooltip.add(Component.translatable("tooltip.logicore.cycles_demand", Utils.formatValues(cycles)));
     }
 
     @Override
@@ -46,7 +47,7 @@ public class CompilerProvider implements IBlockComponentProvider, IServerDataPro
 
         if (blockEntity.getCycleStorage() != null) {
             data.putLong("CyclesDemand", blockEntity.getCycleStorage().getCycleDemand());
-            data.putLong("CyclesStored", blockEntity.getCycleStorage().getCyclesStored());
+            data.putLong("CyclesStored", blockEntity.getCurrentCycles());
         }
     }
 

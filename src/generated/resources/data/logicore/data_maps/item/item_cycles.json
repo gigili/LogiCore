@@ -1,0 +1,21 @@
+{
+  "values": {
+	"#c:animal_foods": 32,
+	"#c:concretes": 8,
+	"#c:crops": 12,
+	"#c:dusts": 64,
+	"#c:gems": 3072,
+	"#c:ingots/gold": 2048,
+	"#c:ingots/iron": 256,
+	"#c:ores/gold": 1024,
+	"#c:ores/iron": 128,
+	"#c:rods/wooden": 4,
+	"#c:stones": 2,
+	"#minecraft:dirt": 1,
+	"#minecraft:logs": 32,
+	"#minecraft:sand": 1,
+	"minecraft:dragon_breath": 150000,
+	"minecraft:dragon_egg": 250000,
+	"minecraft:nether_star": 130000
+  }
+}

@@ -1,5 +1,6 @@
 package dev.gacbl.logicore;
 
+import com.mojang.logging.LogUtils;
 import dev.gacbl.logicore.blocks.compiler.CompilerModule;
 import dev.gacbl.logicore.blocks.compiler.ui.CompilerScreen;
 import dev.gacbl.logicore.blocks.computer.ComputerModule;
@@ -9,6 +10,7 @@ import dev.gacbl.logicore.blocks.datacenter.DatacenterModule;
 import dev.gacbl.logicore.blocks.serverrack.ServerRackModule;
 import dev.gacbl.logicore.blocks.serverrack.ui.ServerRackScreen;
 import dev.gacbl.logicore.core.CreativeTabModule;
+import dev.gacbl.logicore.core.ModDataMaps;
 import dev.gacbl.logicore.core.MyCommands;
 import dev.gacbl.logicore.items.processorunit.ProcessorUnitModule;
 import dev.gacbl.logicore.network.PacketHandler;
@@ -28,10 +30,13 @@ import net.neoforged.neoforge.common.NeoForge;
 import net.neoforged.neoforge.event.RegisterCommandsEvent;
 import net.neoforged.neoforge.event.server.ServerStartingEvent;
 import net.neoforged.neoforge.event.tick.LevelTickEvent;
+import net.neoforged.neoforge.registries.datamaps.RegisterDataMapTypesEvent;
+import org.slf4j.Logger;
 
 @Mod(LogiCore.MOD_ID)
 public class LogiCore {
     public static final String MOD_ID = "logicore";
+    public static final Logger LOGGER = LogUtils.getLogger();
 
     public LogiCore(IEventBus modEventBus, ModContainer modContainer) {
         NeoForge.EVENT_BUS.register(this);
@@ -46,8 +51,13 @@ public class LogiCore {
         PacketHandler.register(modEventBus);
 
         modContainer.registerConfig(ModConfig.Type.COMMON, Config.SPEC, "logicore.toml");
+        modEventBus.addListener(this::registerDataMaps);
 
         Guide.builder(ResourceLocation.parse("logicore:guide")).build();
+    }
+
+    private void registerDataMaps(RegisterDataMapTypesEvent event) {
+        event.register(ModDataMaps.ITEM_CYCLES);
     }
 
     @SubscribeEvent

@@ -2,7 +2,8 @@ package dev.gacbl.logicore.blocks.compiler.ui;
 
 import dev.gacbl.logicore.blocks.compiler.CompilerBlockEntity;
 import dev.gacbl.logicore.blocks.compiler.CompilerModule;
-import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.core.BlockPos;
+import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.*;
@@ -14,93 +15,68 @@ import org.jetbrains.annotations.NotNull;
 
 public class CompilerMenu extends AbstractContainerMenu {
     public final CompilerBlockEntity blockEntity;
-    private final Level level;
     private final ContainerData data;
 
-    // CREDIT GOES TO: diesieben07 | https://github.com/diesieben07/SevenCommons
-    // must assign a slot number to each of the slots used by the GUI.
-    // For this container, we can see both the tile inventory's slots as well as the player inventory slots and the hotbar.
-    // Each time we add a Slot to the container, it automatically increases the slotIndex, which means
-    //  0 - 8 = hotbar slots (which will map to the InventoryPlayer slot numbers 0 - 8)
-    //  9 - 35 = player inventory slots (which map to the InventoryPlayer slot numbers 9 - 35)
-    //  36 - 44 = TileInventory slots, which map to our TileEntity slot numbers 0 - 8)
-    private static final int HOTBAR_SLOT_COUNT = 9;
-    private static final int PLAYER_INVENTORY_ROW_COUNT = 3;
-    private static final int PLAYER_INVENTORY_COLUMN_COUNT = 9;
-    private static final int PLAYER_INVENTORY_SLOT_COUNT = PLAYER_INVENTORY_COLUMN_COUNT * PLAYER_INVENTORY_ROW_COUNT;
-    private static final int VANILLA_SLOT_COUNT = HOTBAR_SLOT_COUNT + PLAYER_INVENTORY_SLOT_COUNT;
-    private static final int VANILLA_FIRST_SLOT_INDEX = 0;
-    private static final int TE_INVENTORY_FIRST_SLOT_INDEX = VANILLA_FIRST_SLOT_INDEX + VANILLA_SLOT_COUNT;
-    private static final int TE_INVENTORY_SLOT_COUNT = 2;  // must be the number of slots you have!
+    public static final int TEMPLATE_SLOT_INDEX = 36;
 
-    public CompilerMenu(int pContainerId, Inventory inv, FriendlyByteBuf extraData) {
-        this(pContainerId, inv, inv.player.level().getBlockEntity(extraData.readBlockPos()), new SimpleContainerData(2));
+    public CompilerMenu(int containerId, Inventory playerInventory, BlockPos pos) {
+        this(containerId, playerInventory, playerInventory.player.level().getBlockEntity(pos), new SimpleContainerData(2));
     }
 
-    public CompilerMenu(int pContainerId, Inventory inv, BlockEntity entity, ContainerData data) {
-        super(CompilerModule.COMPILER_MENU.get(), pContainerId);
-        checkContainerSize(inv, 2);
-        blockEntity = ((CompilerBlockEntity) entity);
-        this.level = inv.player.level();
+    public CompilerMenu(int containerId, Inventory playerInventory, BlockEntity entity, ContainerData data) {
+        super(CompilerModule.COMPILER_MENU.get(), containerId);
+        this.blockEntity = (CompilerBlockEntity) entity;
         this.data = data;
 
-        addPlayerInventory(inv);
-        addPlayerHotbar(inv);
+        addPlayerInventory(playerInventory);
+        addPlayerHotbar(playerInventory);
 
-        this.addSlot(new SlotItemHandler(this.blockEntity.getItemHandler(null), 0, 37, 43));
-        this.addSlot(new SlotItemHandler(this.blockEntity.getItemHandler(null), 1, 121, 43));
+        this.addSlot(new SlotItemHandler(this.blockEntity.getItemHandler(null), 0, 37, 43) {
+            @Override
+            public boolean mayPickup(Player playerIn) {
+                return false;
+            }
+
+            @Override
+            public boolean mayPlace(@NotNull ItemStack stack) {
+                return false;
+            }
+        });
+
+        this.addSlot(new SlotItemHandler(this.blockEntity.getItemHandler(null), 1, 121, 43) {
+            @Override
+            public boolean mayPlace(@NotNull ItemStack stack) {
+                return false;
+            }
+        });
 
         addDataSlots(data);
     }
 
-    public boolean isCrafting() {
-        return data.get(0) > 0;
-    }
-
-    public int getScaledArrowProgress() {
-        int progress = this.data.get(0);
-        int maxProgress = this.data.get(1);
-        int arrowSize = 43;
-
-        return maxProgress != 0 && progress != 0 ? progress * arrowSize / maxProgress : 0;
+    public CompilerMenu(int i, Inventory inventory, RegistryFriendlyByteBuf registryFriendlyByteBuf) {
+        this(i, inventory, registryFriendlyByteBuf.readBlockPos());
     }
 
     @Override
     public @NotNull ItemStack quickMoveStack(@NotNull Player playerIn, int pIndex) {
-        Slot sourceSlot = slots.get(pIndex);
-        if (!sourceSlot.hasItem()) return ItemStack.EMPTY;
-        ItemStack sourceStack = sourceSlot.getItem();
-        ItemStack copyOfSourceStack = sourceStack.copy();
-
-        if (pIndex < VANILLA_FIRST_SLOT_INDEX + VANILLA_SLOT_COUNT) {
-            if (!moveItemStackTo(sourceStack, TE_INVENTORY_FIRST_SLOT_INDEX, TE_INVENTORY_FIRST_SLOT_INDEX + 1, false)) {
-                return ItemStack.EMPTY;
+        if (pIndex == 37) {
+            Slot sourceSlot = slots.get(pIndex);
+            if (sourceSlot != null && sourceSlot.hasItem()) {
+                ItemStack source = sourceSlot.getItem();
+                ItemStack copy = source.copy();
+                if (!moveItemStackTo(source, 0, 36, true)) return ItemStack.EMPTY;
+                sourceSlot.onTake(playerIn, source);
+                return copy;
             }
-        } else if (pIndex < TE_INVENTORY_FIRST_SLOT_INDEX + TE_INVENTORY_SLOT_COUNT) {
-            if (!moveItemStackTo(sourceStack, VANILLA_FIRST_SLOT_INDEX, VANILLA_FIRST_SLOT_INDEX + VANILLA_SLOT_COUNT, false)) {
-                return ItemStack.EMPTY;
-            }
-        } else {
-            System.out.println("Invalid slotIndex:" + pIndex);
-            return ItemStack.EMPTY;
         }
-
-        if (sourceStack.getCount() == 0) {
-            sourceSlot.set(ItemStack.EMPTY);
-        } else {
-            sourceSlot.setChanged();
-        }
-        sourceSlot.onTake(playerIn, sourceStack);
-        return copyOfSourceStack;
+        return ItemStack.EMPTY;
     }
 
     @Override
     public boolean stillValid(@NotNull Player player) {
         Level level = player.level();
-        return stillValid(ContainerLevelAccess.create(level, blockEntity.getBlockPos()),
-                player, CompilerModule.COMPILER_BLOCK.get());
+        return stillValid(ContainerLevelAccess.create(level, blockEntity.getBlockPos()), player, CompilerModule.COMPILER_BLOCK.get());
     }
-
 
     private void addPlayerInventory(Inventory playerInventory) {
         for (int i = 0; i < 3; ++i) {
@@ -114,5 +90,13 @@ public class CompilerMenu extends AbstractContainerMenu {
         for (int i = 0; i < 9; ++i) {
             this.addSlot(new Slot(playerInventory, i, 8 + i * 18, 165));
         }
+    }
+
+    public int getProgress() {
+        return this.data.get(0);
+    }
+
+    public int getMaxProgress() {
+        return this.data.get(1);
     }
 }

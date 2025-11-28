@@ -2,6 +2,7 @@ package dev.gacbl.logicore.blocks.serverrack.ui;
 
 import dev.gacbl.logicore.LogiCore;
 import dev.gacbl.logicore.blocks.computer.ComputerBlockEntity;
+import dev.gacbl.logicore.core.Utils;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
@@ -165,17 +166,8 @@ public class ServerRackScreen extends AbstractContainerScreen<ServerRackMenu> {
         if (mouseX >= powerSectionX && mouseY >= powerSectionY && mouseX <= powerSectionX + 16 && mouseY <= powerSectionY + 56) {
             int current = this.menu.getEnergy();
             int max = this.menu.getMaxEnergy();
-            guiGraphics.renderTooltip(this.font, Component.translatable("tooltip.logicore.energy_stored", formatEnergy(current), formatEnergy(max)), mouseX, mouseY);
+            guiGraphics.renderTooltip(this.font, Component.translatable("tooltip.logicore.energy_stored", Utils.formatValues(current), Utils.formatValues(max)), mouseX, mouseY);
         }
-    }
-
-    private String formatEnergy(long energy) {
-        if (energy >= 1_000_000) {
-            return String.format("%.1fM", energy / 1_000_000.0);
-        } else if (energy >= 1_000) {
-            return String.format("%.1fK", energy / 1_000.0);
-        }
-        return String.valueOf(energy);
     }
 
     private void renderDescription(@NotNull GuiGraphics graphics, int mouseX, int mouseY, float partialTicks) {
@@ -190,7 +182,7 @@ public class ServerRackScreen extends AbstractContainerScreen<ServerRackMenu> {
         graphics.drawString(this.font, Component.translatable("ui.tooltip.logicore.base_cycles_generation").plainCopy().withStyle(ChatFormatting.BOLD), labelSectionX + 85, labelSectionY, textColor, false);
         labelSectionY += 12;
 
-        graphics.drawString(this.font, Component.translatable("ui.tooltip.logicore.cycles_storage", formatEnergy(cycles), formatEnergy(maxCycles)), labelSectionX, labelSectionY, textColor, false);
+        graphics.drawString(this.font, Component.translatable("ui.tooltip.logicore.cycles_storage", Utils.formatValues(cycles), Utils.formatValues(maxCycles)), labelSectionX, labelSectionY, textColor, false);
         graphics.drawString(this.font, Component.literal((String.valueOf(this.menu.getBaseCycleGeneration()))), labelSectionX + 85, labelSectionY, textColor, false);
         labelSectionY += 18;
 
