@@ -45,8 +45,8 @@ public class CompilerMenu extends AbstractContainerMenu {
         addPlayerInventory(playerInventory);
         addPlayerHotbar(playerInventory);
 
-        this.addSlot(new SlotItemHandler(this.blockEntity.getItemHandler(null), 0, 13, 21));
-        this.addSlot(new SlotItemHandler(this.blockEntity.getItemHandler(null), 1, 145, 67));
+        this.addSlot(new SlotItemHandler(this.blockEntity.getItemHandler(null), 0, 37, 43));
+        this.addSlot(new SlotItemHandler(this.blockEntity.getItemHandler(null), 1, 121, 43));
     }
 
     public CompilerMenu(int i, Inventory inventory, RegistryFriendlyByteBuf registryFriendlyByteBuf) {
@@ -61,7 +61,7 @@ public class CompilerMenu extends AbstractContainerMenu {
         ItemStack copyOfSourceStack = sourceStack.copy();
 
         if (pIndex < VANILLA_FIRST_SLOT_INDEX + VANILLA_SLOT_COUNT) {
-            if (!moveItemStackTo(sourceStack, TE_INVENTORY_FIRST_SLOT_INDEX, TE_INVENTORY_FIRST_SLOT_INDEX + TE_INVENTORY_SLOT_COUNT, false)) {
+            if (!moveItemStackTo(sourceStack, TE_INVENTORY_FIRST_SLOT_INDEX, TE_INVENTORY_FIRST_SLOT_INDEX + 1, false)) {
                 return ItemStack.EMPTY;
             }
         } else if (pIndex < TE_INVENTORY_FIRST_SLOT_INDEX + TE_INVENTORY_SLOT_COUNT) {

@@ -19,7 +19,7 @@ import org.jetbrains.annotations.NotNull;
 import java.util.stream.Stream;
 
 public record CompilerRecipe(Ingredient inputItem, int inputCount, ItemStack output, int cycles,
-                             float chance) implements Recipe<CompilerRecipeInput> {
+                             float chance, int time) implements Recipe<CompilerRecipeInput> {
 
     @Override
     public boolean matches(@NotNull CompilerRecipeInput container, @NotNull Level level) {
@@ -52,25 +52,32 @@ public record CompilerRecipe(Ingredient inputItem, int inputCount, ItemStack out
         return CompilerModule.COMPILER_TYPE.get();
     }
 
+    public int getTime() {
+        return this.time;
+    }
+
     private static final Codec<Pair<Ingredient, Integer>> INPUT_CODEC = new MapCodec<Pair<Ingredient, Integer>>() {
         @Override
         public <T> RecordBuilder<T> encode(Pair<Ingredient, Integer> input, DynamicOps<T> ops, RecordBuilder<T> prefix) {
+            T ingredientEncoded = Ingredient.CODEC.encodeStart(ops, input.getFirst()).getOrThrow(IllegalStateException::new);
+            ops.getMap(ingredientEncoded).result().ifPresent(map ->
+                    map.entries().forEach(pair -> prefix.add(pair.getFirst(), pair.getSecond()))
+            );
+            prefix.add("count", ops.createInt(input.getSecond()));
             return prefix;
         }
 
         @Override
         public <T> Stream<T> keys(DynamicOps<T> ops) {
-            return Stream.empty();
+            return Stream.of(ops.createString("count"), ops.createString("item"), ops.createString("tag"));
         }
 
 
         @Override
-        public <T> DataResult<Pair<Ingredient, Integer>> decode(com.mojang.serialization.DynamicOps<T> ops, com.mojang.serialization.MapLike<T> map) {
+        public <T> DataResult<Pair<Ingredient, Integer>> decode(DynamicOps<T> ops, MapLike<T> map) {
             DataResult<Ingredient> ingredientResult = Ingredient.CODEC.decode(ops, ops.createMap(map.entries())).map(Pair::getFirst);
-
             T countObj = map.get("count");
             int count = (countObj != null) ? ops.getNumberValue(countObj).result().orElse(1).intValue() : 1;
-
             return ingredientResult.map(ing -> Pair.of(ing, count));
         }
     }.codec();
@@ -78,21 +85,24 @@ public record CompilerRecipe(Ingredient inputItem, int inputCount, ItemStack out
     private static final Codec<Pair<ItemStack, Float>> OUTPUT_CODEC = new MapCodec<Pair<ItemStack, Float>>() {
         @Override
         public <T> RecordBuilder<T> encode(Pair<ItemStack, Float> input, DynamicOps<T> ops, RecordBuilder<T> prefix) {
+            T stackEncoded = ItemStack.CODEC.encodeStart(ops, input.getFirst()).getOrThrow(IllegalStateException::new);
+            ops.getMap(stackEncoded).result().ifPresent(map ->
+                    map.entries().forEach(pair -> prefix.add(pair.getFirst(), pair.getSecond()))
+            );
+            prefix.add("chance", ops.createFloat(input.getSecond()));
             return prefix;
         }
 
         @Override
         public <T> Stream<T> keys(DynamicOps<T> ops) {
-            return Stream.empty();
+            return Stream.of(ops.createString("chance"), ops.createString("id"), ops.createString("count"));
         }
 
         @Override
-        public <T> DataResult<Pair<ItemStack, Float>> decode(com.mojang.serialization.DynamicOps<T> ops, com.mojang.serialization.MapLike<T> map) {
+        public <T> DataResult<Pair<ItemStack, Float>> decode(DynamicOps<T> ops, MapLike<T> map) {
             DataResult<ItemStack> stackResult = ItemStack.CODEC.decode(ops, ops.createMap(map.entries())).map(Pair::getFirst);
-
             T chanceObj = map.get("chance");
             float chance = (chanceObj != null) ? ops.getNumberValue(chanceObj).result().orElse(1.0f).floatValue() : 1.0f;
-
             return stackResult.map(stack -> Pair.of(stack, chance));
         }
     }.codec();
@@ -100,10 +110,11 @@ public record CompilerRecipe(Ingredient inputItem, int inputCount, ItemStack out
     public static final MapCodec<CompilerRecipe> CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
             INPUT_CODEC.fieldOf("input").forGetter(r -> Pair.of(r.inputItem, r.inputCount)),
             OUTPUT_CODEC.fieldOf("output").forGetter(r -> Pair.of(r.output, r.chance)),
-            Codec.INT.fieldOf("cycles").forGetter(CompilerRecipe::cycles)
-    ).apply(instance, (inputPair, outputPair, cycles) -> new CompilerRecipe(
+            Codec.INT.fieldOf("cycles").forGetter(CompilerRecipe::cycles),
+            Codec.INT.fieldOf("time").forGetter(CompilerRecipe::time)
+    ).apply(instance, (inputPair, outputPair, cycles, time) -> new CompilerRecipe(
             inputPair.getFirst(), inputPair.getSecond(),
-            outputPair.getFirst(), cycles, outputPair.getSecond()
+            outputPair.getFirst(), cycles, outputPair.getSecond(), time
     )));
 
     public static final StreamCodec<RegistryFriendlyByteBuf, CompilerRecipe> STREAM_CODEC = StreamCodec.composite(
@@ -112,6 +123,7 @@ public record CompilerRecipe(Ingredient inputItem, int inputCount, ItemStack out
             ItemStack.STREAM_CODEC, CompilerRecipe::output,
             ByteBufCodecs.INT, CompilerRecipe::cycles,
             ByteBufCodecs.FLOAT, CompilerRecipe::chance,
+            ByteBufCodecs.INT, CompilerRecipe::time,
             CompilerRecipe::new
     );
 }

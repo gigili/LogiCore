@@ -27,5 +27,6 @@ public class CompilerScreen extends AbstractContainerScreen<CompilerMenu> {
         int x = (this.width - this.imageWidth) / 2;
         int y = (this.height - this.imageHeight) / 2;
         graphics.blit(TEXTURE, x, y, 0, 0, 175, 188);
+        renderTooltip(graphics, mouseX, mouseY);
     }
 }

@@ -69,11 +69,11 @@ public class CompilerRecipeCategory implements IRecipeCategory<CompilerRecipe> {
                 })
                 .toList();
 
-        builder.addSlot(RecipeIngredientRole.INPUT, 5, 6)
+        builder.addSlot(RecipeIngredientRole.INPUT, 29, 28)
                 .addItemStacks(inputStacks)
                 .setSlotName("Input");
 
-        builder.addSlot(RecipeIngredientRole.OUTPUT, 137, 52)
+        builder.addSlot(RecipeIngredientRole.OUTPUT, 113, 28)
                 .addItemStack(recipe.getResultItem(Minecraft.getInstance().level.registryAccess()))
                 .setSlotName("Output");
     }
@@ -83,8 +83,11 @@ public class CompilerRecipeCategory implements IRecipeCategory<CompilerRecipe> {
         Minecraft minecraft = Minecraft.getInstance();
         boolean hasChance = recipe.chance() < 1.0f;
 
-        Component cyclesText = Component.literal(recipe.cycles() + " Cycles");
-        guiGraphics.drawString(minecraft.font, cyclesText, 50, hasChance ? 45 : 60, 0x808080, false);
+        Component cyclesText = Component.literal(recipe.cycles() + " Cycles/tick");
+        guiGraphics.drawString(minecraft.font, cyclesText, 35, hasChance ? 35 : 50, 0x808080, false);
+
+        Component totalCyclesText = Component.literal(recipe.cycles() * recipe.time() + " total Cycles");
+        guiGraphics.drawString(minecraft.font, totalCyclesText, 35, hasChance ? 45 : 60, 0x808080, false);
 
         if (hasChance) {
             String chanceStr = "Chance: " + (int) (recipe.chance() * 100) + "%";

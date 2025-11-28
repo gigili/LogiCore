@@ -39,6 +39,11 @@ public class CompilerBlockEntity extends BlockEntity implements ICycleConsumer, 
 
     private long currentCycles = 0;
     private int progress = 0;
+    private CompilerRecipe recipe;
+
+    public int getProgress() {
+        return progress;
+    }
 
     private RecipeHolder<CompilerRecipe> cachedRecipe = null;
 
@@ -57,7 +62,7 @@ public class CompilerBlockEntity extends BlockEntity implements ICycleConsumer, 
 
         @Override
         public boolean isItemValid(int slot, @NotNull ItemStack stack) {
-            return true;
+            return slot == INPUT_SLOT;
         }
     };
 
@@ -122,14 +127,14 @@ public class CompilerBlockEntity extends BlockEntity implements ICycleConsumer, 
         RecipeHolder<CompilerRecipe> recipeHolder = be.getRecipe();
 
         if (recipeHolder != null && be.canInsertOutput(recipeHolder.value())) {
-            CompilerRecipe recipe = recipeHolder.value();
+            be.recipe = recipeHolder.value();
 
-            if (be.currentCycles >= recipe.cycles()) {
+            if (be.currentCycles >= be.recipe.cycles()) {
                 be.progress++;
-                be.currentCycles -= recipe.cycles();
+                be.currentCycles -= be.recipe.cycles();
 
-                if (be.progress >= MAX_PROGRESS) {
-                    be.craftItem(recipe);
+                if (be.progress >= be.recipe.getTime()) {
+                    be.craftItem(be.recipe);
                     be.progress = 0;
                 }
                 be.setChanged();
@@ -137,12 +142,13 @@ public class CompilerBlockEntity extends BlockEntity implements ICycleConsumer, 
         } else {
             if (be.progress > 0) {
                 be.progress = 0;
+                be.recipe = null;
                 be.setChanged();
             }
         }
     }
 
-    private RecipeHolder<CompilerRecipe> getRecipe() {
+    public RecipeHolder<CompilerRecipe> getRecipe() {
         if (this.level == null) return null;
 
         ItemStack input = itemHandler.getStackInSlot(INPUT_SLOT);
@@ -175,11 +181,11 @@ public class CompilerBlockEntity extends BlockEntity implements ICycleConsumer, 
 
         itemHandler.extractItem(INPUT_SLOT, recipe.inputCount(), false);
 
-        if (recipe.chance() != 1f) {
+        if (recipe.chance() < 1f) {
             if (this.level.random.nextFloat() <= recipe.chance()) {
                 craftItems(recipe);
-                return;
             }
+            return;
         }
 
         craftItems(recipe);
