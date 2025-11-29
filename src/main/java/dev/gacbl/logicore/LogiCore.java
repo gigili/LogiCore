@@ -7,6 +7,7 @@ import dev.gacbl.logicore.blocks.computer.ComputerModule;
 import dev.gacbl.logicore.blocks.datacable.DataCableModule;
 import dev.gacbl.logicore.blocks.datacable.cable_network.NetworkManager;
 import dev.gacbl.logicore.blocks.datacenter.DatacenterModule;
+import dev.gacbl.logicore.blocks.datacenter_port.DatacenterPortModule;
 import dev.gacbl.logicore.blocks.serverrack.ServerRackModule;
 import dev.gacbl.logicore.blocks.serverrack.ui.ServerRackScreen;
 import dev.gacbl.logicore.core.CreativeTabModule;
@@ -47,10 +48,11 @@ public class LogiCore {
         ServerRackModule.register(modEventBus);
         DataCableModule.register(modEventBus);
         DatacenterModule.register(modEventBus);
+        DatacenterPortModule.register(modEventBus);
         CompilerModule.register(modEventBus);
         PacketHandler.register(modEventBus);
 
-        modContainer.registerConfig(ModConfig.Type.COMMON, Config.SPEC, "logicore.toml");
+        modContainer.registerConfig(ModConfig.Type.COMMON, Config.SPEC, "logicore/logicore.toml");
         modEventBus.addListener(this::registerDataMaps);
 
         Guide.builder(ResourceLocation.parse("logicore:guide")).build();

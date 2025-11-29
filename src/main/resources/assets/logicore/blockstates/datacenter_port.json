@@ -1,0 +1,10 @@
+{
+  "variants": {
+	"facing=north": {"model": "logicore:block/datacenter_port"},
+	"facing=east": {"model": "logicore:block/datacenter_port", "y": 90},
+	"facing=south": {"model": "logicore:block/datacenter_port", "y": 180},
+	"facing=west": {"model": "logicore:block/datacenter_port", "y": 270},
+	"facing=up": {"model": "logicore:block/datacenter_port", "x": 270},
+	"facing=down": {"model": "logicore:block/datacenter_port", "x": 90}
+  }
+}

@@ -175,9 +175,14 @@ dependencies {
     // Spark
     localRuntime "curse.maven:spark-361579:6225208"
 
-
     // Just Dire Things
     //localRuntime "curse.maven:jdt-1002348:6369120"
+
+    // Building Gadgets
+    localRuntime "curse.maven:building_gadgets-298187:6850515"
+
+    // LaserIO
+    localRuntime "curse.maven:laserio-626839:5730007"
 
     // Cloth, Powah
     localRuntime "curse.maven:cloth-348521:5729127"
@@ -195,7 +200,7 @@ dependencies {
     //localRuntime "curse.maven:mekanismgen-268566:7132171"
 
     // Construction sticks
-    localRuntime "curse.maven:cs-1156098:6912513"
+    // localRuntime "curse.maven:cs-1156098:6912513"
 
     // Torchmaster
     localRuntime "curse.maven:torchmaster-254268:7197218"

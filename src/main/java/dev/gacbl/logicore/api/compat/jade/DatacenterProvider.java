@@ -1,7 +1,7 @@
 package dev.gacbl.logicore.api.compat.jade;
 
 import dev.gacbl.logicore.LogiCore;
-import dev.gacbl.logicore.blocks.datacenter.DatacenterControllerBlockEntity;
+import dev.gacbl.logicore.blocks.datacenter_port.DatacenterPortBlockEntity;
 import dev.gacbl.logicore.core.Utils;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
@@ -26,12 +26,12 @@ public class DatacenterProvider implements IBlockComponentProvider, IServerDataP
     @Override
     public boolean shouldRequestData(BlockAccessor accessor) {
         BlockEntity be = accessor.getLevel().getBlockEntity(accessor.getPosition());
-        return be instanceof DatacenterControllerBlockEntity;
+        return be instanceof DatacenterPortBlockEntity;
     }
 
     @Override
     public void appendServerData(CompoundTag data, BlockAccessor accessor) {
-        DatacenterControllerBlockEntity blockEntity = (DatacenterControllerBlockEntity) accessor.getBlockEntity();
+        DatacenterPortBlockEntity blockEntity = (DatacenterPortBlockEntity) accessor.getBlockEntity();
 
         if (blockEntity == null) return;
 
@@ -41,6 +41,6 @@ public class DatacenterProvider implements IBlockComponentProvider, IServerDataP
 
     @Override
     public ResourceLocation getUid() {
-        return ResourceLocation.fromNamespaceAndPath(LogiCore.MOD_ID, "datacenter_controller");
+        return ResourceLocation.fromNamespaceAndPath(LogiCore.MOD_ID, "datacenter_port");
     }
 }

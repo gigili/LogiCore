@@ -115,7 +115,7 @@ public class Config {
 
         DATACENTER_PRODUCES_SOUND = BUILDER
                 .comment(" If the datacenter produces ambient sound when it's formed")
-                .define("produce_sound", true);
+                .define("produce_sound", false);
 
         DATACENTER_PRODUCES_PARTICLES = BUILDER
                 .comment(" If the datacenter produces particles when it's formed")

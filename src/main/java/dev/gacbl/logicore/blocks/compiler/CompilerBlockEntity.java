@@ -88,13 +88,6 @@ public class CompilerBlockEntity extends BlockEntity implements ICycleConsumer, 
         }
     };
 
-    private final IItemHandler automationInputHandler = new RangedWrapper(itemHandler, INPUT_SLOT, INPUT_SLOT + 1) {
-        @Override
-        public @NotNull ItemStack extractItem(int slot, int amount, boolean simulate) {
-            return ItemStack.EMPTY;
-        }
-    };
-
     private final IItemHandler automationOutputHandler = new RangedWrapper(itemHandler, OUTPUT_SLOT, OUTPUT_SLOT + 1) {
         @Override
         public @NotNull ItemStack insertItem(int slot, @NotNull ItemStack stack, boolean simulate) {
@@ -104,8 +97,7 @@ public class CompilerBlockEntity extends BlockEntity implements ICycleConsumer, 
 
     public IItemHandler getItemHandler(@Nullable Direction side) {
         if (side == null) return itemHandler;
-        if (side == Direction.DOWN) return automationOutputHandler;
-        return automationInputHandler;
+        return automationOutputHandler;
     }
 
     @Override
@@ -129,7 +121,7 @@ public class CompilerBlockEntity extends BlockEntity implements ICycleConsumer, 
 
     @Override
     public long receiveCycles(long maxReceive, boolean simulate) {
-        long cap = 1000000;
+        long cap = 1_000_000;
         long space = cap - currentCycles;
         long accepted = Math.min(maxReceive, space);
 

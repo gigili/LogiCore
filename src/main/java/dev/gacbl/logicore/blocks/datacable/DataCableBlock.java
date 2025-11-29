@@ -4,7 +4,7 @@ import com.mojang.serialization.MapCodec;
 import dev.gacbl.logicore.blocks.compiler.CompilerBlock;
 import dev.gacbl.logicore.blocks.computer.ComputerBlock;
 import dev.gacbl.logicore.blocks.datacable.cable_network.NetworkManager;
-import dev.gacbl.logicore.blocks.datacenter.DatacenterControllerBlock;
+import dev.gacbl.logicore.blocks.datacenter_port.DatacenterPortBlock;
 import dev.gacbl.logicore.blocks.serverrack.ServerRackBlock;
 import dev.gacbl.logicore.items.processorunit.ProcessorUnitModule;
 import net.minecraft.core.BlockPos;
@@ -170,7 +170,7 @@ public class DataCableBlock extends BaseEntityBlock implements SimpleWaterlogged
     }
 
     private boolean canConnectToBlock(LevelAccessor level, BlockPos pos) {
-        List<Class<? extends Block>> allowedBlocks = List.of(ServerRackBlock.class, ComputerBlock.class, CompilerBlock.class, DatacenterControllerBlock.class);
+        List<Class<? extends Block>> allowedBlocks = List.of(ServerRackBlock.class, ComputerBlock.class, CompilerBlock.class, DatacenterPortBlock.class);
         if (level instanceof ServerLevel server) {
             Block block = server.getBlockState(pos).getBlock();
             var cap = server.getCapability(Capabilities.EnergyStorage.BLOCK, pos, null);

@@ -15,10 +15,10 @@ public class ClientEvents {
 
     @SubscribeEvent
     public static void onRecipesUpdated(RecipesUpdatedEvent event) {
+        assert net.minecraft.client.Minecraft.getInstance().level != null;
         CycleValueManager.reload(
                 event.getRecipeManager(),
                 net.minecraft.client.Minecraft.getInstance().level.registryAccess(),
-                null,
                 false
         );
     }

@@ -4,6 +4,7 @@
 	"logicore:data_cable",
 	"logicore:computer",
 	"logicore:datacenter_controller",
-	"logicore:compiler"
+	"logicore:compiler",
+	"logicore:datacenter_port"
   ]
 }

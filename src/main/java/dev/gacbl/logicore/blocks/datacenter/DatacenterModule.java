@@ -1,7 +1,6 @@
 package dev.gacbl.logicore.blocks.datacenter;
 
 import dev.gacbl.logicore.LogiCore;
-import dev.gacbl.logicore.core.ModCapabilities;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceLocation;
@@ -55,10 +54,5 @@ public class DatacenterModule {
     }
 
     private static void registerCapabilities(RegisterCapabilitiesEvent event) {
-        event.registerBlockEntity(
-                ModCapabilities.CYCLE_PROVIDER,
-                DatacenterModule.DATACENTER_CONTROLLER_BE.get(),
-                (blockEntity, context) -> blockEntity
-        );
     }
 }

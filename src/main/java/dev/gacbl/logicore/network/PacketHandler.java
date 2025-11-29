@@ -50,6 +50,12 @@ public class PacketHandler {
                 SetAutoCraftingTemplatePayload.STREAM_CODEC,
                 SetAutoCraftingTemplatePayload.HANDLER
         );
+
+        registrar.playToServer(
+                SyncMultiblockPortsPayload.TYPE,
+                SyncMultiblockPortsPayload.STREAM_CODEC,
+                SyncMultiblockPortsPayload.HANDLER
+        );
     }
 
     public static <MSG extends CustomPacketPayload> void sendToClientsTrackingChunk(Level level, BlockPos pos, MSG packet) {

@@ -5,6 +5,7 @@ import dev.gacbl.logicore.blocks.compiler.CompilerModule;
 import dev.gacbl.logicore.blocks.computer.ComputerModule;
 import dev.gacbl.logicore.blocks.datacable.DataCableModule;
 import dev.gacbl.logicore.blocks.datacenter.DatacenterModule;
+import dev.gacbl.logicore.blocks.datacenter_port.DatacenterPortModule;
 import dev.gacbl.logicore.blocks.serverrack.ServerRackModule;
 import dev.gacbl.logicore.core.ModTags;
 import net.minecraft.core.HolderLookup;
@@ -66,6 +67,15 @@ public class ModBlockTagProvider extends BlockTagsProvider {
         tag(BlockTags.create(ResourceLocation.fromNamespaceAndPath("c", "relocation_not_supported"))).add(CompilerModule.COMPILER_BLOCK.get());
         tag(BlockTags.create(ResourceLocation.fromNamespaceAndPath("mekanism", "cardboard_blacklist"))).add(CompilerModule.COMPILER_BLOCK.get());
 
+        tag(BlockTags.MINEABLE_WITH_PICKAXE).add(DatacenterPortModule.DATACENTER_PORT.get());
+        tag(BlockTags.NEEDS_IRON_TOOL).add(DatacenterPortModule.DATACENTER_PORT.get());
+        tag(BlockTags.create(ResourceLocation.fromNamespaceAndPath("justdirethings", "eclipsegate_deny"))).add(DatacenterPortModule.DATACENTER_PORT.get());
+        tag(BlockTags.create(ResourceLocation.fromNamespaceAndPath("justdirethings", "phase_deny"))).add(DatacenterPortModule.DATACENTER_PORT.get());
+        tag(BlockTags.create(ResourceLocation.fromNamespaceAndPath("justdirethings", "swapper_deny"))).add(DatacenterPortModule.DATACENTER_PORT.get());
+        tag(BlockTags.create(ResourceLocation.fromNamespaceAndPath("c", "relocation_not_supported"))).add(DatacenterPortModule.DATACENTER_PORT.get());
+        tag(BlockTags.create(ResourceLocation.fromNamespaceAndPath("mekanism", "cardboard_blacklist"))).add(DatacenterPortModule.DATACENTER_PORT.get());
+        tag(ModTags.Blocks.VALID_DATACENTER_WALL_BLOCK).add(DatacenterPortModule.DATACENTER_PORT.get());
+
         setupOptionalTags();
     }
 
@@ -79,6 +89,7 @@ public class ModBlockTagProvider extends BlockTagsProvider {
         tag(ModTags.Blocks.IS_ENERGY_CABLE).addOptional(ResourceLocation.fromNamespaceAndPath("mekanism", "advanced_universal_cable"));
         tag(ModTags.Blocks.IS_ENERGY_CABLE).addOptional(ResourceLocation.fromNamespaceAndPath("mekanism", "elite_universal_cable"));
         tag(ModTags.Blocks.IS_ENERGY_CABLE).addOptional(ResourceLocation.fromNamespaceAndPath("mekanism", "ultimate_universal_cable"));
+        tag(ModTags.Blocks.IS_ENERGY_CABLE).addOptionalTag(BlockTags.create(ResourceLocation.fromNamespaceAndPath("powah", "energy_cables")));
 
         //Outer frame blocks
         tag(ModTags.Blocks.VALID_DATACENTER_FRAME_BLOCK).add(Blocks.IRON_BLOCK);

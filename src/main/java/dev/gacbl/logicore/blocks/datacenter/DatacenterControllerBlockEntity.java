@@ -1,17 +1,23 @@
 package dev.gacbl.logicore.blocks.datacenter;
 
 import dev.gacbl.logicore.Config;
-import dev.gacbl.logicore.api.computation.ICycleProvider;
 import dev.gacbl.logicore.api.multiblock.AbstractSealedController;
 import dev.gacbl.logicore.api.multiblock.MultiblockValidationException;
 import dev.gacbl.logicore.api.multiblock.MultiblockValidator;
+import dev.gacbl.logicore.blocks.datacenter_port.DatacenterPortBlockEntity;
 import dev.gacbl.logicore.core.CoreCycleProviderBlockEntity;
 import dev.gacbl.logicore.core.ModTags;
+import dev.gacbl.logicore.network.payload.SyncMultiblockPortsPayload;
+import net.minecraft.client.Minecraft;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.ListTag;
+import net.minecraft.nbt.LongTag;
+import net.minecraft.nbt.Tag;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import org.jetbrains.annotations.NotNull;
@@ -19,8 +25,9 @@ import org.jetbrains.annotations.NotNull;
 import java.util.HashSet;
 import java.util.Set;
 
-public class DatacenterControllerBlockEntity extends AbstractSealedController implements ICycleProvider {
+public class DatacenterControllerBlockEntity extends AbstractSealedController {
     private final Set<BlockPos> interiorProviders = new HashSet<>();
+    private final Set<BlockPos> ports = new HashSet<>();
     private boolean cacheDirty = true;
 
     public DatacenterControllerBlockEntity(BlockPos pos, BlockState state) {
@@ -74,6 +81,11 @@ public class DatacenterControllerBlockEntity extends AbstractSealedController im
     protected void onStructureFormed() {
         if (level != null) {
             level.setBlock(worldPosition, getBlockState().setValue(DatacenterControllerBlock.FORMED, true), 3);
+            this.cacheDirty = true;
+            this.validateCacheIfNeeded();
+            if (Minecraft.getInstance().player != null) {
+                Minecraft.getInstance().player.connection.send(new SyncMultiblockPortsPayload(this.worldPosition, this.isFormed, this.ports));
+            }
         }
     }
 
@@ -81,6 +93,9 @@ public class DatacenterControllerBlockEntity extends AbstractSealedController im
     protected void onStructureBroken() {
         if (level != null) {
             level.setBlock(worldPosition, getBlockState().setValue(DatacenterControllerBlock.FORMED, false), 3);
+            if (Minecraft.getInstance().player != null) {
+                Minecraft.getInstance().player.connection.send(new SyncMultiblockPortsPayload(this.worldPosition, this.isFormed, this.ports));
+            }
         }
     }
 
@@ -90,69 +105,29 @@ public class DatacenterControllerBlockEntity extends AbstractSealedController im
     }
 
     @Override
-    protected void saveAdditional(@NotNull CompoundTag tag, @NotNull HolderLookup.Provider registries) {
+    protected void saveAdditional(@NotNull CompoundTag tag, HolderLookup.@NotNull Provider registries) {
         super.saveAdditional(tag, registries);
+
+        tag.putBoolean("Formed", isFormed);
+
+        ListTag portsTag = new ListTag();
+        for (BlockPos portPos : ports) {
+            portsTag.add(LongTag.valueOf(portPos.asLong()));
+        }
+        tag.put("Ports", portsTag);
     }
 
     @Override
-    public void loadAdditional(@NotNull CompoundTag tag, @NotNull HolderLookup.Provider registries) {
+    public void loadAdditional(@NotNull CompoundTag tag, HolderLookup.@NotNull Provider registries) {
         super.loadAdditional(tag, registries);
-    }
 
-    /* Cycle setup */
-    @Override
-    public long getCyclesAvailable() {
-        if (level == null) return 0;
+        isFormed = tag.getBoolean("Formed");
+        ports.clear();
 
-        validateCacheIfNeeded();
-        long total = 0;
-        for (BlockPos pos : interiorProviders) {
-            if (level.getBlockEntity(pos) instanceof ICycleProvider provider) {
-                total += provider.getCyclesAvailable();
-            }
+        ListTag portsTag = tag.getList("Ports", Tag.TAG_LONG);
+        for (Tag value : portsTag) {
+            ports.add(BlockPos.of(((LongTag) value).getAsLong()));
         }
-        return total;
-    }
-
-    @Override
-    public long getCycleCapacity() {
-        if (level == null) return 0;
-
-        validateCacheIfNeeded();
-        long total = 0;
-        for (BlockPos pos : interiorProviders) {
-            if (level.getBlockEntity(pos) instanceof ICycleProvider provider) {
-                total += provider.getCycleCapacity();
-            }
-        }
-        return total;
-    }
-
-    @Override
-    public long extractCycles(long maxExtract, boolean simulate) {
-        if (!isFormed || level == null) return 0;
-
-        validateCacheIfNeeded();
-
-        long extractedTotal = 0;
-        long remainingNeeded = maxExtract;
-
-        for (BlockPos pos : interiorProviders) {
-            if (remainingNeeded <= 0) break;
-
-            if (level.getBlockEntity(pos) instanceof ICycleProvider provider) {
-                long pulled = provider.extractCycles(remainingNeeded, simulate);
-                extractedTotal += pulled;
-                remainingNeeded -= pulled;
-            }
-        }
-
-        return extractedTotal;
-    }
-
-    @Override
-    public long receiveCycles(long receive, boolean simulate) {
-        return 0;
     }
 
     @Override
@@ -160,6 +135,7 @@ public class DatacenterControllerBlockEntity extends AbstractSealedController im
         super.tick(level, pos, state);
         if (level.getGameTime() % 100 == 0) {
             this.cacheDirty = true;
+            validateCacheIfNeeded();
         }
     }
 
@@ -167,13 +143,46 @@ public class DatacenterControllerBlockEntity extends AbstractSealedController im
         if (!cacheDirty || level == null || !isFormed) return;
 
         interiorProviders.clear();
+        ports.clear();
 
         BlockPos.betweenClosedStream(minPos, maxPos).forEach(pos -> {
             if (level.getBlockEntity(pos) instanceof CoreCycleProviderBlockEntity) {
                 interiorProviders.add(pos.immutable());
             }
+
+            if (level.getBlockEntity(pos) instanceof DatacenterPortBlockEntity) {
+                ports.add(pos.immutable());
+            }
         });
 
         cacheDirty = false;
+    }
+
+    public Set<BlockPos> getInteriorProviders() {
+        return this.interiorProviders;
+    }
+
+    public Set<BlockPos> getPorts() {
+        return this.ports;
+    }
+
+    public void applyMultiblockState(boolean formed, Set<BlockPos> newPorts) {
+        this.isFormed = formed;
+        this.ports.clear();
+        this.ports.addAll(newPorts);
+        setChanged();
+
+        Level level = getLevel();
+        if (level != null && !level.isClientSide) {
+            BlockState state = getBlockState();
+            level.sendBlockUpdated(worldPosition, state, state, 3);
+
+            for (BlockPos portPos : ports) {
+                BlockEntity blockEntity = level.getBlockEntity(portPos);
+                if (blockEntity instanceof DatacenterPortBlockEntity portBlockEntity) {
+                    portBlockEntity.setControllerPos(formed ? worldPosition : null);
+                }
+            }
+        }
     }
 }

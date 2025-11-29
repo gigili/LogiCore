@@ -2,6 +2,8 @@ package dev.gacbl.logicore.network.payload;
 
 import dev.gacbl.logicore.LogiCore;
 import dev.gacbl.logicore.api.multiblock.AbstractSealedController;
+import dev.gacbl.logicore.blocks.datacenter.DatacenterControllerBlockEntity;
+import dev.gacbl.logicore.blocks.datacenter_port.DatacenterPortBlockEntity;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.client.Minecraft;
 import net.minecraft.core.BlockPos;
@@ -51,6 +53,14 @@ public record SyncMultiblockDataPayload(
                         payload.errorMessage(),
                         payload.errorPos()
                 );
+            }
+
+            if (level.getBlockEntity(payload.pos()) instanceof DatacenterControllerBlockEntity controllerBlockEntity) {
+                for (BlockPos pos : controllerBlockEntity.getPorts()) {
+                    if (level.getBlockEntity(pos) instanceof DatacenterPortBlockEntity portBlockEntity) {
+                        portBlockEntity.setControllerPos(payload.pos());
+                    }
+                }
             }
         }
     });

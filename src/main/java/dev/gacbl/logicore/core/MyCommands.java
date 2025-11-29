@@ -3,6 +3,7 @@ package dev.gacbl.logicore.core;
 import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import dev.gacbl.logicore.LogiCore;
+import dev.gacbl.logicore.blocks.datacable.cable_network.ComputationNetwork;
 import dev.gacbl.logicore.blocks.datacable.cable_network.NetworkManager;
 import net.minecraft.commands.CommandBuildContext;
 import net.minecraft.commands.CommandSourceStack;
@@ -37,6 +38,9 @@ public class MyCommands {
 
         int networkCount = manager.getNetworks().size();
         source.sendSuccess(() -> Component.literal("Found " + networkCount + " computation networks."), false);
+        for (ComputationNetwork network : manager.getNetworks().values()) {
+            source.sendSuccess(() -> Component.literal("Network: " + network.getNetworkID()), false);
+        }
 
         return 1;
     }
