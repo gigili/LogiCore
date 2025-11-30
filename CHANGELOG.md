@@ -17,3 +17,4 @@
         - `logicore:is_energy_generator` | tag already in a `valid_datacenter_inner_block` list
         - `logicore:is_energy_cable` | tag already in a `valid_datacenter_inner_block` list
 - Added a compiler block which can convert one item into the other by using cycles
+    - Added rendering of the selected item the compiler is generating
