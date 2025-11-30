@@ -33,6 +33,7 @@ public class CompilerBlockEntity extends BlockEntity implements ICycleConsumer, 
     public static final int INPUT_SLOT = 0;
     public static final int OUTPUT_SLOT = 1;
     private static final int PROCESSING_TIME = 20;
+    private float rotation;
 
     private long currentCycles = 0;
     private int progress = 0;
@@ -245,5 +246,13 @@ public class CompilerBlockEntity extends BlockEntity implements ICycleConsumer, 
                 }
             }
         }
+    }
+
+    public float getRenderingRotation() {
+        rotation += 0.5f;
+        if (rotation >= 360) {
+            rotation = 0;
+        }
+        return rotation;
     }
 }

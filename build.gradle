@@ -204,6 +204,10 @@ dependencies {
 
     // Torchmaster
     localRuntime "curse.maven:torchmaster-254268:7197218"
+
+    // Functional storage
+    localRuntime "curse.maven:titanium-287342:6875285"
+    localRuntime "curse.maven:function_storage-556861:7061714"
 }
 
 // This block of code expands all declared replace properties in the specified resource targets.

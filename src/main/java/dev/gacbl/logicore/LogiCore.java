@@ -1,6 +1,7 @@
 package dev.gacbl.logicore;
 
 import com.mojang.logging.LogUtils;
+import dev.gacbl.logicore.blocks.compiler.CompilerBlockEntityRenderer;
 import dev.gacbl.logicore.blocks.compiler.CompilerModule;
 import dev.gacbl.logicore.blocks.compiler.ui.CompilerScreen;
 import dev.gacbl.logicore.blocks.computer.ComputerModule;
@@ -26,6 +27,7 @@ import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.fml.common.Mod;
 import net.neoforged.fml.config.ModConfig;
 import net.neoforged.fml.event.lifecycle.FMLClientSetupEvent;
+import net.neoforged.neoforge.client.event.EntityRenderersEvent;
 import net.neoforged.neoforge.client.event.RegisterMenuScreensEvent;
 import net.neoforged.neoforge.common.NeoForge;
 import net.neoforged.neoforge.event.RegisterCommandsEvent;
@@ -89,6 +91,11 @@ public class LogiCore {
         public static void registerScreens(RegisterMenuScreensEvent event) {
             event.register(ServerRackModule.SERVER_RACK_MENU.get(), ServerRackScreen::new);
             event.register(CompilerModule.COMPILER_MENU.get(), CompilerScreen::new);
+        }
+
+        @SubscribeEvent
+        public static void registerBER(EntityRenderersEvent.RegisterRenderers event) {
+            event.registerBlockEntityRenderer(CompilerModule.COMPILER_BLOCK_ENTITY.get(), CompilerBlockEntityRenderer::new);
         }
     }
 }

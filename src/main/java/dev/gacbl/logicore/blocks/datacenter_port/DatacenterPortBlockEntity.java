@@ -11,6 +11,10 @@ import net.minecraft.world.level.block.state.BlockState;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+
 public class DatacenterPortBlockEntity extends BlockEntity implements ICycleProvider {
     @Nullable
     private BlockPos controllerPos;
@@ -79,7 +83,11 @@ public class DatacenterPortBlockEntity extends BlockEntity implements ICycleProv
         long remainingNeeded = maxExtract;
 
         if (level.getBlockEntity(controllerPos) instanceof DatacenterControllerBlockEntity controllerBlockEntity) {
-            for (BlockPos pos : controllerBlockEntity.getInteriorProviders()) {
+            List<BlockPos> providers = new ArrayList<>(controllerBlockEntity.getInteriorProviders());
+
+            Collections.shuffle(providers);
+
+            for (BlockPos pos : providers) {
                 if (remainingNeeded <= 0) break;
 
                 if (level.getBlockEntity(pos) instanceof ICycleProvider provider) {
