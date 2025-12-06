@@ -6,7 +6,9 @@ import dev.gacbl.logicore.blocks.computer.ComputerModule;
 import dev.gacbl.logicore.blocks.datacable.DataCableModule;
 import dev.gacbl.logicore.blocks.datacenter.DatacenterModule;
 import dev.gacbl.logicore.blocks.datacenter_port.DatacenterPortModule;
+import dev.gacbl.logicore.blocks.drone_bay.DroneBayModule;
 import dev.gacbl.logicore.blocks.serverrack.ServerRackModule;
+import dev.gacbl.logicore.entity.drone.DroneModule;
 import dev.gacbl.logicore.items.processorunit.ProcessorUnitModule;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.network.chat.Component;
@@ -31,6 +33,8 @@ public class CreativeTabModule {
                         output.accept(DatacenterModule.DATACENTER_CONTROLLER.get());
                         output.accept(CompilerModule.COMPILER_ITEM.get());
                         output.accept(DatacenterPortModule.DATACENTER_PORT.get());
+                        output.accept(DroneBayModule.DRONE_BAY.get());
+                        output.accept(DroneModule.DRONE_ITEM.get());
                     })
                     .build());
 

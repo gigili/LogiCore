@@ -1,0 +1,19 @@
+{
+  "variants": {
+	"facing=north": {
+	  "model": "logicore:block/drone_bay"
+	},
+	"facing=east": {
+	  "model": "logicore:block/drone_bay",
+	  "y": 90
+	},
+	"facing=south": {
+	  "model": "logicore:block/drone_bay",
+	  "y": 180
+	},
+	"facing=west": {
+	  "model": "logicore:block/drone_bay",
+	  "y": 270
+	}
+  }
+}

@@ -1,0 +1,27 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "redstone",
+  "key": {
+	"G": {
+	  "item": "minecraft:gold_ingot"
+	},
+	"I": {
+	  "item": "minecraft:iron_ingot"
+	},
+	"P": {
+	  "item": "logicore:processor_unit"
+	},
+	"R": {
+	  "item": "minecraft:redstone"
+	}
+  },
+  "pattern": [
+	"IGI",
+	"RPR",
+	"IGI"
+  ],
+  "result": {
+	"count": 1,
+	"id": "logicore:drone_bay"
+  }
+}

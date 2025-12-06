@@ -9,14 +9,21 @@ import dev.gacbl.logicore.blocks.datacable.DataCableModule;
 import dev.gacbl.logicore.blocks.datacable.cable_network.NetworkManager;
 import dev.gacbl.logicore.blocks.datacenter.DatacenterModule;
 import dev.gacbl.logicore.blocks.datacenter_port.DatacenterPortModule;
+import dev.gacbl.logicore.blocks.drone_bay.DroneBayModule;
+import dev.gacbl.logicore.blocks.drone_bay.DroneBayRenderer;
 import dev.gacbl.logicore.blocks.serverrack.ServerRackModule;
 import dev.gacbl.logicore.blocks.serverrack.ui.ServerRackScreen;
 import dev.gacbl.logicore.core.CreativeTabModule;
 import dev.gacbl.logicore.core.ModDataMaps;
 import dev.gacbl.logicore.core.MyCommands;
+import dev.gacbl.logicore.entity.drone.DroneEntity;
+import dev.gacbl.logicore.entity.drone.DroneModule;
+import dev.gacbl.logicore.entity.drone.client.DroneModel;
+import dev.gacbl.logicore.entity.drone.client.DroneRenderer;
 import dev.gacbl.logicore.items.processorunit.ProcessorUnitModule;
 import dev.gacbl.logicore.network.PacketHandler;
 import guideme.Guide;
+import net.minecraft.client.renderer.entity.EntityRenderers;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
 import net.neoforged.api.distmarker.Dist;
@@ -31,6 +38,7 @@ import net.neoforged.neoforge.client.event.EntityRenderersEvent;
 import net.neoforged.neoforge.client.event.RegisterMenuScreensEvent;
 import net.neoforged.neoforge.common.NeoForge;
 import net.neoforged.neoforge.event.RegisterCommandsEvent;
+import net.neoforged.neoforge.event.entity.EntityAttributeCreationEvent;
 import net.neoforged.neoforge.event.server.ServerStartingEvent;
 import net.neoforged.neoforge.event.tick.LevelTickEvent;
 import net.neoforged.neoforge.registries.datamaps.RegisterDataMapTypesEvent;
@@ -52,7 +60,10 @@ public class LogiCore {
         DatacenterModule.register(modEventBus);
         DatacenterPortModule.register(modEventBus);
         CompilerModule.register(modEventBus);
+        DroneBayModule.register(modEventBus);
         PacketHandler.register(modEventBus);
+
+        DroneModule.register(modEventBus);
 
         modContainer.registerConfig(ModConfig.Type.COMMON, Config.SPEC, "logicore/logicore.toml");
         modEventBus.addListener(this::registerDataMaps);
@@ -85,6 +96,7 @@ public class LogiCore {
     public static class ClientModEvents {
         @SubscribeEvent
         public static void onClientSetup(FMLClientSetupEvent event) {
+            EntityRenderers.register(DroneModule.DRONE.get(), DroneRenderer::new);
         }
 
         @SubscribeEvent
@@ -96,6 +108,21 @@ public class LogiCore {
         @SubscribeEvent
         public static void registerBER(EntityRenderersEvent.RegisterRenderers event) {
             event.registerBlockEntityRenderer(CompilerModule.COMPILER_BLOCK_ENTITY.get(), CompilerBlockEntityRenderer::new);
+        }
+
+        @SubscribeEvent
+        public static void registerRenderers(EntityRenderersEvent.RegisterRenderers event) {
+            event.registerBlockEntityRenderer(DroneBayModule.DRONE_BAY_BE.get(), DroneBayRenderer::new);
+        }
+
+        @SubscribeEvent
+        public static void registerLayers(EntityRenderersEvent.RegisterLayerDefinitions event) {
+            event.registerLayerDefinition(DroneModel.LAYER_LOCATION, DroneModel::createBodyLayer);
+        }
+
+        @SubscribeEvent
+        public static void registerAttributes(EntityAttributeCreationEvent event) {
+            event.put(DroneModule.DRONE.get(), DroneEntity.createAttributes().build());
         }
     }
 }

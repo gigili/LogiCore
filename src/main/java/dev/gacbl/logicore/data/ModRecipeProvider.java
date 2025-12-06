@@ -5,7 +5,9 @@ import dev.gacbl.logicore.blocks.computer.ComputerBlock;
 import dev.gacbl.logicore.blocks.datacable.DataCableBlock;
 import dev.gacbl.logicore.blocks.datacenter.DatacenterControllerBlock;
 import dev.gacbl.logicore.blocks.datacenter_port.DatacenterPortBlock;
+import dev.gacbl.logicore.blocks.drone_bay.DroneBayBlock;
 import dev.gacbl.logicore.blocks.serverrack.ServerRackBlock;
+import dev.gacbl.logicore.entity.drone.DroneItem;
 import dev.gacbl.logicore.items.processorunit.ProcessorUnitItem;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.data.PackOutput;
@@ -31,6 +33,8 @@ public class ModRecipeProvider extends RecipeProvider implements IConditionBuild
         DatacenterControllerBlock.getRecipe().unlockedBy("has_redstone", has(Items.REDSTONE)).save(recipeOutput);
         CompilerBlock.getRecipe().unlockedBy("has_redstone", has(Items.REDSTONE)).save(recipeOutput);
         DatacenterPortBlock.getRecipe().unlockedBy("has_redstone", has(Items.REDSTONE)).save(recipeOutput);
+        DroneBayBlock.getRecipe().unlockedBy("has_redstone", has(Items.REDSTONE)).save(recipeOutput);
+        DroneItem.getRecipe().unlockedBy("has_redstone", has(Items.REDSTONE)).save(recipeOutput);
 
         /*CompilerRecipeBuilder.of(
                         Ingredient.of(Items.IRON_INGOT), // Input

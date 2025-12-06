@@ -12,10 +12,8 @@ import net.neoforged.bus.api.IEventBus;
 import net.neoforged.neoforge.registries.DeferredRegister;
 
 public class DataCableModule {
-    public static final DeferredRegister<Block> BLOCKS =
-            DeferredRegister.create(BuiltInRegistries.BLOCK, LogiCore.MOD_ID);
-    public static final DeferredRegister<Item> ITEMS =
-            DeferredRegister.create(BuiltInRegistries.ITEM, LogiCore.MOD_ID);
+    public static final DeferredRegister.Blocks BLOCKS = DeferredRegister.createBlocks(LogiCore.MOD_ID);
+    public static final DeferredRegister.Items ITEMS = DeferredRegister.createItems(LogiCore.MOD_ID);
 
     public static final DeferredRegister<BlockEntityType<?>> BLOCK_ENTITIES = DeferredRegister.create(BuiltInRegistries.BLOCK_ENTITY_TYPE, LogiCore.MOD_ID);
 

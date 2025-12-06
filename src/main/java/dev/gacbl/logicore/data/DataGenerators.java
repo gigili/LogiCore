@@ -5,6 +5,7 @@ import dev.gacbl.logicore.blocks.compiler.CompilerLootTableProvider;
 import dev.gacbl.logicore.blocks.computer.ComputerLootTableProvider;
 import dev.gacbl.logicore.blocks.datacable.DataCableLootTableProvider;
 import dev.gacbl.logicore.blocks.datacenter.DataCenterControllerLootTableProvider;
+import dev.gacbl.logicore.blocks.drone_bay.DroneBayLootTableProvider;
 import dev.gacbl.logicore.blocks.serverrack.ServerRackLootTableProvider;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.data.DataGenerator;
@@ -40,7 +41,8 @@ public class DataGenerators {
                                 new LootTableProvider.SubProviderEntry(DataCableLootTableProvider::new, LootContextParamSets.BLOCK),
                                 new LootTableProvider.SubProviderEntry(ComputerLootTableProvider::new, LootContextParamSets.BLOCK),
                                 new LootTableProvider.SubProviderEntry(DataCenterControllerLootTableProvider::new, LootContextParamSets.BLOCK),
-                                new LootTableProvider.SubProviderEntry(CompilerLootTableProvider::new, LootContextParamSets.BLOCK)
+                                new LootTableProvider.SubProviderEntry(CompilerLootTableProvider::new, LootContextParamSets.BLOCK),
+                                new LootTableProvider.SubProviderEntry(DroneBayLootTableProvider::new, LootContextParamSets.BLOCK)
                         ),
                         lookupProvider
                 )
@@ -53,7 +55,7 @@ public class DataGenerators {
         generator.addProvider(event.includeServer(), blockTagsProvider);
         generator.addProvider(event.includeServer(), new ModItemTagProvider(packOutput, lookupProvider, blockTagsProvider.contentsGetter(), existingFileHelper));
 
-        //generator.addProvider(event.includeClient(), new ModItemModelProvider(packOutput, existingFileHelper));
+        generator.addProvider(event.includeClient(), new ModItemModelProvider(packOutput, existingFileHelper));
         //generator.addProvider(event.includeClient(), new ModBlockStateProvider(packOutput, existingFileHelper));
     }
 }

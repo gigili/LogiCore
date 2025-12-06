@@ -1,4 +1,4 @@
-package dev.gacbl.logicore.blocks.computer;
+package dev.gacbl.logicore.blocks.drone_bay;
 
 import com.mojang.serialization.MapCodec;
 import dev.gacbl.logicore.items.processorunit.ProcessorUnitModule;
@@ -30,40 +30,51 @@ import net.minecraft.world.phys.shapes.VoxelShape;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-public class ComputerBlock extends BaseEntityBlock {
-    public static final MapCodec<ComputerBlock> CODEC = simpleCodec(ComputerBlock::new);
+public class DroneBayBlock extends BaseEntityBlock {
+    public static final MapCodec<DroneBayBlock> CODEC = simpleCodec(DroneBayBlock::new);
     public static final DirectionProperty FACING = BlockStateProperties.HORIZONTAL_FACING;
     protected static final VoxelShape[] SHAPES = new VoxelShape[6];
 
     static {
-        VoxelShape bottom = Block.box(0, 0, 0, 16, 7, 16);
-        VoxelShape topNorth = Block.box(0, 7, 7, 16, 16, 16);
-        VoxelShape topSouth = Block.box(0, 7, 0, 16, 16, 9);
-        VoxelShape topEast = Block.box(0, 7, 0, 9, 16, 16);
-        VoxelShape topWest = Block.box(7, 7, 0, 16, 16, 16);
+        VoxelShape baseNorth = Block.box(1, 0, 0, 15, 2, 14);
+        VoxelShape wallNorth = Block.box(1, 0, 14, 15, 16, 16);
+        VoxelShape shapeNorth = Shapes.or(baseNorth, wallNorth);
 
-        SHAPES[2] = Shapes.or(bottom, topNorth); // North
-        SHAPES[3] = Shapes.or(bottom, topSouth); // South
-        SHAPES[4] = Shapes.or(bottom, topWest);  // West
-        SHAPES[5] = Shapes.or(bottom, topEast);  // East
+        VoxelShape baseSouth = Block.box(1, 0, 2, 15, 2, 16);
+        VoxelShape wallSouth = Block.box(1, 0, 0, 15, 16, 2);
+        VoxelShape shapeSouth = Shapes.or(baseSouth, wallSouth);
 
-        // Fallback for UP/DOWN
-        SHAPES[0] = SHAPES[2];
-        SHAPES[1] = SHAPES[2];
+        VoxelShape baseWest = Block.box(0, 0, 1, 14, 2, 15);
+        VoxelShape wallWest = Block.box(14, 0, 1, 16, 16, 15);
+        VoxelShape shapeWest = Shapes.or(baseWest, wallWest);
+
+        VoxelShape baseEast = Block.box(2, 0, 1, 16, 2, 15);
+        VoxelShape wallEast = Block.box(0, 0, 1, 2, 16, 15);
+        VoxelShape shapeEast = Shapes.or(baseEast, wallEast);
+
+        SHAPES[2] = shapeNorth;
+        SHAPES[3] = shapeSouth;
+        SHAPES[4] = shapeWest;
+        SHAPES[5] = shapeEast;
+
+        // Fallback for UP/DOWN (Default to North)
+        SHAPES[0] = shapeNorth;
+        SHAPES[1] = shapeNorth;
     }
 
-    public ComputerBlock(Properties properties) {
+    protected DroneBayBlock(Properties properties) {
         super(properties);
         this.registerDefaultState(this.stateDefinition.any().setValue(FACING, Direction.NORTH));
     }
 
     public static ShapedRecipeBuilder getRecipe() {
-        return ShapedRecipeBuilder.shaped(RecipeCategory.REDSTONE, ComputerModule.COMPUTER_BLOCK.get())
-                .pattern("RNR")
-                .pattern("NPN")
-                .pattern("RNR")
-                .define('N', Items.NETHER_STAR)
+        return ShapedRecipeBuilder.shaped(RecipeCategory.REDSTONE, DroneBayModule.DRONE_BAY.get())
+                .pattern("IGI")
+                .pattern("RPR")
+                .pattern("IGI")
+                .define('I', Items.IRON_INGOT)
                 .define('R', Items.REDSTONE)
+                .define('G', Items.GOLD_INGOT)
                 .define('P', ProcessorUnitModule.PROCESSOR_UNIT.get());
     }
 
@@ -89,6 +100,11 @@ public class ComputerBlock extends BaseEntityBlock {
     }
 
     @Override
+    public @Nullable BlockEntity newBlockEntity(@NotNull BlockPos blockPos, @NotNull BlockState blockState) {
+        return new DroneBayBlockEntity(blockPos, blockState);
+    }
+
+    @Override
     public @NotNull RenderShape getRenderShape(@NotNull BlockState state) {
         return RenderShape.MODEL;
     }
@@ -104,39 +120,18 @@ public class ComputerBlock extends BaseEntityBlock {
     }
 
     @Override
-    public void onRemove(@NotNull BlockState state, @NotNull Level level, @NotNull BlockPos pos, @NotNull BlockState newState, boolean isMoving) {
-        BlockEntity be = level.getBlockEntity(pos);
-        if (be instanceof ComputerBlockEntity computerBlockEntity) {
-            computerBlockEntity.dropContents();
-        }
-        super.onRemove(state, level, pos, newState, isMoving);
+    protected @NotNull InteractionResult useWithoutItem(@NotNull BlockState state, Level level, @NotNull BlockPos pos, @NotNull Player player, @NotNull BlockHitResult hitResult) {
+        if (level.isClientSide) return InteractionResult.FAIL;
+        return InteractionResult.FAIL;
     }
 
     @Nullable
     @Override
     public <T extends BlockEntity> BlockEntityTicker<T> getTicker(Level level, @NotNull BlockState state, @NotNull BlockEntityType<T> type) {
-        if (!level.isClientSide()) {
-            return createTickerHelper(type, ComputerModule.COMPUTER_BLOCK_ENTITY.get(), ComputerBlockEntity::serverTick);
-        }
-        return null;
-    }
-
-    @Nullable
-    @Override
-    public BlockEntity newBlockEntity(@NotNull BlockPos pos, @NotNull BlockState state) {
-        return new ComputerBlockEntity(pos, state);
-    }
-
-    @Override
-    protected @NotNull InteractionResult useWithoutItem(@NotNull BlockState state, Level level, @NotNull BlockPos bePos, @NotNull Player player, @NotNull BlockHitResult hit) {
-        if (!level.isClientSide) {
-            BlockEntity be = level.getBlockEntity(bePos);
-
-            if (be instanceof ComputerBlockEntity serverRack) {
-                player.openMenu(serverRack, bePos);
-                return InteractionResult.CONSUME;
+        return level.isClientSide ? null : (lvl, pos, st, be) -> {
+            if (be instanceof DroneBayBlockEntity controller) {
+                controller.tick(lvl, pos, st);
             }
-        }
-        return InteractionResult.SUCCESS;
+        };
     }
 }

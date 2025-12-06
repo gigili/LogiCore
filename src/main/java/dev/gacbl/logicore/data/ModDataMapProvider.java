@@ -48,23 +48,17 @@ public class ModDataMapProvider extends DataMapProvider {
                 .add(BuiltInRegistries.ITEM.wrapAsHolder(Items.NETHER_STAR), 130000, false)
                 .add(BuiltInRegistries.ITEM.wrapAsHolder(Items.DRAGON_EGG), 250000, false)
                 .add(BuiltInRegistries.ITEM.wrapAsHolder(Items.DRAGON_BREATH), 150000, false)
-
-                // --- FUELS & MINERALS ---
                 .add(ItemTags.COALS, 16, false)
                 .add(Tags.Items.INGOTS_COPPER, 64, false)
                 .add(BuiltInRegistries.ITEM.wrapAsHolder(Items.FLINT), 4, false)
                 .add(BuiltInRegistries.ITEM.wrapAsHolder(Items.CLAY_BALL), 8, false)
                 .add(Tags.Items.OBSIDIANS, 64, false)
                 .add(BuiltInRegistries.ITEM.wrapAsHolder(Items.NETHERITE_SCRAP), 2056, false)
-
-                // --- NETHER & END ---
                 .add(BuiltInRegistries.ITEM.wrapAsHolder(Items.NETHERRACK), 1, false)
                 .add(Tags.Items.GEMS_QUARTZ, 32, false)
                 .add(BuiltInRegistries.ITEM.wrapAsHolder(Items.SOUL_SAND), 4, false)
                 .add(BuiltInRegistries.ITEM.wrapAsHolder(Items.END_STONE), 4, false)
                 .add(Tags.Items.ENDER_PEARLS, 1024, false)
-
-                // --- MOB DROPS & ORGANICS ---
                 .add(Tags.Items.LEATHERS, 16, false)
                 .add(Tags.Items.FEATHERS, 16, false)
                 .add(Tags.Items.BONES, 16, false)
