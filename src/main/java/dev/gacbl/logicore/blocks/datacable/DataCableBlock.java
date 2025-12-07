@@ -6,6 +6,9 @@ import dev.gacbl.logicore.blocks.computer.ComputerBlock;
 import dev.gacbl.logicore.blocks.datacable.cable_network.NetworkManager;
 import dev.gacbl.logicore.blocks.datacenter_port.DatacenterPortBlock;
 import dev.gacbl.logicore.blocks.drone_bay.DroneBayBlock;
+import dev.gacbl.logicore.blocks.drone_bay.DroneBayBlockEntity;
+import dev.gacbl.logicore.blocks.generator.GeneratorBlock;
+import dev.gacbl.logicore.blocks.generator.GeneratorBlockEntity;
 import dev.gacbl.logicore.blocks.serverrack.ServerRackBlock;
 import dev.gacbl.logicore.items.processorunit.ProcessorUnitModule;
 import net.minecraft.core.BlockPos;
@@ -164,18 +167,38 @@ public class DataCableBlock extends BaseEntityBlock implements SimpleWaterlogged
         }
 
         if (level instanceof LevelAccessor accessor) {
-            return canConnectToBlock(accessor, pos);
+            return canConnectToBlock(accessor, pos, direction);
         }
 
         return false;
     }
 
-    private boolean canConnectToBlock(LevelAccessor level, BlockPos pos) {
+    private boolean canConnectToBlock(LevelAccessor level, BlockPos pos, Direction direction) {
         List<Class<? extends Block>> allowedBlocks = List.of(ServerRackBlock.class, ComputerBlock.class, CompilerBlock.class, DatacenterPortBlock.class, DroneBayBlock.class);
         if (level instanceof ServerLevel server) {
             Block block = server.getBlockState(pos).getBlock();
             var cap = server.getCapability(Capabilities.EnergyStorage.BLOCK, pos, null);
-            return allowedBlocks.contains(block.getClass()) || (cap != null && cap.getMaxEnergyStored() > 0);
+            boolean isAllowed = allowedBlocks.contains(block.getClass()) || (cap != null && cap.getMaxEnergyStored() > 0);
+
+            if (server.getBlockEntity(pos) instanceof GeneratorBlockEntity) {
+                BlockState state = server.getBlockState(pos);
+                Direction neighborFace = direction.getOpposite();
+                Direction generatorFront = state.getValue(GeneratorBlock.FACING);
+                if (neighborFace == Direction.UP || neighborFace == generatorFront) {
+                    isAllowed = false;
+                }
+            }
+
+            if (server.getBlockEntity(pos) instanceof DroneBayBlockEntity) {
+                BlockState state = server.getBlockState(pos);
+                Direction neighborFace = direction.getOpposite();
+                Direction bayFront = state.getValue(GeneratorBlock.FACING);
+                if (neighborFace != bayFront.getOpposite()) {
+                    isAllowed = false;
+                }
+            }
+
+            return isAllowed;
         }
         return false;
     }

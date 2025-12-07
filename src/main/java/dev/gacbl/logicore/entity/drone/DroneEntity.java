@@ -4,7 +4,6 @@ import dev.gacbl.logicore.entity.drone.goals.FollowPlayerGoal;
 import dev.gacbl.logicore.entity.drone.goals.HealOwnerGoal;
 import dev.gacbl.logicore.entity.drone.goals.RechargeIfEmptyGoal;
 import net.minecraft.core.BlockPos;
-import net.minecraft.core.component.DataComponents;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
@@ -24,7 +23,6 @@ import net.minecraft.world.entity.ai.navigation.FlyingPathNavigation;
 import net.minecraft.world.entity.ai.navigation.PathNavigation;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.component.CustomData;
 import net.minecraft.world.level.Level;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -76,8 +74,8 @@ public class DroneEntity extends FlyingMob {
 
     @Override
     protected void registerGoals() {
-        this.goalSelector.addGoal(0, new FloatGoal(this));
         this.goalSelector.addGoal(0, new RechargeIfEmptyGoal(this));
+        this.goalSelector.addGoal(0, new FloatGoal(this));
 
         this.goalSelector.addGoal(1, new HealOwnerGoal(this, 20, HEAL_COST));
         this.goalSelector.addGoal(3, new FollowPlayerGoal(this));
@@ -152,13 +150,7 @@ public class DroneEntity extends FlyingMob {
     @Override
     protected void dropCustomDeathLoot(@NotNull ServerLevel level, @NotNull DamageSource source, boolean recentlyHit) {
         super.dropCustomDeathLoot(level, source, recentlyHit);
-
         ItemStack stack = new ItemStack(DroneModule.DRONE_ITEM.get());
-
-        if (this.getEnergy() < MAX_ENERGY) {
-            stack.set(DataComponents.CUSTOM_DATA, CustomData.of(this.saveWithoutId(new CompoundTag())));
-        }
-
         this.spawnAtLocation(stack);
     }
 

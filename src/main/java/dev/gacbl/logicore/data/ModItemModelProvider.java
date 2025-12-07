@@ -7,6 +7,7 @@ import dev.gacbl.logicore.blocks.datacable.DataCableModule;
 import dev.gacbl.logicore.blocks.datacenter.DatacenterModule;
 import dev.gacbl.logicore.blocks.datacenter_port.DatacenterPortModule;
 import dev.gacbl.logicore.blocks.drone_bay.DroneBayModule;
+import dev.gacbl.logicore.blocks.generator.GeneratorModule;
 import dev.gacbl.logicore.blocks.serverrack.ServerRackModule;
 import dev.gacbl.logicore.items.processorunit.ProcessorUnitModule;
 import net.minecraft.data.PackOutput;
@@ -30,5 +31,6 @@ public class ModItemModelProvider extends ItemModelProvider {
         withExistingParent(DatacenterPortModule.DATACENTER_PORT_ITEM.getId().getPath(), "logicore:block/" + DatacenterPortModule.DATACENTER_PORT_ITEM.getId().getPath());
         withExistingParent(DroneBayModule.DRONE_BAY_ITEM.getId().getPath(), "logicore:block/" + DroneBayModule.DRONE_BAY_ITEM.getId().getPath());
         withExistingParent(ServerRackModule.SERVER_RACK_ITEM.getId().getPath(), "logicore:block/" + ServerRackModule.SERVER_RACK_ITEM.getId().getPath());
+        withExistingParent(GeneratorModule.GENERATOR_ITEM.getId().getPath(), "logicore:block/" + GeneratorModule.GENERATOR_ITEM.getId().getPath());
     }
 }

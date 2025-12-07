@@ -7,6 +7,7 @@ import dev.gacbl.logicore.blocks.datacable.DataCableModule;
 import dev.gacbl.logicore.blocks.datacenter.DatacenterModule;
 import dev.gacbl.logicore.blocks.datacenter_port.DatacenterPortModule;
 import dev.gacbl.logicore.blocks.drone_bay.DroneBayModule;
+import dev.gacbl.logicore.blocks.generator.GeneratorModule;
 import dev.gacbl.logicore.blocks.serverrack.ServerRackModule;
 import dev.gacbl.logicore.core.ModTags;
 import net.minecraft.core.HolderLookup;
@@ -82,6 +83,12 @@ public class ModBlockTagProvider extends BlockTagsProvider {
         tag(BlockTags.create(ResourceLocation.fromNamespaceAndPath("justdirethings", "eclipsegate_deny"))).add(DroneBayModule.DRONE_BAY.get());
         tag(BlockTags.create(ResourceLocation.fromNamespaceAndPath("justdirethings", "phase_deny"))).add(DroneBayModule.DRONE_BAY.get());
         tag(BlockTags.create(ResourceLocation.fromNamespaceAndPath("justdirethings", "swapper_deny"))).add(DroneBayModule.DRONE_BAY.get());
+
+        tag(BlockTags.MINEABLE_WITH_PICKAXE).add(GeneratorModule.GENERATOR.get());
+        tag(BlockTags.NEEDS_IRON_TOOL).add(GeneratorModule.GENERATOR.get());
+        tag(BlockTags.create(ResourceLocation.fromNamespaceAndPath("justdirethings", "eclipsegate_deny"))).add(GeneratorModule.GENERATOR.get());
+        tag(BlockTags.create(ResourceLocation.fromNamespaceAndPath("justdirethings", "phase_deny"))).add(GeneratorModule.GENERATOR.get());
+        tag(BlockTags.create(ResourceLocation.fromNamespaceAndPath("justdirethings", "swapper_deny"))).add(GeneratorModule.GENERATOR.get());
 
         setupOptionalTags();
     }

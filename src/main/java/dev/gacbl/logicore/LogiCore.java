@@ -11,6 +11,8 @@ import dev.gacbl.logicore.blocks.datacenter.DatacenterModule;
 import dev.gacbl.logicore.blocks.datacenter_port.DatacenterPortModule;
 import dev.gacbl.logicore.blocks.drone_bay.DroneBayModule;
 import dev.gacbl.logicore.blocks.drone_bay.DroneBayRenderer;
+import dev.gacbl.logicore.blocks.generator.GeneratorModule;
+import dev.gacbl.logicore.blocks.generator.ui.GeneratorScreen;
 import dev.gacbl.logicore.blocks.serverrack.ServerRackModule;
 import dev.gacbl.logicore.blocks.serverrack.ui.ServerRackScreen;
 import dev.gacbl.logicore.core.CreativeTabModule;
@@ -61,6 +63,7 @@ public class LogiCore {
         DatacenterPortModule.register(modEventBus);
         CompilerModule.register(modEventBus);
         DroneBayModule.register(modEventBus);
+        GeneratorModule.register(modEventBus);
         PacketHandler.register(modEventBus);
 
         DroneModule.register(modEventBus);
@@ -103,6 +106,7 @@ public class LogiCore {
         public static void registerScreens(RegisterMenuScreensEvent event) {
             event.register(ServerRackModule.SERVER_RACK_MENU.get(), ServerRackScreen::new);
             event.register(CompilerModule.COMPILER_MENU.get(), CompilerScreen::new);
+            event.register(GeneratorModule.GENERATOR_MENU.get(), GeneratorScreen::new);
         }
 
         @SubscribeEvent

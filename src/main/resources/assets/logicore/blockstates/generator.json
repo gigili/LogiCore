@@ -1,0 +1,34 @@
+{
+  "variants": {
+	"facing=north,generating=false": {
+	  "model": "logicore:block/generator"
+	},
+	"facing=south,generating=false": {
+	  "model": "logicore:block/generator",
+	  "y": 180
+	},
+	"facing=west,generating=false": {
+	  "model": "logicore:block/generator",
+	  "y": 270
+	},
+	"facing=east,generating=false": {
+	  "model": "logicore:block/generator",
+	  "y": 90
+	},
+	"facing=north,generating=true": {
+	  "model": "logicore:block/generator_on"
+	},
+	"facing=south,generating=true": {
+	  "model": "logicore:block/generator_on",
+	  "y": 180
+	},
+	"facing=west,generating=true": {
+	  "model": "logicore:block/generator_on",
+	  "y": 270
+	},
+	"facing=east,generating=true": {
+	  "model": "logicore:block/generator_on",
+	  "y": 90
+	}
+  }
+}

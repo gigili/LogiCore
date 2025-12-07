@@ -165,7 +165,7 @@ public class ComputationNetwork {
     private void pullEnergy(Level level) {
         if (this.energySources.isEmpty()) return;
 
-        int energyNeeded = networkEnergyBuffer.getMaxEnergyStored() - networkEnergyBuffer.getEnergyStored();
+        int energyNeeded = Math.min((int) feDemand, networkEnergyBuffer.getMaxEnergyStored() - networkEnergyBuffer.getEnergyStored());
         int sourcesToTry = this.energySources.size();
         List<BlockPos> sources = new ArrayList<>(this.energySources);
 

@@ -30,9 +30,9 @@ public class DroneBayRenderer implements BlockEntityRenderer<DroneBayBlockEntity
         this.bufferSource = bufferSource;
         this.poseStack = poseStack;
 
-        renderText("Cycles: " + Utils.formatValues(blockEntity.getCyclesStored()), 0x00FF00, 0, 0.1, -0.35);
-        renderText("Docked: Nothing", 0xb00307, 0, 0.0, -0.35);
-        renderText("What ever", 0x00FF00, 0, 0.08, -0.35);
+        renderText("Cycles: " + Utils.formatValues(blockEntity.getCyclesStored()), 0x00FF00, 0, -0.1, -0.35);
+        renderText("Docked: Nothing", 0xb00307, 0, -0.2, -0.35);
+        renderText("What ever", 0x00FF00, 0, -0.3, -0.35);
 
 
     }
@@ -45,7 +45,7 @@ public class DroneBayRenderer implements BlockEntityRenderer<DroneBayBlockEntity
 
         poseStack.pushPose();
 
-        poseStack.translate(0.5, 0.5, 0.5);
+        poseStack.translate(0.5, 1, 0.5);
 
         float angle = -facing.toYRot();
         poseStack.mulPose(Axis.YP.rotationDegrees(angle));

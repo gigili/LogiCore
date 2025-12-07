@@ -18,3 +18,6 @@
         - `logicore:is_energy_cable` | tag already in a `valid_datacenter_inner_block` list
 - Added a compiler block which can convert one item into the other by using cycles
     - Added rendering of the selected item the compiler is generating
+- Added a drone bay
+- Added a simple drone for testing purposes
+- Added a generator that converts fuels to FE

@@ -6,6 +6,7 @@
 	"logicore:datacenter_controller",
 	"logicore:compiler",
 	"logicore:datacenter_port",
-	"logicore:drone_bay"
+	"logicore:drone_bay",
+	"logicore:generator"
   ]
 }
