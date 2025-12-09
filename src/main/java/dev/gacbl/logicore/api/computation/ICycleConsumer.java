@@ -5,5 +5,7 @@ public interface ICycleConsumer {
 
     long receiveCycles(long maxReceive, boolean simulate);
 
+    long extractCycles(long maxExtract, boolean simulate);
+
     long getCyclesStored();
 }

@@ -20,7 +20,7 @@ public class HealOwnerGoal extends Goal {
     @Override
     public boolean canUse() {
         Player owner = drone.getOwner();
-        return owner != null && owner.getHealth() < owner.getMaxHealth() && drone.getEnergy() >= cost;
+        return owner != null && owner.getHealth() < owner.getMaxHealth() && drone.getCyclesStored() >= cost;
     }
 
     @Override
@@ -32,9 +32,9 @@ public class HealOwnerGoal extends Goal {
     public void tick() {
         Player owner = drone.getOwner();
         if (cooldown <= 0 && owner != null && drone.distanceToSqr(owner) < 36.0) {
-            owner.heal(4.0f); // Heal 2 heart
+            owner.heal(4.0f); // Heal 2 hearts
 
-            drone.consumeEnergy(cost);
+            drone.getCycleStorage().extractCycles(cost, false);
             drone.level().broadcastEntityEvent(drone, (byte) 60);
             cooldown = defaultCooldown;
         }

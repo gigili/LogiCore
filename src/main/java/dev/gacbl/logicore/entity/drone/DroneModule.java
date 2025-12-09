@@ -1,11 +1,13 @@
 package dev.gacbl.logicore.entity.drone;
 
 import dev.gacbl.logicore.LogiCore;
+import dev.gacbl.logicore.core.ModCapabilities;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.MobCategory;
 import net.minecraft.world.item.Item;
 import net.neoforged.bus.api.IEventBus;
+import net.neoforged.neoforge.capabilities.RegisterCapabilitiesEvent;
 import net.neoforged.neoforge.registries.DeferredItem;
 import net.neoforged.neoforge.registries.DeferredRegister;
 
@@ -24,5 +26,14 @@ public class DroneModule {
     public static void register(IEventBus eventBus) {
         ENTITY_TYPES.register(eventBus);
         ITEMS.register(eventBus);
+        eventBus.addListener(DroneModule::registerCapabilities);
+    }
+
+    private static void registerCapabilities(RegisterCapabilitiesEvent event) {
+        event.registerEntity(
+                ModCapabilities.ENTITY_CYCLE_CONSUMER,
+                DroneModule.DRONE.get(),
+                (be, context) -> be.getCycleStorage()
+        );
     }
 }

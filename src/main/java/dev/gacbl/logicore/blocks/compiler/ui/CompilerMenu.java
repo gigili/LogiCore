@@ -31,7 +31,7 @@ public class CompilerMenu extends AbstractContainerMenu {
         addPlayerInventory(playerInventory);
         addPlayerHotbar(playerInventory);
 
-        this.addSlot(new SlotItemHandler(this.blockEntity.getItemHandler(null), 0, 37, 43) {
+        this.addSlot(new SlotItemHandler(this.blockEntity.getItemHandler(null), 0, 72, 82) {
             @Override
             public boolean mayPickup(Player playerIn) {
                 return false;
@@ -43,7 +43,7 @@ public class CompilerMenu extends AbstractContainerMenu {
             }
         });
 
-        this.addSlot(new SlotItemHandler(this.blockEntity.getItemHandler(null), 1, 121, 43) {
+        this.addSlot(new SlotItemHandler(this.blockEntity.getItemHandler(null), 1, 144, 82) {
             @Override
             public boolean mayPlace(@NotNull ItemStack stack) {
                 return false;
@@ -81,14 +81,14 @@ public class CompilerMenu extends AbstractContainerMenu {
     private void addPlayerInventory(Inventory playerInventory) {
         for (int i = 0; i < 3; ++i) {
             for (int l = 0; l < 9; ++l) {
-                this.addSlot(new Slot(playerInventory, l + i * 9 + 9, 8 + l * 18, 107 + i * 18));
+                this.addSlot(new Slot(playerInventory, l + i * 9 + 9, 36 + l * 18, 157 + i * 18));
             }
         }
     }
 
     private void addPlayerHotbar(Inventory playerInventory) {
         for (int i = 0; i < 9; ++i) {
-            this.addSlot(new Slot(playerInventory, i, 8 + i * 18, 165));
+            this.addSlot(new Slot(playerInventory, i, 36 + i * 18, 213));
         }
     }
 

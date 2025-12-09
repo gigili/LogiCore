@@ -59,8 +59,8 @@ public class LogiCoreJeiPlugin implements IModPlugin {
                 List<Target<I>> targets = new ArrayList<>();
 
                 if (ingredient.getIngredient() instanceof ItemStack) {
-                    int x = gui.getGuiLeft() + 37;
-                    int y = gui.getGuiTop() + 43;
+                    int x = gui.getGuiLeft() + 72;
+                    int y = gui.getGuiTop() + 82;
 
                     targets.add(new Target<I>() {
                         @Override

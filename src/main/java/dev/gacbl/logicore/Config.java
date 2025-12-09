@@ -29,6 +29,11 @@ public class Config {
     public static final ModConfigSpec.ConfigValue<Boolean> DATACENTER_PRODUCES_SOUND;
     public static final ModConfigSpec.ConfigValue<Boolean> DATACENTER_PRODUCES_PARTICLES;
 
+    //Compiler
+    public static final ModConfigSpec.ConfigValue<Integer> COMPILER_CYCLES_PROCESSED_PER_TICK;
+    public static final ModConfigSpec.ConfigValue<Integer> COMPILER_MAX_PROGRESS;
+    public static final ModConfigSpec.ConfigValue<Integer> COMPILER_MAX_TICK_DURATION;
+
     static {
         BUILDER.comment("LogiCore Configuration");
 
@@ -96,6 +101,22 @@ public class Config {
                 .comment(" How much of a boost in cycle production the computer gets from being in datacenter")
                 .defineInRange("datacenter_boost", 100, 1, Integer.MAX_VALUE);
 
+        BUILDER.pop();
+        //</editor-fold>
+
+        //<editor-fold desc="Compiler">
+        BUILDER.push("Compiler");
+        COMPILER_CYCLES_PROCESSED_PER_TICK = BUILDER
+                .comment(" How many cycles per tick are processed. 50 cycles per tick = 1000 cycles per second.")
+                .defineInRange("cycles_processed_per_tick", 50, 20, 1000);
+
+        COMPILER_MAX_PROGRESS = BUILDER
+                .comment(" Max progress")
+                .defineInRange("max_progress", 20, 20, 1000);
+
+        COMPILER_MAX_TICK_DURATION = BUILDER
+                .comment(" Cap the most expensive items to this value in ticks")
+                .defineInRange("max_duration_cap", 600, 20, Integer.MAX_VALUE);
         BUILDER.pop();
         //</editor-fold>
 

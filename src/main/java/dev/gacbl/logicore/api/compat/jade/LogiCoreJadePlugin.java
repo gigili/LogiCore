@@ -1,6 +1,7 @@
 package dev.gacbl.logicore.api.compat.jade;
 
 import dev.gacbl.logicore.LogiCore;
+import dev.gacbl.logicore.api.compat.jade.providers.*;
 import dev.gacbl.logicore.blocks.compiler.CompilerBlock;
 import dev.gacbl.logicore.blocks.compiler.CompilerBlockEntity;
 import dev.gacbl.logicore.blocks.computer.ComputerBlock;
@@ -11,6 +12,7 @@ import dev.gacbl.logicore.blocks.drone_bay.DroneBayBlock;
 import dev.gacbl.logicore.blocks.drone_bay.DroneBayBlockEntity;
 import dev.gacbl.logicore.blocks.serverrack.ServerRackBlock;
 import dev.gacbl.logicore.blocks.serverrack.ServerRackBlockEntity;
+import dev.gacbl.logicore.entity.drone.DroneEntity;
 import snownee.jade.api.IWailaClientRegistration;
 import snownee.jade.api.IWailaCommonRegistration;
 import snownee.jade.api.IWailaPlugin;
@@ -27,6 +29,8 @@ public class LogiCoreJadePlugin implements IWailaPlugin {
         registration.registerBlockComponent(CompilerProvider.INSTANCE, CompilerBlock.class);
         registration.registerBlockComponent(DatacenterProvider.INSTANCE, DatacenterPortBlock.class);
         registration.registerBlockComponent(DroneBayProvider.INSTANCE, DroneBayBlock.class);
+
+        registration.registerEntityComponent(DroneEntityProvider.INSTANCE, DroneEntity.class);
     }
 
     @Override
@@ -36,5 +40,7 @@ public class LogiCoreJadePlugin implements IWailaPlugin {
         registration.registerBlockDataProvider(CompilerProvider.INSTANCE, CompilerBlockEntity.class);
         registration.registerBlockDataProvider(DatacenterProvider.INSTANCE, DatacenterPortBlockEntity.class);
         registration.registerBlockDataProvider(DroneBayProvider.INSTANCE, DroneBayBlockEntity.class);
+
+        registration.registerEntityDataProvider(DroneEntityProvider.INSTANCE, DroneEntity.class);
     }
 }

@@ -8,9 +8,12 @@ import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderer;
 import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
 import net.minecraft.core.Direction;
+import net.minecraft.network.chat.Component;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import org.jetbrains.annotations.NotNull;
+
+import java.util.Objects;
 
 public class DroneBayRenderer implements BlockEntityRenderer<DroneBayBlockEntity> {
     private final Font font;
@@ -30,14 +33,18 @@ public class DroneBayRenderer implements BlockEntityRenderer<DroneBayBlockEntity
         this.bufferSource = bufferSource;
         this.poseStack = poseStack;
 
-        renderText("Cycles: " + Utils.formatValues(blockEntity.getCyclesStored()), 0x00FF00, 0, -0.1, -0.35);
-        renderText("Docked: Nothing", 0xb00307, 0, -0.2, -0.35);
-        renderText("What ever", 0x00FF00, 0, -0.3, -0.35);
+        String dockedText = blockEntity.getDockedName().isEmpty() ? Component.translatable("tooltip.logicore.drone_bay.docked.nothing").getString() : blockEntity.getDockedName();
 
+        renderText(
+                Component.translatable("tooltip.logicore.cycles_stored", Utils.formatValues(Objects.requireNonNull(blockEntity.getCycleStorage()).getCyclesAvailable())),
+                0x00FF00, 0, -0.1, -0.35
+        );
 
+        renderText(Component.translatable("tooltip.logicore.drone_bay.docked", dockedText), 0xb00307, 0, -0.2, -0.35);
+        //renderText("Active", 0x00FF00, 0, -0.3, -0.35);
     }
 
-    private void renderText(String textToRender, int color, double x, double y, double z) {
+    private void renderText(Component textToRender, int color, double x, double y, double z) {
         Direction facing = blockState.hasProperty(BlockStateProperties.HORIZONTAL_FACING)
                 ? blockState.getValue(BlockStateProperties.HORIZONTAL_FACING)
                 : Direction.NORTH;

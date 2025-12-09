@@ -7,6 +7,7 @@ import dev.gacbl.logicore.api.computation.ICycleStorage;
 import net.minecraft.core.Direction;
 import net.minecraft.resources.ResourceLocation;
 import net.neoforged.neoforge.capabilities.BlockCapability;
+import net.neoforged.neoforge.capabilities.EntityCapability;
 
 public class ModCapabilities {
     public static final BlockCapability<ICycleStorage, Direction> CYCLE_STORAGE =
@@ -23,6 +24,12 @@ public class ModCapabilities {
 
     public static final BlockCapability<ICycleConsumer, Direction> CYCLE_CONSUMER =
             BlockCapability.create(ResourceLocation.fromNamespaceAndPath(LogiCore.MOD_ID, "cycle_consumer"),
+                    ICycleConsumer.class,
+                    Direction.class
+            );
+
+    public static final EntityCapability<ICycleConsumer, Direction> ENTITY_CYCLE_CONSUMER =
+            EntityCapability.create(ResourceLocation.fromNamespaceAndPath(LogiCore.MOD_ID, "entity_cycle_consumer"),
                     ICycleConsumer.class,
                     Direction.class
             );

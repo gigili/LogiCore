@@ -1,4 +1,4 @@
-package dev.gacbl.logicore.api.compat.jade;
+package dev.gacbl.logicore.api.compat.jade.providers;
 
 import dev.gacbl.logicore.LogiCore;
 import dev.gacbl.logicore.blocks.compiler.CompilerBlockEntity;

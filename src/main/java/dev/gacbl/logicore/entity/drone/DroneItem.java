@@ -54,7 +54,7 @@ public class DroneItem extends Item {
 
         if (foundBayPos == null) {
             if (context.getPlayer() != null) {
-                context.getPlayer().displayClientMessage(Component.literal("No Drone Bay found nearby!"), true);
+                context.getPlayer().displayClientMessage(Component.translatable("errors.logicore.drone.no_drone_bay_nearby"), true);
             }
             return InteractionResult.FAIL;
         }

@@ -1,5 +1,8 @@
 package dev.gacbl.logicore.entity.drone;
 
+import dev.gacbl.logicore.api.computation.CycleStorage;
+import dev.gacbl.logicore.api.computation.ICycleConsumer;
+import dev.gacbl.logicore.blocks.drone_bay.DroneBayBlockEntity;
 import dev.gacbl.logicore.entity.drone.goals.FollowPlayerGoal;
 import dev.gacbl.logicore.entity.drone.goals.HealOwnerGoal;
 import dev.gacbl.logicore.entity.drone.goals.RechargeIfEmptyGoal;
@@ -30,16 +33,15 @@ import org.jetbrains.annotations.Nullable;
 import java.util.Optional;
 import java.util.UUID;
 
-public class DroneEntity extends FlyingMob {
-    private static final EntityDataAccessor<Integer> ENERGY = SynchedEntityData.defineId(DroneEntity.class, EntityDataSerializers.INT);
+public class DroneEntity extends FlyingMob implements ICycleConsumer {
+    private static final EntityDataAccessor<Long> CYCLES = SynchedEntityData.defineId(DroneEntity.class, EntityDataSerializers.LONG);
     private static final EntityDataAccessor<Optional<UUID>> OWNER_UUID = SynchedEntityData.defineId(DroneEntity.class, EntityDataSerializers.OPTIONAL_UUID);
     private static final EntityDataAccessor<Optional<BlockPos>> HOME_POS = SynchedEntityData.defineId(DroneEntity.class, EntityDataSerializers.OPTIONAL_BLOCK_POS);
 
+    private final CycleStorage cycleStorage = new CycleStorage(1000, 100, 100);
+
     public final AnimationState idleAnimationState = new AnimationState();
     private int idleAnimationTimeout = 0;
-
-    public static final int MAX_ENERGY = 1000;
-    private static final int HEAL_COST = 50;
 
     protected DroneEntity(EntityType<? extends FlyingMob> entityType, Level level) {
         super(entityType, level);
@@ -49,7 +51,7 @@ public class DroneEntity extends FlyingMob {
     @Override
     protected void defineSynchedData(SynchedEntityData.@NotNull Builder builder) {
         super.defineSynchedData(builder);
-        builder.define(ENERGY, MAX_ENERGY); // Start full
+        builder.define(CYCLES, 0L);
         builder.define(OWNER_UUID, Optional.empty());
         builder.define(HOME_POS, Optional.empty());
     }
@@ -77,7 +79,7 @@ public class DroneEntity extends FlyingMob {
         this.goalSelector.addGoal(0, new RechargeIfEmptyGoal(this));
         this.goalSelector.addGoal(0, new FloatGoal(this));
 
-        this.goalSelector.addGoal(1, new HealOwnerGoal(this, 20, HEAL_COST));
+        this.goalSelector.addGoal(1, new HealOwnerGoal(this, 20, 50));
         this.goalSelector.addGoal(3, new FollowPlayerGoal(this));
 
         this.goalSelector.addGoal(4, new LookAtPlayerGoal(this, Player.class, 8.0F));
@@ -101,22 +103,10 @@ public class DroneEntity extends FlyingMob {
         return uuid.map(value -> this.level().getPlayerByUUID(value)).orElse(null);
     }
 
-    public int getEnergy() {
-        return this.entityData.get(ENERGY);
-    }
-
-    public void setEnergy(int amount) {
-        this.entityData.set(ENERGY, Math.clamp(amount, 0, MAX_ENERGY));
-    }
-
-    public void consumeEnergy(int amount) {
-        setEnergy(getEnergy() - amount);
-    }
-
     @Override
     public void addAdditionalSaveData(@NotNull CompoundTag tag) {
         super.addAdditionalSaveData(tag);
-        tag.putInt("Energy", getEnergy());
+        tag.putLong("cycles", cycleStorage.getCyclesStored());
         if (getHomePos() != null) tag.putLong("HomePos", getHomePos().asLong());
         this.entityData.get(OWNER_UUID).ifPresent(uuid -> tag.putUUID("Owner", uuid));
     }
@@ -124,7 +114,7 @@ public class DroneEntity extends FlyingMob {
     @Override
     public void readAdditionalSaveData(@NotNull CompoundTag tag) {
         super.readAdditionalSaveData(tag);
-        setEnergy(tag.getInt("Energy"));
+        cycleStorage.setCycles(tag.getLong("cycles"));
         if (tag.contains("HomePos")) setHomePos(BlockPos.of(tag.getLong("HomePos")));
         if (tag.hasUUID("Owner")) setOwnerUUID(tag.getUUID("Owner"));
     }
@@ -150,12 +140,43 @@ public class DroneEntity extends FlyingMob {
     @Override
     protected void dropCustomDeathLoot(@NotNull ServerLevel level, @NotNull DamageSource source, boolean recentlyHit) {
         super.dropCustomDeathLoot(level, source, recentlyHit);
+
+        if (level.isClientSide) return;
         ItemStack stack = new ItemStack(DroneModule.DRONE_ITEM.get());
         this.spawnAtLocation(stack);
+
+        if (getHomePos() == null) return;
+        if (level.getBlockEntity(getHomePos()) instanceof DroneBayBlockEntity droneBayBlockEntity) {
+            droneBayBlockEntity.clearDockedName();
+        }
     }
 
     @Override
     public boolean shouldDropExperience() {
         return false;
+    }
+
+    @Override
+    public long getCycleDemand() {
+        return cycleStorage.getCycleDemand();
+    }
+
+    @Override
+    public long receiveCycles(long maxReceive, boolean simulate) {
+        return cycleStorage.receiveCycles(maxReceive, simulate);
+    }
+
+    @Override
+    public long extractCycles(long maxExtract, boolean simulate) {
+        return 0;
+    }
+
+    @Override
+    public long getCyclesStored() {
+        return cycleStorage.getCyclesStored();
+    }
+
+    public CycleStorage getCycleStorage() {
+        return cycleStorage;
     }
 }

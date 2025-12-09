@@ -18,7 +18,7 @@ public class FollowPlayerGoal extends Goal {
     @Override
     public boolean canUse() {
         this.owner = drone.getOwner();
-        return owner != null && !owner.isSpectator() && drone.getEnergy() > 0 && drone.distanceToSqr(owner) > 10.0;
+        return owner != null && !owner.isSpectator() && drone.getCyclesStored() > 0 && drone.distanceToSqr(owner) > 10.0;
     }
 
     @Override
@@ -27,11 +27,11 @@ public class FollowPlayerGoal extends Goal {
 
         drone.getLookControl().setLookAt(owner, 10.0F, (float) drone.getMaxHeadXRot());
 
-        // Target position: Behind owner and slightly up
+        // Target position: Behind an owner and slightly up
         double targetX = owner.getX() - (owner.getLookAngle().x * 1.2);
         double targetZ = owner.getZ() - (owner.getLookAngle().z * 1.2);
         double targetY = owner.getY() + 3.5;
 
-        drone.getNavigation().moveTo(targetX, targetY, targetZ, 1.0D);
+        drone.getNavigation().moveTo(targetX, targetY, targetZ, 1.25);
     }
 }

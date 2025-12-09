@@ -1,5 +1,6 @@
 package dev.gacbl.logicore.blocks.compiler;
 
+import dev.gacbl.logicore.Config;
 import dev.gacbl.logicore.api.computation.ICycleConsumer;
 import dev.gacbl.logicore.api.cycles.CycleValueManager;
 import dev.gacbl.logicore.blocks.compiler.ui.CompilerMenu;
@@ -32,11 +33,14 @@ import java.util.UUID;
 public class CompilerBlockEntity extends BlockEntity implements ICycleConsumer, MenuProvider {
     public static final int INPUT_SLOT = 0;
     public static final int OUTPUT_SLOT = 1;
-    private static final int PROCESSING_TIME = 20;
+
+    private static final int CYCLES_PROCESSED_PER_TICK = Config.COMPILER_CYCLES_PROCESSED_PER_TICK.get();
+
     private float rotation;
 
     private long currentCycles = 0;
     private int progress = 0;
+    private int maxProgress = Config.COMPILER_MAX_PROGRESS.get();
 
     public long getCurrentCycles() {
         return this.currentCycles;
@@ -47,7 +51,7 @@ public class CompilerBlockEntity extends BlockEntity implements ICycleConsumer, 
         public int get(int pIndex) {
             return switch (pIndex) {
                 case 0 -> CompilerBlockEntity.this.progress;
-                case 1 -> PROCESSING_TIME;
+                case 1 -> CompilerBlockEntity.this.maxProgress;
                 default -> 0;
             };
         }
@@ -56,6 +60,8 @@ public class CompilerBlockEntity extends BlockEntity implements ICycleConsumer, 
         public void set(int pIndex, int pValue) {
             if (pIndex == 0) {
                 CompilerBlockEntity.this.progress = pValue;
+            } else if (pIndex == 1) {
+                CompilerBlockEntity.this.maxProgress = pValue;
             }
         }
 
@@ -133,6 +139,11 @@ public class CompilerBlockEntity extends BlockEntity implements ICycleConsumer, 
         return accepted;
     }
 
+    @Override
+    public long extractCycles(long maxReceive, boolean simulate) {
+        return 0;
+    }
+
     public static void serverTick(Level level, BlockPos pos, BlockState state, CompilerBlockEntity be) {
         if (level.isClientSide) return;
 
@@ -140,6 +151,7 @@ public class CompilerBlockEntity extends BlockEntity implements ICycleConsumer, 
         if (template.isEmpty() || !CycleValueManager.hasCycleValue(template)) {
             if (be.progress > 0) {
                 be.progress = 0;
+                be.maxProgress = 20;
                 be.setChanged();
             }
             return;
@@ -147,10 +159,19 @@ public class CompilerBlockEntity extends BlockEntity implements ICycleConsumer, 
 
         int cost = CycleValueManager.getCycleValue(template);
 
+        int rawDuration = (int) Math.ceil((double) cost / CYCLES_PROCESSED_PER_TICK);
+
+        int calculatedDuration = Math.max(20, Math.min(Config.COMPILER_MAX_TICK_DURATION.get(), rawDuration));
+
+        if (be.maxProgress != calculatedDuration) {
+            be.maxProgress = calculatedDuration;
+            be.setChanged();
+        }
+
         if (be.currentCycles >= cost && be.canInsertOutput(template)) {
             be.progress++;
 
-            if (be.progress >= PROCESSING_TIME) {
+            if (be.progress >= be.maxProgress) {
                 be.currentCycles -= cost;
 
                 ItemStack result = template.copy();

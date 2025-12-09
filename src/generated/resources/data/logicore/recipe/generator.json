@@ -1,0 +1,27 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "redstone",
+  "key": {
+	"F": {
+	  "item": "minecraft:furnace"
+	},
+	"I": {
+	  "item": "minecraft:iron_ingot"
+	},
+	"N": {
+	  "item": "minecraft:smooth_stone"
+	},
+	"S": {
+	  "tag": "c:stones"
+	}
+  },
+  "pattern": [
+	"INI",
+	"NFN",
+	"SSS"
+  ],
+  "result": {
+	"count": 1,
+	"id": "logicore:generator"
+  }
+}
