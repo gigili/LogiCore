@@ -46,5 +46,6 @@
   "ui.tooltip.logicore.cycles_storage": "%s / %s",
   "ui.tooltip.logicore.fe_per_tick": "Fe per tick:",
   "tooltip.logicore.drone_bay.docked": "Docked: %s",
-  "tooltip.logicore.drone_bay.docked.nothing": "Nothing"
+  "tooltip.logicore.drone_bay.docked.nothing": "Nothing",
+  "message.logicore.drone_died_at": "Drone %s died at %s"
 }

@@ -32,6 +32,11 @@ public class FollowPlayerGoal extends Goal {
         double targetZ = owner.getZ() - (owner.getLookAngle().z * 1.2);
         double targetY = owner.getY() + 3.5;
 
-        drone.getNavigation().moveTo(targetX, targetY, targetZ, 1.25);
+
+        if (drone.distanceToSqr(targetX, targetY, targetZ) > 200D) {
+            drone.teleportTo(targetX, targetY, targetZ);
+        }
+
+        drone.getNavigation().moveTo(targetX, targetY, targetZ, 1.7);
     }
 }

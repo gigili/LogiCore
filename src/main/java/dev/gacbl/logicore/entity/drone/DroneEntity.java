@@ -7,6 +7,7 @@ import dev.gacbl.logicore.entity.drone.goals.FollowPlayerGoal;
 import dev.gacbl.logicore.entity.drone.goals.HealOwnerGoal;
 import dev.gacbl.logicore.entity.drone.goals.RechargeIfEmptyGoal;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.component.DataComponents;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
@@ -143,6 +144,9 @@ public class DroneEntity extends FlyingMob implements ICycleConsumer {
 
         if (level.isClientSide) return;
         ItemStack stack = new ItemStack(DroneModule.DRONE_ITEM.get());
+        if (this.hasCustomName()) {
+            stack.set(DataComponents.CUSTOM_NAME, this.getCustomName());
+        }
         this.spawnAtLocation(stack);
 
         if (getHomePos() == null) return;

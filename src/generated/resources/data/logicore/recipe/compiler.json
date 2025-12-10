@@ -3,7 +3,7 @@
   "category": "redstone",
   "key": {
 	"N": {
-	  "item": "minecraft:nether_star"
+	  "tag": "c:ender_pearls"
 	},
 	"P": {
 	  "item": "logicore:processor_unit"

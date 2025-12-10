@@ -6,7 +6,7 @@
       "tag": "c:ender_pearls"
     },
     "N": {
-      "item": "minecraft:nether_star"
+	  "item": "minecraft:quartz"
     },
     "P": {
       "item": "logicore:processor_unit"

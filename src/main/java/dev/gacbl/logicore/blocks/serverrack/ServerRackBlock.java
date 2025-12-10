@@ -56,7 +56,7 @@ public class ServerRackBlock extends BaseEntityBlock {
                 .pattern("RNR")
                 .pattern("EPE")
                 .pattern("RNR")
-                .define('N', Items.NETHER_STAR)
+                .define('N', Items.QUARTZ)
                 .define('R', Items.REDSTONE)
                 .define('E', ItemTags.create(ResourceLocation.fromNamespaceAndPath("c", "ender_pearls")))
                 .define('P', ProcessorUnitModule.PROCESSOR_UNIT.get());

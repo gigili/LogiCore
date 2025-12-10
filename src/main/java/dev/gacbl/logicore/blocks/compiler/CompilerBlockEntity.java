@@ -263,7 +263,7 @@ public class CompilerBlockEntity extends BlockEntity implements ICycleConsumer, 
             if (neighborBE instanceof DataCableBlockEntity dcbe) {
                 UUID networkID = dcbe.getNetworkUUID();
                 if (networkID != null && manager.getNetworks().containsKey(networkID)) {
-                    manager.getNetworks().get(networkID).setDirty();
+                    manager.getNetworks().get(networkID).requestCycles(getCycleDemand());
                 }
             }
         }

@@ -6,6 +6,8 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.data.recipes.RecipeCategory;
 import net.minecraft.data.recipes.ShapedRecipeBuilder;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.tags.ItemTags;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Items;
@@ -62,7 +64,7 @@ public class ComputerBlock extends BaseEntityBlock {
                 .pattern("RNR")
                 .pattern("NPN")
                 .pattern("RNR")
-                .define('N', Items.NETHER_STAR)
+                .define('N', ItemTags.create(ResourceLocation.fromNamespaceAndPath("c", "ender_pearls")))
                 .define('R', Items.REDSTONE)
                 .define('P', ProcessorUnitModule.PROCESSOR_UNIT.get());
     }

@@ -162,6 +162,10 @@ public class ComputationNetwork {
         }
     }
 
+    public void requestCycles(long cycleDemand) {
+        this.cycleDemand += cycleDemand;
+    }
+
     private void pullEnergy(Level level) {
         if (this.energySources.isEmpty()) return;
 

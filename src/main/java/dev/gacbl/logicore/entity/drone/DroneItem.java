@@ -68,6 +68,10 @@ public class DroneItem extends Item {
 
             // Set Custom Data
             drone.setHomePos(foundBayPos);
+            if (!context.getItemInHand().getHoverName().getString().isEmpty()) {
+                drone.setCustomName(context.getItemInHand().getHoverName());
+            }
+
             if (context.getPlayer() != null) {
                 drone.setOwnerUUID(context.getPlayer().getUUID());
             }

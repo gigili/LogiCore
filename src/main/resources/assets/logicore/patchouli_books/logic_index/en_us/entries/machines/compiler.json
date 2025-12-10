@@ -1,0 +1,28 @@
+{
+  "name": "Compiler",
+  "icon": "logicore:compiler",
+  "category": "logicore:machines_category",
+  "pages": [
+	{
+	  "type": "patchouli:spotlight",
+	  "item": "logicore:compiler",
+	  "title": "Compiler",
+	  "text": "The Compiler is the bridge between the digital and physical realms. It allows you to materialize items directly from raw computational power, synthesizing matter from $(l:logicore:architecture/cycles)Cycles$()."
+	},
+	{
+	  "type": "patchouli:text",
+	  "title": "Operation",
+	  "text": "Place a 'ghost' template item in the left slot. The Compiler will request $(l:logicore:architecture/cycles)Cycles$() from the network to match the item's defined cost.$(br)$(br)Once fully charged, the matter is synthesized and the result appears in the output slot."
+	},
+	{
+	  "type": "patchouli:text",
+	  "title": "Processing Speed",
+	  "text": "The compilation process is not instantaneous. The time required depends on the complexity (Cycle cost) of the object.$(br)$(br)Simple components materialize rapidly, while complex machinery requires a longer, stable connection to compile fully."
+	},
+	{
+	  "type": "patchouli:crafting",
+	  "recipe": "logicore:compiler",
+	  "text": "A matter-synthesis engine capable of rearranging atomic structures."
+	}
+  ]
+}

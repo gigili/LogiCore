@@ -2,8 +2,8 @@
   "type": "minecraft:crafting_shaped",
   "category": "redstone",
   "key": {
-    "N": {
-      "item": "minecraft:nether_star"
+	"E": {
+	  "tag": "c:ender_pearls"
     },
     "Q": {
       "item": "minecraft:quartz"
@@ -14,7 +14,7 @@
   },
   "pattern": [
     "RQR",
-    "QNQ",
+	"QEQ",
     "RQR"
   ],
   "result": {
