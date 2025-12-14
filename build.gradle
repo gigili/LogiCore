@@ -208,6 +208,14 @@ dependencies {
     // Functional storage
     localRuntime "curse.maven:titanium-287342:6875285"
     localRuntime "curse.maven:function_storage-556861:7061714"
+
+    // Architectury, FTB Chunks, FTB Library, FTB Teams
+    compileOnly("curse.maven:architectury-api-419699:5786327")
+    localRuntime("curse.maven:architectury-api-419699:5786327")
+    localRuntime("curse.maven:ftb-chunks-forge-314906:7157142")
+    localRuntime("curse.maven:ftb-library-forge-404465:7312258")
+    compileOnly("curse.maven:ftb-teams-forge-404468:7315210")
+    localRuntime("curse.maven:ftb-teams-forge-404468:7315210")
 }
 
 // This block of code expands all declared replace properties in the specified resource targets.

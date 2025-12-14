@@ -3,6 +3,7 @@ package dev.gacbl.logicore.client;
 import dev.gacbl.logicore.LogiCore;
 import dev.gacbl.logicore.api.cycles.CycleSavedData;
 import dev.gacbl.logicore.api.cycles.CycleValueManager;
+import dev.gacbl.logicore.core.IntegrationUtils;
 import dev.gacbl.logicore.core.Utils;
 import dev.gacbl.logicore.network.PacketHandler;
 import dev.gacbl.logicore.network.payload.SyncPlayerCyclesPayload;
@@ -54,7 +55,7 @@ public class ClientEvents {
         if (player != null) {
             if (level instanceof ServerLevel serverLevel) {
                 CycleSavedData data = CycleSavedData.get(serverLevel);
-                long cycles = data.getCyclesByKey(CycleSavedData.getStorageKey(player));
+                long cycles = data.getCyclesByKeyString(IntegrationUtils.getStorageKey(serverLevel, player.getUUID()));
                 PacketHandler.sendToPlayer(player, new SyncPlayerCyclesPayload(cycles));
             }
         }
@@ -63,7 +64,6 @@ public class ClientEvents {
     @SubscribeEvent
     public static void registerOverlays(RegisterGuiLayersEvent event) {
         event.registerAboveAll(ResourceLocation.fromNamespaceAndPath(LogiCore.MOD_ID, "cycle_hud"), (gui, deltaTracker) -> {
-            // Get value from your client-side storage (synced via packet)
             long cycles = ClientCycleData.getCycles();
 
             Player player = Minecraft.getInstance().player;

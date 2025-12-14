@@ -17,6 +17,7 @@ import dev.gacbl.logicore.blocks.generator.ui.GeneratorScreen;
 import dev.gacbl.logicore.blocks.serverrack.ServerRackModule;
 import dev.gacbl.logicore.blocks.serverrack.ui.ServerRackScreen;
 import dev.gacbl.logicore.core.CreativeTabModule;
+import dev.gacbl.logicore.core.IntegrationUtils;
 import dev.gacbl.logicore.core.ModDataMaps;
 import dev.gacbl.logicore.core.MyCommands;
 import dev.gacbl.logicore.entity.drone.DroneEntity;
@@ -66,9 +67,11 @@ public class LogiCore {
         DroneBayModule.register(modEventBus);
         GeneratorModule.register(modEventBus);
         CloudInterfaceModule.register(modEventBus);
-        PacketHandler.register(modEventBus);
-
         DroneModule.register(modEventBus);
+
+        IntegrationUtils.registerEvents();
+
+        PacketHandler.register(modEventBus);
 
         modContainer.registerConfig(ModConfig.Type.COMMON, Config.SPEC, "logicore/logicore.toml");
         modEventBus.addListener(this::registerDataMaps);

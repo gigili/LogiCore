@@ -1,6 +1,5 @@
 package dev.gacbl.logicore.blocks.cloud_interface;
 
-import dev.gacbl.logicore.api.computation.CycleStorage;
 import dev.gacbl.logicore.api.computation.ICycleProvider;
 import dev.gacbl.logicore.api.cycles.CycleSavedData;
 import dev.gacbl.logicore.blocks.datacable.DataCableBlockEntity;
@@ -15,7 +14,6 @@ import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
@@ -26,8 +24,6 @@ import java.util.UUID;
 public class CloudInterfaceBlockEntity extends BlockEntity implements ICycleProvider {
     private UUID ownerUUID;
 
-    public final CycleStorage cycleStorage = new CycleStorage(1_000_000, 100_000, 100_000);
-
     public CloudInterfaceBlockEntity(BlockPos pos, BlockState blockState) {
         super(CloudInterfaceModule.CLOUD_INTERFACE_BE.get(), pos, blockState);
     }
@@ -37,29 +33,28 @@ public class CloudInterfaceBlockEntity extends BlockEntity implements ICycleProv
         setChanged();
     }
 
+    private String getStorageKey(ServerLevel serverLevel) {
+        if (ownerUUID == null) return "invalid";
+        return CycleSavedData.getKey(serverLevel, ownerUUID);
+    }
+
     public static void serverTick(Level level, BlockPos pos, BlockState state, CloudInterfaceBlockEntity be) {
         if (!(level instanceof ServerLevel serverLevel) || be.ownerUUID == null) return;
 
-        // Use UUID as key (simplification for offline players).
-        // If you want strict team support for offline players, you'd need to look up their team via scoreboard here.
-        String storageKey = be.ownerUUID.toString();
-
-        // Retrieve the global data
+        String storageKey = be.getStorageKey(serverLevel);
         CycleSavedData savedData = CycleSavedData.get(serverLevel);
 
-        // 1. UPLOAD LOGIC (Back of the block)
         Direction facing = state.getValue(CloudInterfaceBlock.FACING);
-        Direction inputSide = facing.getOpposite(); // The side "behind" the interface
+        Direction inputSide = facing.getOpposite();
         BlockPos inputPos = pos.relative(inputSide);
 
-        // Check for provider at the back
         ICycleProvider provider = level.getCapability(ModCapabilities.CYCLE_PROVIDER, inputPos, inputSide.getOpposite());
         if (provider != null) {
-            long maxUpload = 10000; // Rate limit
+            long maxUpload = 10000;
             long extracted = provider.extractCycles(maxUpload, false);
+
             if (extracted > 0) {
-                savedData.modifyCyclesByKey(storageKey, extracted);
-                syncToOwner(serverLevel, be.ownerUUID, savedData.getCyclesByKey(storageKey));
+                savedData.modifyCycles(serverLevel, storageKey, extracted);
             }
         }
 
@@ -67,12 +62,13 @@ public class CloudInterfaceBlockEntity extends BlockEntity implements ICycleProv
             if (dc.getNetworkUUID() != null) {
                 UUID networkUUID = dc.getNetworkUUID();
                 NetworkManager manager = NetworkManager.get(serverLevel);
+
                 if (manager.getNetworks().containsKey(networkUUID)) {
                     ComputationNetwork network = manager.getNetworks().get(networkUUID);
                     long extracted = network.extractCycles(serverLevel, 10000);
+
                     if (extracted > 0) {
-                        savedData.modifyCyclesByKey(storageKey, extracted);
-                        syncToOwner(serverLevel, be.ownerUUID, savedData.getCyclesByKey(storageKey));
+                        savedData.modifyCycles(serverLevel, storageKey, extracted);
                     }
                 }
             }
@@ -105,8 +101,7 @@ public class CloudInterfaceBlockEntity extends BlockEntity implements ICycleProv
     @Override
     public long getCyclesAvailable() {
         if (!(level instanceof ServerLevel serverLevel) || ownerUUID == null) return 0;
-        CycleSavedData savedData = CycleSavedData.get(serverLevel);
-        return savedData.getCyclesByKey(ownerUUID.toString());
+        return CycleSavedData.get(serverLevel).getCyclesByKeyString(ownerUUID.toString());
     }
 
     @Override
@@ -117,11 +112,14 @@ public class CloudInterfaceBlockEntity extends BlockEntity implements ICycleProv
     @Override
     public long extractCycles(long maxExtract, boolean simulate) {
         if (!(level instanceof ServerLevel serverLevel) || ownerUUID == null) return 0;
+
         CycleSavedData savedData = CycleSavedData.get(serverLevel);
-        Player player = serverLevel.getPlayerByUUID(ownerUUID);
-        long extracted = savedData.extractCycles(player, maxExtract, simulate);
-        if (extracted > 0) {
-            syncToOwner(serverLevel, ownerUUID, savedData.getCyclesByKey(CycleSavedData.getStorageKey(player)));
+        String key = getStorageKey(serverLevel);
+        long current = savedData.getCyclesByKeyString(key);
+        long extracted = Math.min(current, maxExtract);
+
+        if (!simulate && extracted > 0) {
+            savedData.modifyCycles(serverLevel, key, -extracted);
         }
         return extracted;
     }
@@ -131,13 +129,9 @@ public class CloudInterfaceBlockEntity extends BlockEntity implements ICycleProv
         if (!(level instanceof ServerLevel serverLevel) || ownerUUID == null) return 0;
 
         if (!simulate) {
-            String storageKey = ownerUUID.toString();
-            CycleSavedData savedData = CycleSavedData.get(serverLevel);
-            savedData.modifyCyclesByKey(storageKey, receive);
-            Player player = serverLevel.getPlayerByUUID(ownerUUID);
-            syncToOwner(serverLevel, ownerUUID, savedData.getCyclesByKey(CycleSavedData.getStorageKey(player)));
+            String key = getStorageKey(serverLevel);
+            CycleSavedData.get(serverLevel).modifyCycles(serverLevel, key, receive);
         }
-
         return receive;
     }
 }
