@@ -1,0 +1,48 @@
+{
+  "format_version": "1.9.0",
+  "credit": "Made with Blockbench",
+  "textures": {
+	"0": "logicore:block/cloud_interface",
+	"1": "logicore:block/cloud_interface_back",
+	"particle": "logicore:block/cloud_interface"
+  },
+  "elements": [
+	{
+	  "from": [0, 0, 0],
+	  "to": [16, 16, 16],
+	  "rotation": {"angle": 0, "axis": "y", "origin": [8, 8, 8]},
+	  "faces": {
+		"north": {"uv": [0, 0, 16, 16], "texture": "#0"},
+		"east": {"uv": [0, 0, 16, 16], "texture": "#0"},
+		"south": {"uv": [0, 0, 16, 16], "texture": "#1"},
+		"west": {"uv": [0, 0, 16, 16], "texture": "#0"},
+		"up": {"uv": [0, 0, 16, 16], "texture": "#0"},
+		"down": {"uv": [0, 0, 16, 16], "texture": "#0"}
+	  }
+	}
+  ],
+  "display": {
+	"thirdperson_righthand": {
+	  "scale": [0.5, 0.5, 0.5]
+	},
+	"thirdperson_lefthand": {
+	  "scale": [0.5, 0.5, 0.5]
+	},
+	"firstperson_righthand": {
+	  "scale": [0.5, 0.5, 0.5]
+	},
+	"firstperson_lefthand": {
+	  "scale": [0.5, 0.5, 0.5]
+	},
+	"ground": {
+	  "scale": [0.25, 0.25, 0.25]
+	},
+	"gui": {
+	  "rotation": [32, 44, 0],
+	  "scale": [0.6, 0.6, 0.6]
+	},
+	"on_shelf": {
+	  "rotation": [0, -180, 0]
+	}
+  }
+}

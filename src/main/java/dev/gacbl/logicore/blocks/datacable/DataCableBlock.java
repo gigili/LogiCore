@@ -1,6 +1,7 @@
 package dev.gacbl.logicore.blocks.datacable;
 
 import com.mojang.serialization.MapCodec;
+import dev.gacbl.logicore.blocks.cloud_interface.CloudInterfaceBlock;
 import dev.gacbl.logicore.blocks.compiler.CompilerBlock;
 import dev.gacbl.logicore.blocks.computer.ComputerBlock;
 import dev.gacbl.logicore.blocks.datacable.cable_network.NetworkManager;
@@ -174,7 +175,14 @@ public class DataCableBlock extends BaseEntityBlock implements SimpleWaterlogged
     }
 
     private boolean canConnectToBlock(LevelAccessor level, BlockPos pos, Direction direction) {
-        List<Class<? extends Block>> allowedBlocks = List.of(ServerRackBlock.class, ComputerBlock.class, CompilerBlock.class, DatacenterPortBlock.class, DroneBayBlock.class);
+        List<Class<? extends Block>> allowedBlocks = List.of(
+                ServerRackBlock.class,
+                ComputerBlock.class,
+                CompilerBlock.class,
+                DatacenterPortBlock.class,
+                DroneBayBlock.class,
+                CloudInterfaceBlock.class
+        );
         if (level instanceof ServerLevel server) {
             Block block = server.getBlockState(pos).getBlock();
             var cap = server.getCapability(Capabilities.EnergyStorage.BLOCK, pos, null);

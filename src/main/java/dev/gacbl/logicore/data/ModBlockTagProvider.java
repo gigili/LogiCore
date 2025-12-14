@@ -1,6 +1,7 @@
 package dev.gacbl.logicore.data;
 
 import dev.gacbl.logicore.LogiCore;
+import dev.gacbl.logicore.blocks.cloud_interface.CloudInterfaceModule;
 import dev.gacbl.logicore.blocks.compiler.CompilerModule;
 import dev.gacbl.logicore.blocks.computer.ComputerModule;
 import dev.gacbl.logicore.blocks.datacable.DataCableModule;
@@ -89,6 +90,12 @@ public class ModBlockTagProvider extends BlockTagsProvider {
         tag(BlockTags.create(ResourceLocation.fromNamespaceAndPath("justdirethings", "eclipsegate_deny"))).add(GeneratorModule.GENERATOR.get());
         tag(BlockTags.create(ResourceLocation.fromNamespaceAndPath("justdirethings", "phase_deny"))).add(GeneratorModule.GENERATOR.get());
         tag(BlockTags.create(ResourceLocation.fromNamespaceAndPath("justdirethings", "swapper_deny"))).add(GeneratorModule.GENERATOR.get());
+
+        tag(BlockTags.MINEABLE_WITH_PICKAXE).add(CloudInterfaceModule.CLOUD_INTERFACE.get());
+        tag(BlockTags.NEEDS_IRON_TOOL).add(CloudInterfaceModule.CLOUD_INTERFACE.get());
+        tag(BlockTags.create(ResourceLocation.fromNamespaceAndPath("justdirethings", "eclipsegate_deny"))).add(CloudInterfaceModule.CLOUD_INTERFACE.get());
+        tag(BlockTags.create(ResourceLocation.fromNamespaceAndPath("justdirethings", "phase_deny"))).add(CloudInterfaceModule.CLOUD_INTERFACE.get());
+        tag(BlockTags.create(ResourceLocation.fromNamespaceAndPath("justdirethings", "swapper_deny"))).add(CloudInterfaceModule.CLOUD_INTERFACE.get());
 
         setupOptionalTags();
     }

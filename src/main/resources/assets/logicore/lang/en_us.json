@@ -7,6 +7,7 @@
   "block.logicore.drone_bay": "Drone bay",
   "block.logicore.generator": "Generator",
   "block.logicore.server_rack": "Server rack",
+  "block.logicore.cloud_interface": "Cloud interface",
   "config.jade.plugin_logicore.compiler": "Compiler",
   "config.jade.plugin_logicore.datacenter_controller": "Datacenter controller",
   "config.jade.plugin_logicore.datacenter_port": "Datacenter port",
@@ -47,5 +48,6 @@
   "ui.tooltip.logicore.fe_per_tick": "Fe per tick:",
   "tooltip.logicore.drone_bay.docked": "Docked: %s",
   "tooltip.logicore.drone_bay.docked.nothing": "Nothing",
-  "message.logicore.drone_died_at": "Drone %s died at %s"
+  "message.logicore.drone_died_at": "Drone %s died at %s",
+  "tooltip.logicore.ui.cloud_cycles": "Cloud Cycles: %s"
 }

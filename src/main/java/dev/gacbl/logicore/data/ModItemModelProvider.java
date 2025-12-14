@@ -1,6 +1,7 @@
 package dev.gacbl.logicore.data;
 
 import dev.gacbl.logicore.LogiCore;
+import dev.gacbl.logicore.blocks.cloud_interface.CloudInterfaceModule;
 import dev.gacbl.logicore.blocks.compiler.CompilerModule;
 import dev.gacbl.logicore.blocks.computer.ComputerModule;
 import dev.gacbl.logicore.blocks.datacable.DataCableModule;
@@ -32,5 +33,6 @@ public class ModItemModelProvider extends ItemModelProvider {
         withExistingParent(DroneBayModule.DRONE_BAY_ITEM.getId().getPath(), "logicore:block/" + DroneBayModule.DRONE_BAY_ITEM.getId().getPath());
         withExistingParent(ServerRackModule.SERVER_RACK_ITEM.getId().getPath(), "logicore:block/" + ServerRackModule.SERVER_RACK_ITEM.getId().getPath());
         withExistingParent(GeneratorModule.GENERATOR_ITEM.getId().getPath(), "logicore:block/" + GeneratorModule.GENERATOR_ITEM.getId().getPath());
+        withExistingParent(CloudInterfaceModule.CLOUD_INTERFACE.getId().getPath(), "logicore:block/" + CloudInterfaceModule.CLOUD_INTERFACE.getId().getPath());
     }
 }

@@ -5,6 +5,7 @@ import dev.gacbl.logicore.network.payload.*;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.level.Level;
 import net.neoforged.bus.api.IEventBus;
@@ -56,11 +57,21 @@ public class PacketHandler {
                 SyncMultiblockPortsPayload.STREAM_CODEC,
                 SyncMultiblockPortsPayload.HANDLER
         );
+
+        registrar.playToClient(
+                SyncPlayerCyclesPayload.TYPE,
+                SyncPlayerCyclesPayload.STREAM_CODEC,
+                SyncPlayerCyclesPayload.HANDLER
+        );
     }
 
     public static <MSG extends CustomPacketPayload> void sendToClientsTrackingChunk(Level level, BlockPos pos, MSG packet) {
         if (level instanceof ServerLevel serverLevel) {
             PacketDistributor.sendToPlayersTrackingChunk(serverLevel, new ChunkPos(pos), packet);
         }
+    }
+
+    public static <MSG extends CustomPacketPayload> void sendToPlayer(ServerPlayer player, MSG packet) {
+        PacketDistributor.sendToPlayer(player, packet);
     }
 }

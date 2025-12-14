@@ -1,0 +1,8 @@
+{
+  "variants": {
+	"facing=north": {"model": "logicore:block/cloud_interface"},
+	"facing=south": {"model": "logicore:block/cloud_interface", "y": 180},
+	"facing=west": {"model": "logicore:block/cloud_interface", "y": 270},
+	"facing=east": {"model": "logicore:block/cloud_interface", "y": 90}
+  }
+}

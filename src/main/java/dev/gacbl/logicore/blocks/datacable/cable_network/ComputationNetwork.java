@@ -4,6 +4,7 @@ import dev.gacbl.logicore.api.computation.ICycleConsumer;
 import dev.gacbl.logicore.api.computation.ICycleProvider;
 import dev.gacbl.logicore.core.ModCapabilities;
 import net.minecraft.core.BlockPos;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
@@ -164,6 +165,22 @@ public class ComputationNetwork {
 
     public void requestCycles(long cycleDemand) {
         this.cycleDemand += cycleDemand;
+    }
+
+    public long extractCycles(ServerLevel level, long cyclesNeeded) {
+        List<BlockPos> providers = new ArrayList<>(this.providers);
+
+        int providersToTry = providers.size();
+        for (int i = 0; i < providersToTry && cyclesNeeded > 0; i++) {
+            this.providerIndex = (this.providerIndex + 1) % providers.size();
+            BlockPos providerPos = providers.get(this.providerIndex);
+
+            ICycleProvider provider = getProviderAt(level, providerPos);
+            if (provider != null) {
+                return provider.extractCycles(cyclesNeeded, false);
+            }
+        }
+        return 0;
     }
 
     private void pullEnergy(Level level) {

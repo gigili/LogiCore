@@ -7,8 +7,6 @@ import dev.gacbl.logicore.api.multiblock.MultiblockValidator;
 import dev.gacbl.logicore.blocks.datacenter_port.DatacenterPortBlockEntity;
 import dev.gacbl.logicore.core.CoreCycleProviderBlockEntity;
 import dev.gacbl.logicore.core.ModTags;
-import dev.gacbl.logicore.network.payload.SyncMultiblockPortsPayload;
-import net.minecraft.client.Minecraft;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.HolderLookup;
@@ -83,8 +81,11 @@ public class DatacenterControllerBlockEntity extends AbstractSealedController {
             level.setBlock(worldPosition, getBlockState().setValue(DatacenterControllerBlock.FORMED, true), 3);
             this.cacheDirty = true;
             this.validateCacheIfNeeded();
-            if (Minecraft.getInstance().player != null) {
-                Minecraft.getInstance().player.connection.send(new SyncMultiblockPortsPayload(this.worldPosition, this.isFormed, this.ports));
+            if (ports.isEmpty()) return;
+            for (BlockPos port : ports) {
+                if (level.getBlockEntity(port) instanceof DatacenterPortBlockEntity dc) {
+                    dc.setControllerPos(worldPosition);
+                }
             }
         }
     }
@@ -93,8 +94,11 @@ public class DatacenterControllerBlockEntity extends AbstractSealedController {
     protected void onStructureBroken() {
         if (level != null) {
             level.setBlock(worldPosition, getBlockState().setValue(DatacenterControllerBlock.FORMED, false), 3);
-            if (Minecraft.getInstance().player != null) {
-                Minecraft.getInstance().player.connection.send(new SyncMultiblockPortsPayload(this.worldPosition, this.isFormed, this.ports));
+            if (ports.isEmpty()) return;
+            for (BlockPos port : ports) {
+                if (level.getBlockEntity(port) instanceof DatacenterPortBlockEntity dc) {
+                    dc.setControllerPos(null);
+                }
             }
         }
     }

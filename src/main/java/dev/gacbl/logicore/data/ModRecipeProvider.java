@@ -1,5 +1,6 @@
 package dev.gacbl.logicore.data;
 
+import dev.gacbl.logicore.blocks.cloud_interface.CloudInterfaceBlock;
 import dev.gacbl.logicore.blocks.compiler.CompilerBlock;
 import dev.gacbl.logicore.blocks.computer.ComputerBlock;
 import dev.gacbl.logicore.blocks.datacable.DataCableBlock;
@@ -37,6 +38,7 @@ public class ModRecipeProvider extends RecipeProvider implements IConditionBuild
         DroneBayBlock.getRecipe().unlockedBy("has_redstone", has(Items.REDSTONE)).save(recipeOutput);
         DroneItem.getRecipe().unlockedBy("has_redstone", has(Items.REDSTONE)).save(recipeOutput);
         GeneratorBlock.getRecipe().unlockedBy("has_redstone", has(Items.REDSTONE)).save(recipeOutput);
+        CloudInterfaceBlock.getRecipe().unlockedBy("has_redstone", has(Items.REDSTONE)).save(recipeOutput);
 
         /*CompilerRecipeBuilder.of(
                         Ingredient.of(Items.IRON_INGOT), // Input

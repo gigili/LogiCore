@@ -1,6 +1,7 @@
 package dev.gacbl.logicore.core;
 
 import dev.gacbl.logicore.LogiCore;
+import dev.gacbl.logicore.blocks.cloud_interface.CloudInterfaceModule;
 import dev.gacbl.logicore.blocks.compiler.CompilerModule;
 import dev.gacbl.logicore.blocks.computer.ComputerModule;
 import dev.gacbl.logicore.blocks.datacable.DataCableModule;
@@ -37,6 +38,7 @@ public class CreativeTabModule {
                         output.accept(DroneBayModule.DRONE_BAY.get());
                         output.accept(DroneModule.DRONE_ITEM.get());
                         output.accept(GeneratorModule.GENERATOR.get());
+                        output.accept(CloudInterfaceModule.CLOUD_INTERFACE.get());
                     })
                     .build());
 
