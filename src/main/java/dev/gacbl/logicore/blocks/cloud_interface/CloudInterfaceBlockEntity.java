@@ -1,19 +1,17 @@
 package dev.gacbl.logicore.blocks.cloud_interface;
 
+import dev.gacbl.logicore.Config;
 import dev.gacbl.logicore.api.computation.ICycleProvider;
 import dev.gacbl.logicore.api.cycles.CycleSavedData;
 import dev.gacbl.logicore.blocks.datacable.DataCableBlockEntity;
 import dev.gacbl.logicore.blocks.datacable.cable_network.ComputationNetwork;
 import dev.gacbl.logicore.blocks.datacable.cable_network.NetworkManager;
 import dev.gacbl.logicore.core.ModCapabilities;
-import dev.gacbl.logicore.network.PacketHandler;
-import dev.gacbl.logicore.network.payload.SyncPlayerCyclesPayload;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.server.level.ServerLevel;
-import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
@@ -41,6 +39,7 @@ public class CloudInterfaceBlockEntity extends BlockEntity implements ICycleProv
     public static void serverTick(Level level, BlockPos pos, BlockState state, CloudInterfaceBlockEntity be) {
         if (!(level instanceof ServerLevel serverLevel) || be.ownerUUID == null) return;
 
+        long maxUpload = Config.CI_MAX_TRANSFER_RATE.get();
         String storageKey = be.getStorageKey(serverLevel);
         CycleSavedData savedData = CycleSavedData.get(serverLevel);
 
@@ -50,7 +49,6 @@ public class CloudInterfaceBlockEntity extends BlockEntity implements ICycleProv
 
         ICycleProvider provider = level.getCapability(ModCapabilities.CYCLE_PROVIDER, inputPos, inputSide.getOpposite());
         if (provider != null) {
-            long maxUpload = 10000;
             long extracted = provider.extractCycles(maxUpload, false);
 
             if (extracted > 0) {
@@ -65,20 +63,13 @@ public class CloudInterfaceBlockEntity extends BlockEntity implements ICycleProv
 
                 if (manager.getNetworks().containsKey(networkUUID)) {
                     ComputationNetwork network = manager.getNetworks().get(networkUUID);
-                    long extracted = network.extractCycles(serverLevel, 10000);
+                    long extracted = network.extractCycles(serverLevel, maxUpload);
 
                     if (extracted > 0) {
                         savedData.modifyCycles(serverLevel, storageKey, extracted);
                     }
                 }
             }
-        }
-    }
-
-    private static void syncToOwner(ServerLevel level, UUID ownerUUID, long newValue) {
-        ServerPlayer player = level.getServer().getPlayerList().getPlayer(ownerUUID);
-        if (player != null) {
-            PacketHandler.sendToPlayer(player, new SyncPlayerCyclesPayload(newValue));
         }
     }
 

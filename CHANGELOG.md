@@ -21,3 +21,6 @@
 - Added a drone bay
 - Added a simple drone for testing purposes
 - Added a generator that converts fuels to FE
+- Added a cloud interface block
+    - It allows storing cycles in the "cloud" and sharing it with the team.
+    - It can be used to transfer cycles from the cloud to machines as well

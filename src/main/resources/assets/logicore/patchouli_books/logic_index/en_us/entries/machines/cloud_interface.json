@@ -1,0 +1,31 @@
+{
+  "name": "Cloud Interface",
+  "category": "logicore:machines_category",
+  "icon": "logicore:cloud_interface",
+  "pages": [
+	{
+	  "type": "patchouli:text",
+	  "text": "The $(item)Cloud Interface$() is a gateway to your digital cycle storage.$(br)$(br)It allows you to upload generated cycles to a global \"Cloud\" account. These cycles are stored in the world data, meaning they are accessible from any other Cloud Interface, anywhere and in any dimension."
+	},
+	{
+	  "type": "patchouli:crafting",
+	  "recipe": "logicore:cloud_interface",
+	  "text": "Provides access to the global Cycle Network."
+	},
+	{
+	  "type": "patchouli:text",
+	  "title": "I/O Configuration",
+	  "text": "The block has specific directional logic:$(br)$(br)$(li)$(l)Back Input:$() Connect a Generator or Network Cable here to $(2)UPLOAD$() cycles to the cloud.$(li)$(l)Output Sides:$() Any other side will $(4)DOWNLOAD$() cycles from the cloud to power adjacent machines."
+	},
+	{
+	  "type": "patchouli:text",
+	  "title": "Team Storage",
+	  "text": "Cloud storage is automatically keyed to your account.$(br)$(br)If you join a $(l)Team$() (via FTB Teams or Vanilla), your interface will instantly switch to the Team's shared storage pool.$(br)$(br)This allows all party members to contribute to and withdraw from the same energy source."
+	},
+	{
+	  "type": "patchouli:text",
+	  "title": "Offline Access",
+	  "text": "Unlike personal inventory, the Cloud Interface works via $(l)Global Saved Data$().$(br)$(br)This means automation will continue to run and process cycles even if the owner is offline, provided the chunk is loaded."
+	}
+  ]
+}

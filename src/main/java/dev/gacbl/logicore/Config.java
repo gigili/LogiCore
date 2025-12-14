@@ -34,6 +34,9 @@ public class Config {
     public static final ModConfigSpec.ConfigValue<Integer> COMPILER_MAX_PROGRESS;
     public static final ModConfigSpec.ConfigValue<Integer> COMPILER_MAX_TICK_DURATION;
 
+    //Cloud interface
+    public static final ModConfigSpec.ConfigValue<Long> CI_MAX_TRANSFER_RATE;
+
     static {
         BUILDER.comment("LogiCore Configuration");
 
@@ -117,6 +120,14 @@ public class Config {
         COMPILER_MAX_TICK_DURATION = BUILDER
                 .comment(" Cap the most expensive items to this value in ticks")
                 .defineInRange("max_duration_cap", 600, 20, Integer.MAX_VALUE);
+        BUILDER.pop();
+        //</editor-fold>
+
+        // <editor-fold desc="Cloud interface">
+        BUILDER.push("Cloud interface");
+        CI_MAX_TRANSFER_RATE = BUILDER
+                .comment(" How many cycles per tick are transferred to and from the cloud.")
+                .defineInRange("cycles_processed_per_tick", 10000L, 1L, 1_000_000_000L);
         BUILDER.pop();
         //</editor-fold>
 

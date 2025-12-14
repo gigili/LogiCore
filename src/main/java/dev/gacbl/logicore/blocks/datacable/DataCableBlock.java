@@ -229,10 +229,10 @@ public class DataCableBlock extends BaseEntityBlock implements SimpleWaterlogged
     @Override
     public void onNeighborChange(@NotNull BlockState state, @NotNull LevelReader level, @NotNull BlockPos pos, @NotNull BlockPos neighbor) {
         super.onNeighborChange(state, level, pos, neighbor);
-        /*DataCableBlockEntity blockEntity = (DataCableBlockEntity) level.getBlockEntity(pos);
+        DataCableBlockEntity blockEntity = (DataCableBlockEntity) level.getBlockEntity(pos);
         if (level instanceof ServerLevel server && (blockEntity != null && blockEntity.getNetworkUUID() != null)) {
             NetworkManager.get(server).neighborChanged(server, pos, neighbor);
-        }*/
+        }
     }
 
     @Override
