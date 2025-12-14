@@ -12,6 +12,7 @@ import dev.gacbl.logicore.blocks.generator.GeneratorModule;
 import dev.gacbl.logicore.blocks.serverrack.ServerRackModule;
 import dev.gacbl.logicore.entity.drone.DroneModule;
 import dev.gacbl.logicore.items.processorunit.ProcessorUnitModule;
+import dev.gacbl.logicore.items.wrench.WrenchModule;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.CreativeModeTab;
@@ -39,6 +40,7 @@ public class CreativeTabModule {
                         output.accept(DroneModule.DRONE_ITEM.get());
                         output.accept(GeneratorModule.GENERATOR.get());
                         output.accept(CloudInterfaceModule.CLOUD_INTERFACE.get());
+                        output.accept(WrenchModule.WRENCH.get());
                     })
                     .build());
 

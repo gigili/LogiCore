@@ -1,6 +1,7 @@
 package dev.gacbl.logicore.data;
 
 import dev.gacbl.logicore.LogiCore;
+import dev.gacbl.logicore.blocks.cloud_interface.CloudInterfaceLootTableProvider;
 import dev.gacbl.logicore.blocks.compiler.CompilerLootTableProvider;
 import dev.gacbl.logicore.blocks.computer.ComputerLootTableProvider;
 import dev.gacbl.logicore.blocks.datacable.DataCableLootTableProvider;
@@ -42,7 +43,8 @@ public class DataGenerators {
                                 new LootTableProvider.SubProviderEntry(ComputerLootTableProvider::new, LootContextParamSets.BLOCK),
                                 new LootTableProvider.SubProviderEntry(DataCenterControllerLootTableProvider::new, LootContextParamSets.BLOCK),
                                 new LootTableProvider.SubProviderEntry(CompilerLootTableProvider::new, LootContextParamSets.BLOCK),
-                                new LootTableProvider.SubProviderEntry(DroneBayLootTableProvider::new, LootContextParamSets.BLOCK)
+                                new LootTableProvider.SubProviderEntry(DroneBayLootTableProvider::new, LootContextParamSets.BLOCK),
+                                new LootTableProvider.SubProviderEntry(CloudInterfaceLootTableProvider::new, LootContextParamSets.BLOCK)
                         ),
                         lookupProvider
                 )

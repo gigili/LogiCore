@@ -25,6 +25,7 @@ import dev.gacbl.logicore.entity.drone.DroneModule;
 import dev.gacbl.logicore.entity.drone.client.DroneModel;
 import dev.gacbl.logicore.entity.drone.client.DroneRenderer;
 import dev.gacbl.logicore.items.processorunit.ProcessorUnitModule;
+import dev.gacbl.logicore.items.wrench.WrenchModule;
 import dev.gacbl.logicore.network.PacketHandler;
 import guideme.Guide;
 import net.minecraft.client.renderer.entity.EntityRenderers;
@@ -67,6 +68,7 @@ public class LogiCore {
         DroneBayModule.register(modEventBus);
         GeneratorModule.register(modEventBus);
         CloudInterfaceModule.register(modEventBus);
+        WrenchModule.register(modEventBus);
         DroneModule.register(modEventBus);
 
         IntegrationUtils.registerEvents();

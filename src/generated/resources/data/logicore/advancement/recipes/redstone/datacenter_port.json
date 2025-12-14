@@ -1,11 +1,11 @@
 {
   "parent": "minecraft:recipes/root",
   "criteria": {
-	"has_redstone": {
+	"has_processor": {
 	  "conditions": {
 		"items": [
 		  {
-			"items": "minecraft:redstone"
+			"items": "logicore:processor_unit"
 		  }
 		]
 	  },
@@ -21,7 +21,7 @@
   "requirements": [
 	[
 	  "has_the_recipe",
-	  "has_redstone"
+	  "has_processor"
 	]
   ],
   "rewards": {

@@ -32,9 +32,7 @@ public class ClientEvents {
     public static void onItemTooltip(ItemTooltipEvent event) {
         if (CycleValueManager.hasCycleValue(event.getItemStack())) {
             int value = CycleValueManager.getCycleValue(event.getItemStack());
-
-            event.getToolTip().add(Component.translatable("tooltip.logicore.items.cycles", value)
-                    .withStyle(ChatFormatting.AQUA));
+            event.getToolTip().add(Component.translatable("tooltip.logicore.items.cycles", value).withStyle(ChatFormatting.AQUA));
         }
     }
 

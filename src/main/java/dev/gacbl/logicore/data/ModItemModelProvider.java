@@ -11,6 +11,7 @@ import dev.gacbl.logicore.blocks.drone_bay.DroneBayModule;
 import dev.gacbl.logicore.blocks.generator.GeneratorModule;
 import dev.gacbl.logicore.blocks.serverrack.ServerRackModule;
 import dev.gacbl.logicore.items.processorunit.ProcessorUnitModule;
+import dev.gacbl.logicore.items.wrench.WrenchModule;
 import net.minecraft.data.PackOutput;
 import net.neoforged.neoforge.client.model.generators.ItemModelProvider;
 import net.neoforged.neoforge.common.data.ExistingFileHelper;
@@ -24,6 +25,7 @@ public class ModItemModelProvider extends ItemModelProvider {
     @Override
     protected void registerModels() {
         basicItem(ProcessorUnitModule.PROCESSOR_UNIT.get());
+        basicItem(WrenchModule.WRENCH.get());
 
         withExistingParent(CompilerModule.COMPILER_ITEM.getId().getPath(), "logicore:block/" + CompilerModule.COMPILER_ITEM.getId().getPath());
         withExistingParent(ComputerModule.COMPUTER_ITEM.getId().getPath(), "logicore:block/" + ComputerModule.COMPUTER_ITEM.getId().getPath());

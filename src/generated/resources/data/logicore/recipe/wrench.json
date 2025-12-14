@@ -1,0 +1,27 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "redstone",
+  "key": {
+	"I": {
+	  "item": "minecraft:iron_ingot"
+	},
+	"P": {
+	  "item": "logicore:processor_unit"
+	},
+	"Q": {
+	  "item": "minecraft:quartz"
+	},
+	"S": {
+	  "item": "minecraft:stick"
+	}
+  },
+  "pattern": [
+	" QP",
+	" SI",
+	"S  "
+  ],
+  "result": {
+	"count": 1,
+	"id": "logicore:wrench"
+  }
+}

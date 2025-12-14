@@ -1,9 +1,12 @@
 package dev.gacbl.logicore.data;
 
 import dev.gacbl.logicore.LogiCore;
+import dev.gacbl.logicore.items.wrench.WrenchModule;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.data.PackOutput;
 import net.minecraft.data.tags.ItemTagsProvider;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.tags.ItemTags;
 import net.minecraft.world.level.block.Block;
 import net.neoforged.neoforge.common.data.ExistingFileHelper;
 import org.jetbrains.annotations.NotNull;
@@ -18,5 +21,6 @@ public class ModItemTagProvider extends ItemTagsProvider {
 
     @Override
     protected void addTags(HolderLookup.@NotNull Provider provider) {
+        tag(ItemTags.create(ResourceLocation.fromNamespaceAndPath("c", "tools/wrench"))).add(WrenchModule.WRENCH.get());
     }
 }
