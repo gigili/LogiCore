@@ -8,6 +8,7 @@
 	"logicore:datacenter_port",
 	"logicore:drone_bay",
 	"logicore:generator",
-	"logicore:cloud_interface"
+	"logicore:cloud_interface",
+	"logicore:basic_battery"
   ]
 }

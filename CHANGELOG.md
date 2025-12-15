@@ -25,3 +25,4 @@
     - It allows storing cycles in the "cloud" and sharing it with the team.
     - It can be used to transfer cycles from the cloud to machines as well
 - Added wrench item
+- Added basic battery block for energy storage

@@ -1,7 +1,6 @@
 package dev.gacbl.logicore.api.compat.jei;
 
 import dev.gacbl.logicore.LogiCore;
-import dev.gacbl.logicore.blocks.compiler.CompilerModule;
 import dev.gacbl.logicore.blocks.compiler.ui.CompilerScreen;
 import dev.gacbl.logicore.network.payload.SetAutoCraftingTemplatePayload;
 import mezz.jei.api.IModPlugin;
@@ -17,7 +16,6 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.Rect2i;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.crafting.RecipeHolder;
 import net.neoforged.neoforge.network.PacketDistributor;
 import org.jetbrains.annotations.NotNull;
 
@@ -35,12 +33,12 @@ public class LogiCoreJeiPlugin implements IModPlugin {
 
     @Override
     public void registerRecipeCatalysts(@NotNull IRecipeCatalystRegistration registration) {
-        registration.addRecipeCatalyst(new ItemStack(CompilerModule.COMPILER_BLOCK.get()), CompilerRecipeCategory.TYPE);
+        //registration.addRecipeCatalyst(new ItemStack(CompilerModule.COMPILER_BLOCK.get()), CompilerRecipeCategory.TYPE);
     }
 
     @Override
     public void registerCategories(IRecipeCategoryRegistration registration) {
-        registration.addRecipeCategories(new CompilerRecipeCategory(registration.getJeiHelpers().getGuiHelper()));
+        //registration.addRecipeCategories(new CompilerRecipeCategory(registration.getJeiHelpers().getGuiHelper()));
         slotDrawable = registration.getJeiHelpers().getGuiHelper().getSlotDrawable();
     }
 
@@ -48,12 +46,12 @@ public class LogiCoreJeiPlugin implements IModPlugin {
     public void registerRecipes(@NotNull IRecipeRegistration registration) {
         if (Minecraft.getInstance().level == null) return;
         final var recipeManager = Minecraft.getInstance().level.getRecipeManager();
-        registration.addRecipes(CompilerRecipeCategory.TYPE, recipeManager.getAllRecipesFor(CompilerModule.COMPILER_TYPE.get()).stream().map(RecipeHolder::value).toList());
+        //registration.addRecipes(CompilerRecipeCategory.TYPE, recipeManager.getAllRecipesFor(CompilerModule.COMPILER_TYPE.get()).stream().map(RecipeHolder::value).toList());
     }
 
     @Override
     public void registerGuiHandlers(IGuiHandlerRegistration registration) {
-        registration.addGhostIngredientHandler(CompilerScreen.class, new IGhostIngredientHandler<CompilerScreen>() {
+        registration.addGhostIngredientHandler(CompilerScreen.class, new IGhostIngredientHandler<>() {
             @Override
             public <I> @NotNull List<Target<I>> getTargetsTyped(@NotNull CompilerScreen gui, @NotNull ITypedIngredient<I> ingredient, boolean doStart) {
                 List<Target<I>> targets = new ArrayList<>();

@@ -2,8 +2,6 @@ package dev.gacbl.logicore.items.processorunit;
 
 import net.minecraft.data.recipes.RecipeCategory;
 import net.minecraft.data.recipes.ShapedRecipeBuilder;
-import net.minecraft.resources.ResourceLocation;
-import net.minecraft.tags.ItemTags;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.Items;
 
@@ -15,9 +13,10 @@ public class ProcessorUnitItem extends Item {
     public static ShapedRecipeBuilder getRecipe() {
         return ShapedRecipeBuilder.shaped(RecipeCategory.REDSTONE, ProcessorUnitModule.PROCESSOR_UNIT.get())
                 .pattern("RQR")
-                .pattern("QEQ")
+                .pattern("IGI")
                 .pattern("RQR")
-                .define('E', ItemTags.create(ResourceLocation.fromNamespaceAndPath("c", "ender_pearls")))
+                .define('I', Items.IRON_INGOT)
+                .define('G', Items.GOLD_INGOT)
                 .define('R', Items.REDSTONE)
                 .define('Q', Items.QUARTZ);
     }

@@ -1,8 +1,6 @@
 package dev.gacbl.logicore.blocks.compiler;
 
 import dev.gacbl.logicore.LogiCore;
-import dev.gacbl.logicore.blocks.compiler.recipe.CompilerRecipe;
-import dev.gacbl.logicore.blocks.compiler.recipe.CompilerRecipeSerializer;
 import dev.gacbl.logicore.blocks.compiler.ui.CompilerMenu;
 import dev.gacbl.logicore.core.ModCapabilities;
 import net.minecraft.core.registries.BuiltInRegistries;
@@ -45,17 +43,6 @@ public class CompilerModule {
 
     public static final DeferredRegister<RecipeType<?>> RECIPE_TYPE =
             DeferredRegister.create(BuiltInRegistries.RECIPE_TYPE, LogiCore.MOD_ID);
-
-    public static final DeferredHolder<RecipeSerializer<?>, RecipeSerializer<CompilerRecipe>> COMPILER_SERIALIZER =
-            SERIALIZERS.register("compiler", () -> CompilerRecipeSerializer.INSTANCE);
-
-    public static final DeferredHolder<RecipeType<?>, RecipeType<CompilerRecipe>> COMPILER_TYPE =
-            RECIPE_TYPE.register("compiler", () -> new RecipeType<CompilerRecipe>() {
-                @Override
-                public String toString() {
-                    return "compiler";
-                }
-            });
 
     public static void register(IEventBus modEventBus) {
         BLOCKS.register(modEventBus);

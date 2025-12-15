@@ -1,6 +1,7 @@
 package dev.gacbl.logicore.data;
 
 import dev.gacbl.logicore.LogiCore;
+import dev.gacbl.logicore.blocks.battery.basic.BasicBatteryModule;
 import dev.gacbl.logicore.blocks.cloud_interface.CloudInterfaceModule;
 import dev.gacbl.logicore.blocks.compiler.CompilerModule;
 import dev.gacbl.logicore.blocks.computer.ComputerModule;
@@ -64,6 +65,7 @@ public class ModBlockTagProvider extends BlockTagsProvider {
 
         tag(BlockTags.MINEABLE_WITH_PICKAXE).add(CompilerModule.COMPILER_BLOCK.get());
         tag(BlockTags.NEEDS_IRON_TOOL).add(CompilerModule.COMPILER_BLOCK.get());
+        tag(ModTags.Blocks.VALID_DATACENTER_INNER_BLOCK).add(CompilerModule.COMPILER_BLOCK.get());
         tag(BlockTags.create(ResourceLocation.fromNamespaceAndPath("justdirethings", "eclipsegate_deny"))).add(CompilerModule.COMPILER_BLOCK.get());
         tag(BlockTags.create(ResourceLocation.fromNamespaceAndPath("justdirethings", "phase_deny"))).add(CompilerModule.COMPILER_BLOCK.get());
         tag(BlockTags.create(ResourceLocation.fromNamespaceAndPath("justdirethings", "swapper_deny"))).add(CompilerModule.COMPILER_BLOCK.get());
@@ -87,6 +89,7 @@ public class ModBlockTagProvider extends BlockTagsProvider {
 
         tag(BlockTags.MINEABLE_WITH_PICKAXE).add(GeneratorModule.GENERATOR.get());
         tag(BlockTags.NEEDS_IRON_TOOL).add(GeneratorModule.GENERATOR.get());
+        tag(ModTags.Blocks.IS_ENERGY_GENERATOR).add(GeneratorModule.GENERATOR.get());
         tag(BlockTags.create(ResourceLocation.fromNamespaceAndPath("justdirethings", "eclipsegate_deny"))).add(GeneratorModule.GENERATOR.get());
         tag(BlockTags.create(ResourceLocation.fromNamespaceAndPath("justdirethings", "phase_deny"))).add(GeneratorModule.GENERATOR.get());
         tag(BlockTags.create(ResourceLocation.fromNamespaceAndPath("justdirethings", "swapper_deny"))).add(GeneratorModule.GENERATOR.get());
@@ -96,6 +99,13 @@ public class ModBlockTagProvider extends BlockTagsProvider {
         tag(BlockTags.create(ResourceLocation.fromNamespaceAndPath("justdirethings", "eclipsegate_deny"))).add(CloudInterfaceModule.CLOUD_INTERFACE.get());
         tag(BlockTags.create(ResourceLocation.fromNamespaceAndPath("justdirethings", "phase_deny"))).add(CloudInterfaceModule.CLOUD_INTERFACE.get());
         tag(BlockTags.create(ResourceLocation.fromNamespaceAndPath("justdirethings", "swapper_deny"))).add(CloudInterfaceModule.CLOUD_INTERFACE.get());
+
+        tag(BlockTags.MINEABLE_WITH_PICKAXE).add(BasicBatteryModule.BASIC_BATTERY.get());
+        tag(BlockTags.NEEDS_IRON_TOOL).add(BasicBatteryModule.BASIC_BATTERY.get());
+        tag(ModTags.Blocks.VALID_DATACENTER_INNER_BLOCK).add(BasicBatteryModule.BASIC_BATTERY.get());
+        tag(BlockTags.create(ResourceLocation.fromNamespaceAndPath("justdirethings", "eclipsegate_deny"))).add(BasicBatteryModule.BASIC_BATTERY.get());
+        tag(BlockTags.create(ResourceLocation.fromNamespaceAndPath("justdirethings", "phase_deny"))).add(BasicBatteryModule.BASIC_BATTERY.get());
+        tag(BlockTags.create(ResourceLocation.fromNamespaceAndPath("justdirethings", "swapper_deny"))).add(BasicBatteryModule.BASIC_BATTERY.get());
 
         setupOptionalTags();
     }
@@ -143,6 +153,9 @@ public class ModBlockTagProvider extends BlockTagsProvider {
         tag(ModTags.Blocks.VALID_DATACENTER_INNER_BLOCK).add(Blocks.WAXED_EXPOSED_COPPER_GRATE);
         tag(ModTags.Blocks.VALID_DATACENTER_INNER_BLOCK).add(Blocks.WAXED_OXIDIZED_COPPER_GRATE);
         tag(ModTags.Blocks.VALID_DATACENTER_INNER_BLOCK).add(Blocks.WAXED_WEATHERED_COPPER_GRATE);
+        tag(ModTags.Blocks.VALID_DATACENTER_INNER_BLOCK).add(Blocks.HOPPER);
+        tag(ModTags.Blocks.VALID_DATACENTER_INNER_BLOCK).addTag(BlockTags.create(ResourceLocation.fromNamespaceAndPath("c", "chests")));
+        tag(ModTags.Blocks.VALID_DATACENTER_INNER_BLOCK).addTag(BlockTags.create(ResourceLocation.fromNamespaceAndPath("c", "barrels")));
         tag(ModTags.Blocks.VALID_DATACENTER_INNER_BLOCK).addOptionalTag(ModTags.Blocks.IS_ENERGY_CABLE);
         tag(ModTags.Blocks.VALID_DATACENTER_INNER_BLOCK).addOptionalTag(ModTags.Blocks.IS_ENERGY_GENERATOR);
         tag(ModTags.Blocks.VALID_DATACENTER_INNER_BLOCK).addTag(BlockTags.create(ResourceLocation.fromNamespaceAndPath("minecraft", "pressure_plates")));

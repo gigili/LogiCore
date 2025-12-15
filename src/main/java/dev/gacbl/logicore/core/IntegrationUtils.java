@@ -17,7 +17,6 @@ import java.util.UUID;
 
 public class IntegrationUtils {
     public static void registerEvents() {
-        // Check for common mod ID variations
         if (ModList.get().isLoaded("ftb_teams") || ModList.get().isLoaded("ftbteams")) {
             FTBTeamsHandler.register();
         }

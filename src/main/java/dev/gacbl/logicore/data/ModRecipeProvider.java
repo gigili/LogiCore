@@ -1,5 +1,6 @@
 package dev.gacbl.logicore.data;
 
+import dev.gacbl.logicore.blocks.battery.basic.BasicBatteryBlock;
 import dev.gacbl.logicore.blocks.cloud_interface.CloudInterfaceBlock;
 import dev.gacbl.logicore.blocks.compiler.CompilerBlock;
 import dev.gacbl.logicore.blocks.computer.ComputerBlock;
@@ -42,29 +43,6 @@ public class ModRecipeProvider extends RecipeProvider implements IConditionBuild
         GeneratorBlock.getRecipe().unlockedBy("has_processor", has(ProcessorUnitModule.PROCESSOR_UNIT.get())).save(recipeOutput);
         CloudInterfaceBlock.getRecipe().unlockedBy("has_processor", has(ProcessorUnitModule.PROCESSOR_UNIT.get())).save(recipeOutput);
         WrenchItem.getRecipe().unlockedBy("has_processor", has(ProcessorUnitModule.PROCESSOR_UNIT.get())).save(recipeOutput);
-
-        /*CompilerRecipeBuilder.of(
-                        Ingredient.of(Items.IRON_INGOT), // Input
-                        3,                               // Input Count
-                        Items.GOLD_INGOT,                // Output
-                        1,                               // Output Count
-                        200,                             // Cycles
-                        1.0f,                            // Chance
-                        30                               // Ticks
-                )
-                .unlockedBy("has_iron", has(Items.IRON_INGOT))
-                .save(recipeOutput, ResourceLocation.fromNamespaceAndPath(LogiCore.MOD_ID, "gold_from_iron_compiler"));
-
-        CompilerRecipeBuilder.of(
-                        Ingredient.of(ItemTags.create(ResourceLocation.fromNamespaceAndPath("c", "stones"))), // Input
-                        16,                               // Input Count
-                        Items.IRON_BLOCK,                // Output
-                        1,                               // Output Count
-                        500,                             // Cycles
-                        0.65f,                            // Chance
-                        50                               // Ticks
-                )
-                .unlockedBy("has_iron", has(Items.IRON_INGOT))
-                .save(recipeOutput, ResourceLocation.fromNamespaceAndPath(LogiCore.MOD_ID, "iron_block_from_stone_compiler"));*/
+        BasicBatteryBlock.getRecipe().unlockedBy("has_processor", has(ProcessorUnitModule.PROCESSOR_UNIT.get())).save(recipeOutput);
     }
 }

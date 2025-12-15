@@ -1,5 +1,7 @@
 {
   "values": [
+	"logicore:compiler",
+	"logicore:basic_battery",
 	"logicore:server_rack",
 	"logicore:computer",
 	"logicore:data_cable",
@@ -17,6 +19,9 @@
 	"minecraft:waxed_exposed_copper_grate",
 	"minecraft:waxed_oxidized_copper_grate",
 	"minecraft:waxed_weathered_copper_grate",
+	"minecraft:hopper",
+	"#c:chests",
+	"#c:barrels",
 	{
 	  "id": "#logicore:is_energy_cable",
 	  "required": false

@@ -1,5 +1,6 @@
 {
   "values": [
+	"logicore:generator",
 	{
 	  "id": "justdirethings:generatort1",
 	  "required": false

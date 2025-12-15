@@ -2,8 +2,11 @@
   "type": "minecraft:crafting_shaped",
   "category": "redstone",
   "key": {
-	"E": {
-	  "tag": "c:ender_pearls"
+	"G": {
+	  "item": "minecraft:gold_ingot"
+	},
+	"I": {
+	  "item": "minecraft:iron_ingot"
     },
     "Q": {
       "item": "minecraft:quartz"
@@ -14,7 +17,7 @@
   },
   "pattern": [
     "RQR",
-	"QEQ",
+	"IGI",
     "RQR"
   ],
   "result": {

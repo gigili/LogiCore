@@ -1,0 +1,24 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "redstone",
+  "key": {
+	"G": {
+	  "item": "minecraft:gold_ingot"
+	},
+	"P": {
+	  "item": "logicore:processor_unit"
+	},
+	"R": {
+	  "item": "minecraft:redstone"
+	}
+  },
+  "pattern": [
+	"RGR",
+	"GPG",
+	"RGR"
+  ],
+  "result": {
+	"count": 1,
+	"id": "logicore:basic_battery"
+  }
+}

@@ -34,6 +34,11 @@ repositories {
     repositories {
         maven { url 'https://maven.blamejared.com' }
     }
+
+    maven {
+        name = "TerraformersMC"
+        url = "https://maven.terraformersmc.com/"
+    }
 }
 
 base {
@@ -147,10 +152,24 @@ configurations {
 }
 
 dependencies {
+    //Architectury
+    compileOnly "curse.maven:architectury-api-419699:5786327"
+    localRuntime "curse.maven:architectury-api-419699:5786327"
+
     // JEI
     compileOnly "mezz.jei:jei-${minecraft_version}-common-api:${jei_version}"
     compileOnly "mezz.jei:jei-${minecraft_version}-neoforge-api:${jei_version}"
-    localRuntime "mezz.jei:jei-${minecraft_version}-neoforge:${jei_version}"
+    //localRuntime "mezz.jei:jei-${minecraft_version}-neoforge:${jei_version}"
+
+    // EMI
+    compileOnly "dev.emi:emi-neoforge:${emi_version}:api"
+    localRuntime "dev.emi:emi-neoforge:${emi_version}"
+
+    // Architectury
+    compileOnly "dev.emi:emi-xplat-intermediary:${emi_version}:api"
+
+    // MultiLoader Template/VanillaGradle
+    compileOnly "dev.emi:emi-xplat-mojmap:${emi_version}:api"
 
     // Jade
     implementation "maven.modrinth:jade:15.10.3+neoforge"
@@ -167,26 +186,25 @@ dependencies {
     // Tags viewer
     localRuntime "curse.maven:tv-1119728:5807896"
 
-    // Architectury, Kotlin, Observable
-    localRuntime "curse.maven:architectury-419699:5786327"
-    localRuntime "curse.maven:kotlin-351264:6994056"
-    localRuntime "curse.maven:observable-509575:6697124"
+    // Kotlin, Observable
+    //localRuntime "curse.maven:kotlin-351264:6994056"
+    //localRuntime "curse.maven:observable-509575:6697124"
 
     // Spark
-    localRuntime "curse.maven:spark-361579:6225208"
+    //localRuntime "curse.maven:spark-361579:6225208"
 
     // Just Dire Things
     //localRuntime "curse.maven:jdt-1002348:6369120"
 
     // Building Gadgets
-    localRuntime "curse.maven:building_gadgets-298187:6850515"
+    //localRuntime "curse.maven:building_gadgets-298187:6850515"
 
     // LaserIO
-    localRuntime "curse.maven:laserio-626839:5730007"
+    //localRuntime "curse.maven:laserio-626839:5730007"
 
     // Cloth, Powah
-    localRuntime "curse.maven:cloth-348521:5729127"
-    localRuntime "curse.maven:powah-633483:6830067"
+    //localRuntime "curse.maven:cloth-348521:5729127"
+    //localRuntime "curse.maven:powah-633483:6830067"
 
     // ModernUI, Flux Networks
     /*localRuntime "curse.maven:moder-352491:6956436"
@@ -206,16 +224,14 @@ dependencies {
     localRuntime "curse.maven:torchmaster-254268:7197218"
 
     // Functional storage
-    localRuntime "curse.maven:titanium-287342:6875285"
-    localRuntime "curse.maven:function_storage-556861:7061714"
+    //localRuntime "curse.maven:titanium-287342:6875285"
+    //localRuntime "curse.maven:function_storage-556861:7061714"
 
-    // Architectury, FTB Chunks, FTB Library, FTB Teams
-    compileOnly("curse.maven:architectury-api-419699:5786327")
-    localRuntime("curse.maven:architectury-api-419699:5786327")
-    localRuntime("curse.maven:ftb-chunks-forge-314906:7157142")
-    localRuntime("curse.maven:ftb-library-forge-404465:7312258")
-    compileOnly("curse.maven:ftb-teams-forge-404468:7315210")
-    localRuntime("curse.maven:ftb-teams-forge-404468:7315210")
+    // FTB Chunks, FTB Library, FTB Teams
+    localRuntime "curse.maven:ftb-chunks-forge-314906:7157142"
+    localRuntime "curse.maven:ftb-library-forge-404465:7312258"
+    compileOnly "curse.maven:ftb-teams-forge-404468:7315210"
+    localRuntime "curse.maven:ftb-teams-forge-404468:7315210"
 }
 
 // This block of code expands all declared replace properties in the specified resource targets.

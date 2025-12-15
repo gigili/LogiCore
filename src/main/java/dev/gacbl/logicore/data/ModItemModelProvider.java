@@ -1,6 +1,7 @@
 package dev.gacbl.logicore.data;
 
 import dev.gacbl.logicore.LogiCore;
+import dev.gacbl.logicore.blocks.battery.basic.BasicBatteryModule;
 import dev.gacbl.logicore.blocks.cloud_interface.CloudInterfaceModule;
 import dev.gacbl.logicore.blocks.compiler.CompilerModule;
 import dev.gacbl.logicore.blocks.computer.ComputerModule;
@@ -36,5 +37,6 @@ public class ModItemModelProvider extends ItemModelProvider {
         withExistingParent(ServerRackModule.SERVER_RACK_ITEM.getId().getPath(), "logicore:block/" + ServerRackModule.SERVER_RACK_ITEM.getId().getPath());
         withExistingParent(GeneratorModule.GENERATOR_ITEM.getId().getPath(), "logicore:block/" + GeneratorModule.GENERATOR_ITEM.getId().getPath());
         withExistingParent(CloudInterfaceModule.CLOUD_INTERFACE.getId().getPath(), "logicore:block/" + CloudInterfaceModule.CLOUD_INTERFACE.getId().getPath());
+        withExistingParent(BasicBatteryModule.BASIC_BATTERY.getId().getPath(), "logicore:block/" + BasicBatteryModule.BASIC_BATTERY.getId().getPath());
     }
 }

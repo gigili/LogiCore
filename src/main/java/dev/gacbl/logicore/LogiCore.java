@@ -1,6 +1,7 @@
 package dev.gacbl.logicore;
 
 import com.mojang.logging.LogUtils;
+import dev.gacbl.logicore.blocks.battery.basic.BasicBatteryModule;
 import dev.gacbl.logicore.blocks.cloud_interface.CloudInterfaceModule;
 import dev.gacbl.logicore.blocks.compiler.CompilerBlockEntityRenderer;
 import dev.gacbl.logicore.blocks.compiler.CompilerModule;
@@ -70,7 +71,7 @@ public class LogiCore {
         CloudInterfaceModule.register(modEventBus);
         WrenchModule.register(modEventBus);
         DroneModule.register(modEventBus);
-
+        BasicBatteryModule.register(modEventBus);
         IntegrationUtils.registerEvents();
 
         PacketHandler.register(modEventBus);
