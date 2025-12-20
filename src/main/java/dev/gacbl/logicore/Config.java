@@ -6,6 +6,9 @@ public class Config {
     private static final ModConfigSpec.Builder BUILDER = new ModConfigSpec.Builder();
     public static final ModConfigSpec SPEC;
 
+    //General
+    public static final ModConfigSpec.ConfigValue<Boolean> ALLOW_JEI_DRAG;
+
     //Server rack
     public static final ModConfigSpec.ConfigValue<Integer> SERVER_RACK_BASE_CYCLE_GENERATION;
     public static final ModConfigSpec.ConfigValue<Integer> SERVER_RACK_CYCLES_PER_PROCESSOR;
@@ -39,6 +42,14 @@ public class Config {
 
     static {
         BUILDER.comment("LogiCore Configuration");
+
+        //<editor-fold desc="General">
+        BUILDER.push("General");
+        ALLOW_JEI_DRAG = BUILDER
+                .comment(" If items can be dragged from JEI into compiler")
+                .define("jei_drag", true);
+        BUILDER.pop();
+        //</editor-fold>
 
         //<editor-fold desc="Machines">
         BUILDER.push("Machines");

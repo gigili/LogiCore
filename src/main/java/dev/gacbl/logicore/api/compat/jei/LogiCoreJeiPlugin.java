@@ -1,5 +1,6 @@
 package dev.gacbl.logicore.api.compat.jei;
 
+import dev.gacbl.logicore.Config;
 import dev.gacbl.logicore.LogiCore;
 import dev.gacbl.logicore.blocks.compiler.ui.CompilerScreen;
 import dev.gacbl.logicore.network.payload.SetAutoCraftingTemplatePayload;
@@ -50,7 +51,8 @@ public class LogiCoreJeiPlugin implements IModPlugin {
     }
 
     @Override
-    public void registerGuiHandlers(IGuiHandlerRegistration registration) {
+    public void registerGuiHandlers(@NotNull IGuiHandlerRegistration registration) {
+        if (!Config.ALLOW_JEI_DRAG.get()) return;
         registration.addGhostIngredientHandler(CompilerScreen.class, new IGhostIngredientHandler<>() {
             @Override
             public <I> @NotNull List<Target<I>> getTargetsTyped(@NotNull CompilerScreen gui, @NotNull ITypedIngredient<I> ingredient, boolean doStart) {
