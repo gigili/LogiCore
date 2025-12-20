@@ -9,6 +9,7 @@ import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.neoforged.bus.api.IEventBus;
+import net.neoforged.fml.ModList;
 import net.neoforged.neoforge.capabilities.RegisterCapabilitiesEvent;
 import net.neoforged.neoforge.registries.DeferredHolder;
 import net.neoforged.neoforge.registries.DeferredRegister;
@@ -21,7 +22,7 @@ public class CloudInterfaceModule {
     public static final DeferredHolder<Block, CloudInterfaceBlock> CLOUD_INTERFACE =
             BLOCKS.register("cloud_interface", () -> new CloudInterfaceBlock(BlockBehaviour.Properties.of().requiresCorrectToolForDrops().strength(0.5f).noOcclusion()));
 
-    public static final DeferredHolder<Item, BlockItem> COMPUTER_ITEM =
+    public static final DeferredHolder<Item, BlockItem> CLOUD_INTERFACE_ITEM =
             ITEMS.register("cloud_interface", () -> new BlockItem(CLOUD_INTERFACE.get(), new Item.Properties()));
 
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<CloudInterfaceBlockEntity>> CLOUD_INTERFACE_BE =
@@ -41,5 +42,9 @@ public class CloudInterfaceModule {
                 CLOUD_INTERFACE_BE.get(),
                 (be, context) -> be
         );
+
+        if (ModList.get().isLoaded("ae2")) {
+            dev.gacbl.logicore.api.compat.ae2.Ae2Helper.registerCapabilities(event);
+        }
     }
 }

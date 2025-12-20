@@ -1,6 +1,8 @@
 package dev.gacbl.logicore.blocks.cloud_interface;
 
 import dev.gacbl.logicore.Config;
+import dev.gacbl.logicore.api.compat.ae2.Ae2Helper;
+import dev.gacbl.logicore.api.compat.ae2.IGridNodeService;
 import dev.gacbl.logicore.api.computation.ICycleProvider;
 import dev.gacbl.logicore.api.cycles.CycleSavedData;
 import dev.gacbl.logicore.blocks.datacable.DataCableBlockEntity;
@@ -15,20 +17,33 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
+import net.neoforged.fml.ModList;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.UUID;
 
 public class CloudInterfaceBlockEntity extends BlockEntity implements ICycleProvider {
     private UUID ownerUUID;
+    private IGridNodeService ae2Service;
 
     public CloudInterfaceBlockEntity(BlockPos pos, BlockState blockState) {
         super(CloudInterfaceModule.CLOUD_INTERFACE_BE.get(), pos, blockState);
+        if (ModList.get().isLoaded("ae2")) {
+            this.ae2Service = Ae2Helper.createService(this);
+        }
+    }
+
+    public IGridNodeService getAe2Service() {
+        return ae2Service;
     }
 
     public void setOwner(UUID owner) {
         this.ownerUUID = owner;
         setChanged();
+    }
+
+    public UUID getOwner() {
+        return this.ownerUUID;
     }
 
     private String getStorageKey(ServerLevel serverLevel) {
@@ -38,6 +53,10 @@ public class CloudInterfaceBlockEntity extends BlockEntity implements ICycleProv
 
     public static void serverTick(Level level, BlockPos pos, BlockState state, CloudInterfaceBlockEntity be) {
         if (!(level instanceof ServerLevel serverLevel) || be.ownerUUID == null) return;
+
+        if (be.ae2Service != null) {
+            be.ae2Service.serverTick();
+        }
 
         long maxUpload = Config.CI_MAX_TRANSFER_RATE.get();
         String storageKey = be.getStorageKey(serverLevel);
@@ -79,6 +98,9 @@ public class CloudInterfaceBlockEntity extends BlockEntity implements ICycleProv
         if (ownerUUID != null) {
             tag.putUUID("Owner", ownerUUID);
         }
+        if (ae2Service != null) {
+            ae2Service.save(tag, registries);
+        }
     }
 
     @Override
@@ -86,6 +108,9 @@ public class CloudInterfaceBlockEntity extends BlockEntity implements ICycleProv
         super.loadAdditional(tag, registries);
         if (tag.hasUUID("Owner")) {
             ownerUUID = tag.getUUID("Owner");
+        }
+        if (ae2Service != null) {
+            ae2Service.load(tag, registries);
         }
     }
 
@@ -124,5 +149,13 @@ public class CloudInterfaceBlockEntity extends BlockEntity implements ICycleProv
             CycleSavedData.get(serverLevel).modifyCycles(serverLevel, key, receive);
         }
         return receive;
+    }
+
+    @Override
+    public void setRemoved() {
+        super.setRemoved();
+        if (ae2Service != null) {
+            ae2Service.onRemove();
+        }
     }
 }

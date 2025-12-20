@@ -26,3 +26,4 @@
     - It can be used to transfer cycles from the cloud to machines as well
 - Added wrench item
 - Added basic battery block for energy storage
+- Added AE2 integration via Cloud Interface block
