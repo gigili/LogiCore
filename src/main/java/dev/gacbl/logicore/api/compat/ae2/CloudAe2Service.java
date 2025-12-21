@@ -40,8 +40,8 @@ public class CloudAe2Service implements IGridNodeService, IGridNodeListener<Clou
     private final CloudInterfaceBlockEntity host;
     private final IManagedGridNode mainNode;
     private final VirtualCloudStorage virtualStorage;
-    private final List<IPatternDetails> cachedPatterns = new ArrayList<>();
-    private boolean patternsInitialized = false;
+    private static final List<IPatternDetails> GLOBAL_CACHED_PATTERNS = new ArrayList<>();
+    private static volatile boolean globalPatternsInitialized = false;
 
     public static final Item CATALYST_ITEM = Items.STRUCTURE_VOID;
     private final Queue<PendingCraft> pendingCrafts = new ArrayDeque<>();
@@ -64,35 +64,39 @@ public class CloudAe2Service implements IGridNodeService, IGridNodeListener<Clou
     }
 
     private void initPatterns() {
-        if (patternsInitialized) return;
-        cachedPatterns.clear();
+        if (globalPatternsInitialized) return;
+        if (host.getLevel() == null) return;
 
-        for (Item item : BuiltInRegistries.ITEM) {
-            if (item == Items.AIR || item == CATALYST_ITEM) continue;
+        synchronized (GLOBAL_CACHED_PATTERNS) {
+            if (globalPatternsInitialized) return;
 
-            ItemStack stack = new ItemStack(item);
-            long cost = CycleValueManager.getCycleValue(stack);
+            GLOBAL_CACHED_PATTERNS.clear();
             AEItemKey catalystKey = AEItemKey.of(CATALYST_ITEM);
 
-            if (cost > 0) {
+            for (Item item : BuiltInRegistries.ITEM) {
+                if (item == Items.AIR || item == CATALYST_ITEM) continue;
 
-                AEItemKey outputKey = AEItemKey.of(stack);
+                ItemStack stack = new ItemStack(item);
+                long cost = CycleValueManager.getCycleValue(stack);
 
-                List<GenericStack> inputs = List.of(new GenericStack(catalystKey, cost));
-                List<GenericStack> outputs = List.of(new GenericStack(outputKey, 1));
+                if (cost > 0) {
+                    AEItemKey outputKey = AEItemKey.of(stack);
+                    List<GenericStack> inputs = List.of(new GenericStack(catalystKey, cost));
+                    List<GenericStack> outputs = List.of(new GenericStack(outputKey, 1));
 
-                try {
-                    ItemStack patternStack = PatternDetailsHelper.encodeProcessingPattern(inputs, outputs);
-                    IPatternDetails pattern = PatternDetailsHelper.decodePattern(patternStack, host.getLevel());
-                    if (pattern != null) {
-                        cachedPatterns.add(pattern);
+                    try {
+                        ItemStack patternStack = PatternDetailsHelper.encodeProcessingPattern(inputs, outputs);
+                        IPatternDetails pattern = PatternDetailsHelper.decodePattern(patternStack, host.getLevel());
+                        if (pattern != null) {
+                            GLOBAL_CACHED_PATTERNS.add(pattern);
+                        }
+                    } catch (Exception e) {
+                        LogiCore.LOGGER.error("Failed to encode pattern for {}", item, e);
                     }
-                } catch (Exception e) {
-                    LogiCore.LOGGER.error("Failed to encode pattern for {}", item, e);
                 }
             }
+            globalPatternsInitialized = true;
         }
-        patternsInitialized = true;
     }
 
     @Override
@@ -105,7 +109,7 @@ public class CloudAe2Service implements IGridNodeService, IGridNodeListener<Clou
         if (!mainNode.isReady()) {
             mainNode.create(host.getLevel(), host.getBlockPos());
         }
-        if (!patternsInitialized && mainNode.isActive()) {
+        if (!globalPatternsInitialized && mainNode.isActive()) {
             initPatterns();
             if (mainNode.getNode() != null) {
                 mainNode.getNode().getGrid().getService(appeng.api.networking.crafting.ICraftingService.class)
@@ -114,15 +118,11 @@ public class CloudAe2Service implements IGridNodeService, IGridNodeListener<Clou
             }
         }
 
-        if (!pendingCrafts.isEmpty() && mainNode.isActive()) {
-            processPendingCrafts();
-        }
-
         if (mainNode.isActive() && host.getLevel() != null && host.getOwner() != null) {
             long now = host.getLevel().getGameTime();
 
             if (now - lastSyncTick >= 20) {
-                ServerLevel serverLevel = Objects.requireNonNull(host.getLevel().getServer()).overworld();
+                ServerLevel serverLevel = (ServerLevel) host.getLevel();
                 String ownerKey = CycleSavedData.getKey(serverLevel, host.getOwner());
                 long currentCycles = CycleSavedData.get(serverLevel).getCyclesByKeyString(ownerKey);
 
@@ -136,6 +136,10 @@ public class CloudAe2Service implements IGridNodeService, IGridNodeListener<Clou
                 }
             }
         }
+
+        if (!pendingCrafts.isEmpty() && mainNode.isActive()) {
+            processPendingCrafts();
+        }
     }
 
     private void processPendingCrafts() {
@@ -146,24 +150,29 @@ public class CloudAe2Service implements IGridNodeService, IGridNodeListener<Clou
         Iterator<PendingCraft> it = pendingCrafts.iterator();
         while (it.hasNext()) {
             PendingCraft craft = it.next();
-            long inserted = inventory.insert(craft.key, craft.amount, Actionable.MODULATE, source);
 
+            long inserted = inventory.insert(craft.key, craft.amount, Actionable.MODULATE, source);
             craft.amount -= inserted;
+
             if (craft.amount <= 0) {
                 it.remove();
             }
+        }
+
+        if (!pendingCrafts.isEmpty()) {
+            host.setChanged();
         }
     }
 
     @Override
     public List<IPatternDetails> getAvailablePatterns() {
-        if (!patternsInitialized) initPatterns();
-        return cachedPatterns;
+        if (!globalPatternsInitialized) initPatterns();
+        return GLOBAL_CACHED_PATTERNS;
     }
 
     @Override
     public int getPatternPriority() {
-        return 1000;
+        return Integer.MAX_VALUE;
     }
 
     @Override
@@ -213,6 +222,7 @@ public class CloudAe2Service implements IGridNodeService, IGridNodeListener<Clou
     @Override
     public void save(CompoundTag tag, HolderLookup.Provider registries) {
         mainNode.saveToNBT(tag);
+
         if (!pendingCrafts.isEmpty()) {
             ListTag list = new ListTag();
             for (PendingCraft craft : pendingCrafts) {
@@ -234,7 +244,6 @@ public class CloudAe2Service implements IGridNodeService, IGridNodeListener<Clou
             ListTag list = tag.getList(NBT_PENDING_CRAFTS, Tag.TAG_COMPOUND);
             for (int i = 0; i < list.size(); i++) {
                 CompoundTag craftTag = list.getCompound(i);
-
                 AEKey key = AEKey.fromTagGeneric(registries, craftTag.getCompound("key"));
                 long amount = craftTag.getLong("amount");
 
@@ -267,7 +276,7 @@ public class CloudAe2Service implements IGridNodeService, IGridNodeListener<Clou
 
     @Override
     public void mountInventories(IStorageMounts storageMounts) {
-        storageMounts.mount(virtualStorage);
+        storageMounts.mount(virtualStorage, Integer.MAX_VALUE);
     }
 
     private static class PendingCraft {
@@ -303,15 +312,16 @@ public class CloudAe2Service implements IGridNodeService, IGridNodeListener<Clou
 
         @Override
         public long insert(AEKey what, long amount, Actionable mode, IActionSource source) {
-            assert host.getLevel() != null;
-            ServerLevel serverLevel = Objects.requireNonNull(host.getLevel().getServer()).overworld();
-            String ownerKey = CycleSavedData.getKey(serverLevel, host.getOwner());
-            CycleSavedData data = CycleSavedData.get(serverLevel);
-            if (what.equals(CATALYST_KEY)) {
-                data.modifyCycles(serverLevel, ownerKey, amount);
+            if (what instanceof AEItemKey itemKey && itemKey.getItem() == CATALYST_ITEM) {
+                if (mode == Actionable.MODULATE) {
+                    if (host.getLevel() != null && host.getOwner() != null) {
+                        ServerLevel serverLevel = Objects.requireNonNull(host.getLevel().getServer()).overworld();
+                        String ownerKey = CycleSavedData.getKey(serverLevel, host.getOwner());
+                        CycleSavedData.get(serverLevel).modifyCycles(serverLevel, ownerKey, amount);
+                    }
+                }
                 return amount;
             }
-
             return 0;
         }
 

@@ -224,8 +224,8 @@ dependencies {
     localRuntime "curse.maven:torchmaster-254268:7197218"
 
     // Functional storage
-    //localRuntime "curse.maven:titanium-287342:6875285"
-    //localRuntime "curse.maven:function_storage-556861:7061714"
+    localRuntime "curse.maven:titanium-287342:6875285"
+    localRuntime "curse.maven:function_storage-556861:7061714"
 
     // FTB Chunks, FTB Library, FTB Teams
     //localRuntime "curse.maven:ftb-chunks-forge-314906:7157142"
@@ -235,12 +235,16 @@ dependencies {
 
     // AE2
     compileOnly "org.appliedenergistics:appliedenergistics2:19.2.17:api"
-    //localRuntime "org.appliedenergistics:appliedenergistics2:19.2.17"
+    localRuntime "org.appliedenergistics:appliedenergistics2:19.2.17"
 
     // AdvancedAE
     //localRuntime "curse.maven:gecko-388172:6920810"
     //localRuntime "curse.maven:glodium-957920:5821676"
     //localRuntime "curse.maven:advancedae-1084104:7169197"
+
+    // Sophisticated storage
+    localRuntime "curse.maven:storage_core-618298:7358894"
+    localRuntime "curse.maven:sop_storage-619320:7347813"
 
 }
 
