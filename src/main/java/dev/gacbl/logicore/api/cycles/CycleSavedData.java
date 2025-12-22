@@ -12,12 +12,12 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.level.saveddata.SavedData;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class CycleSavedData extends SavedData {
-    private final Map<String, Long> storage = new HashMap<>();
+    private final Map<String, Long> storage = new ConcurrentHashMap<>();
 
     public static CycleSavedData get(ServerLevel level) {
         return level.getServer().overworld().getDataStorage().computeIfAbsent(new Factory<>(
@@ -31,7 +31,7 @@ public class CycleSavedData extends SavedData {
         return IntegrationUtils.getStorageKey(level, uuid);
     }
 
-    public void modifyCycles(ServerLevel level, String key, long change) {
+    public synchronized void modifyCycles(ServerLevel level, String key, long change) {
         long current = storage.getOrDefault(key, 0L);
         long newValue = Math.max(0, current + change);
 
@@ -56,10 +56,12 @@ public class CycleSavedData extends SavedData {
 
     public static CycleSavedData load(CompoundTag tag, HolderLookup.Provider provider) {
         CycleSavedData data = new CycleSavedData();
-        ListTag list = tag.getList("cycles", Tag.TAG_COMPOUND);
-        for (Tag t : list) {
-            CompoundTag entry = (CompoundTag) t;
-            data.storage.put(entry.getString("key"), entry.getLong("val"));
+        if (tag.contains("cycles")) {
+            ListTag list = tag.getList("cycles", Tag.TAG_COMPOUND);
+            for (Tag t : list) {
+                CompoundTag entry = (CompoundTag) t;
+                data.storage.put(entry.getString("key"), entry.getLong("val"));
+            }
         }
         return data;
     }

@@ -14,6 +14,7 @@ import net.minecraft.core.Direction;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
@@ -25,6 +26,25 @@ import java.util.UUID;
 public class CloudInterfaceBlockEntity extends BlockEntity implements ICycleProvider {
     private UUID ownerUUID;
     private IGridNodeService ae2Service;
+    private ItemStack buffer = ItemStack.EMPTY;
+
+    public boolean insert(ItemStack stack) {
+        if (!buffer.isEmpty()) return false;
+        buffer = stack.copy();
+        setChanged();
+        return true;
+    }
+
+    public ItemStack extract() {
+        ItemStack out = buffer;
+        buffer = ItemStack.EMPTY;
+        setChanged();
+        return out;
+    }
+
+    public boolean hasItem() {
+        return !buffer.isEmpty();
+    }
 
     public CloudInterfaceBlockEntity(BlockPos pos, BlockState blockState) {
         super(CloudInterfaceModule.CLOUD_INTERFACE_BE.get(), pos, blockState);

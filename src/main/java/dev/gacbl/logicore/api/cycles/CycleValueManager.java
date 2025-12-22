@@ -36,7 +36,7 @@ import java.util.Map;
 
 @EventBusSubscriber(modid = LogiCore.MOD_ID)
 public class CycleValueManager {
-    private static final Map<Item, Integer> CYCLE_VALUES = new HashMap<>();
+    public static final Map<Item, Integer> CYCLE_VALUES = new HashMap<>();
     private static final Gson GSON = new GsonBuilder().setPrettyPrinting().create();
     private static final String CACHE_FILENAME = "cycle_cache.json";
     private static final String CUSTOM_FILENAME = "custom_cycles.json";

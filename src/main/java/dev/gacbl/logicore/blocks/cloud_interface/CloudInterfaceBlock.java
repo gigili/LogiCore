@@ -102,7 +102,18 @@ public class CloudInterfaceBlock extends BaseEntityBlock {
 
     @Override
     protected @NotNull InteractionResult useWithoutItem(@NotNull BlockState state, @NotNull Level level, @NotNull BlockPos bePos, @NotNull Player player, @NotNull BlockHitResult hit) {
-        return InteractionResult.SUCCESS;
+        if (level.isClientSide) return InteractionResult.SUCCESS;
+
+        BlockEntity be = level.getBlockEntity(bePos);
+        if (!(be instanceof CloudInterfaceBlockEntity ci)) return InteractionResult.PASS;
+
+        if (ci.hasItem()) {
+            ItemStack stack = ci.extract();
+            player.getInventory().placeItemBackInInventory(stack);
+            return InteractionResult.CONSUME;
+        }
+
+        return InteractionResult.PASS;
     }
 
     @Override
