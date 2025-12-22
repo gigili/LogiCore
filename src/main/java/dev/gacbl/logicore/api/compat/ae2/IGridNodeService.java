@@ -11,6 +11,4 @@ public interface IGridNodeService {
     void save(CompoundTag tag, HolderLookup.Provider registries);
 
     void load(CompoundTag tag, HolderLookup.Provider registries);
-
-    Object getGridNode();
 }

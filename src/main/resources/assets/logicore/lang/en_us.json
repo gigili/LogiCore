@@ -48,6 +48,7 @@
   "tooltip.logicore.ui.cloud_cycles": "Cloud Cycles: %s",
   "ui.tooltip.logicore.base_cycles_generation": "Base:",
   "ui.tooltip.logicore.cycles": "Cycles:",
+  "ui.tooltip.logicore.cycles_clean": "Cycles",
   "ui.tooltip.logicore.cycles_modifier": "Modifier:",
   "ui.tooltip.logicore.cycles_produced": "Produced:",
   "ui.tooltip.logicore.cycles_storage": "%s / %s",
