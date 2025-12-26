@@ -15,6 +15,7 @@ import net.neoforged.neoforge.capabilities.Capabilities;
 import net.neoforged.neoforge.energy.EnergyStorage;
 import net.neoforged.neoforge.energy.IEnergyStorage;
 
+import javax.annotation.Nullable;
 import java.util.*;
 
 public class ComputationNetwork {
@@ -168,12 +169,18 @@ public class ComputationNetwork {
     }
 
     public long extractCycles(ServerLevel level, long cyclesNeeded) {
+        return this.extractCycles(level, cyclesNeeded, null);
+    }
+
+    public long extractCycles(ServerLevel level, long cyclesNeeded, @Nullable BlockPos providerToIgnore) {
         List<BlockPos> providers = new ArrayList<>(this.providers);
 
         int providersToTry = providers.size();
         for (int i = 0; i < providersToTry && cyclesNeeded > 0; i++) {
             this.providerIndex = (this.providerIndex + 1) % providers.size();
             BlockPos providerPos = providers.get(this.providerIndex);
+
+            if (providerPos.equals(providerToIgnore)) continue;
 
             ICycleProvider provider = getProviderAt(level, providerPos);
             if (provider != null) {

@@ -1,7 +1,6 @@
 package dev.gacbl.logicore.blocks.cloud_interface;
 
 import dev.gacbl.logicore.Config;
-import dev.gacbl.logicore.api.compat.ae2.Ae2Helper;
 import dev.gacbl.logicore.api.compat.ae2.IGridNodeService;
 import dev.gacbl.logicore.api.computation.ICycleProvider;
 import dev.gacbl.logicore.api.cycles.CycleSavedData;
@@ -23,10 +22,23 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.UUID;
 
-public class CloudInterfaceBlockEntity extends BlockEntity implements ICycleProvider {
+public class CloudInterfaceBlockEntity extends BlockEntity {
     private UUID ownerUUID;
     private IGridNodeService ae2Service;
     private ItemStack buffer = ItemStack.EMPTY;
+
+    private long bufferedCycles = 0;
+    private boolean isBackConnected = false;
+
+    private final ICycleProvider UPLOAD_HANDLER = new UploadHandler();
+    private final ICycleProvider DOWNLOAD_HANDLER = new DownloadHandler();
+
+    public CloudInterfaceBlockEntity(BlockPos pos, BlockState state) {
+        super(CloudInterfaceModule.CLOUD_INTERFACE_BE.get(), pos, state);
+        if (ModList.get().isLoaded("ae2")) {
+            this.ae2Service = dev.gacbl.logicore.api.compat.ae2.Ae2Helper.createService(this);
+        }
+    }
 
     public boolean insert(ItemStack stack) {
         if (!buffer.isEmpty()) return false;
@@ -46,24 +58,17 @@ public class CloudInterfaceBlockEntity extends BlockEntity implements ICycleProv
         return !buffer.isEmpty();
     }
 
-    public CloudInterfaceBlockEntity(BlockPos pos, BlockState blockState) {
-        super(CloudInterfaceModule.CLOUD_INTERFACE_BE.get(), pos, blockState);
-        if (ModList.get().isLoaded("ae2")) {
-            this.ae2Service = Ae2Helper.createService(this);
-        }
-    }
-
-    public IGridNodeService getAe2Service() {
-        return ae2Service;
-    }
-
     public void setOwner(UUID owner) {
         this.ownerUUID = owner;
         setChanged();
     }
 
     public UUID getOwner() {
-        return this.ownerUUID;
+        return ownerUUID;
+    }
+
+    public IGridNodeService getAe2Service() {
+        return ae2Service;
     }
 
     private String getStorageKey(ServerLevel serverLevel) {
@@ -72,15 +77,11 @@ public class CloudInterfaceBlockEntity extends BlockEntity implements ICycleProv
     }
 
     public static void serverTick(Level level, BlockPos pos, BlockState state, CloudInterfaceBlockEntity be) {
-        if (!(level instanceof ServerLevel serverLevel) || be.ownerUUID == null) return;
-
-        if (be.ae2Service != null) {
-            be.ae2Service.serverTick();
-        }
+        if (!(level instanceof ServerLevel sl)) return;
 
         long maxUpload = Config.CI_MAX_TRANSFER_RATE.get();
-        String storageKey = be.getStorageKey(serverLevel);
-        CycleSavedData savedData = CycleSavedData.get(serverLevel);
+        String storageKey = be.getStorageKey(sl);
+        CycleSavedData savedData = CycleSavedData.get(sl);
 
         Direction facing = state.getValue(CloudInterfaceBlock.FACING);
         Direction inputSide = facing.getOpposite();
@@ -91,24 +92,142 @@ public class CloudInterfaceBlockEntity extends BlockEntity implements ICycleProv
             long extracted = provider.extractCycles(maxUpload, false);
 
             if (extracted > 0) {
-                savedData.modifyCycles(serverLevel, storageKey, extracted);
+                be.bufferedCycles += extracted;
             }
         }
 
         if (level.getBlockEntity(inputPos) instanceof DataCableBlockEntity dc) {
             if (dc.getNetworkUUID() != null) {
                 UUID networkUUID = dc.getNetworkUUID();
-                NetworkManager manager = NetworkManager.get(serverLevel);
+                NetworkManager manager = NetworkManager.get(sl);
 
                 if (manager.getNetworks().containsKey(networkUUID)) {
                     ComputationNetwork network = manager.getNetworks().get(networkUUID);
-                    long extracted = network.extractCycles(serverLevel, maxUpload);
+                    long extracted = network.extractCycles(sl, maxUpload);
 
                     if (extracted > 0) {
-                        savedData.modifyCycles(serverLevel, storageKey, extracted);
+                        be.bufferedCycles += extracted;
                     }
                 }
             }
+        }
+
+
+        if (level.getGameTime() % 20 == 0) { // Check every second, not every tick
+            if (be.bufferedCycles != 0) {
+                if (be.ownerUUID != null) {
+                    String key = CycleSavedData.getKey(sl, be.ownerUUID);
+                    CycleSavedData.get(sl).modifyCycles(sl, key, be.bufferedCycles);
+                    be.bufferedCycles = 0;
+                }
+            }
+        }
+
+        if (be.ae2Service != null) {
+            be.ae2Service.serverTick();
+        }
+    }
+
+    public ICycleProvider getCycleCapability(Direction ctx) {
+        if (level == null || level.isClientSide) return null;
+
+        Direction facing = getBlockState().getValue(CloudInterfaceBlock.FACING);
+        Direction opposite = facing.getOpposite();
+        BlockPos pos = getBlockPos().relative(opposite);
+        BlockEntity be = level.getBlockEntity(pos);
+
+        if (be instanceof DataCableBlockEntity dc) {
+            return UPLOAD_HANDLER;
+        }
+
+        for (Direction dir : Direction.values()) {
+            BlockPos pX = getBlockPos().relative(dir);
+            BlockEntity beX = level.getBlockEntity(pX);
+            if (dir != opposite) {
+                if (beX == null) continue;
+                if (beX instanceof DataCableBlockEntity) return DOWNLOAD_HANDLER;
+            }
+        }
+
+        return null;
+    }
+
+    private class UploadHandler implements ICycleProvider {
+        @Override
+        public long receiveCycles(long receive, boolean simulate) {
+            if (ownerUUID == null) return 0;
+            if (!simulate) {
+                // Buffer the addition
+                bufferedCycles += receive;
+                setChanged();
+            }
+            return receive;
+        }
+
+        @Override
+        public long extractCycles(long maxExtract, boolean simulate) {
+            return 0; // Cannot extract from the upload side
+        }
+
+        @Override
+        public long getCyclesAvailable() {
+            return 0; // Pretend empty to prevent extraction attempts
+        }
+
+        @Override
+        public long getCycleCapacity() {
+            return Long.MAX_VALUE;
+        }
+    }
+
+    private class DownloadHandler implements ICycleProvider {
+        @Override
+        public long receiveCycles(long receive, boolean simulate) {
+            return 0; // Cannot insert into the download side
+        }
+
+        @Override
+        public long extractCycles(long maxExtract, boolean simulate) {
+            if (ownerUUID == null || level == null) return 0;
+            if (!(level instanceof ServerLevel sl)) return 0;
+
+            if (bufferedCycles != 0) {
+                String key = CycleSavedData.getKey(sl, ownerUUID);
+                CycleSavedData.get(sl).modifyCycles(sl, key, bufferedCycles);
+                bufferedCycles = 0;
+            }
+
+            String key = CycleSavedData.getKey(sl, ownerUUID);
+            long current = CycleSavedData.get(sl).getCyclesByKeyString(key);
+            long extracted = Math.min(current, maxExtract);
+
+            if (!simulate && extracted > 0) {
+                CycleSavedData.get(sl).modifyCycles(sl, key, -extracted);
+            }
+            return extracted;
+        }
+
+        @Override
+        public long getCyclesAvailable() {
+            if (ownerUUID == null || level == null) return 0;
+            if (!(level instanceof ServerLevel sl)) return 0;
+            return CycleSavedData.get(sl).getCyclesByKeyString(CycleSavedData.getKey(sl, ownerUUID));
+        }
+
+        @Override
+        public long getCycleCapacity() {
+            return Long.MAX_VALUE;
+        }
+    }
+
+    @Override
+    protected void loadAdditional(@NotNull CompoundTag tag, HolderLookup.@NotNull Provider registries) {
+        super.loadAdditional(tag, registries);
+        if (tag.hasUUID("Owner")) {
+            this.ownerUUID = tag.getUUID("Owner");
+        }
+        if (ae2Service != null) {
+            ae2Service.load(tag, registries);
         }
     }
 
@@ -121,54 +240,6 @@ public class CloudInterfaceBlockEntity extends BlockEntity implements ICycleProv
         if (ae2Service != null) {
             ae2Service.save(tag, registries);
         }
-    }
-
-    @Override
-    protected void loadAdditional(@NotNull CompoundTag tag, HolderLookup.@NotNull Provider registries) {
-        super.loadAdditional(tag, registries);
-        if (tag.hasUUID("Owner")) {
-            ownerUUID = tag.getUUID("Owner");
-        }
-        if (ae2Service != null) {
-            ae2Service.load(tag, registries);
-        }
-    }
-
-    @Override
-    public long getCyclesAvailable() {
-        if (!(level instanceof ServerLevel serverLevel) || ownerUUID == null) return 0;
-        return CycleSavedData.get(serverLevel).getCyclesByKeyString(ownerUUID.toString());
-    }
-
-    @Override
-    public long getCycleCapacity() {
-        return Long.MAX_VALUE;
-    }
-
-    @Override
-    public long extractCycles(long maxExtract, boolean simulate) {
-        if (!(level instanceof ServerLevel serverLevel) || ownerUUID == null) return 0;
-
-        CycleSavedData savedData = CycleSavedData.get(serverLevel);
-        String key = getStorageKey(serverLevel);
-        long current = savedData.getCyclesByKeyString(key);
-        long extracted = Math.min(current, maxExtract);
-
-        if (!simulate && extracted > 0) {
-            savedData.modifyCycles(serverLevel, key, -extracted);
-        }
-        return extracted;
-    }
-
-    @Override
-    public long receiveCycles(long receive, boolean simulate) {
-        if (!(level instanceof ServerLevel serverLevel) || ownerUUID == null) return 0;
-
-        if (!simulate) {
-            String key = getStorageKey(serverLevel);
-            CycleSavedData.get(serverLevel).modifyCycles(serverLevel, key, receive);
-        }
-        return receive;
     }
 
     @Override

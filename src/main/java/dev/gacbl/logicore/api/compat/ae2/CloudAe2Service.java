@@ -76,17 +76,30 @@ public class CloudAe2Service implements IGridNodeService, IGridNodeListener<Clou
                 if (item == Items.AIR || cost <= 0) continue;
 
                 try {
-                    // Pre-calculate the key once
                     AEItemKey key = AEItemKey.of(item);
                     CACHED_ENTRIES.add(new CachedEntry(key, cost));
                 } catch (Exception e) {
-                    // Ignore bad items so they don't break the whole system
-                    LogiCore.LOGGER.warn("Failed to create AE2 key for item: " + item, e);
+                    LogiCore.LOGGER.warn("Failed to create AE2 key for item: {}", item, e);
                 }
             }
             cacheInitialized = true;
             LogiCore.LOGGER.info("Cloud Cache built with {} items.", CACHED_ENTRIES.size());
         }
+    }
+
+    /**
+     * Calculates a safe sync interval based on the number of registered items.
+     * Prevents "Death by Update Loop" in large modpacks.
+     */
+    private int getDynamicSyncInterval() {
+        int count;
+        synchronized (CACHED_ENTRIES) {
+            count = CACHED_ENTRIES.size();
+        }
+        if (count < 500) return 20;       // Small pack: 1 second
+        if (count < 2000) return 100;     // Medium pack: 5 seconds
+        if (count < 10000) return 400;    // Large pack: 20 seconds
+        return 1200;                      // Kitchen Sink (ATM, etc): 60 seconds
     }
 
     @Override
@@ -101,7 +114,6 @@ public class CloudAe2Service implements IGridNodeService, IGridNodeListener<Clou
 
         if (!mainNode.isActive()) return;
 
-        // Ensure cache is built at least once
         if (!cacheInitialized) {
             rebuildCache();
         }
@@ -119,18 +131,29 @@ public class CloudAe2Service implements IGridNodeService, IGridNodeListener<Clou
 
         if (host.getOwner() != null) {
             long now = sl.getGameTime();
-            if (now - lastSyncTick >= 20) {
-                lastSyncTick = now;
+            int syncInterval = getDynamicSyncInterval();
+            long timeDiff = now - lastSyncTick;
+
+            if (timeDiff >= syncInterval) {
                 String ownerKey = CycleSavedData.getKey(sl, host.getOwner());
                 long currentCycles = CycleSavedData.get(sl).getCyclesByKeyString(ownerKey);
 
                 if (currentCycles != lastSyncedCycles) {
-                    lastSyncedCycles = currentCycles;
-                    var node = mainNode.getNode();
-                    if (node != null && node.getGrid() != null) {
-                        IStorageService service = node.getGrid().getService(IStorageService.class);
-                        if (service != null) {
-                            service.refreshNodeStorageProvider(node);
+                    long delta = Math.abs(currentCycles - lastSyncedCycles);
+
+                    boolean criticalStateChange = (lastSyncedCycles <= 0 && currentCycles > 0) || (lastSyncedCycles > 0 && currentCycles == 0);
+                    boolean isSignificant = lastSyncedCycles > 0 && ((double) delta / lastSyncedCycles > 0.05);
+
+                    if (lastSyncedCycles == -1 || criticalStateChange || isSignificant) {
+                        lastSyncTick = now;
+                        lastSyncedCycles = currentCycles;
+
+                        var node = mainNode.getNode();
+                        if (node != null && node.getGrid() != null) {
+                            IStorageService service = node.getGrid().getService(IStorageService.class);
+                            if (service != null) {
+                                service.refreshNodeStorageProvider(node);
+                            }
                         }
                     }
                 }
@@ -182,12 +205,10 @@ public class CloudAe2Service implements IGridNodeService, IGridNodeListener<Clou
 
         @Override
         public void getAvailableStacks(KeyCounter out) {
-            // Fast failure checks
             if (host.isRemoved()) return;
             if (!(host.getLevel() instanceof ServerLevel sl)) return;
             if (host.getOwner() == null) return;
 
-            // Ensure cache exists
             if (!cacheInitialized) return;
 
             String ownerKey = CycleSavedData.getKey(sl, host.getOwner());
@@ -195,14 +216,12 @@ public class CloudAe2Service implements IGridNodeService, IGridNodeListener<Clou
 
             if (totalCycles <= 0) return;
 
-            // --- OPTIMIZED LOOP ---
-            // Iterate the cached list (fast array access)
-            // No Map lookups, no object creation, no registry access
-            for (CachedEntry entry : CACHED_ENTRIES) {
-                // Integer division is very fast
-                long count = totalCycles / entry.cost;
-                if (count > 0) {
-                    out.add(entry.key, count);
+            synchronized (CACHED_ENTRIES) {
+                for (CachedEntry entry : CACHED_ENTRIES) {
+                    long count = totalCycles / entry.cost;
+                    if (count > 0) {
+                        out.add(entry.key, count);
+                    }
                 }
             }
         }
@@ -219,7 +238,6 @@ public class CloudAe2Service implements IGridNodeService, IGridNodeListener<Clou
             if (!(host.getLevel() instanceof ServerLevel sl)) return 0;
             if (host.getOwner() == null) return 0;
 
-            // Note: We still do lookup here, but insert/extract is rare compared to getAvailableStacks
             long costPerItem = CycleValueManager.getCycleValue(itemKey.toStack());
             if (costPerItem <= 0) return 0;
 
@@ -243,6 +261,7 @@ public class CloudAe2Service implements IGridNodeService, IGridNodeListener<Clou
             if (costPerItem <= 0) return 0;
 
             String ownerKey = CycleSavedData.getKey(sl, host.getOwner());
+
             long totalCycles = CycleSavedData.get(sl).getCyclesByKeyString(ownerKey);
 
             long maxAffordable = totalCycles / costPerItem;

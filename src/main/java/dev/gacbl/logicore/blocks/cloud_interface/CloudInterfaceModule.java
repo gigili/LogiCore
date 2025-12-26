@@ -40,7 +40,7 @@ public class CloudInterfaceModule {
         event.registerBlockEntity(
                 ModCapabilities.CYCLE_PROVIDER,
                 CLOUD_INTERFACE_BE.get(),
-                (be, context) -> be
+                CloudInterfaceBlockEntity::getCycleCapability
         );
 
         if (ModList.get().isLoaded("ae2")) {

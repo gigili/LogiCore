@@ -138,7 +138,7 @@ public class Config {
         BUILDER.push("Cloud interface");
         CI_MAX_TRANSFER_RATE = BUILDER
                 .comment(" How many cycles per tick are transferred to and from the cloud.")
-                .defineInRange("cycles_processed_per_tick", 10000L, 1L, 1_000_000_000L);
+                .defineInRange("cycles_processed_per_tick", 100_000L, 1L, 1_000_000_000L);
         BUILDER.pop();
         //</editor-fold>
 
