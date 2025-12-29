@@ -170,7 +170,7 @@ dependencies {
 
     // EMI
     compileOnly "dev.emi:emi-neoforge:${emi_version}:api"
-    localRuntime "dev.emi:emi-neoforge:${emi_version}"
+    //localRuntime "dev.emi:emi-neoforge:${emi_version}"
 
     // Architectury
     compileOnly "dev.emi:emi-xplat-intermediary:${emi_version}:api"

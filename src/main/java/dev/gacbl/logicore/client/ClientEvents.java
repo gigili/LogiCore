@@ -17,6 +17,7 @@ import net.neoforged.neoforge.event.entity.player.ItemTooltipEvent;
 
 @EventBusSubscriber(modid = LogiCore.MOD_ID, value = Dist.CLIENT)
 public class ClientEvents {
+    private static long lastCycleValue = 0;
 
     @SubscribeEvent
     public static void onRecipesUpdated(RecipesUpdatedEvent event) {
@@ -40,6 +41,7 @@ public class ClientEvents {
     public static void registerOverlays(RegisterGuiLayersEvent event) {
         event.registerAboveAll(ResourceLocation.fromNamespaceAndPath(LogiCore.MOD_ID, "cycle_hud"), (gui, deltaTracker) -> {
             long cycles = ClientCycleData.getCycles();
+            long diff = 0;
 
             Player player = Minecraft.getInstance().player;
             if (player != null && player.isShiftKeyDown()) {

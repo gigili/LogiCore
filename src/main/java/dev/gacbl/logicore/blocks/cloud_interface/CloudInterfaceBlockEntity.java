@@ -80,8 +80,6 @@ public class CloudInterfaceBlockEntity extends BlockEntity {
         if (!(level instanceof ServerLevel sl)) return;
 
         long maxUpload = Config.CI_MAX_TRANSFER_RATE.get();
-        String storageKey = be.getStorageKey(sl);
-        CycleSavedData savedData = CycleSavedData.get(sl);
 
         Direction facing = state.getValue(CloudInterfaceBlock.FACING);
         Direction inputSide = facing.getOpposite();
@@ -191,27 +189,43 @@ public class CloudInterfaceBlockEntity extends BlockEntity {
             if (ownerUUID == null || level == null) return 0;
             if (!(level instanceof ServerLevel sl)) return 0;
 
-            if (bufferedCycles != 0) {
+            long extractedTotal = 0;
+            long remainingNeeded = maxExtract;
+
+            if (bufferedCycles > 0) {
+                long fromBuffer = Math.min(bufferedCycles, remainingNeeded);
+                if (!simulate) {
+                    bufferedCycles -= fromBuffer;
+                    setChanged();
+                }
+                remainingNeeded -= fromBuffer;
+                extractedTotal += fromBuffer;
+            }
+
+            if (remainingNeeded > 0) {
                 String key = CycleSavedData.getKey(sl, ownerUUID);
-                CycleSavedData.get(sl).modifyCycles(sl, key, bufferedCycles);
-                bufferedCycles = 0;
+
+                long globalBalance = CycleSavedData.get(sl).getCyclesByKeyString(key);
+                long fromGlobal = Math.min(globalBalance, remainingNeeded);
+
+                if (!simulate && fromGlobal > 0) {
+                    //CycleSavedData.get(sl).modifyCycles(sl, key, -fromGlobal);
+                }
+                extractedTotal += fromGlobal;
             }
 
-            String key = CycleSavedData.getKey(sl, ownerUUID);
-            long current = CycleSavedData.get(sl).getCyclesByKeyString(key);
-            long extracted = Math.min(current, maxExtract);
-
-            if (!simulate && extracted > 0) {
-                CycleSavedData.get(sl).modifyCycles(sl, key, -extracted);
-            }
-            return extracted;
+            return extractedTotal;
         }
 
         @Override
         public long getCyclesAvailable() {
             if (ownerUUID == null || level == null) return 0;
             if (!(level instanceof ServerLevel sl)) return 0;
-            return CycleSavedData.get(sl).getCyclesByKeyString(CycleSavedData.getKey(sl, ownerUUID));
+
+            String key = CycleSavedData.getKey(sl, ownerUUID);
+            long global = CycleSavedData.get(sl).getCyclesByKeyString(key);
+
+            return global + bufferedCycles;
         }
 
         @Override

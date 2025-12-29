@@ -99,7 +99,7 @@ public class CloudAe2Service implements IGridNodeService, IGridNodeListener<Clou
         if (count < 500) return 20;       // Small pack: 1 second
         if (count < 2000) return 100;     // Medium pack: 5 seconds
         if (count < 10000) return 400;    // Large pack: 20 seconds
-        return 1200;                      // Kitchen Sink (ATM, etc): 60 seconds
+        return 2400;                      // Kitchen Sink (ATM, etc): 120 seconds
     }
 
     @Override
@@ -145,8 +145,8 @@ public class CloudAe2Service implements IGridNodeService, IGridNodeListener<Clou
                     boolean isSignificant = lastSyncedCycles > 0 && ((double) delta / lastSyncedCycles > 0.05);
 
                     if (lastSyncedCycles == -1 || criticalStateChange || isSignificant) {
-                        lastSyncTick = now;
                         lastSyncedCycles = currentCycles;
+                        lastSyncTick = now;
 
                         var node = mainNode.getNode();
                         if (node != null && node.getGrid() != null) {
