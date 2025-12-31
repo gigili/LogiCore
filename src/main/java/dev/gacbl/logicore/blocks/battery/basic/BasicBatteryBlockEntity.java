@@ -9,7 +9,6 @@ public class BasicBatteryBlockEntity extends BaseBatteryEntity {
         super(BasicBatteryModule.BASIC_BATTERY_BE.get(), pos, blockState, 100_000, 10_000, 10_000);
     }
 
-
     public void dropContents() {
 
     }

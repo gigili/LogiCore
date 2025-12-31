@@ -23,28 +23,19 @@ import org.jetbrains.annotations.NotNull;
 import java.util.UUID;
 
 public class CloudInterfaceBlockEntity extends BlockEntity {
+    private final ICycleProvider UPLOAD_HANDLER = new UploadHandler();
+    private final ICycleProvider DOWNLOAD_HANDLER = new DownloadHandler();
+
     private UUID ownerUUID;
     private IGridNodeService ae2Service;
     private ItemStack buffer = ItemStack.EMPTY;
-
     private long bufferedCycles = 0;
-    private boolean isBackConnected = false;
-
-    private final ICycleProvider UPLOAD_HANDLER = new UploadHandler();
-    private final ICycleProvider DOWNLOAD_HANDLER = new DownloadHandler();
 
     public CloudInterfaceBlockEntity(BlockPos pos, BlockState state) {
         super(CloudInterfaceModule.CLOUD_INTERFACE_BE.get(), pos, state);
         if (ModList.get().isLoaded("ae2")) {
             this.ae2Service = dev.gacbl.logicore.api.compat.ae2.Ae2Helper.createService(this);
         }
-    }
-
-    public boolean insert(ItemStack stack) {
-        if (!buffer.isEmpty()) return false;
-        buffer = stack.copy();
-        setChanged();
-        return true;
     }
 
     public ItemStack extract() {
@@ -69,11 +60,6 @@ public class CloudInterfaceBlockEntity extends BlockEntity {
 
     public IGridNodeService getAe2Service() {
         return ae2Service;
-    }
-
-    private String getStorageKey(ServerLevel serverLevel) {
-        if (ownerUUID == null) return "invalid";
-        return CycleSavedData.getKey(serverLevel, ownerUUID);
     }
 
     public static void serverTick(Level level, BlockPos pos, BlockState state, CloudInterfaceBlockEntity be) {
@@ -134,7 +120,7 @@ public class CloudInterfaceBlockEntity extends BlockEntity {
         BlockPos pos = getBlockPos().relative(opposite);
         BlockEntity be = level.getBlockEntity(pos);
 
-        if (be instanceof DataCableBlockEntity dc) {
+        if (be instanceof DataCableBlockEntity) {
             return UPLOAD_HANDLER;
         }
 
@@ -208,9 +194,6 @@ public class CloudInterfaceBlockEntity extends BlockEntity {
                 long globalBalance = CycleSavedData.get(sl).getCyclesByKeyString(key);
                 long fromGlobal = Math.min(globalBalance, remainingNeeded);
 
-                if (!simulate && fromGlobal > 0) {
-                    //CycleSavedData.get(sl).modifyCycles(sl, key, -fromGlobal);
-                }
                 extractedTotal += fromGlobal;
             }
 

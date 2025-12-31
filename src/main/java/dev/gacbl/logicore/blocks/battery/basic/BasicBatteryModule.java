@@ -23,7 +23,7 @@ public class BasicBatteryModule {
             BLOCKS.register("basic_battery", () -> new BasicBatteryBlock(BlockBehaviour.Properties.of()
                     .mapColor(MapColor.METAL).strength(2.0f).requiresCorrectToolForDrops().noOcclusion()));
 
-    public static final DeferredHolder<Item, BlockItem> SERVER_RACK_ITEM =
+    public static final DeferredHolder<Item, BlockItem> BASIC_BATTERY_ITEM =
             ITEMS.register("basic_battery", () -> new BlockItem(BASIC_BATTERY.get(), new Item.Properties()));
 
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<BasicBatteryBlockEntity>> BASIC_BATTERY_BE =
