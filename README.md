@@ -10,8 +10,6 @@ infrastructure, power management, and data processing.
 
 -----
 
-## ⚡ Key Features
-
 ### 💾 The Cycle System
 
 Every item in the world consists of data. LogiCore assigns a **Cycle Value** to items (similar to EMC).
