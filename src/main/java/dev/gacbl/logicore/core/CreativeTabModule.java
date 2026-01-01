@@ -1,6 +1,7 @@
 package dev.gacbl.logicore.core;
 
 import dev.gacbl.logicore.LogiCore;
+import dev.gacbl.logicore.blocks.battery.advance.AdvanceBatteryModule;
 import dev.gacbl.logicore.blocks.battery.basic.BasicBatteryModule;
 import dev.gacbl.logicore.blocks.cloud_interface.CloudInterfaceModule;
 import dev.gacbl.logicore.blocks.compiler.CompilerModule;
@@ -43,6 +44,7 @@ public class CreativeTabModule {
                         output.accept(CloudInterfaceModule.CLOUD_INTERFACE.get());
                         output.accept(WrenchModule.WRENCH.get());
                         output.accept(BasicBatteryModule.BASIC_BATTERY.get());
+                        output.accept(AdvanceBatteryModule.ADVANCE_BATTERY.get());
                     })
                     .build());
 

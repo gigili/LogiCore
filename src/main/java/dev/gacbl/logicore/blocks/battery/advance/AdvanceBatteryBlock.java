@@ -1,4 +1,4 @@
-package dev.gacbl.logicore.blocks.battery.basic;
+package dev.gacbl.logicore.blocks.battery.advance;
 
 import com.mojang.serialization.MapCodec;
 import dev.gacbl.logicore.blocks.computer.ComputerBlock;
@@ -24,21 +24,21 @@ import net.minecraft.world.level.block.state.properties.DirectionProperty;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-public class BasicBatteryBlock extends BaseEntityBlock {
+public class AdvanceBatteryBlock extends BaseEntityBlock {
     public static final MapCodec<ComputerBlock> CODEC = simpleCodec(ComputerBlock::new);
     public static final DirectionProperty FACING = BlockStateProperties.HORIZONTAL_FACING;
 
-    protected BasicBatteryBlock(Properties properties) {
+    protected AdvanceBatteryBlock(Properties properties) {
         super(properties);
         this.registerDefaultState(this.stateDefinition.any().setValue(FACING, Direction.NORTH));
     }
 
     public static ShapedRecipeBuilder getRecipe() {
-        return ShapedRecipeBuilder.shaped(RecipeCategory.REDSTONE, BasicBatteryModule.BASIC_BATTERY.get())
-                .pattern("RGR")
-                .pattern("GPG")
-                .pattern("RGR")
-                .define('G', Items.GOLD_INGOT)
+        return ShapedRecipeBuilder.shaped(RecipeCategory.REDSTONE, AdvanceBatteryModule.ADVANCE_BATTERY.get())
+                .pattern("RER")
+                .pattern("EPE")
+                .pattern("RER")
+                .define('E', Items.EMERALD)
                 .define('R', Items.REDSTONE)
                 .define('P', ProcessorUnitModule.PROCESSOR_UNIT.get());
     }
@@ -72,7 +72,7 @@ public class BasicBatteryBlock extends BaseEntityBlock {
     @Override
     public void onRemove(@NotNull BlockState state, @NotNull Level level, @NotNull BlockPos pos, @NotNull BlockState newState, boolean isMoving) {
         BlockEntity blockEntity = level.getBlockEntity(pos);
-        if (blockEntity instanceof BasicBatteryBlockEntity be) {
+        if (blockEntity instanceof AdvanceBatteryBlockEntity be) {
             be.dropContents();
         }
         super.onRemove(state, level, pos, newState, isMoving);
@@ -82,13 +82,13 @@ public class BasicBatteryBlock extends BaseEntityBlock {
     @Override
     public <T extends BlockEntity> BlockEntityTicker<T> getTicker(Level level, @NotNull BlockState state, @NotNull BlockEntityType<T> type) {
         if (!level.isClientSide()) {
-            return createTickerHelper(type, BasicBatteryModule.BASIC_BATTERY_BE.get(), BasicBatteryBlockEntity::serverTick);
+            return createTickerHelper(type, AdvanceBatteryModule.ADVANCE_BATTERY_BE.get(), AdvanceBatteryBlockEntity::serverTick);
         }
         return null;
     }
 
     @Override
     public @Nullable BlockEntity newBlockEntity(@NotNull BlockPos blockPos, @NotNull BlockState blockState) {
-        return new BasicBatteryBlockEntity(blockPos, blockState);
+        return new AdvanceBatteryBlockEntity(blockPos, blockState);
     }
 }

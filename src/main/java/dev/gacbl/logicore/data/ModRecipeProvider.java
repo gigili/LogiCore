@@ -1,5 +1,6 @@
 package dev.gacbl.logicore.data;
 
+import dev.gacbl.logicore.blocks.battery.advance.AdvanceBatteryBlock;
 import dev.gacbl.logicore.blocks.battery.basic.BasicBatteryBlock;
 import dev.gacbl.logicore.blocks.cloud_interface.CloudInterfaceBlock;
 import dev.gacbl.logicore.blocks.compiler.CompilerBlock;
@@ -44,5 +45,6 @@ public class ModRecipeProvider extends RecipeProvider implements IConditionBuild
         CloudInterfaceBlock.getRecipe().unlockedBy("has_processor", has(ProcessorUnitModule.PROCESSOR_UNIT.get())).save(recipeOutput);
         WrenchItem.getRecipe().unlockedBy("has_processor", has(ProcessorUnitModule.PROCESSOR_UNIT.get())).save(recipeOutput);
         BasicBatteryBlock.getRecipe().unlockedBy("has_processor", has(ProcessorUnitModule.PROCESSOR_UNIT.get())).save(recipeOutput);
+        AdvanceBatteryBlock.getRecipe().unlockedBy("has_processor", has(ProcessorUnitModule.PROCESSOR_UNIT.get())).save(recipeOutput);
     }
 }

@@ -25,7 +25,7 @@ public class ComputationNetwork {
     private final Set<BlockPos> providers = new HashSet<>();
     private final Set<BlockPos> consumers = new HashSet<>();
     private final Set<BlockPos> energySources = new HashSet<>();
-    private final EnergyStorage networkEnergyBuffer = new EnergyStorage(1_000_000, MAX_PULL_PER_SOURCE_PER_TICK, MAX_PULL_PER_SOURCE_PER_TICK);
+    private final EnergyStorage networkEnergyBuffer = new EnergyStorage(MAX_PULL_PER_SOURCE_PER_TICK, MAX_PULL_PER_SOURCE_PER_TICK, MAX_PULL_PER_SOURCE_PER_TICK);
 
     EnumProperty<DoubleBlockHalf> HALF = BlockStateProperties.DOUBLE_BLOCK_HALF;
 
@@ -55,7 +55,7 @@ public class ComputationNetwork {
             this.isDirty = false;
         }
 
-        if (this.networkEnergyBuffer.getEnergyStored() < this.networkEnergyBuffer.getMaxEnergyStored()) {
+        if (this.networkEnergyBuffer.getEnergyStored() < this.networkEnergyBuffer.getMaxEnergyStored() && feDemand > 0) {
             pullEnergy(level);
         }
 
@@ -191,7 +191,7 @@ public class ComputationNetwork {
     }
 
     private void pullEnergy(Level level) {
-        if (this.energySources.isEmpty()) return;
+        if (this.energySources.isEmpty() || feDemand == 0) return;
 
         int energyNeeded = Math.min((int) feDemand, networkEnergyBuffer.getMaxEnergyStored() - networkEnergyBuffer.getEnergyStored());
         int sourcesToTry = this.energySources.size();

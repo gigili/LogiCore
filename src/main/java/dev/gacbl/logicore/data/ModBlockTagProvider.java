@@ -1,6 +1,7 @@
 package dev.gacbl.logicore.data;
 
 import dev.gacbl.logicore.LogiCore;
+import dev.gacbl.logicore.blocks.battery.advance.AdvanceBatteryModule;
 import dev.gacbl.logicore.blocks.battery.basic.BasicBatteryModule;
 import dev.gacbl.logicore.blocks.cloud_interface.CloudInterfaceModule;
 import dev.gacbl.logicore.blocks.compiler.CompilerModule;
@@ -106,6 +107,13 @@ public class ModBlockTagProvider extends BlockTagsProvider {
         tag(BlockTags.create(ResourceLocation.fromNamespaceAndPath("justdirethings", "eclipsegate_deny"))).add(BasicBatteryModule.BASIC_BATTERY.get());
         tag(BlockTags.create(ResourceLocation.fromNamespaceAndPath("justdirethings", "phase_deny"))).add(BasicBatteryModule.BASIC_BATTERY.get());
         tag(BlockTags.create(ResourceLocation.fromNamespaceAndPath("justdirethings", "swapper_deny"))).add(BasicBatteryModule.BASIC_BATTERY.get());
+
+        tag(BlockTags.MINEABLE_WITH_PICKAXE).add(AdvanceBatteryModule.ADVANCE_BATTERY.get());
+        tag(BlockTags.NEEDS_IRON_TOOL).add(AdvanceBatteryModule.ADVANCE_BATTERY.get());
+        tag(ModTags.Blocks.VALID_DATACENTER_INNER_BLOCK).add(AdvanceBatteryModule.ADVANCE_BATTERY.get());
+        tag(BlockTags.create(ResourceLocation.fromNamespaceAndPath("justdirethings", "eclipsegate_deny"))).add(AdvanceBatteryModule.ADVANCE_BATTERY.get());
+        tag(BlockTags.create(ResourceLocation.fromNamespaceAndPath("justdirethings", "phase_deny"))).add(AdvanceBatteryModule.ADVANCE_BATTERY.get());
+        tag(BlockTags.create(ResourceLocation.fromNamespaceAndPath("justdirethings", "swapper_deny"))).add(AdvanceBatteryModule.ADVANCE_BATTERY.get());
 
         setupOptionalTags();
     }

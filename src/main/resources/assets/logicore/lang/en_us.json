@@ -9,6 +9,7 @@
   "block.logicore.generator": "Generator",
   "block.logicore.server_rack": "Server rack",
   "block.logicore.basic_battery": "Basic battery",
+  "block.logicore.advance_battery": "Advance battery",
   "config.jade.plugin_logicore.compiler": "Compiler",
   "config.jade.plugin_logicore.datacenter_controller": "Datacenter controller",
   "config.jade.plugin_logicore.datacenter_port": "Datacenter port",

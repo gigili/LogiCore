@@ -27,6 +27,7 @@ public class DataCableBlockEntity extends BlockEntity {
         super(type, pos, blockState);
     }
 
+
     @Override
     public void onLoad() {
         super.onLoad();
