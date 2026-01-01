@@ -99,8 +99,12 @@ machine and mechanic.
 
 * **Minecraft:** 1.21.1
 * **NeoForge:** Latest recommended version.
-* *(Optional)* **Patchouli:** For the in-game guidebook.
-* *(Optional)* **Jade / JEI:** Highly recommended for recipe and block info.
+* Optional dependencies / compatibilities:
+    * **Patchouli**
+    * **Jade**
+    * **JEI** / **EMI**
+    * **AE2**
+        * **GuidMe**
 
 -----
 
