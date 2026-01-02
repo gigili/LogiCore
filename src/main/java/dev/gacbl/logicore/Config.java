@@ -8,6 +8,7 @@ public class Config {
 
     //General
     public static final ModConfigSpec.ConfigValue<Boolean> ALLOW_JEI_DRAG;
+    public static final ModConfigSpec.ConfigValue<Boolean> ENABLE_AE2_INTEGRATION;
 
     //Server rack
     public static final ModConfigSpec.ConfigValue<Integer> SERVER_RACK_BASE_CYCLE_GENERATION;
@@ -48,6 +49,9 @@ public class Config {
         ALLOW_JEI_DRAG = BUILDER
                 .comment(" If items can be dragged from JEI into compiler")
                 .define("jei_drag", true);
+        ENABLE_AE2_INTEGRATION = BUILDER
+                .comment(" Should the AE2 integration be allowed or not")
+                .define("ae2_integration", true);
         BUILDER.pop();
         //</editor-fold>
 

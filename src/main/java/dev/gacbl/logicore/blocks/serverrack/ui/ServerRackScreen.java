@@ -178,16 +178,18 @@ public class ServerRackScreen extends AbstractContainerScreen<ServerRackMenu> {
         int cycles = this.menu.getCycles();
         int maxCycles = this.menu.getMaxCycles();
 
+        boolean isComputer = menu.blockEntity instanceof ComputerBlockEntity;
+
         graphics.drawString(this.font, Component.translatable("ui.tooltip.logicore.cycles").plainCopy().withStyle(ChatFormatting.BOLD), labelSectionX, labelSectionY, textColor, false);
-        graphics.drawString(this.font, Component.translatable("ui.tooltip.logicore.base_cycles_generation").plainCopy().withStyle(ChatFormatting.BOLD), labelSectionX + 85, labelSectionY, textColor, false);
+        graphics.drawString(this.font, Component.translatable("ui.tooltip.logicore.base_cycles_generation").plainCopy().withStyle(ChatFormatting.BOLD), labelSectionX + (isComputer ? 95 : 85), labelSectionY, textColor, false);
         labelSectionY += 12;
 
         graphics.drawString(this.font, Component.translatable("ui.tooltip.logicore.cycles_storage", Utils.formatValues(cycles), Utils.formatValues(maxCycles)), labelSectionX, labelSectionY, textColor, false);
-        graphics.drawString(this.font, Component.literal((String.valueOf(this.menu.getBaseCycleGeneration()))), labelSectionX + 85, labelSectionY, textColor, false);
+        graphics.drawString(this.font, Component.literal((String.valueOf(this.menu.getBaseCycleGeneration()))), labelSectionX + (isComputer ? 95 : 85), labelSectionY, textColor, false);
         labelSectionY += 18;
 
         graphics.drawString(this.font, Component.translatable("ui.tooltip.logicore.cycles_modifier").plainCopy().withStyle(ChatFormatting.BOLD), labelSectionX, labelSectionY, textColor, false);
-        graphics.drawString(this.font, Component.translatable("ui.tooltip.logicore.cycles_produced").plainCopy().withStyle(ChatFormatting.BOLD), labelSectionX + 85, labelSectionY, textColor, false);
+        graphics.drawString(this.font, Component.translatable("ui.tooltip.logicore.cycles_produced").plainCopy().withStyle(ChatFormatting.BOLD), labelSectionX + (isComputer ? 95 : 85), labelSectionY, textColor, false);
         labelSectionY += 12;
 
         int cycleModifier = (this.menu.getCyclesPerProcessor() * this.menu.getProcessorCount());
@@ -199,7 +201,7 @@ public class ServerRackScreen extends AbstractContainerScreen<ServerRackMenu> {
             cyclesToGenerate = 0;
         }
         graphics.drawString(this.font, Component.literal(String.valueOf(cycleModifier)), labelSectionX, labelSectionY, textColor, false);
-        graphics.drawString(this.font, Component.literal(String.valueOf(cyclesToGenerate)), labelSectionX + 85, labelSectionY, textColor, false);
+        graphics.drawString(this.font, Component.literal(String.valueOf(cyclesToGenerate)), labelSectionX + (isComputer ? 95 : 85), labelSectionY, textColor, false);
         labelSectionY += 18;
 
         graphics.drawString(this.font, Component.translatable("ui.tooltip.logicore.fe_per_tick").plainCopy().withStyle(ChatFormatting.BOLD), labelSectionX, labelSectionY, textColor, false);

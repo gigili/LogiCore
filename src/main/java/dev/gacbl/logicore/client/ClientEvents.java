@@ -17,8 +17,6 @@ import net.neoforged.neoforge.event.entity.player.ItemTooltipEvent;
 
 @EventBusSubscriber(modid = LogiCore.MOD_ID, value = Dist.CLIENT)
 public class ClientEvents {
-    private static long lastCycleValue = 0;
-
     @SubscribeEvent
     public static void onRecipesUpdated(RecipesUpdatedEvent event) {
         assert net.minecraft.client.Minecraft.getInstance().level != null;

@@ -1,4 +1,4 @@
-package dev.gacbl.logicore.core;
+package dev.gacbl.logicore.data;
 
 import dev.gacbl.logicore.LogiCore;
 import dev.gacbl.logicore.blocks.battery.advance.AdvanceBatteryModule;

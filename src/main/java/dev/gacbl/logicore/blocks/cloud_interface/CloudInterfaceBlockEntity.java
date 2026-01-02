@@ -33,7 +33,7 @@ public class CloudInterfaceBlockEntity extends BlockEntity {
 
     public CloudInterfaceBlockEntity(BlockPos pos, BlockState state) {
         super(CloudInterfaceModule.CLOUD_INTERFACE_BE.get(), pos, state);
-        if (ModList.get().isLoaded("ae2")) {
+        if (ModList.get().isLoaded("ae2") && Config.ENABLE_AE2_INTEGRATION.get()) {
             this.ae2Service = dev.gacbl.logicore.api.compat.ae2.Ae2Helper.createService(this);
         }
     }
