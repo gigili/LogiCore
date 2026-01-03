@@ -34,6 +34,8 @@
   "item.logicore.drone": "Drone",
   "item.logicore.processor_unit": "Processor unit",
   "item.logicore.wrench": "Wrench",
+  "item.logicore.stack_upgrade": "Stack upgrade",
+  "tooltip.item.logicore.stack_upgrade": "Increases number of compiled items and cost by 4",
   "message.logicore.datacenter.formed": "Datacenter is active",
   "message.logicore.drone_died_at": "Drone %s died at %s",
   "sounds.logicore.datacenter.ambient": "Datacenter hum",
@@ -53,5 +55,6 @@
   "ui.tooltip.logicore.cycles_modifier": "Modifier:",
   "ui.tooltip.logicore.cycles_produced": "Produced:",
   "ui.tooltip.logicore.cycles_storage": "%s / %s",
-  "ui.tooltip.logicore.fe_per_tick": "Fe per tick:"
+  "ui.tooltip.logicore.fe_per_tick": "Fe per tick:",
+  "tooltip.logicore.compiler.stack_upgrades_max": "Stack upgrades: %s / %s"
 }

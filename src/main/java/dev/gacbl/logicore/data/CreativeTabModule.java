@@ -14,6 +14,7 @@ import dev.gacbl.logicore.blocks.generator.GeneratorModule;
 import dev.gacbl.logicore.blocks.serverrack.ServerRackModule;
 import dev.gacbl.logicore.entity.drone.DroneModule;
 import dev.gacbl.logicore.items.processorunit.ProcessorUnitModule;
+import dev.gacbl.logicore.items.stack_upgrade.StackUpgradeModule;
 import dev.gacbl.logicore.items.wrench.WrenchModule;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.network.chat.Component;
@@ -45,6 +46,7 @@ public class CreativeTabModule {
                         output.accept(WrenchModule.WRENCH.get());
                         output.accept(BasicBatteryModule.BASIC_BATTERY.get());
                         output.accept(AdvanceBatteryModule.ADVANCE_BATTERY.get());
+                        output.accept(StackUpgradeModule.STACK_UPGRADE.get());
                     })
                     .build());
 

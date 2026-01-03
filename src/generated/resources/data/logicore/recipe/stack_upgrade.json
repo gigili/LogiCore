@@ -1,0 +1,21 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "redstone",
+  "key": {
+	"E": {
+	  "tag": "c:gems/emerald"
+	},
+	"P": {
+	  "item": "logicore:processor_unit"
+	}
+  },
+  "pattern": [
+	"EEE",
+	"EPE",
+	"EEE"
+  ],
+  "result": {
+	"count": 1,
+	"id": "logicore:stack_upgrade"
+  }
+}

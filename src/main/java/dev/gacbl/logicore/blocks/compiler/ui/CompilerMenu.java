@@ -2,6 +2,7 @@ package dev.gacbl.logicore.blocks.compiler.ui;
 
 import dev.gacbl.logicore.blocks.compiler.CompilerBlockEntity;
 import dev.gacbl.logicore.blocks.compiler.CompilerModule;
+import dev.gacbl.logicore.items.stack_upgrade.StackUpgradeItem;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.world.entity.player.Inventory;
@@ -20,7 +21,7 @@ public class CompilerMenu extends AbstractContainerMenu {
     public static final int TEMPLATE_SLOT_INDEX = 36;
 
     public CompilerMenu(int containerId, Inventory playerInventory, BlockPos pos) {
-        this(containerId, playerInventory, playerInventory.player.level().getBlockEntity(pos), new SimpleContainerData(2));
+        this(containerId, playerInventory, playerInventory.player.level().getBlockEntity(pos), new SimpleContainerData(3));
     }
 
     public CompilerMenu(int containerId, Inventory playerInventory, BlockEntity entity, ContainerData data) {
@@ -50,6 +51,8 @@ public class CompilerMenu extends AbstractContainerMenu {
             }
         });
 
+        this.addSlot(new SlotItemHandler(this.blockEntity.getUpgradeItemHandler(null), 0, 108, 118));
+
         addDataSlots(data);
     }
 
@@ -59,7 +62,7 @@ public class CompilerMenu extends AbstractContainerMenu {
 
     @Override
     public @NotNull ItemStack quickMoveStack(@NotNull Player playerIn, int pIndex) {
-        if (pIndex == 37) {
+        if (pIndex == 37 || pIndex == 38) {
             Slot sourceSlot = slots.get(pIndex);
             if (sourceSlot != null && sourceSlot.hasItem()) {
                 ItemStack source = sourceSlot.getItem();
@@ -67,6 +70,17 @@ public class CompilerMenu extends AbstractContainerMenu {
                 if (!moveItemStackTo(source, 0, 36, true)) return ItemStack.EMPTY;
                 sourceSlot.onTake(playerIn, source);
                 return copy;
+            }
+        } else {
+            Slot sourceSlot = slots.get(pIndex);
+            if (sourceSlot != null && sourceSlot.hasItem()) {
+                ItemStack source = sourceSlot.getItem();
+                if (source.getItem() instanceof StackUpgradeItem) {
+                    ItemStack copy = source.copy();
+                    if (!moveItemStackTo(source, 38, 39, true)) return ItemStack.EMPTY;
+                    sourceSlot.onTake(playerIn, source);
+                    return copy;
+                }
             }
         }
         return ItemStack.EMPTY;
@@ -98,5 +112,9 @@ public class CompilerMenu extends AbstractContainerMenu {
 
     public int getMaxProgress() {
         return this.data.get(1);
+    }
+
+    public int getStackUpgradeCount() {
+        return this.data.get(2);
     }
 }

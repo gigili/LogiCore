@@ -29,3 +29,4 @@
     - Basic
     - Advance
 - Added AE2 integration via Cloud Interface block
+- Added stack upgrade item for Compiler

@@ -6,6 +6,7 @@ import dev.gacbl.logicore.api.cycles.CycleValueManager;
 import dev.gacbl.logicore.blocks.compiler.ui.CompilerMenu;
 import dev.gacbl.logicore.blocks.datacable.DataCableBlockEntity;
 import dev.gacbl.logicore.blocks.datacable.cable_network.NetworkManager;
+import dev.gacbl.logicore.items.stack_upgrade.StackUpgradeItem;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.HolderLookup;
@@ -52,6 +53,7 @@ public class CompilerBlockEntity extends BlockEntity implements ICycleConsumer, 
             return switch (pIndex) {
                 case 0 -> CompilerBlockEntity.this.progress;
                 case 1 -> CompilerBlockEntity.this.maxProgress;
+                case 2 -> CompilerBlockEntity.this.upgradeItemHandler.getStackInSlot(0).getCount();
                 default -> 0;
             };
         }
@@ -67,7 +69,7 @@ public class CompilerBlockEntity extends BlockEntity implements ICycleConsumer, 
 
         @Override
         public int getCount() {
-            return 2;
+            return 3;
         }
     };
 
@@ -95,6 +97,23 @@ public class CompilerBlockEntity extends BlockEntity implements ICycleConsumer, 
         }
     };
 
+    private final ItemStackHandler upgradeItemHandler = new ItemStackHandler(1) {
+        @Override
+        protected void onContentsChanged(int slot) {
+            setChanged();
+        }
+
+        @Override
+        public boolean isItemValid(int slot, @NotNull ItemStack stack) {
+            return stack.getItem() instanceof StackUpgradeItem;
+        }
+
+        @Override
+        public int getSlotLimit(int slot) {
+            return 16;
+        }
+    };
+
     private final IItemHandler automationOutputHandler = new RangedWrapper(itemHandler, OUTPUT_SLOT, OUTPUT_SLOT + 1) {
         @Override
         public @NotNull ItemStack insertItem(int slot, @NotNull ItemStack stack, boolean simulate) {
@@ -105,6 +124,10 @@ public class CompilerBlockEntity extends BlockEntity implements ICycleConsumer, 
     public IItemHandler getItemHandler(@Nullable Direction side) {
         if (side == null) return itemHandler;
         return automationOutputHandler;
+    }
+
+    public IItemHandler getUpgradeItemHandler(@Nullable Direction side) {
+        return upgradeItemHandler;
     }
 
     @Override
@@ -121,14 +144,15 @@ public class CompilerBlockEntity extends BlockEntity implements ICycleConsumer, 
         if (cost <= 0) return 0;
 
         if (canInsertOutput(template)) {
-            return cost;
+            int upgradeCount = upgradeItemHandler.getStackInSlot(0).getCount();
+            return cost * ((upgradeCount > 0) ? (upgradeCount * 4L) : 1);
         }
         return 0;
     }
 
     @Override
     public long receiveCycles(long maxReceive, boolean simulate) {
-        long cap = 1_000_000;
+        long cap = getCycleDemand() + 100_000;
         long space = cap - currentCycles;
         long accepted = Math.min(maxReceive, space);
 
@@ -157,7 +181,7 @@ public class CompilerBlockEntity extends BlockEntity implements ICycleConsumer, 
             return;
         }
 
-        int cost = CycleValueManager.getCycleValue(template);
+        long cost = be.getCycleDemand();
 
         int rawDuration = (int) Math.ceil((double) cost / CYCLES_PROCESSED_PER_TICK);
 
@@ -173,9 +197,13 @@ public class CompilerBlockEntity extends BlockEntity implements ICycleConsumer, 
 
             if (be.progress >= be.maxProgress) {
                 be.currentCycles -= cost;
-
+                int upgradeCount = be.upgradeItemHandler.getStackInSlot(0).getCount();
                 ItemStack result = template.copy();
-                result.setCount(1);
+                if (upgradeCount > 0) {
+                    result.setCount(upgradeCount * 4);
+                } else {
+                    result.setCount(1);
+                }
                 be.addToOutput(result);
 
                 be.progress = 0;
@@ -195,7 +223,14 @@ public class CompilerBlockEntity extends BlockEntity implements ICycleConsumer, 
 
         if (!ItemStack.isSameItemSameComponents(outputStack, template)) return false;
 
-        return outputStack.getCount() < outputStack.getMaxStackSize();
+        int outputCount = outputStack.getCount();
+        int upgradeCount = upgradeItemHandler.getStackInSlot(0).getCount();
+
+        if (upgradeCount == 0) {
+            return outputCount < outputStack.getMaxStackSize();
+        } else {
+            return (outputCount + (upgradeCount * 4)) <= outputStack.getMaxStackSize();
+        }
     }
 
     private void addToOutput(ItemStack result) {
@@ -210,12 +245,14 @@ public class CompilerBlockEntity extends BlockEntity implements ICycleConsumer, 
     public void dropContents() {
         if (this.level == null) return;
         Containers.dropItemStack(this.level, this.worldPosition.getX(), this.worldPosition.getY(), this.worldPosition.getZ(), itemHandler.getStackInSlot(OUTPUT_SLOT));
+        Containers.dropItemStack(this.level, this.worldPosition.getX(), this.worldPosition.getY(), this.worldPosition.getZ(), upgradeItemHandler.getStackInSlot(0));
     }
 
     @Override
     protected void saveAdditional(@NotNull CompoundTag tag, @NotNull HolderLookup.Provider registries) {
         super.saveAdditional(tag, registries);
         tag.put("inventory", itemHandler.serializeNBT(registries));
+        tag.put("upgrades", upgradeItemHandler.serializeNBT(registries));
         tag.putInt("progress", progress);
         tag.putLong("currentCycles", currentCycles);
     }
@@ -225,6 +262,9 @@ public class CompilerBlockEntity extends BlockEntity implements ICycleConsumer, 
         super.loadAdditional(tag, registries);
         if (tag.contains("inventory")) {
             itemHandler.deserializeNBT(registries, tag.getCompound("inventory"));
+        }
+        if (tag.contains("upgrades")) {
+            upgradeItemHandler.deserializeNBT(registries, tag.getCompound("upgrades"));
         }
         progress = tag.getInt("progress");
         currentCycles = tag.getLong("currentCycles");

@@ -14,6 +14,7 @@ import dev.gacbl.logicore.blocks.serverrack.ServerRackBlock;
 import dev.gacbl.logicore.entity.drone.DroneItem;
 import dev.gacbl.logicore.items.processorunit.ProcessorUnitItem;
 import dev.gacbl.logicore.items.processorunit.ProcessorUnitModule;
+import dev.gacbl.logicore.items.stack_upgrade.StackUpgradeItem;
 import dev.gacbl.logicore.items.wrench.WrenchItem;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.data.PackOutput;
@@ -46,5 +47,6 @@ public class ModRecipeProvider extends RecipeProvider implements IConditionBuild
         WrenchItem.getRecipe().unlockedBy("has_processor", has(ProcessorUnitModule.PROCESSOR_UNIT.get())).save(recipeOutput);
         BasicBatteryBlock.getRecipe().unlockedBy("has_processor", has(ProcessorUnitModule.PROCESSOR_UNIT.get())).save(recipeOutput);
         AdvanceBatteryBlock.getRecipe().unlockedBy("has_processor", has(ProcessorUnitModule.PROCESSOR_UNIT.get())).save(recipeOutput);
+        StackUpgradeItem.getRecipe().unlockedBy("has_processor", has(ProcessorUnitModule.PROCESSOR_UNIT.get())).save(recipeOutput);
     }
 }

@@ -34,17 +34,17 @@ public class DroneModel<T extends DroneEntity> extends HierarchicalModel<T> {
                 .texOffs(4, 27).addBox(2.5F, 4.5F, 6.0F, 1.0F, 8.0F, 1.0F, new CubeDeformation(0.0F))
                 .texOffs(8, 27).addBox(-6.5F, 4.5F, 6.0F, 1.0F, 8.0F, 1.0F, new CubeDeformation(0.0F)), PartPose.offset(0.0F, 0.0F, 0.0F));
 
-        PartDefinition blade1 = drone.addOrReplaceChild("blade1", CubeListBuilder.create().texOffs(0, 17).addBox(-0.5F, -0.25F, -2.5F, 1.0F, 0.0F, 5.0F, new CubeDeformation(0.0F))
-                .texOffs(24, 17).addBox(-2.5F, -0.25F, -0.5F, 5.0F, 0.0F, 1.0F, new CubeDeformation(0.0F)), PartPose.offset(3.0F, 5.0F, -8.5F));
+        PartDefinition blade1 = drone.addOrReplaceChild("blade1", CubeListBuilder.create().texOffs(0, 17).addBox(-0.5F, 0.43F, -2.5F, 1.0F, 0.0F, 5.0F, new CubeDeformation(0.0F))
+                .texOffs(24, 17).addBox(-2.5F, 0.45F, -0.5F, 5.0F, 0.0F, 1.0F, new CubeDeformation(0.0F)), PartPose.offset(3.0F, 4.0F, -8.5F));
 
-        PartDefinition blade2 = drone.addOrReplaceChild("blade2", CubeListBuilder.create().texOffs(12, 17).addBox(-0.5F, -0.25F, -2.5F, 1.0F, 0.0F, 5.0F, new CubeDeformation(0.0F))
-                .texOffs(24, 18).addBox(-2.5F, -0.25F, -0.5F, 5.0F, 0.0F, 1.0F, new CubeDeformation(0.0F)), PartPose.offset(-6.0F, 5.0F, -8.5F));
+        PartDefinition blade2 = drone.addOrReplaceChild("blade2", CubeListBuilder.create().texOffs(12, 17).addBox(-0.5F, 0.43F, -2.5F, 1.0F, 0.0F, 5.0F, new CubeDeformation(0.0F))
+                .texOffs(24, 18).addBox(-2.5F, 0.45F, -0.5F, 5.0F, 0.0F, 1.0F, new CubeDeformation(0.0F)), PartPose.offset(-6.0F, 4.0F, -8.5F));
 
-        PartDefinition blade3 = drone.addOrReplaceChild("blade3", CubeListBuilder.create().texOffs(0, 22).addBox(-0.5F, -0.25F, -2.5F, 1.0F, 0.0F, 5.0F, new CubeDeformation(0.0F))
-                .texOffs(24, 19).addBox(-2.5F, -0.25F, -0.5F, 5.0F, 0.0F, 1.0F, new CubeDeformation(0.0F)), PartPose.offset(-6.0F, 5.0F, 6.5F));
+        PartDefinition blade3 = drone.addOrReplaceChild("blade3", CubeListBuilder.create().texOffs(0, 22).addBox(-0.5F, 0.43F, -2.5F, 1.0F, 0.0F, 5.0F, new CubeDeformation(0.0F))
+                .texOffs(24, 19).addBox(-2.5F, 0.45F, -0.5F, 5.0F, 0.0F, 1.0F, new CubeDeformation(0.0F)), PartPose.offset(-6.0F, 4.0F, 6.5F));
 
-        PartDefinition blade4 = drone.addOrReplaceChild("blade4", CubeListBuilder.create().texOffs(12, 22).addBox(-0.5F, -0.25F, -2.5F, 1.0F, 0.0F, 5.0F, new CubeDeformation(0.0F))
-                .texOffs(24, 20).addBox(-2.5F, -0.25F, -0.5F, 5.0F, 0.0F, 1.0F, new CubeDeformation(0.0F)), PartPose.offset(3.0F, 5.0F, 6.5F));
+        PartDefinition blade4 = drone.addOrReplaceChild("blade4", CubeListBuilder.create().texOffs(12, 22).addBox(-0.5F, 0.43F, -2.5F, 1.0F, 0.0F, 5.0F, new CubeDeformation(0.0F))
+                .texOffs(24, 20).addBox(-2.5F, 0.45F, -0.5F, 5.0F, 0.0F, 1.0F, new CubeDeformation(0.0F)), PartPose.offset(3.0F, 4.0F, 6.5F));
 
         return LayerDefinition.create(meshdefinition, 64, 64);
     }
@@ -57,7 +57,8 @@ public class DroneModel<T extends DroneEntity> extends HierarchicalModel<T> {
     @Override
     public void setupAnim(@NotNull DroneEntity entity, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch) {
         this.root().getAllParts().forEach(ModelPart::resetPose);
-        this.animateWalk(DroneAnimations.ANIM_FLYING, limbSwing, limbSwingAmount, limbSwingAmount, ageInTicks);
+        //this.animateWalk(DroneAnimations.ANIM_FLYING, limbSwing, limbSwingAmount, limbSwingAmount, ageInTicks);
+        this.animate(entity.flyingAnimationState, DroneAnimations.ANIM_FLYING, ageInTicks, 1.0F);
         this.animate(entity.idleAnimationState, DroneAnimations.ANIM_IDLE, ageInTicks, 1f);
     }
 

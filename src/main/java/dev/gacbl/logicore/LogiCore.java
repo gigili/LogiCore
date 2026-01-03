@@ -28,6 +28,7 @@ import dev.gacbl.logicore.entity.drone.DroneModule;
 import dev.gacbl.logicore.entity.drone.client.DroneModel;
 import dev.gacbl.logicore.entity.drone.client.DroneRenderer;
 import dev.gacbl.logicore.items.processorunit.ProcessorUnitModule;
+import dev.gacbl.logicore.items.stack_upgrade.StackUpgradeModule;
 import dev.gacbl.logicore.items.wrench.WrenchModule;
 import dev.gacbl.logicore.network.PacketHandler;
 import guideme.Guide;
@@ -75,8 +76,9 @@ public class LogiCore {
         DroneModule.register(modEventBus);
         BasicBatteryModule.register(modEventBus);
         AdvanceBatteryModule.register(modEventBus);
-        IntegrationUtils.registerEvents();
+        StackUpgradeModule.register(modEventBus);
 
+        IntegrationUtils.registerEvents();
         PacketHandler.register(modEventBus);
 
         modContainer.registerConfig(ModConfig.Type.COMMON, Config.SPEC, "logicore/logicore.toml");

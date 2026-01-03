@@ -42,11 +42,12 @@ public class DroneEntity extends FlyingMob implements ICycleConsumer {
     private final CycleStorage cycleStorage = new CycleStorage(1000, 100, 100);
 
     public final AnimationState idleAnimationState = new AnimationState();
+    public final AnimationState flyingAnimationState = new AnimationState();
     private int idleAnimationTimeout = 0;
 
     protected DroneEntity(EntityType<? extends FlyingMob> entityType, Level level) {
         super(entityType, level);
-        this.moveControl = new FlyingMoveControl(this, 10, false);
+        this.moveControl = new FlyingMoveControl(this, 10, true);
     }
 
     @Override
@@ -127,6 +128,8 @@ public class DroneEntity extends FlyingMob implements ICycleConsumer {
         } else {
             --this.idleAnimationTimeout;
         }
+
+        this.flyingAnimationState.startIfStopped(this.tickCount);
     }
 
     @Override

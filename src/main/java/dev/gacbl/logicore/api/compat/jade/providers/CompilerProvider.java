@@ -31,6 +31,12 @@ public class CompilerProvider implements IBlockComponentProvider, IServerDataPro
 
         tooltip.add(Component.translatable("tooltip.logicore.cycles_stored", Utils.formatValues(cyclesStored)));
         tooltip.add(Component.translatable("tooltip.logicore.cycles_demand", Utils.formatValues(cycles)));
+
+        if (accessor.getServerData().contains("UpgradesCount")) {
+            int cnt = accessor.getServerData().getInt("UpgradesCount");
+            int cntMax = accessor.getServerData().getInt("UpgradesCountMax");
+            tooltip.add(Component.translatable("tooltip.logicore.compiler.stack_upgrades_max", cnt, cntMax));
+        }
     }
 
     @Override
@@ -48,6 +54,8 @@ public class CompilerProvider implements IBlockComponentProvider, IServerDataPro
         if (blockEntity.getCycleStorage() != null) {
             data.putLong("CyclesDemand", blockEntity.getCycleStorage().getCycleDemand());
             data.putLong("CyclesStored", blockEntity.getCurrentCycles());
+            data.putLong("UpgradesCount", blockEntity.getUpgradeItemHandler(null).getStackInSlot(0).getCount());
+            data.putInt("UpgradesCountMax", blockEntity.getUpgradeItemHandler(null).getSlotLimit(0));
         }
     }
 
