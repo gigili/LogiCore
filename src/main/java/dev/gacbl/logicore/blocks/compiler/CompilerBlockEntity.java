@@ -6,13 +6,16 @@ import dev.gacbl.logicore.api.cycles.CycleValueManager;
 import dev.gacbl.logicore.blocks.compiler.ui.CompilerMenu;
 import dev.gacbl.logicore.blocks.datacable.DataCableBlockEntity;
 import dev.gacbl.logicore.blocks.datacable.cable_network.NetworkManager;
+import dev.gacbl.logicore.client.ClientKnowledgeData;
 import dev.gacbl.logicore.items.stack_upgrade.StackUpgradeItem;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.HolderLookup;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.Containers;
 import net.minecraft.world.MenuProvider;
 import net.minecraft.world.entity.player.Inventory;
@@ -88,7 +91,8 @@ public class CompilerBlockEntity extends BlockEntity implements ICycleConsumer, 
 
         @Override
         public boolean isItemValid(int slot, @NotNull ItemStack stack) {
-            return slot == INPUT_SLOT && CycleValueManager.hasCycleValue(stack);
+            ResourceLocation itemRes = BuiltInRegistries.ITEM.getKey(stack.getItem());
+            return slot == INPUT_SLOT && CycleValueManager.hasCycleValue(stack) && ClientKnowledgeData.isUnlocked(itemRes.toString());
         }
 
         @Override

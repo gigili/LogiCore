@@ -17,7 +17,9 @@ import dev.gacbl.logicore.blocks.drone_bay.DroneBayModule;
 import dev.gacbl.logicore.blocks.drone_bay.DroneBayRenderer;
 import dev.gacbl.logicore.blocks.generator.GeneratorModule;
 import dev.gacbl.logicore.blocks.generator.ui.GeneratorScreen;
+import dev.gacbl.logicore.blocks.research_station.ResearchStationBlockEntityRenderer;
 import dev.gacbl.logicore.blocks.research_station.ResearchStationModule;
+import dev.gacbl.logicore.blocks.research_station.ui.ResearchStationScreen;
 import dev.gacbl.logicore.blocks.serverrack.ServerRackModule;
 import dev.gacbl.logicore.blocks.serverrack.ui.ServerRackScreen;
 import dev.gacbl.logicore.core.IntegrationUtils;
@@ -122,11 +124,13 @@ public class LogiCore {
             event.register(ServerRackModule.SERVER_RACK_MENU.get(), ServerRackScreen::new);
             event.register(CompilerModule.COMPILER_MENU.get(), CompilerScreen::new);
             event.register(GeneratorModule.GENERATOR_MENU.get(), GeneratorScreen::new);
+            event.register(ResearchStationModule.RESEARCH_STATION_MENU.get(), ResearchStationScreen::new);
         }
 
         @SubscribeEvent
         public static void registerBER(EntityRenderersEvent.RegisterRenderers event) {
             event.registerBlockEntityRenderer(CompilerModule.COMPILER_BLOCK_ENTITY.get(), CompilerBlockEntityRenderer::new);
+            event.registerBlockEntityRenderer(ResearchStationModule.RESEARCH_STATION_BE.get(), ResearchStationBlockEntityRenderer::new);
         }
 
         @SubscribeEvent

@@ -41,6 +41,11 @@ public class Config {
     //Cloud interface
     public static final ModConfigSpec.ConfigValue<Long> CI_MAX_TRANSFER_RATE;
 
+    // Research station
+    public static final ModConfigSpec.ConfigValue<Integer> RS_MAX_RESEARCH_PROGRESS;
+    public static final ModConfigSpec.ConfigValue<Integer> RS_CYCLES_PROCESSED_PER_TICK;
+    public static final ModConfigSpec.ConfigValue<Integer> RS_MAX_TICK_DURATION;
+
     static {
         BUILDER.comment("LogiCore Configuration");
 
@@ -143,6 +148,22 @@ public class Config {
         CI_MAX_TRANSFER_RATE = BUILDER
                 .comment(" How many cycles per tick are transferred to and from the cloud.")
                 .defineInRange("cycles_processed_per_tick", 100_000L, 1L, 1_000_000_000L);
+        BUILDER.pop();
+        //</editor-fold>
+
+        // <editor-fold desc="Research station">
+        BUILDER.push("Research station");
+        RS_CYCLES_PROCESSED_PER_TICK = BUILDER
+                .comment(" How many cycles per tick are processed. 50 cycles per tick = 1000 cycles per second.")
+                .defineInRange("cycles_processed_per_tick", 50, 20, 1000);
+
+        RS_MAX_RESEARCH_PROGRESS = BUILDER
+                .comment(" Max progress")
+                .defineInRange("research_speed", 20, 20, Integer.MAX_VALUE);
+
+        RS_MAX_TICK_DURATION = BUILDER
+                .comment(" Cap the most expensive items to this value in ticks")
+                .defineInRange("max_duration_cap", 600, 20, Integer.MAX_VALUE);
         BUILDER.pop();
         //</editor-fold>
 

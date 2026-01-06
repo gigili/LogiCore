@@ -1,6 +1,8 @@
 package dev.gacbl.logicore.blocks.research_station;
 
 import dev.gacbl.logicore.LogiCore;
+import dev.gacbl.logicore.blocks.research_station.ui.ResearchStationMenu;
+import dev.gacbl.logicore.core.ModCapabilities;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.world.inventory.MenuType;
@@ -13,6 +15,7 @@ import net.minecraft.world.level.block.state.properties.BooleanProperty;
 import net.minecraft.world.level.material.MapColor;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.neoforge.capabilities.RegisterCapabilitiesEvent;
+import net.neoforged.neoforge.common.extensions.IMenuTypeExtension;
 import net.neoforged.neoforge.registries.DeferredBlock;
 import net.neoforged.neoforge.registries.DeferredHolder;
 import net.neoforged.neoforge.registries.DeferredRegister;
@@ -39,8 +42,8 @@ public class ResearchStationModule {
             BLOCK_ENTITIES.register("research_station",
                     () -> BlockEntityType.Builder.of(ResearchStationBlockEntity::new, RESEARCH_STATION.get()).build(null));
 
-    /*public static final net.neoforged.neoforge.registries.DeferredHolder<MenuType<?>, MenuType<ResearchStationMenu>> GENERATOR_MENU =
-            MENUS.register("research_station_menu", () -> IMenuTypeExtension.create(ResearchStationMenu::new));*/
+    public static final net.neoforged.neoforge.registries.DeferredHolder<MenuType<?>, MenuType<ResearchStationMenu>> RESEARCH_STATION_MENU =
+            MENUS.register("research_station_menu", () -> IMenuTypeExtension.create(ResearchStationMenu::new));
 
     public static void register(IEventBus eventBus) {
         BLOCKS.register(eventBus);
@@ -51,5 +54,10 @@ public class ResearchStationModule {
     }
 
     private static void registerCapabilities(RegisterCapabilitiesEvent event) {
+        event.registerBlockEntity(
+                ModCapabilities.CYCLE_CONSUMER,
+                RESEARCH_STATION_BE.get(),
+                (be, context) -> be
+        );
     }
 }

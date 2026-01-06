@@ -20,6 +20,7 @@ import net.minecraft.core.Direction;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.Items;
@@ -212,12 +213,19 @@ public class CloudAe2Service implements IGridNodeService, IGridNodeListener<Clou
             if (!cacheInitialized) return;
 
             String ownerKey = CycleSavedData.getKey(sl, host.getOwner());
-            long totalCycles = CycleSavedData.get(sl).getCyclesByKeyString(ownerKey);
+            CycleSavedData savedData = CycleSavedData.get(sl);
+            long totalCycles = savedData.getCyclesByKeyString(ownerKey);
 
             if (totalCycles <= 0) return;
 
             synchronized (CACHED_ENTRIES) {
                 for (CachedEntry entry : CACHED_ENTRIES) {
+                    ResourceLocation resLoc = net.minecraft.core.registries.BuiltInRegistries.ITEM.getKey(entry.key.getItem());
+
+                    if (!savedData.isUnlocked(ownerKey, resLoc)) {
+                        continue;
+                    }
+
                     long count = totalCycles / entry.cost;
                     if (count > 0) {
                         out.add(entry.key, count);

@@ -35,12 +35,13 @@
   "item.logicore.compiler": "Compiler",
   "item.logicore.drone": "Drone",
   "item.logicore.processor_unit": "Processor unit",
-  "item.logicore.wrench": "Wrench",
   "item.logicore.stack_upgrade": "Stack upgrade",
-  "tooltip.item.logicore.stack_upgrade": "Increases number of compiled items and cost by 4",
+  "item.logicore.wrench": "Wrench",
   "message.logicore.datacenter.formed": "Datacenter is active",
   "message.logicore.drone_died_at": "Drone %s died at %s",
   "sounds.logicore.datacenter.ambient": "Datacenter hum",
+  "tooltip.item.logicore.stack_upgrade": "Increases number of compiled items and cost by 4",
+  "tooltip.logicore.compiler.stack_upgrades_max": "Stack upgrades: %s / %s",
   "tooltip.logicore.cycles": "Cycles: %s / %s C",
   "tooltip.logicore.cycles_demand": "Cycle demand: %s",
   "tooltip.logicore.cycles_stored": "Cycle stored: %s",
@@ -49,6 +50,8 @@
   "tooltip.logicore.energy_stored": "Energy: %d / %d FE",
   "tooltip.logicore.generating_fe_per_tick": "Generating: %s FE/t",
   "tooltip.logicore.items.cycles": "%s cycles",
+  "tooltip.logicore.items.not_researched": "Not researched",
+  "tooltip.logicore.items.researched": "Researched",
   "tooltip.logicore.processors": "Processors: %s / %s",
   "tooltip.logicore.ui.cloud_cycles": "Cloud Cycles: %s",
   "ui.tooltip.logicore.base_cycles_generation": "Base:",
@@ -58,5 +61,6 @@
   "ui.tooltip.logicore.cycles_produced": "Produced:",
   "ui.tooltip.logicore.cycles_storage": "%s / %s",
   "ui.tooltip.logicore.fe_per_tick": "Fe per tick:",
-  "tooltip.logicore.compiler.stack_upgrades_max": "Stack upgrades: %s / %s"
+  "logicore.toast.research_complete": "Research completed!",
+  "tooltip.logicore.research_progress": "Research progress: %s / %s"
 }

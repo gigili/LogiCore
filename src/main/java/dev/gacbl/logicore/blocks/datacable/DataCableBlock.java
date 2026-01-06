@@ -10,6 +10,7 @@ import dev.gacbl.logicore.blocks.drone_bay.DroneBayBlock;
 import dev.gacbl.logicore.blocks.drone_bay.DroneBayBlockEntity;
 import dev.gacbl.logicore.blocks.generator.GeneratorBlock;
 import dev.gacbl.logicore.blocks.generator.GeneratorBlockEntity;
+import dev.gacbl.logicore.blocks.research_station.ResearchStationBlock;
 import dev.gacbl.logicore.blocks.serverrack.ServerRackBlock;
 import dev.gacbl.logicore.items.processorunit.ProcessorUnitModule;
 import net.minecraft.core.BlockPos;
@@ -176,7 +177,8 @@ public class DataCableBlock extends BaseEntityBlock implements SimpleWaterlogged
                 CompilerBlock.class,
                 DatacenterPortBlock.class,
                 DroneBayBlock.class,
-                CloudInterfaceBlock.class
+                CloudInterfaceBlock.class,
+                ResearchStationBlock.class
         );
         if (level instanceof ServerLevel server) {
             Block block = server.getBlockState(pos).getBlock();

@@ -12,7 +12,7 @@ import net.minecraft.world.entity.player.Inventory;
 import org.jetbrains.annotations.NotNull;
 
 public class ServerRackScreen extends AbstractContainerScreen<ServerRackMenu> {
-    private static final ResourceLocation TEXTURE = ResourceLocation.fromNamespaceAndPath(LogiCore.MOD_ID, "textures/gui/server_rack_gui_v3.png");
+    private static final ResourceLocation TEXTURE = ResourceLocation.fromNamespaceAndPath(LogiCore.MOD_ID, "textures/gui/server_rack_gui.png");
 
     public ServerRackScreen(ServerRackMenu menu, Inventory playerInventory, Component title) {
         super(menu, playerInventory, title);

@@ -63,6 +63,24 @@ public class PacketHandler {
                 SyncPlayerCyclesPayload.STREAM_CODEC,
                 SyncPlayerCyclesPayload.HANDLER
         );
+
+        registrar.playToClient(
+                SyncPlayerKnowledgePayload.TYPE,
+                SyncPlayerKnowledgePayload.STREAM_CODEC,
+                SyncPlayerKnowledgePayload.HANDLER
+        );
+
+        registrar.playToClient(
+                SyncAllPlayerKnowledgePayload.TYPE,
+                SyncAllPlayerKnowledgePayload.STREAM_CODEC,
+                SyncAllPlayerKnowledgePayload.HANDLER
+        );
+
+        registrar.playToClient(
+                NotifyResearchCompletePayload.TYPE,
+                NotifyResearchCompletePayload.STREAM_CODEC,
+                NotifyResearchCompletePayload.HANDLER
+        );
     }
 
     public static <MSG extends CustomPacketPayload> void sendToClientsTrackingChunk(Level level, BlockPos pos, MSG packet) {
