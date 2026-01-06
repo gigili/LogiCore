@@ -11,6 +11,7 @@ import dev.gacbl.logicore.blocks.datacenter.DataCenterControllerLootTableProvide
 import dev.gacbl.logicore.blocks.datacenter.DatacenterPortLootTableProvider;
 import dev.gacbl.logicore.blocks.drone_bay.DroneBayLootTableProvider;
 import dev.gacbl.logicore.blocks.generator.GeneratorLootTableProvider;
+import dev.gacbl.logicore.blocks.research_station.ResearchStationLootTableProvider;
 import dev.gacbl.logicore.blocks.serverrack.ServerRackLootTableProvider;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.data.DataGenerator;
@@ -52,7 +53,8 @@ public class DataGenerators {
                                 new LootTableProvider.SubProviderEntry(CloudInterfaceLootTableProvider::new, LootContextParamSets.BLOCK),
                                 new LootTableProvider.SubProviderEntry(GeneratorLootTableProvider::new, LootContextParamSets.BLOCK),
                                 new LootTableProvider.SubProviderEntry(BasicBatteryLootTableProvider::new, LootContextParamSets.BLOCK),
-                                new LootTableProvider.SubProviderEntry(AdvanceBatteryLootTableProvider::new, LootContextParamSets.BLOCK)
+                                new LootTableProvider.SubProviderEntry(AdvanceBatteryLootTableProvider::new, LootContextParamSets.BLOCK),
+                                new LootTableProvider.SubProviderEntry(ResearchStationLootTableProvider::new, LootContextParamSets.BLOCK)
                         ),
                         lookupProvider
                 )

@@ -10,6 +10,7 @@ import dev.gacbl.logicore.blocks.datacenter.DatacenterControllerBlock;
 import dev.gacbl.logicore.blocks.datacenter_port.DatacenterPortBlock;
 import dev.gacbl.logicore.blocks.drone_bay.DroneBayBlock;
 import dev.gacbl.logicore.blocks.generator.GeneratorBlock;
+import dev.gacbl.logicore.blocks.research_station.ResearchStationBlock;
 import dev.gacbl.logicore.blocks.serverrack.ServerRackBlock;
 import dev.gacbl.logicore.entity.drone.DroneItem;
 import dev.gacbl.logicore.items.processorunit.ProcessorUnitItem;
@@ -48,5 +49,6 @@ public class ModRecipeProvider extends RecipeProvider implements IConditionBuild
         BasicBatteryBlock.getRecipe().unlockedBy("has_processor", has(ProcessorUnitModule.PROCESSOR_UNIT.get())).save(recipeOutput);
         AdvanceBatteryBlock.getRecipe().unlockedBy("has_processor", has(ProcessorUnitModule.PROCESSOR_UNIT.get())).save(recipeOutput);
         StackUpgradeItem.getRecipe().unlockedBy("has_processor", has(ProcessorUnitModule.PROCESSOR_UNIT.get())).save(recipeOutput);
+        ResearchStationBlock.getRecipe().unlockedBy("has_processor", has(ProcessorUnitModule.PROCESSOR_UNIT.get())).save(recipeOutput);
     }
 }

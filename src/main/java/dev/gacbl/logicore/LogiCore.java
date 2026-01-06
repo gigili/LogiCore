@@ -17,6 +17,7 @@ import dev.gacbl.logicore.blocks.drone_bay.DroneBayModule;
 import dev.gacbl.logicore.blocks.drone_bay.DroneBayRenderer;
 import dev.gacbl.logicore.blocks.generator.GeneratorModule;
 import dev.gacbl.logicore.blocks.generator.ui.GeneratorScreen;
+import dev.gacbl.logicore.blocks.research_station.ResearchStationModule;
 import dev.gacbl.logicore.blocks.serverrack.ServerRackModule;
 import dev.gacbl.logicore.blocks.serverrack.ui.ServerRackScreen;
 import dev.gacbl.logicore.core.IntegrationUtils;
@@ -77,6 +78,7 @@ public class LogiCore {
         BasicBatteryModule.register(modEventBus);
         AdvanceBatteryModule.register(modEventBus);
         StackUpgradeModule.register(modEventBus);
+        ResearchStationModule.register(modEventBus);
 
         IntegrationUtils.registerEvents();
         PacketHandler.register(modEventBus);

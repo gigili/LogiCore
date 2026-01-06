@@ -5,6 +5,7 @@
 	"logicore:computer",
 	"logicore:datacenter_controller",
 	"logicore:compiler",
-	"logicore:datacenter_port"
+	"logicore:datacenter_port",
+	"logicore:research_station"
   ]
 }

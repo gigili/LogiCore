@@ -11,6 +11,7 @@ import dev.gacbl.logicore.blocks.datacenter.DatacenterModule;
 import dev.gacbl.logicore.blocks.datacenter_port.DatacenterPortModule;
 import dev.gacbl.logicore.blocks.drone_bay.DroneBayModule;
 import dev.gacbl.logicore.blocks.generator.GeneratorModule;
+import dev.gacbl.logicore.blocks.research_station.ResearchStationModule;
 import dev.gacbl.logicore.blocks.serverrack.ServerRackModule;
 import dev.gacbl.logicore.items.processorunit.ProcessorUnitModule;
 import dev.gacbl.logicore.items.stack_upgrade.StackUpgradeModule;
@@ -42,5 +43,6 @@ public class ModItemModelProvider extends ItemModelProvider {
         withExistingParent(CloudInterfaceModule.CLOUD_INTERFACE.getId().getPath(), "logicore:block/" + CloudInterfaceModule.CLOUD_INTERFACE.getId().getPath());
         withExistingParent(BasicBatteryModule.BASIC_BATTERY.getId().getPath(), "logicore:block/" + BasicBatteryModule.BASIC_BATTERY.getId().getPath());
         withExistingParent(AdvanceBatteryModule.ADVANCE_BATTERY.getId().getPath(), "logicore:block/" + AdvanceBatteryModule.ADVANCE_BATTERY.getId().getPath());
+        withExistingParent(ResearchStationModule.RESEARCH_STATION.getId().getPath(), "logicore:block/" + ResearchStationModule.RESEARCH_STATION.getId().getPath());
     }
 }

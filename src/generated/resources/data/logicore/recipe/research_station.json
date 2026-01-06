@@ -1,0 +1,27 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "redstone",
+  "key": {
+	"G": {
+	  "item": "minecraft:gold_ingot"
+	},
+	"I": {
+	  "item": "minecraft:iron_ingot"
+	},
+	"P": {
+	  "item": "logicore:processor_unit"
+	},
+	"S": {
+	  "tag": "c:stones"
+	}
+  },
+  "pattern": [
+	"GIG",
+	"IPI",
+	"SSS"
+  ],
+  "result": {
+	"count": 1,
+	"id": "logicore:research_station"
+  }
+}

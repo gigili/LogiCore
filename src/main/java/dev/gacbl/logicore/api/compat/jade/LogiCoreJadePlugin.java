@@ -10,6 +10,8 @@ import dev.gacbl.logicore.blocks.datacenter_port.DatacenterPortBlock;
 import dev.gacbl.logicore.blocks.datacenter_port.DatacenterPortBlockEntity;
 import dev.gacbl.logicore.blocks.drone_bay.DroneBayBlock;
 import dev.gacbl.logicore.blocks.drone_bay.DroneBayBlockEntity;
+import dev.gacbl.logicore.blocks.research_station.ResearchStationBlock;
+import dev.gacbl.logicore.blocks.research_station.ResearchStationBlockEntity;
 import dev.gacbl.logicore.blocks.serverrack.ServerRackBlock;
 import dev.gacbl.logicore.blocks.serverrack.ServerRackBlockEntity;
 import dev.gacbl.logicore.entity.drone.DroneEntity;
@@ -29,6 +31,7 @@ public class LogiCoreJadePlugin implements IWailaPlugin {
         registration.registerBlockComponent(CompilerProvider.INSTANCE, CompilerBlock.class);
         registration.registerBlockComponent(DatacenterProvider.INSTANCE, DatacenterPortBlock.class);
         registration.registerBlockComponent(DroneBayProvider.INSTANCE, DroneBayBlock.class);
+        registration.registerBlockComponent(ResearchStationProvider.INSTANCE, ResearchStationBlock.class);
 
         registration.registerEntityComponent(DroneEntityProvider.INSTANCE, DroneEntity.class);
     }
@@ -40,6 +43,7 @@ public class LogiCoreJadePlugin implements IWailaPlugin {
         registration.registerBlockDataProvider(CompilerProvider.INSTANCE, CompilerBlockEntity.class);
         registration.registerBlockDataProvider(DatacenterProvider.INSTANCE, DatacenterPortBlockEntity.class);
         registration.registerBlockDataProvider(DroneBayProvider.INSTANCE, DroneBayBlockEntity.class);
+        registration.registerBlockDataProvider(ResearchStationProvider.INSTANCE, ResearchStationBlockEntity.class);
 
         registration.registerEntityDataProvider(DroneEntityProvider.INSTANCE, DroneEntity.class);
     }

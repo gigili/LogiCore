@@ -11,6 +11,7 @@ import dev.gacbl.logicore.blocks.datacenter.DatacenterModule;
 import dev.gacbl.logicore.blocks.datacenter_port.DatacenterPortModule;
 import dev.gacbl.logicore.blocks.drone_bay.DroneBayModule;
 import dev.gacbl.logicore.blocks.generator.GeneratorModule;
+import dev.gacbl.logicore.blocks.research_station.ResearchStationModule;
 import dev.gacbl.logicore.blocks.serverrack.ServerRackModule;
 import dev.gacbl.logicore.entity.drone.DroneModule;
 import dev.gacbl.logicore.items.processorunit.ProcessorUnitModule;
@@ -47,6 +48,7 @@ public class CreativeTabModule {
                         output.accept(BasicBatteryModule.BASIC_BATTERY.get());
                         output.accept(AdvanceBatteryModule.ADVANCE_BATTERY.get());
                         output.accept(StackUpgradeModule.STACK_UPGRADE.get());
+                        output.accept(ResearchStationModule.RESEARCH_STATION.get());
                     })
                     .build());
 
