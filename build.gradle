@@ -170,7 +170,7 @@ dependencies {
 
     // EMI
     compileOnly "dev.emi:emi-neoforge:${emi_version}:api"
-    //localRuntime "dev.emi:emi-neoforge:${emi_version}"
+    localRuntime "dev.emi:emi-neoforge:${emi_version}"
 
     // Architectury
     compileOnly "dev.emi:emi-xplat-intermediary:${emi_version}:api"
@@ -235,6 +235,8 @@ dependencies {
     localRuntime "curse.maven:ftb-library-forge-404465:7312258"
     compileOnly "curse.maven:ftb-teams-forge-404468:7315210"
     localRuntime "curse.maven:ftb-teams-forge-404468:7315210"
+    localRuntime "curse.maven:ftb-ranks-314905:6431744"
+    localRuntime "curse.maven:ftb-ultimine-386134:7188395"
 
     // AE2
     compileOnly "org.appliedenergistics:appliedenergistics2:19.2.17:api"

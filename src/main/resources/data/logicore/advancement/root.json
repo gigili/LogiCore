@@ -1,0 +1,13 @@
+{
+  "display": {
+	"icon": {"id": "logicore:research_station"},
+	"title": "LogiCore",
+	"description": "The start of your journey",
+	"background": "minecraft:textures/block/stone.png",
+	"show_toast": false,
+	"announce_to_chat": false
+  },
+  "criteria": {
+	"tick": {"trigger": "minecraft:tick"}
+  }
+}

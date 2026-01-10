@@ -1,0 +1,19 @@
+{
+  "display": {
+	"icon": {
+	  "id": "logicore:processor_unit"
+	},
+	"title": "LogiCore Developer!",
+	"description": "You are the creator of this mod!",
+	"frame": "challenge",
+	"show_toast": true,
+	"announce_to_chat": true,
+	"hidden": true
+  },
+  "criteria": {
+	"is_dev": {
+	  "trigger": "minecraft:impossible"
+	}
+  },
+  "parent": "logicore:root"
+}
