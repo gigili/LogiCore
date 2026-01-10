@@ -34,7 +34,3 @@ Renaming the Drone Item in an Anvil before placing it will give the entity a per
 Combines advanced mobility with a processor unit for autonomous logic.
 
 <Recipe id="logicore:drone" />
-
-<GameScene zoom={2} interactive={true}>
-    <Entity id="logicore:drone" />
-</GameScene>

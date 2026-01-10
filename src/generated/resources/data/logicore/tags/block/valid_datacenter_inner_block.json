@@ -1,8 +1,9 @@
 {
   "values": [
 	"logicore:compiler",
-	"logicore:basic_battery",
-	"logicore:advance_battery",
+	"logicore:small_battery",
+	"logicore:medium_battery",
+	"logicore:large_battery",
 	"logicore:server_rack",
 	"logicore:computer",
 	"logicore:data_cable",

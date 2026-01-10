@@ -226,7 +226,7 @@ dependencies {
     // Torchmaster
     localRuntime "curse.maven:torchmaster-254268:7197218"
 
-    // Functional storage
+    // Titanium, Functional storage
     //localRuntime "curse.maven:titanium-287342:6875285"
     //localRuntime "curse.maven:function_storage-556861:7061714"
 
@@ -249,6 +249,9 @@ dependencies {
     localRuntime "curse.maven:storage_core-618298:7358894"
     localRuntime "curse.maven:sop_storage-619320:7347813"
 
+    // Titanium, Replication
+    localRuntime "curse.maven:titanium-287342:6875285"
+    localRuntime "curse.maven:replication-638351:7331983"
 }
 
 // This block of code expands all declared replace properties in the specified resource targets.

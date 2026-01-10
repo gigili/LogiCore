@@ -14,6 +14,7 @@ import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.block.state.properties.BooleanProperty;
 import net.minecraft.world.level.material.MapColor;
 import net.neoforged.bus.api.IEventBus;
+import net.neoforged.neoforge.capabilities.Capabilities;
 import net.neoforged.neoforge.capabilities.RegisterCapabilitiesEvent;
 import net.neoforged.neoforge.common.extensions.IMenuTypeExtension;
 import net.neoforged.neoforge.registries.DeferredBlock;
@@ -58,6 +59,12 @@ public class ResearchStationModule {
                 ModCapabilities.CYCLE_CONSUMER,
                 RESEARCH_STATION_BE.get(),
                 (be, context) -> be
+        );
+
+        event.registerBlockEntity(
+                Capabilities.ItemHandler.BLOCK,
+                RESEARCH_STATION_BE.get(),
+                (be, context) -> be.getItemHandler()
         );
     }
 }

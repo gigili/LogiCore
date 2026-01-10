@@ -11,11 +11,11 @@
 	  "entries": [
 		{
 		  "type": "minecraft:item",
-		  "name": "logicore:advance_battery"
+		  "name": "logicore:medium_battery"
 		}
 	  ],
 	  "rolls": 1.0
 	}
   ],
-  "random_sequence": "logicore:blocks/advance_battery"
+  "random_sequence": "logicore:blocks/medium_battery"
 }

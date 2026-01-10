@@ -1,0 +1,18 @@
+{
+  "name": "Generator",
+  "icon": "logicore:generator",
+  "category": "logicore:machines_category",
+  "pages": [
+	{
+	  "type": "patchouli:spotlight",
+	  "item": "logicore:generator",
+	  "title": "Generator",
+	  "text": "To start producing cycles, you will first need some way to power the machines. This generator is a basic one, that allows you to burn up to 3 different solid fuels at once."
+	},
+	{
+	  "type": "patchouli:crafting",
+	  "recipe": "logicore:generator",
+	  "text": "The production of power is based on the type of fuel used. The longer burn time of the fuel, the more power it will produce. By holding shift and hover over the power level you can see current production speed."
+	}
+  ]
+}

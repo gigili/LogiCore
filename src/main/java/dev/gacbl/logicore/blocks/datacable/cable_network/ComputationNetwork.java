@@ -25,7 +25,7 @@ public class ComputationNetwork {
     private final Set<BlockPos> providers = new HashSet<>();
     private final Set<BlockPos> consumers = new HashSet<>();
     private final Set<BlockPos> energySources = new HashSet<>();
-    private final EnergyStorage networkEnergyBuffer = new EnergyStorage(MAX_PULL_PER_SOURCE_PER_TICK, MAX_PULL_PER_SOURCE_PER_TICK, MAX_PULL_PER_SOURCE_PER_TICK);
+    private final EnergyStorage networkEnergyBuffer = new EnergyStorage(MAX_PULL_PER_SOURCE_PER_TICK * 3, MAX_PULL_PER_SOURCE_PER_TICK * 2, MAX_PULL_PER_SOURCE_PER_TICK * 2);
 
     EnumProperty<DoubleBlockHalf> HALF = BlockStateProperties.DOUBLE_BLOCK_HALF;
 
@@ -210,7 +210,7 @@ public class ComputationNetwork {
                 // Simulate extraction to see what we'd get
                 int receivedSim = source.extractEnergy(pullAmount, true);
                 if (receivedSim > 0) {
-                    // Simulate receiving to see what buffer will take
+                    // Simulate receiving to see what the buffer will take
                     int acceptedSim = this.networkEnergyBuffer.receiveEnergy(receivedSim, true);
                     if (acceptedSim > 0) {
                         // Perform the actual extraction and reception

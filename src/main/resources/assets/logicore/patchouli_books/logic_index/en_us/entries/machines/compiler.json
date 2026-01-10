@@ -23,6 +23,12 @@
 	  "type": "patchouli:crafting",
 	  "recipe": "logicore:compiler",
 	  "text": "A matter-synthesis engine capable of rearranging atomic structures."
+	},
+	{
+	  "type": "patchouli:spotlight",
+	  "item": "logicore:stack_upgrade",
+	  "title": "Stack upgrade",
+	  "text": "The Compiler supports adding $(l:logicore:components/stack_upgrade)Stack upgrades$() to it in order to increase the number of items it produces. Each stack upgrades increases it by 4 items, with a total of 16 upgrades it produces 64 items in one operation."
 	}
   ]
 }

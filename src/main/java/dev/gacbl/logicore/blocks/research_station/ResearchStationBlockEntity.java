@@ -49,7 +49,7 @@ public class ResearchStationBlockEntity extends BlockEntity implements MenuProvi
 
     public void setOwner(UUID owner) {
         this.ownerUUID = owner;
-        setChanged();
+        setChanged();    
     }
 
     public UUID getOwner() {

@@ -1,0 +1,22 @@
+{
+  "name": "Research station",
+  "icon": "logicore:research_station",
+  "category": "logicore:machines_category",
+  "pages": [
+	{
+	  "type": "patchouli:spotlight",
+	  "item": "logicore:research_station",
+	  "title": "Research station",
+	  "text": "Before you are able to reproduce an item based on their $(l:logicore:architecture/cycles)Cycles$() value, you must first analyze it with the Research station. The research station will analyze the item and store it's knowledge about it so that it can be reproduced."
+	},
+	{
+	  "type": "patchouli:text",
+	  "text": "The research process is dependent on the cycle cost. The more expensive the item is, the longer the research it takes. Default config values allows for a maximum of 600 ticks (or 30 seconds) for the longest research process.All non-researched items will have a tooltip that says 'Not researched' or 'Researched' if it was already learned."
+	},
+	{
+	  "type": "patchouli:crafting",
+	  "recipe": "logicore:research_station",
+	  "text": ""
+	}
+  ]
+}

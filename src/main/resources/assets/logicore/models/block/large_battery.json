@@ -1,0 +1,7 @@
+{
+  "parent": "logicore:block/battery_base",
+  "textures": {
+	"end": "logicore:block/battery_top_bottom",
+	"side": "logicore:block/large_battery"
+  }
+}

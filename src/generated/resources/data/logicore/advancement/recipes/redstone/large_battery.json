@@ -1,0 +1,32 @@
+{
+  "parent": "minecraft:recipes/root",
+  "criteria": {
+	"has_core": {
+	  "conditions": {
+		"items": [
+		  {
+			"items": "logicore:medium_battery"
+		  }
+		]
+	  },
+	  "trigger": "minecraft:inventory_changed"
+	},
+	"has_the_recipe": {
+	  "conditions": {
+		"recipe": "logicore:large_battery"
+	  },
+	  "trigger": "minecraft:recipe_unlocked"
+	}
+  },
+  "requirements": [
+	[
+	  "has_the_recipe",
+	  "has_core"
+	]
+  ],
+  "rewards": {
+	"recipes": [
+	  "logicore:large_battery"
+	]
+  }
+}

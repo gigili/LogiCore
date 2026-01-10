@@ -9,8 +9,9 @@
 	"logicore:drone_bay",
 	"logicore:generator",
 	"logicore:cloud_interface",
-	"logicore:basic_battery",
-	"logicore:advance_battery",
+	"logicore:small_battery",
+	"logicore:medium_battery",
+	"logicore:large_battery",
 	"logicore:research_station"
   ]
 }

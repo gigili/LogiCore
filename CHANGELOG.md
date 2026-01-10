@@ -26,8 +26,9 @@
     - It can be used to transfer cycles from the cloud to machines as well
 - Added wrench item
 - Added battery blocks for energy storage
-    - Basic
-    - Advance
+    - Small
+    - Medium
+    - Large
 - Added AE2 integration via Cloud Interface block
 - Added stack upgrade item for Compiler
 - Added research station

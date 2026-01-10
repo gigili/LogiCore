@@ -1,8 +1,7 @@
 package dev.gacbl.logicore.data;
 
 import dev.gacbl.logicore.LogiCore;
-import dev.gacbl.logicore.blocks.battery.advance.AdvanceBatteryModule;
-import dev.gacbl.logicore.blocks.battery.basic.BasicBatteryModule;
+import dev.gacbl.logicore.blocks.battery.BatteryModule;
 import dev.gacbl.logicore.blocks.cloud_interface.CloudInterfaceModule;
 import dev.gacbl.logicore.blocks.compiler.CompilerModule;
 import dev.gacbl.logicore.blocks.computer.ComputerModule;
@@ -45,8 +44,9 @@ public class CreativeTabModule {
                         output.accept(GeneratorModule.GENERATOR.get());
                         output.accept(CloudInterfaceModule.CLOUD_INTERFACE.get());
                         output.accept(WrenchModule.WRENCH.get());
-                        output.accept(BasicBatteryModule.BASIC_BATTERY.get());
-                        output.accept(AdvanceBatteryModule.ADVANCE_BATTERY.get());
+                        output.accept(BatteryModule.BATTERY_SMALL.get());
+                        output.accept(BatteryModule.BATTERY_MEDIUM.get());
+                        output.accept(BatteryModule.BATTERY_LARGE.get());
                         output.accept(StackUpgradeModule.STACK_UPGRADE.get());
                         output.accept(ResearchStationModule.RESEARCH_STATION.get());
                     })

@@ -9,7 +9,6 @@ import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntity;
-import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.neoforged.neoforge.energy.EnergyStorage;
 import net.neoforged.neoforge.energy.IEnergyStorage;
@@ -18,20 +17,19 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.Objects;
 
-public abstract class BaseBatteryEntity extends BlockEntity {
+public class BaseBatteryEntity extends BlockEntity {
     private final EnergyStorage energyStorage;
     private int lastSyncedEnergy = -1;
 
-    public BaseBatteryEntity(
-            BlockEntityType<?> type,
-            BlockPos pos,
-            BlockState blockState,
-            int maxCapacity,
-            int maxInput,
-            int maxOutput
-    ) {
-        super(type, pos, blockState);
-        this.energyStorage = new EnergyStorage(maxCapacity, maxInput, maxOutput);
+    public BaseBatteryEntity(BlockPos pos, BlockState blockState) {
+        super(BatteryModule.BATTERY_BE.get(), pos, blockState);
+
+        if (blockState.getBlock() instanceof BatteryBlock batteryBlock) {
+            BatteryTier tier = batteryBlock.getTier();
+            this.energyStorage = new EnergyStorage(tier.capacity.get(), tier.maxTransfer.get(), tier.maxTransfer.get());
+        } else {
+            this.energyStorage = new EnergyStorage(1000, 100, 100);
+        }
     }
 
     public IEnergyStorage getEnergyStorage() {

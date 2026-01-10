@@ -1,0 +1,8 @@
+{
+  "variants": {
+	"facing=north": {"model": "logicore:block/medium_battery"},
+	"facing=south": {"model": "logicore:block/medium_battery", "y": 180},
+	"facing=west": {"model": "logicore:block/medium_battery", "y": 270},
+	"facing=east": {"model": "logicore:block/medium_battery", "y": 90}
+  }
+}

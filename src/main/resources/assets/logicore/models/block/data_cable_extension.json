@@ -1,5 +1,6 @@
 {
   "parent": "minecraft:block/block",
+  "render_type": "minecraft:cutout",
   "textures": {
 	"0": "logicore:block/data_cable_extension",
 	"particle": "logicore:block/data_cable_extension"

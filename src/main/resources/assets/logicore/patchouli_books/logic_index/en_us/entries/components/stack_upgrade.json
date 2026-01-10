@@ -1,0 +1,17 @@
+{
+  "name": "Stack upgrade",
+  "icon": "logicore:stack_upgrade",
+  "category": "logicore:components_category",
+  "pages": [
+	{
+	  "type": "patchouli:spotlight",
+	  "item": "logicore:stack_upgrade",
+	  "title": "Stack upgrade",
+	  "text": "This upgrade allows you to change the amount of items a $(l:logicore:machines/compiler)Compiler$() produces. By default each stack upgrade gives you 4 extra items. With a total of 16 upgrades, your compiler will produce 64 items."
+	},
+	{
+	  "type": "patchouli:crafting",
+	  "recipe": "logicore:stack_upgrade"
+	}
+  ]
+}

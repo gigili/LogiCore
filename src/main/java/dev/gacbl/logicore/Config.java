@@ -46,6 +46,14 @@ public class Config {
     public static final ModConfigSpec.ConfigValue<Integer> RS_CYCLES_PROCESSED_PER_TICK;
     public static final ModConfigSpec.ConfigValue<Integer> RS_MAX_TICK_DURATION;
 
+    //Batteries
+    public static final ModConfigSpec.ConfigValue<Integer> SMALL_BATTERY_CAPACITY;
+    public static final ModConfigSpec.ConfigValue<Integer> SMALL_BATTERY_TRANSFER_RATE;
+    public static final ModConfigSpec.ConfigValue<Integer> MEDIUM_BATTERY_CAPACITY;
+    public static final ModConfigSpec.ConfigValue<Integer> MEDIUM_BATTERY_TRANSFER_RATE;
+    public static final ModConfigSpec.ConfigValue<Integer> LARGE_BATTERY_CAPACITY;
+    public static final ModConfigSpec.ConfigValue<Integer> LARGE_BATTERY_TRANSFER_RATE;
+
     static {
         BUILDER.comment("LogiCore Configuration");
 
@@ -189,6 +197,43 @@ public class Config {
                 .comment(" If the datacenter produces particles when it's formed")
                 .define("produce_particles", true);
 
+        BUILDER.pop();
+        //</editor-fold>
+
+        //<editor-fold desc="Batteries">
+        BUILDER.push("Batteries");
+        BUILDER.comment(" Configuration for battery tiers and their properties");
+
+        BUILDER.push("Small");
+        SMALL_BATTERY_CAPACITY = BUILDER
+                .comment(" Maximum capacity of the battery")
+                .defineInRange("small_battery_capacity", 1_000_000, 1, Integer.MAX_VALUE);
+
+        SMALL_BATTERY_TRANSFER_RATE = BUILDER
+                .comment(" Maximum I/O rate of the battery")
+                .defineInRange("small_battery_transfer_rate", 1_000_000, 1, Integer.MAX_VALUE);
+        BUILDER.pop();
+
+        BUILDER.push("Medium");
+        MEDIUM_BATTERY_CAPACITY = BUILDER
+                .comment(" Maximum capacity of the battery")
+                .defineInRange("medium_battery_capacity", 10_000_000, 1, Integer.MAX_VALUE);
+
+        MEDIUM_BATTERY_TRANSFER_RATE = BUILDER
+                .comment(" Maximum I/O rate of the battery")
+                .defineInRange("medium_battery_transfer_rate", 10_000_000, 1, Integer.MAX_VALUE);
+        BUILDER.pop();
+
+        BUILDER.push("Large");
+        LARGE_BATTERY_CAPACITY = BUILDER
+                .comment(" Maximum capacity of the battery")
+                .defineInRange("large_battery_capacity", 100_000_000, 1, Integer.MAX_VALUE);
+
+        LARGE_BATTERY_TRANSFER_RATE = BUILDER
+                .comment(" Maximum I/O rate of the battery")
+                .defineInRange("large_battery_transfer_rate", 100_000_000, 1, Integer.MAX_VALUE);
+
+        BUILDER.pop();
         BUILDER.pop();
         //</editor-fold>
 

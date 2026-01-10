@@ -11,11 +11,11 @@
 	  "entries": [
 		{
 		  "type": "minecraft:item",
-		  "name": "logicore:basic_battery"
+		  "name": "logicore:small_battery"
 		}
 	  ],
 	  "rolls": 1.0
 	}
   ],
-  "random_sequence": "logicore:blocks/basic_battery"
+  "random_sequence": "logicore:blocks/small_battery"
 }

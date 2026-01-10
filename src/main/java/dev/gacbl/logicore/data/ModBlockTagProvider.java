@@ -1,8 +1,7 @@
 package dev.gacbl.logicore.data;
 
 import dev.gacbl.logicore.LogiCore;
-import dev.gacbl.logicore.blocks.battery.advance.AdvanceBatteryModule;
-import dev.gacbl.logicore.blocks.battery.basic.BasicBatteryModule;
+import dev.gacbl.logicore.blocks.battery.BatteryModule;
 import dev.gacbl.logicore.blocks.cloud_interface.CloudInterfaceModule;
 import dev.gacbl.logicore.blocks.compiler.CompilerModule;
 import dev.gacbl.logicore.blocks.computer.ComputerModule;
@@ -102,19 +101,14 @@ public class ModBlockTagProvider extends BlockTagsProvider {
         tag(BlockTags.create(ResourceLocation.fromNamespaceAndPath("justdirethings", "phase_deny"))).add(CloudInterfaceModule.CLOUD_INTERFACE.get());
         tag(BlockTags.create(ResourceLocation.fromNamespaceAndPath("justdirethings", "swapper_deny"))).add(CloudInterfaceModule.CLOUD_INTERFACE.get());
 
-        tag(BlockTags.MINEABLE_WITH_PICKAXE).add(BasicBatteryModule.BASIC_BATTERY.get());
-        tag(BlockTags.NEEDS_IRON_TOOL).add(BasicBatteryModule.BASIC_BATTERY.get());
-        tag(ModTags.Blocks.VALID_DATACENTER_INNER_BLOCK).add(BasicBatteryModule.BASIC_BATTERY.get());
-        tag(BlockTags.create(ResourceLocation.fromNamespaceAndPath("justdirethings", "eclipsegate_deny"))).add(BasicBatteryModule.BASIC_BATTERY.get());
-        tag(BlockTags.create(ResourceLocation.fromNamespaceAndPath("justdirethings", "phase_deny"))).add(BasicBatteryModule.BASIC_BATTERY.get());
-        tag(BlockTags.create(ResourceLocation.fromNamespaceAndPath("justdirethings", "swapper_deny"))).add(BasicBatteryModule.BASIC_BATTERY.get());
-
-        tag(BlockTags.MINEABLE_WITH_PICKAXE).add(AdvanceBatteryModule.ADVANCE_BATTERY.get());
-        tag(BlockTags.NEEDS_IRON_TOOL).add(AdvanceBatteryModule.ADVANCE_BATTERY.get());
-        tag(ModTags.Blocks.VALID_DATACENTER_INNER_BLOCK).add(AdvanceBatteryModule.ADVANCE_BATTERY.get());
-        tag(BlockTags.create(ResourceLocation.fromNamespaceAndPath("justdirethings", "eclipsegate_deny"))).add(AdvanceBatteryModule.ADVANCE_BATTERY.get());
-        tag(BlockTags.create(ResourceLocation.fromNamespaceAndPath("justdirethings", "phase_deny"))).add(AdvanceBatteryModule.ADVANCE_BATTERY.get());
-        tag(BlockTags.create(ResourceLocation.fromNamespaceAndPath("justdirethings", "swapper_deny"))).add(AdvanceBatteryModule.ADVANCE_BATTERY.get());
+        BatteryModule.BLOCKS.getEntries().forEach(blockHolder -> {
+            tag(BlockTags.MINEABLE_WITH_PICKAXE).add(blockHolder.get());
+            tag(BlockTags.NEEDS_IRON_TOOL).add(blockHolder.get());
+            tag(ModTags.Blocks.VALID_DATACENTER_INNER_BLOCK).add(blockHolder.get());
+            tag(BlockTags.create(ResourceLocation.fromNamespaceAndPath("justdirethings", "eclipsegate_deny"))).add(blockHolder.get());
+            tag(BlockTags.create(ResourceLocation.fromNamespaceAndPath("justdirethings", "phase_deny"))).add(blockHolder.get());
+            tag(BlockTags.create(ResourceLocation.fromNamespaceAndPath("justdirethings", "swapper_deny"))).add(blockHolder.get());
+        });
 
         tag(BlockTags.MINEABLE_WITH_PICKAXE).add(ResearchStationModule.RESEARCH_STATION.get());
         tag(BlockTags.NEEDS_IRON_TOOL).add(ResearchStationModule.RESEARCH_STATION.get());

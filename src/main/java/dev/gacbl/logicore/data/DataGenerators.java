@@ -1,8 +1,7 @@
 package dev.gacbl.logicore.data;
 
 import dev.gacbl.logicore.LogiCore;
-import dev.gacbl.logicore.blocks.battery.advance.AdvanceBatteryLootTableProvider;
-import dev.gacbl.logicore.blocks.battery.basic.BasicBatteryLootTableProvider;
+import dev.gacbl.logicore.blocks.battery.BatteryLootTableProvider;
 import dev.gacbl.logicore.blocks.cloud_interface.CloudInterfaceLootTableProvider;
 import dev.gacbl.logicore.blocks.compiler.CompilerLootTableProvider;
 import dev.gacbl.logicore.blocks.computer.ComputerLootTableProvider;
@@ -52,8 +51,7 @@ public class DataGenerators {
                                 new LootTableProvider.SubProviderEntry(DroneBayLootTableProvider::new, LootContextParamSets.BLOCK),
                                 new LootTableProvider.SubProviderEntry(CloudInterfaceLootTableProvider::new, LootContextParamSets.BLOCK),
                                 new LootTableProvider.SubProviderEntry(GeneratorLootTableProvider::new, LootContextParamSets.BLOCK),
-                                new LootTableProvider.SubProviderEntry(BasicBatteryLootTableProvider::new, LootContextParamSets.BLOCK),
-                                new LootTableProvider.SubProviderEntry(AdvanceBatteryLootTableProvider::new, LootContextParamSets.BLOCK),
+                                new LootTableProvider.SubProviderEntry(BatteryLootTableProvider::new, LootContextParamSets.BLOCK),
                                 new LootTableProvider.SubProviderEntry(ResearchStationLootTableProvider::new, LootContextParamSets.BLOCK)
                         ),
                         lookupProvider

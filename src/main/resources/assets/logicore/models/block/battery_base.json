@@ -1,0 +1,45 @@
+{
+  "format_version": "1.9.0",
+  "credit": "Made with Blockbench",
+  "texture_size": [64, 64],
+  "textures": {
+	"side": "logicore:block/small_battery",
+	"end": "logicore:block/battery_top_bottom",
+	"particle": "logicore:block/small_battery"
+  },
+  "elements": [
+	{
+	  "from": [0, 0, 0],
+	  "to": [16, 16, 16],
+	  "faces": {
+		"north": {"uv": [0, 0, 16, 16], "texture": "#side"},
+		"east": {"uv": [0, 0, 16, 16], "texture": "#side"},
+		"south": {"uv": [0, 0, 16, 16], "texture": "#side"},
+		"west": {"uv": [0, 0, 16, 16], "texture": "#side"},
+		"up": {"uv": [0, 0, 16, 16], "texture": "#end"},
+		"down": {"uv": [0, 0, 16, 16], "texture": "#end"}
+	  }
+	}
+  ],
+  "display": {
+	"thirdperson_righthand": {
+	  "scale": [0.5, 0.5, 0.5]
+	},
+	"thirdperson_lefthand": {
+	  "scale": [0.5, 0.5, 0.5]
+	},
+	"firstperson_righthand": {
+	  "scale": [0.5, 0.5, 0.5]
+	},
+	"firstperson_lefthand": {
+	  "scale": [0.5, 0.5, 0.5]
+	},
+	"ground": {
+	  "scale": [0.25, 0.25, 0.25]
+	},
+	"gui": {
+	  "rotation": [27, 45, 0],
+	  "scale": [0.6, 0.6, 0.6]
+	}
+  }
+}

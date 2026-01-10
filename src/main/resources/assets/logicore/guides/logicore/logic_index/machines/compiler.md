@@ -32,3 +32,11 @@ Simple components materialize rapidly, while complex machinery requires a longer
 A matter-synthesis engine capable of rearranging atomic structures.
 
 <Recipe id="logicore:compiler" />
+
+## Stack upgrade
+
+<ItemImage id="logicore:stack_upgrade" />
+
+The Compiler supports adding [Stack upgrades](../components/stack_upgrade.md) to it in order to increase the number of
+items it produces. Each stack upgrades increases it by 4 items, with a total of 16 upgrades it produces 64 items in one
+operation.

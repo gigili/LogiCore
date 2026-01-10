@@ -2,23 +2,23 @@
   "type": "minecraft:crafting_shaped",
   "category": "redstone",
   "key": {
-	"E": {
-	  "item": "minecraft:emerald"
+	"G": {
+	  "item": "minecraft:gold_ingot"
 	},
 	"P": {
-	  "item": "logicore:processor_unit"
+	  "item": "logicore:medium_battery"
 	},
 	"R": {
 	  "item": "minecraft:redstone"
 	}
   },
   "pattern": [
-	"RER",
-	"EPE",
-	"RER"
+	"RGR",
+	"GPG",
+	"RGR"
   ],
   "result": {
 	"count": 1,
-	"id": "logicore:advance_battery"
+	"id": "logicore:large_battery"
   }
 }

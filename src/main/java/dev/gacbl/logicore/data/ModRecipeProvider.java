@@ -1,7 +1,6 @@
 package dev.gacbl.logicore.data;
 
-import dev.gacbl.logicore.blocks.battery.advance.AdvanceBatteryBlock;
-import dev.gacbl.logicore.blocks.battery.basic.BasicBatteryBlock;
+import dev.gacbl.logicore.blocks.battery.BatteryModule;
 import dev.gacbl.logicore.blocks.cloud_interface.CloudInterfaceBlock;
 import dev.gacbl.logicore.blocks.compiler.CompilerBlock;
 import dev.gacbl.logicore.blocks.computer.ComputerBlock;
@@ -17,15 +16,22 @@ import dev.gacbl.logicore.items.processorunit.ProcessorUnitItem;
 import dev.gacbl.logicore.items.processorunit.ProcessorUnitModule;
 import dev.gacbl.logicore.items.stack_upgrade.StackUpgradeItem;
 import dev.gacbl.logicore.items.wrench.WrenchItem;
+import net.minecraft.core.Holder;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.data.PackOutput;
+import net.minecraft.data.recipes.RecipeCategory;
 import net.minecraft.data.recipes.RecipeOutput;
 import net.minecraft.data.recipes.RecipeProvider;
+import net.minecraft.data.recipes.ShapedRecipeBuilder;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.item.Items;
+import net.minecraft.world.level.ItemLike;
 import net.neoforged.neoforge.common.conditions.IConditionBuilder;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.List;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.atomic.AtomicInteger;
 
 public class ModRecipeProvider extends RecipeProvider implements IConditionBuilder {
     public ModRecipeProvider(PackOutput packOutput, CompletableFuture<HolderLookup.Provider> registries) {
@@ -46,9 +52,28 @@ public class ModRecipeProvider extends RecipeProvider implements IConditionBuild
         GeneratorBlock.getRecipe().unlockedBy("has_processor", has(ProcessorUnitModule.PROCESSOR_UNIT.get())).save(recipeOutput);
         CloudInterfaceBlock.getRecipe().unlockedBy("has_processor", has(ProcessorUnitModule.PROCESSOR_UNIT.get())).save(recipeOutput);
         WrenchItem.getRecipe().unlockedBy("has_processor", has(ProcessorUnitModule.PROCESSOR_UNIT.get())).save(recipeOutput);
-        BasicBatteryBlock.getRecipe().unlockedBy("has_processor", has(ProcessorUnitModule.PROCESSOR_UNIT.get())).save(recipeOutput);
-        AdvanceBatteryBlock.getRecipe().unlockedBy("has_processor", has(ProcessorUnitModule.PROCESSOR_UNIT.get())).save(recipeOutput);
         StackUpgradeItem.getRecipe().unlockedBy("has_processor", has(ProcessorUnitModule.PROCESSOR_UNIT.get())).save(recipeOutput);
         ResearchStationBlock.getRecipe().unlockedBy("has_processor", has(ProcessorUnitModule.PROCESSOR_UNIT.get())).save(recipeOutput);
+
+        List<Item> batteryItems = BatteryModule.ITEMS.getEntries().stream()
+                .map(Holder::value)
+                .toList();
+
+        AtomicInteger index = new AtomicInteger(0);
+
+        BatteryModule.BLOCKS.getEntries().forEach(blockHolder -> {
+            int i = index.getAndIncrement();
+            ItemLike coreIngredient = (i == 0) ? ProcessorUnitModule.PROCESSOR_UNIT.get() : batteryItems.get(i - 1);
+
+            ShapedRecipeBuilder.shaped(RecipeCategory.REDSTONE, blockHolder.get())
+                    .pattern("RGR")
+                    .pattern("GPG")
+                    .pattern("RGR")
+                    .define('G', Items.GOLD_INGOT)
+                    .define('R', Items.REDSTONE)
+                    .define('P', coreIngredient)
+                    .unlockedBy("has_core", has(coreIngredient))
+                    .save(recipeOutput);
+        });
     }
 }

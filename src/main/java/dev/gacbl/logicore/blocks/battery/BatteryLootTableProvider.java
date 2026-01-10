@@ -1,4 +1,4 @@
-package dev.gacbl.logicore.blocks.battery.advance;
+package dev.gacbl.logicore.blocks.battery;
 
 import net.minecraft.core.Holder;
 import net.minecraft.core.HolderLookup;
@@ -9,18 +9,21 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.Set;
 
-public class AdvanceBatteryLootTableProvider extends BlockLootSubProvider {
-    public AdvanceBatteryLootTableProvider(HolderLookup.Provider registries) {
+public class BatteryLootTableProvider extends BlockLootSubProvider {
+
+    public BatteryLootTableProvider(HolderLookup.Provider registries) {
         super(Set.of(), FeatureFlags.REGISTRY.allFlags(), registries);
     }
 
     @Override
     protected void generate() {
-        dropSelf(AdvanceBatteryModule.ADVANCE_BATTERY.get());
+        BatteryModule.BLOCKS.getEntries().forEach(blockHolder -> {
+            dropSelf(blockHolder.get());
+        });
     }
 
     @Override
     protected @NotNull Iterable<Block> getKnownBlocks() {
-        return AdvanceBatteryModule.BLOCKS.getEntries().stream().map(Holder::value)::iterator;
+        return BatteryModule.BLOCKS.getEntries().stream().map(Holder::value)::iterator;
     }
 }

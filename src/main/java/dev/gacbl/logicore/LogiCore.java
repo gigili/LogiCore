@@ -2,8 +2,7 @@ package dev.gacbl.logicore;
 
 import com.mojang.logging.LogUtils;
 import dev.gacbl.logicore.blocks.battery.BatteryFillRenderer;
-import dev.gacbl.logicore.blocks.battery.advance.AdvanceBatteryModule;
-import dev.gacbl.logicore.blocks.battery.basic.BasicBatteryModule;
+import dev.gacbl.logicore.blocks.battery.BatteryModule;
 import dev.gacbl.logicore.blocks.cloud_interface.CloudInterfaceModule;
 import dev.gacbl.logicore.blocks.compiler.CompilerBlockEntityRenderer;
 import dev.gacbl.logicore.blocks.compiler.CompilerModule;
@@ -77,8 +76,7 @@ public class LogiCore {
         CloudInterfaceModule.register(modEventBus);
         WrenchModule.register(modEventBus);
         DroneModule.register(modEventBus);
-        BasicBatteryModule.register(modEventBus);
-        AdvanceBatteryModule.register(modEventBus);
+        BatteryModule.register(modEventBus);
         StackUpgradeModule.register(modEventBus);
         ResearchStationModule.register(modEventBus);
 
@@ -136,7 +134,7 @@ public class LogiCore {
         @SubscribeEvent
         public static void registerRenderers(EntityRenderersEvent.RegisterRenderers event) {
             event.registerBlockEntityRenderer(DroneBayModule.DRONE_BAY_BE.get(), DroneBayRenderer::new);
-            event.registerBlockEntityRenderer(AdvanceBatteryModule.ADVANCE_BATTERY_BE.get(), BatteryFillRenderer::new);
+            event.registerBlockEntityRenderer(BatteryModule.BATTERY_BE.get(), BatteryFillRenderer::new);
         }
 
         @SubscribeEvent

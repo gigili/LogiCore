@@ -33,7 +33,6 @@ public class BatteryFillRenderer implements BlockEntityRenderer<BaseBatteryEntit
         float fillRatio = (float) currentEnergy / maxEnergy;
 
         for (Direction facing : Direction.values()) {
-            // Fetch a white texture to use as a base for our colored quads
             TextureAtlasSprite sprite = Minecraft.getInstance()
                     .getTextureAtlas(InventoryMenu.BLOCK_ATLAS)
                     .apply(ResourceLocation.withDefaultNamespace("block/white_concrete"));
@@ -42,71 +41,62 @@ public class BatteryFillRenderer implements BlockEntityRenderer<BaseBatteryEntit
 
             poseStack.translate(0.5D, 0.5D, 0.5D);
             poseStack.mulPose(Axis.YP.rotationDegrees(-facing.toYRot()));
-            poseStack.translate(0.0D, 0.0D, -0.501D);
+            poseStack.translate(0.0D, 0.0D, -0.50D);
 
-            // --- GEOMETRY SETTINGS ---
-            float p = 1.0f / 16.0f; // Size of 1 pixel
-
-            // Edit these values to fine-tune the position
-            float width = 3.52f * p;          // 4 pixels wide
-            float height = 7.4f * p;         // 6 pixels high (Reduced size)
-            float xOffset = -0.25f * p;        // Move RIGHT by 2 pixels
-            float yBottomOffset = -3.7f * p; // Move UP (starts 2 pixels below center instead of 4)
+            float p = 1.0f / 16.0f;
+            float width = 2.56f * p;
+            float height = 5.54f * p;
+            float xOffset = 0.001f;
+            float yBottomOffset = -2.77f * p;
 
             float filledHeight = height * fillRatio;
 
             float xMin = (-width / 2) + xOffset;
             float xMax = (width / 2) + xOffset;
             float yMaxFilled = yBottomOffset + filledHeight;
-            // -------------------------
 
             VertexConsumer vertexConsumer = bufferSource.getBuffer(RenderType.translucent());
             Matrix4f pose;
 
-            // 1. Draw Background (Dark Gray)
-            //addQuad(pose, vertexConsumer, xMin, xMax, yMin, yMaxFull, 50, 50, 50, 255, packedLight, packedOverlay, sprite);
-
-            // 2. Draw Fill (Green)
             if (fillRatio > 0) {
                 poseStack.translate(0.0D, 0.0D, -0.001D);
                 pose = poseStack.last().pose();
-                addQuad(pose, vertexConsumer, xMin, xMax, yBottomOffset, yMaxFilled, 0, 255, 0, 255, packedLight, packedOverlay, sprite);
+                addQuad(pose, vertexConsumer, xMin, xMax, yBottomOffset, yMaxFilled, 0xff1fda60, 15728880, packedOverlay, sprite);
             }
 
             poseStack.popPose();
         }
     }
 
-    private void addQuad(Matrix4f pose, VertexConsumer vertexConsumer, float xMin, float xMax, float yMin, float yMax, int r, int g, int b, int a, int light, int overlay, TextureAtlasSprite sprite) {
-        // Use the sprite's UVs (min/max) to map the texture
+    private void addQuad(Matrix4f pose, VertexConsumer vertexConsumer, float xMin, float xMax, float yMin, float yMax, int color, int light, int overlay, TextureAtlasSprite sprite) {
         float u0 = sprite.getU0();
         float u1 = sprite.getU1();
         float v0 = sprite.getV0();
         float v1 = sprite.getV1();
 
         vertexConsumer.addVertex(pose, xMin, yMax, 0)
-                .setColor(r, g, b, a)
+                .setColor(color)
                 .setUv(u0, v1)
                 .setOverlay(overlay) // Added Overlay
                 .setLight(light)
                 .setNormal(0, 0, -1);
 
         vertexConsumer.addVertex(pose, xMax, yMax, 0)
-                .setColor(r, g, b, a)
+                .setColor(color)
                 .setUv(u1, v1)
                 .setOverlay(overlay) // Added Overlay
                 .setLight(light)
                 .setNormal(0, 0, -1);
 
         vertexConsumer.addVertex(pose, xMax, yMin, 0)
-                .setColor(r, g, b, a)
+                .setColor(color)
                 .setUv(u1, v0)
                 .setOverlay(overlay) // Added Overlay
                 .setLight(light)
                 .setNormal(0, 0, -1);
 
         vertexConsumer.addVertex(pose, xMin, yMin, 0)
-                .setColor(r, g, b, a)
+                .setColor(color)
                 .setUv(u0, v0)
                 .setOverlay(overlay) // Added Overlay
                 .setLight(light)
