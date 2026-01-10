@@ -55,10 +55,16 @@ import net.neoforged.neoforge.event.tick.LevelTickEvent;
 import net.neoforged.neoforge.registries.datamaps.RegisterDataMapTypesEvent;
 import org.slf4j.Logger;
 
+import java.util.UUID;
+
 @Mod(LogiCore.MOD_ID)
 public class LogiCore {
     public static final String MOD_ID = "logicore";
     public static final Logger LOGGER = LogUtils.getLogger();
+
+    public static final UUID LASH_UUID = UUID.fromString("1ede36f5-cc12-47c1-bb01-d6c445d01a17");
+    public static final UUID DIRE_UUID = UUID.fromString("bbb87dbe-690f-4205-bdc5-72ffb8ebc29d");
+    public static final UUID GAC_UUID = UUID.fromString("73790c93-7c66-4147-9156-a12dcbd95c02");
 
     public LogiCore(IEventBus modEventBus, ModContainer modContainer) {
         NeoForge.EVENT_BUS.register(this);

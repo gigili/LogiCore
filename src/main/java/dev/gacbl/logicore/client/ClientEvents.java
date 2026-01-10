@@ -4,9 +4,12 @@ import dev.gacbl.logicore.LogiCore;
 import dev.gacbl.logicore.api.cycles.CycleSavedData;
 import dev.gacbl.logicore.api.cycles.CycleValueManager;
 import dev.gacbl.logicore.core.Utils;
+import dev.gacbl.logicore.items.processorunit.ProcessorUnitModule;
 import dev.gacbl.logicore.network.PacketHandler;
 import dev.gacbl.logicore.network.payload.SyncPlayerKnowledgePayload;
 import net.minecraft.ChatFormatting;
+import net.minecraft.advancements.AdvancementHolder;
+import net.minecraft.advancements.AdvancementProgress;
 import net.minecraft.client.Minecraft;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.chat.Component;
@@ -23,7 +26,10 @@ import net.neoforged.neoforge.client.event.RegisterGuiLayersEvent;
 import net.neoforged.neoforge.event.entity.player.ItemTooltipEvent;
 import net.neoforged.neoforge.event.entity.player.PlayerEvent;
 
+import java.util.List;
 import java.util.Set;
+
+import static dev.gacbl.logicore.LogiCore.*;
 
 @EventBusSubscriber(modid = LogiCore.MOD_ID, value = Dist.CLIENT)
 public class ClientEvents {
@@ -92,5 +98,31 @@ public class ClientEvents {
     @SubscribeEvent
     public static void onClientLogout(ClientPlayerNetworkEvent.LoggingOut event) {
         ClientKnowledgeData.clear();
+    }
+
+    @SubscribeEvent
+    public static void onItemCrafted(PlayerEvent.ItemCraftedEvent event) {
+        if (event.getEntity().level().isClientSide) return;
+        if (!(event.getEntity() instanceof ServerPlayer player)) return;
+
+        if (event.getCrafting().is(ProcessorUnitModule.PROCESSOR_UNIT.get())) {
+            if (List.of(LASH_UUID, DIRE_UUID, GAC_UUID).contains(player.getUUID())) {
+                grantDevAdvancement(player);
+            }
+        }
+    }
+
+    private static void grantDevAdvancement(ServerPlayer player) {
+        String username = player.getName().getString().toLowerCase();
+        ResourceLocation advId = ResourceLocation.fromNamespaceAndPath(LogiCore.MOD_ID, username);
+        AdvancementHolder advancement = player.server.getAdvancements().get(advId);
+
+        if (advancement != null) {
+            AdvancementProgress progress = player.getAdvancements().getOrStartProgress(advancement);
+
+            if (!progress.isDone()) {
+                player.getAdvancements().award(advancement, "is_" + username);
+            }
+        }
     }
 }

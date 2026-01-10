@@ -18,6 +18,7 @@ import dev.gacbl.logicore.api.cycles.CycleValueManager;
 import dev.gacbl.logicore.blocks.cloud_interface.CloudInterfaceBlockEntity;
 import net.minecraft.core.Direction;
 import net.minecraft.core.HolderLookup;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
@@ -65,13 +66,14 @@ public class CloudAe2Service implements IGridNodeService, IGridNodeListener<Clou
         }
     }
 
-    public static void rebuildCache() {
+    public static void rebuildCache(Level level, CloudInterfaceBlockEntity host) {
         synchronized (CACHED_ENTRIES) {
             CACHED_ENTRIES.clear();
             LogiCore.LOGGER.info("Building Cloud AE2 Storage Cache...");
 
             for (Map.Entry<Item, Integer> entry : CycleValueManager.CYCLE_VALUES.entrySet()) {
                 Item item = entry.getKey();
+                ResourceLocation itemRes = BuiltInRegistries.ITEM.getKey(item);
                 int cost = entry.getValue();
 
                 if (item == Items.AIR || cost <= 0) continue;
@@ -93,14 +95,15 @@ public class CloudAe2Service implements IGridNodeService, IGridNodeListener<Clou
      * Prevents "Death by Update Loop" in large modpacks.
      */
     private int getDynamicSyncInterval() {
-        int count;
+        return 20;
+        /*int count;
         synchronized (CACHED_ENTRIES) {
             count = CACHED_ENTRIES.size();
         }
         if (count < 500) return 20;       // Small pack: 1 second
         if (count < 2000) return 100;     // Medium pack: 5 seconds
         if (count < 10000) return 400;    // Large pack: 20 seconds
-        return 2400;                      // Kitchen Sink (ATM, etc): 120 seconds
+        return 2400;                      // Kitchen Sink (ATM, etc): 120 seconds*/
     }
 
     @Override
@@ -116,7 +119,7 @@ public class CloudAe2Service implements IGridNodeService, IGridNodeListener<Clou
         if (!mainNode.isActive()) return;
 
         if (!cacheInitialized) {
-            rebuildCache();
+            rebuildCache(lvl, host);
         }
 
         if (!hasRegistered) {
@@ -246,13 +249,17 @@ public class CloudAe2Service implements IGridNodeService, IGridNodeListener<Clou
             if (!(host.getLevel() instanceof ServerLevel sl)) return 0;
             if (host.getOwner() == null) return 0;
 
+            String ownerKey = CycleSavedData.getKey(sl, host.getOwner());
+            CycleSavedData data = CycleSavedData.get(sl);
+            ResourceLocation itemRes = BuiltInRegistries.ITEM.getKey(itemKey.getItem());
+
             long costPerItem = CycleValueManager.getCycleValue(itemKey.toStack());
             if (costPerItem <= 0) return 0;
+            if (!data.isUnlocked(ownerKey, itemRes)) return 0;
 
             long totalValueToAdd = costPerItem * amount;
 
             if (mode == Actionable.MODULATE) {
-                String ownerKey = CycleSavedData.getKey(sl, host.getOwner());
                 CycleSavedData.get(sl).modifyCycles(sl, ownerKey, totalValueToAdd);
             }
             return amount;
@@ -265,10 +272,13 @@ public class CloudAe2Service implements IGridNodeService, IGridNodeListener<Clou
             if (!(host.getLevel() instanceof ServerLevel sl)) return 0;
             if (host.getOwner() == null) return 0;
 
+            String ownerKey = CycleSavedData.getKey(sl, host.getOwner());
+            CycleSavedData data = CycleSavedData.get(sl);
+            ResourceLocation itemRes = BuiltInRegistries.ITEM.getKey(itemKey.getItem());
+
             long costPerItem = CycleValueManager.getCycleValue(itemKey.toStack());
             if (costPerItem <= 0) return 0;
-
-            String ownerKey = CycleSavedData.getKey(sl, host.getOwner());
+            if (!data.isUnlocked(ownerKey, itemRes)) return 0;
 
             long totalCycles = CycleSavedData.get(sl).getCyclesByKeyString(ownerKey);
 

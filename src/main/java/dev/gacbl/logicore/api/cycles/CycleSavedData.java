@@ -135,4 +135,14 @@ public class CycleSavedData extends SavedData {
     public Set<String> getKnowledge(String playerKey) {
         return knowledge.get(playerKey) == null || knowledge.get(playerKey).isEmpty() ? Collections.emptySet() : knowledge.get(playerKey);
     }
+
+    public void clearAllKnowledgeForOwner(String key) {
+        knowledge.remove(key);
+        setDirty();
+    }
+
+    public void clearAllKnowledge() {
+        knowledge.clear();
+        setDirty();
+    }
 }

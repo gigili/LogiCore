@@ -1,0 +1,19 @@
+{
+  "display": {
+	"icon": {
+	  "id": "logicore:processor_unit"
+	},
+	"title": "You have beautiful eyes!",
+	"description": "Mesmerizing they are!",
+	"frame": "challenge",
+	"show_toast": true,
+	"announce_to_chat": true,
+	"hidden": true
+  },
+  "criteria": {
+	"is_lashmak": {
+	  "trigger": "minecraft:impossible"
+	}
+  },
+  "parent": "logicore:root"
+}
