@@ -16,6 +16,7 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.context.BlockPlaceContext;
+import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.BaseEntityBlock;
 import net.minecraft.world.level.block.Block;
@@ -29,12 +30,31 @@ import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.level.block.state.properties.DirectionProperty;
 import net.minecraft.world.phys.BlockHitResult;
+import net.minecraft.world.phys.shapes.CollisionContext;
+import net.minecraft.world.phys.shapes.Shapes;
+import net.minecraft.world.phys.shapes.VoxelShape;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 public class CloudInterfaceBlock extends BaseEntityBlock {
     public static final MapCodec<ComputerBlock> CODEC = simpleCodec(ComputerBlock::new);
     public static final DirectionProperty FACING = BlockStateProperties.HORIZONTAL_FACING;
+    protected static final VoxelShape[] SHAPES = new VoxelShape[6];
+
+    static {
+        VoxelShape bottom = Block.box(0, 0, 0, 16, 4, 16);
+
+        VoxelShape middleNorth = Block.box(2, 4, 2, 14, 14, 14);
+        VoxelShape topNorth = Block.box(1, 14, 1, 15, 16, 15);
+
+        SHAPES[2] = Shapes.or(bottom, middleNorth, topNorth);
+        SHAPES[3] = Shapes.or(bottom, middleNorth, topNorth);
+        SHAPES[4] = Shapes.or(bottom, middleNorth, topNorth);
+        SHAPES[5] = Shapes.or(bottom, middleNorth, topNorth);
+
+        SHAPES[0] = SHAPES[2];
+        SHAPES[1] = SHAPES[2];
+    }
 
     protected CloudInterfaceBlock(Properties properties) {
         super(properties);
@@ -59,6 +79,11 @@ public class CloudInterfaceBlock extends BaseEntityBlock {
     @Override
     protected void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> builder) {
         builder.add(FACING);
+    }
+
+    @Override
+    protected @NotNull VoxelShape getShape(@NotNull BlockState state, @NotNull BlockGetter level, @NotNull BlockPos pos, @NotNull CollisionContext context) {
+        return SHAPES[state.getValue(FACING).get3DDataValue()];
     }
 
     @Nullable

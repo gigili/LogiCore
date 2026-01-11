@@ -8,7 +8,6 @@ import dev.gacbl.logicore.blocks.computer.ComputerLootTableProvider;
 import dev.gacbl.logicore.blocks.datacable.DataCableLootTableProvider;
 import dev.gacbl.logicore.blocks.datacenter.DataCenterControllerLootTableProvider;
 import dev.gacbl.logicore.blocks.datacenter.DatacenterPortLootTableProvider;
-import dev.gacbl.logicore.blocks.drone_bay.DroneBayLootTableProvider;
 import dev.gacbl.logicore.blocks.generator.GeneratorLootTableProvider;
 import dev.gacbl.logicore.blocks.research_station.ResearchStationLootTableProvider;
 import dev.gacbl.logicore.blocks.serverrack.ServerRackLootTableProvider;
@@ -48,7 +47,7 @@ public class DataGenerators {
                                 new LootTableProvider.SubProviderEntry(DataCenterControllerLootTableProvider::new, LootContextParamSets.BLOCK),
                                 new LootTableProvider.SubProviderEntry(DatacenterPortLootTableProvider::new, LootContextParamSets.BLOCK),
                                 new LootTableProvider.SubProviderEntry(CompilerLootTableProvider::new, LootContextParamSets.BLOCK),
-                                new LootTableProvider.SubProviderEntry(DroneBayLootTableProvider::new, LootContextParamSets.BLOCK),
+                                //new LootTableProvider.SubProviderEntry(DroneBayLootTableProvider::new, LootContextParamSets.BLOCK),
                                 new LootTableProvider.SubProviderEntry(CloudInterfaceLootTableProvider::new, LootContextParamSets.BLOCK),
                                 new LootTableProvider.SubProviderEntry(GeneratorLootTableProvider::new, LootContextParamSets.BLOCK),
                                 new LootTableProvider.SubProviderEntry(BatteryLootTableProvider::new, LootContextParamSets.BLOCK),

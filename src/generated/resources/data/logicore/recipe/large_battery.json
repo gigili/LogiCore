@@ -3,13 +3,13 @@
   "category": "redstone",
   "key": {
 	"G": {
-	  "item": "minecraft:gold_ingot"
+	  "item": "minecraft:diamond_block"
 	},
 	"P": {
 	  "item": "logicore:medium_battery"
 	},
 	"R": {
-	  "item": "minecraft:redstone"
+	  "item": "minecraft:redstone_block"
 	}
   },
   "pattern": [

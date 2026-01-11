@@ -12,8 +12,6 @@ import dev.gacbl.logicore.blocks.datacable.DataCableModule;
 import dev.gacbl.logicore.blocks.datacable.cable_network.NetworkManager;
 import dev.gacbl.logicore.blocks.datacenter.DatacenterModule;
 import dev.gacbl.logicore.blocks.datacenter_port.DatacenterPortModule;
-import dev.gacbl.logicore.blocks.drone_bay.DroneBayModule;
-import dev.gacbl.logicore.blocks.drone_bay.DroneBayRenderer;
 import dev.gacbl.logicore.blocks.generator.GeneratorModule;
 import dev.gacbl.logicore.blocks.generator.ui.GeneratorScreen;
 import dev.gacbl.logicore.blocks.research_station.ResearchStationBlockEntityRenderer;
@@ -25,16 +23,12 @@ import dev.gacbl.logicore.core.IntegrationUtils;
 import dev.gacbl.logicore.core.ModDataMaps;
 import dev.gacbl.logicore.core.MyCommands;
 import dev.gacbl.logicore.data.CreativeTabModule;
-import dev.gacbl.logicore.entity.drone.DroneEntity;
-import dev.gacbl.logicore.entity.drone.DroneModule;
 import dev.gacbl.logicore.entity.drone.client.DroneModel;
-import dev.gacbl.logicore.entity.drone.client.DroneRenderer;
 import dev.gacbl.logicore.items.processorunit.ProcessorUnitModule;
 import dev.gacbl.logicore.items.stack_upgrade.StackUpgradeModule;
 import dev.gacbl.logicore.items.wrench.WrenchModule;
 import dev.gacbl.logicore.network.PacketHandler;
 import guideme.Guide;
-import net.minecraft.client.renderer.entity.EntityRenderers;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
 import net.neoforged.api.distmarker.Dist;
@@ -78,11 +72,11 @@ public class LogiCore {
         DatacenterModule.register(modEventBus);
         DatacenterPortModule.register(modEventBus);
         CompilerModule.register(modEventBus);
-        DroneBayModule.register(modEventBus);
+        //DroneBayModule.register(modEventBus);
         GeneratorModule.register(modEventBus);
         CloudInterfaceModule.register(modEventBus);
         WrenchModule.register(modEventBus);
-        DroneModule.register(modEventBus);
+        //DroneModule.register(modEventBus);
         BatteryModule.register(modEventBus);
         StackUpgradeModule.register(modEventBus);
         ResearchStationModule.register(modEventBus);
@@ -121,7 +115,7 @@ public class LogiCore {
     public static class ClientModEvents {
         @SubscribeEvent
         public static void onClientSetup(FMLClientSetupEvent event) {
-            EntityRenderers.register(DroneModule.DRONE.get(), DroneRenderer::new);
+            //EntityRenderers.register(DroneModule.DRONE.get(), DroneRenderer::new);
         }
 
         @SubscribeEvent
@@ -140,7 +134,7 @@ public class LogiCore {
 
         @SubscribeEvent
         public static void registerRenderers(EntityRenderersEvent.RegisterRenderers event) {
-            event.registerBlockEntityRenderer(DroneBayModule.DRONE_BAY_BE.get(), DroneBayRenderer::new);
+            //event.registerBlockEntityRenderer(DroneBayModule.DRONE_BAY_BE.get(), DroneBayRenderer::new);
             event.registerBlockEntityRenderer(BatteryModule.BATTERY_BE.get(), BatteryFillRenderer::new);
         }
 
@@ -151,7 +145,7 @@ public class LogiCore {
 
         @SubscribeEvent
         public static void registerAttributes(EntityAttributeCreationEvent event) {
-            event.put(DroneModule.DRONE.get(), DroneEntity.createAttributes().build());
+            //event.put(DroneModule.DRONE.get(), DroneEntity.createAttributes().build());
         }
     }
 }

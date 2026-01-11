@@ -34,26 +34,31 @@ public class ResearchStationProvider implements IBlockComponentProvider, IServer
         tooltip.add(Component.translatable("tooltip.logicore.cycles_stored", Utils.formatValues(cyclesStored)));
         tooltip.add(Component.translatable("tooltip.logicore.cycles_demand", Utils.formatValues(cycles)));
         if (accessor.getServerData().contains("progress") && accessor.getServerData().contains("maxProgress")) {
-            long progress = accessor.getServerData().getLong("progress");
-            long maxProgress = accessor.getServerData().getLong("maxProgress");
+            int progress = 0;
+            int maxProgress = 0;
+
+            if (accessor.getServerData().contains("progress")) {
+                progress = accessor.getServerData().getInt("progress");
+            }
+            if (accessor.getServerData().contains("maxProgress")) {
+                maxProgress = accessor.getServerData().getInt("maxProgress");
+            }
 
             if (maxProgress > 0) {
-                float pgr = (float) progress / maxProgress;
+                float fillRatio = (float) progress / (float) maxProgress;
+                int percentage = (int) (fillRatio * 100);
 
-                Component text = Component.translatable("tooltip.logicore.research_progress",
-                        Utils.formatValues(progress),
-                        Utils.formatValues(maxProgress));
+                Component text = Component.translatable("tooltip.logicore.research_progress", percentage);
 
                 var style = IElementHelper.get().progressStyle()
                         .color(0xFF2196F3, 0xFF0B1F38)
                         .textColor(0xFFFFFFFF);
 
-                tooltip.add(IElementHelper.get().progress(pgr, text, style, BoxStyle.getNestedBox(), false));
-                return;
+                tooltip.add(IElementHelper.get().progress(fillRatio, text, style, BoxStyle.getNestedBox(), false));
             }
+        } else {
+            tooltip.add(Component.translatable("tooltip.logicore.no_research_in_progress"));
         }
-
-        tooltip.add(Component.literal("No research in progress"));
     }
 
     @Override

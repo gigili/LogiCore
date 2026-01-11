@@ -1,7 +1,6 @@
 package dev.gacbl.logicore.blocks.research_station;
 
 import com.mojang.serialization.MapCodec;
-import dev.gacbl.logicore.blocks.serverrack.ServerRackBlock;
 import dev.gacbl.logicore.items.processorunit.ProcessorUnitModule;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -37,7 +36,7 @@ import org.jetbrains.annotations.Nullable;
 public class ResearchStationBlock extends BaseEntityBlock {
     public static final VoxelShape SHAPE = Block.box(0.0D, 0.0D, 0.0D, 16.0D, 16.0D, 16.0D);
     public static final DirectionProperty FACING = BlockStateProperties.HORIZONTAL_FACING;
-    public static final MapCodec<ServerRackBlock> CODEC = simpleCodec(ServerRackBlock::new);
+    public static final MapCodec<ResearchStationBlock> CODEC = simpleCodec(ResearchStationBlock::new);
 
     protected ResearchStationBlock(Properties properties) {
         super(properties);

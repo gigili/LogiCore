@@ -6,7 +6,6 @@
 	"logicore:datacenter_controller",
 	"logicore:compiler",
 	"logicore:datacenter_port",
-	"logicore:drone_bay",
 	"logicore:generator",
 	"logicore:cloud_interface",
 	"logicore:small_battery",

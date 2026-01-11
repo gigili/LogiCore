@@ -175,6 +175,8 @@ public class CompilerBlockEntity extends BlockEntity implements ICycleConsumer, 
     public static void serverTick(Level level, BlockPos pos, BlockState state, CompilerBlockEntity be) {
         if (level.isClientSide) return;
 
+        boolean wasWorking = be.progress > 0;
+
         ItemStack template = be.itemHandler.getStackInSlot(INPUT_SLOT);
         if (template.isEmpty() || !CycleValueManager.hasCycleValue(template)) {
             if (be.progress > 0) {
@@ -218,6 +220,11 @@ public class CompilerBlockEntity extends BlockEntity implements ICycleConsumer, 
                 be.progress = 0;
                 be.setChanged();
             }
+        }
+
+        boolean isWorking = be.progress > 0;
+        if (wasWorking != isWorking) {
+            be.sendUpdatePacket();
         }
     }
 
@@ -319,5 +326,20 @@ public class CompilerBlockEntity extends BlockEntity implements ICycleConsumer, 
             rotation = 0;
         }
         return rotation;
+    }
+
+    public float getProgress(float partialTick) {
+        return (float) this.progress / (float) Math.max(1, this.maxProgress);
+    }
+
+    public boolean isWorking() {
+        return this.progress > 0 && this.currentCycles > 0;
+    }
+
+    private void sendUpdatePacket() {
+        setChanged();
+        if (level != null && !level.isClientSide) {
+            level.sendBlockUpdated(worldPosition, getBlockState(), getBlockState(), 3);
+        }
     }
 }

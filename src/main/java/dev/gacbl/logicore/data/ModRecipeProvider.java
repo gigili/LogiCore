@@ -7,11 +7,9 @@ import dev.gacbl.logicore.blocks.computer.ComputerBlock;
 import dev.gacbl.logicore.blocks.datacable.DataCableBlock;
 import dev.gacbl.logicore.blocks.datacenter.DatacenterControllerBlock;
 import dev.gacbl.logicore.blocks.datacenter_port.DatacenterPortBlock;
-import dev.gacbl.logicore.blocks.drone_bay.DroneBayBlock;
 import dev.gacbl.logicore.blocks.generator.GeneratorBlock;
 import dev.gacbl.logicore.blocks.research_station.ResearchStationBlock;
 import dev.gacbl.logicore.blocks.serverrack.ServerRackBlock;
-import dev.gacbl.logicore.entity.drone.DroneItem;
 import dev.gacbl.logicore.items.processorunit.ProcessorUnitItem;
 import dev.gacbl.logicore.items.processorunit.ProcessorUnitModule;
 import dev.gacbl.logicore.items.stack_upgrade.StackUpgradeItem;
@@ -47,8 +45,8 @@ public class ModRecipeProvider extends RecipeProvider implements IConditionBuild
         DatacenterControllerBlock.getRecipe().unlockedBy("has_processor", has(ProcessorUnitModule.PROCESSOR_UNIT.get())).save(recipeOutput);
         CompilerBlock.getRecipe().unlockedBy("has_processor", has(ProcessorUnitModule.PROCESSOR_UNIT.get())).save(recipeOutput);
         DatacenterPortBlock.getRecipe().unlockedBy("has_processor", has(ProcessorUnitModule.PROCESSOR_UNIT.get())).save(recipeOutput);
-        DroneBayBlock.getRecipe().unlockedBy("has_processor", has(ProcessorUnitModule.PROCESSOR_UNIT.get())).save(recipeOutput);
-        DroneItem.getRecipe().unlockedBy("has_processor", has(ProcessorUnitModule.PROCESSOR_UNIT.get())).save(recipeOutput);
+        //DroneBayBlock.getRecipe().unlockedBy("has_processor", has(ProcessorUnitModule.PROCESSOR_UNIT.get())).save(recipeOutput);
+        //DroneItem.getRecipe().unlockedBy("has_processor", has(ProcessorUnitModule.PROCESSOR_UNIT.get())).save(recipeOutput);
         GeneratorBlock.getRecipe().unlockedBy("has_processor", has(ProcessorUnitModule.PROCESSOR_UNIT.get())).save(recipeOutput);
         CloudInterfaceBlock.getRecipe().unlockedBy("has_processor", has(ProcessorUnitModule.PROCESSOR_UNIT.get())).save(recipeOutput);
         WrenchItem.getRecipe().unlockedBy("has_processor", has(ProcessorUnitModule.PROCESSOR_UNIT.get())).save(recipeOutput);
@@ -64,13 +62,15 @@ public class ModRecipeProvider extends RecipeProvider implements IConditionBuild
         BatteryModule.BLOCKS.getEntries().forEach(blockHolder -> {
             int i = index.getAndIncrement();
             ItemLike coreIngredient = (i == 0) ? ProcessorUnitModule.PROCESSOR_UNIT.get() : batteryItems.get(i - 1);
+            Item gold = (i == 0) ? Items.GOLD_INGOT : (i == 2) ? Items.DIAMOND_BLOCK : Items.GOLD_BLOCK;
+            Item redstone = (i == 0) ? Items.REDSTONE : Items.REDSTONE_BLOCK;
 
             ShapedRecipeBuilder.shaped(RecipeCategory.REDSTONE, blockHolder.get())
                     .pattern("RGR")
                     .pattern("GPG")
                     .pattern("RGR")
-                    .define('G', Items.GOLD_INGOT)
-                    .define('R', Items.REDSTONE)
+                    .define('G', gold)
+                    .define('R', redstone)
                     .define('P', coreIngredient)
                     .unlockedBy("has_core", has(coreIngredient))
                     .save(recipeOutput);

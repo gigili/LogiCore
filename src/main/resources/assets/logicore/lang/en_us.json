@@ -55,7 +55,7 @@
   "tooltip.logicore.items.not_researched": "Not researched",
   "tooltip.logicore.items.researched": "Researched",
   "tooltip.logicore.processors": "Processors: %s / %s",
-  "tooltip.logicore.research_progress": "Research progress: %s / %s",
+  "tooltip.logicore.research_progress": "Research progress: %s",
   "tooltip.logicore.ui.cloud_cycles": "Cloud Cycles: %s",
   "ui.tooltip.logicore.base_cycles_generation": "Base:",
   "ui.tooltip.logicore.cycles": "Cycles:",
@@ -65,5 +65,6 @@
   "ui.tooltip.logicore.cycles_storage": "%s / %s",
   "ui.tooltip.logicore.fe_per_tick": "Fe per tick:",
   "tooltip.logicore.battery_capacity": "Max capacity: %s FE",
-  "tooltip.logicore.battery_transfer_rate": "Max I/O: %s FE"
+  "tooltip.logicore.battery_transfer_rate": "Max I/O: %s FE",
+  "tooltip.logicore.no_research_in_progress": "No research in progress"
 }

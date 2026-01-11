@@ -9,9 +9,12 @@ import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderer;
 import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
+import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.inventory.InventoryMenu;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.state.BlockState;
 import net.neoforged.neoforge.energy.IEnergyStorage;
 import org.jetbrains.annotations.NotNull;
 import org.joml.Matrix4f;
@@ -32,10 +35,21 @@ public class BatteryFillRenderer implements BlockEntityRenderer<BaseBatteryEntit
         int currentEnergy = energyStorage.getEnergyStored();
         float fillRatio = (float) currentEnergy / maxEnergy;
 
+        TextureAtlasSprite sprite = Minecraft.getInstance()
+                .getTextureAtlas(InventoryMenu.BLOCK_ATLAS)
+                .apply(ResourceLocation.withDefaultNamespace("block/white_concrete"));
+
+        BlockPos pos = blockEntity.getBlockPos();
+        Level level = blockEntity.getLevel();
+
         for (Direction facing : Direction.values()) {
-            TextureAtlasSprite sprite = Minecraft.getInstance()
-                    .getTextureAtlas(InventoryMenu.BLOCK_ATLAS)
-                    .apply(ResourceLocation.withDefaultNamespace("block/white_concrete"));
+            if (level != null) {
+                BlockPos neighborPos = pos.relative(facing.getOpposite());
+                BlockState neighborState = level.getBlockState(neighborPos);
+                if (!neighborState.isAir()) {
+                    continue;
+                }
+            }
 
             poseStack.pushPose();
 
@@ -61,45 +75,36 @@ public class BatteryFillRenderer implements BlockEntityRenderer<BaseBatteryEntit
             if (fillRatio > 0) {
                 poseStack.translate(0.0D, 0.0D, -0.001D);
                 pose = poseStack.last().pose();
-                addQuad(pose, vertexConsumer, xMin, xMax, yBottomOffset, yMaxFilled, 0xff1fda60, 15728880, packedOverlay, sprite);
+                addQuad(pose, vertexConsumer, xMin, xMax, yBottomOffset, yMaxFilled, packedOverlay, sprite);
             }
 
             poseStack.popPose();
         }
     }
 
-    private void addQuad(Matrix4f pose, VertexConsumer vertexConsumer, float xMin, float xMax, float yMin, float yMax, int color, int light, int overlay, TextureAtlasSprite sprite) {
+    private void addQuad(Matrix4f pose, VertexConsumer vertexConsumer, float xMin, float xMax, float yMin, float yMax, int overlay, TextureAtlasSprite sprite) {
         float u0 = sprite.getU0();
         float u1 = sprite.getU1();
         float v0 = sprite.getV0();
         float v1 = sprite.getV1();
 
+        addVertex(pose, vertexConsumer, xMin, xMax, yMax, overlay, u0, u1, v1);
+        addVertex(pose, vertexConsumer, xMax, xMin, yMin, overlay, u1, u0, v0);
+    }
+
+    private void addVertex(Matrix4f pose, VertexConsumer vertexConsumer, float xMin, float xMax, float yMax, int overlay, float u0, float u1, float v1) {
         vertexConsumer.addVertex(pose, xMin, yMax, 0)
-                .setColor(color)
+                .setColor(0xff1fda60)
                 .setUv(u0, v1)
-                .setOverlay(overlay) // Added Overlay
-                .setLight(light)
+                .setOverlay(overlay)
+                .setLight(15728880)
                 .setNormal(0, 0, -1);
 
         vertexConsumer.addVertex(pose, xMax, yMax, 0)
-                .setColor(color)
+                .setColor(0xff1fda60)
                 .setUv(u1, v1)
-                .setOverlay(overlay) // Added Overlay
-                .setLight(light)
-                .setNormal(0, 0, -1);
-
-        vertexConsumer.addVertex(pose, xMax, yMin, 0)
-                .setColor(color)
-                .setUv(u1, v0)
-                .setOverlay(overlay) // Added Overlay
-                .setLight(light)
-                .setNormal(0, 0, -1);
-
-        vertexConsumer.addVertex(pose, xMin, yMin, 0)
-                .setColor(color)
-                .setUv(u0, v0)
-                .setOverlay(overlay) // Added Overlay
-                .setLight(light)
+                .setOverlay(overlay)
+                .setLight(15728880)
                 .setNormal(0, 0, -1);
     }
 }
