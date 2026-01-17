@@ -10,7 +10,7 @@ infrastructure, power management, and data processing.
 
 ### 💾 The Cycle System
 
-Every item in the world consists of data. LogiCore assigns a **Cycle Value** to items (similar to EMC).
+Every item in the world consists of data. LogiCore assigns a **Cycle Value** to items.
 
 - **Compiler:** The heart of your operation. It turns **Cycles** into any item that has a **Cycle** value attached to
   it.
@@ -61,12 +61,6 @@ Data requires energy.
 - **Power Consumption:** Certain machines (Server rack, Computer) require **Forge Energy (FE)** to generate **Cycles**.
 - **Generators:** Early-game power solutions to kickstart your digital empire.
 
-### 🤖 Automation Drones
-
-Deploy advanced AI entities to automate your world.
-
-- **Drone Bays:** Deploy and recharge drones to handle tasks autonomously.
-
 ### 📚 In-Game Guide
 
 Stuck? LogiCore includes a **Patchouli** guidebook and a **GuideME** guide, *"The Logic Index,"* which documents every
@@ -82,25 +76,28 @@ machine and mechanic.
 4. **Digitize:** Place simple items (Cobblestone, Dirt) into the Compiler to generate your first Cycles.
 5. **Expand:** As your Cycle count grows, construct a **Data Center** (7x7x7 or larger) using a **Datacenter Controller
    ** and **Data Cables** to expand your storage cap.
+6. Start researching items
+7. Connect with your AE2 system to get access to all the researched items
 
 -----
 
 ## 📸 Screenshots
 
 ![Max size datacenter multiblock](./assets/showcase_1.png)
+![All mod items and blocks](./assets/showcase_2.png)
 
 -----
 
 ## 📦 Dependencies
 
 * **Minecraft:** 1.21.1
-* **NeoForge:** Latest recommended version.
+* **NeoForge:** 21.1.215.
 * Optional dependencies / compatibilities:
     * **Patchouli**
     * **Jade**
     * **JEI** / **EMI**
     * **AE2**
-        * **GuidMe**
+  * **GuidMe**
 
 -----
 
