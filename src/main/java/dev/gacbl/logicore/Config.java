@@ -9,6 +9,7 @@ public class Config {
     //General
     public static final ModConfigSpec.ConfigValue<Boolean> ALLOW_JEI_DRAG;
     public static final ModConfigSpec.ConfigValue<Boolean> ENABLE_AE2_INTEGRATION;
+    public static final ModConfigSpec.ConfigValue<Boolean> RENDER_MACHINE_INFORMATION_IN_UI;
 
     //Server rack
     public static final ModConfigSpec.ConfigValue<Integer> SERVER_RACK_BASE_CYCLE_GENERATION;
@@ -60,11 +61,14 @@ public class Config {
         //<editor-fold desc="General">
         BUILDER.push("General");
         ALLOW_JEI_DRAG = BUILDER
-                .comment(" If items can be dragged from JEI into compiler")
+                .comment(" If items can be dragged from JEI/EMI into compiler. Works only for researched items")
                 .define("jei_drag", true);
         ENABLE_AE2_INTEGRATION = BUILDER
                 .comment(" Should the AE2 integration be allowed or not")
                 .define("ae2_integration", true);
+        RENDER_MACHINE_INFORMATION_IN_UI = BUILDER
+                .comment(" Should machine UIs show information about its process? Useful if you don't have jade/top/waila installed")
+                .define("render_machine_information_in_ui", true);
         BUILDER.pop();
         //</editor-fold>
 

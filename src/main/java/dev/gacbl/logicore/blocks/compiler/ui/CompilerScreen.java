@@ -1,52 +1,31 @@
 package dev.gacbl.logicore.blocks.compiler.ui;
 
-import dev.gacbl.logicore.LogiCore;
+import dev.gacbl.logicore.core.ui.MyAbstractContainerScreen;
 import dev.gacbl.logicore.network.payload.SetAutoCraftingTemplatePayload;
-import net.minecraft.ChatFormatting;
 import net.minecraft.client.gui.GuiGraphics;
-import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.ItemStack;
 import net.neoforged.neoforge.network.PacketDistributor;
-import org.jetbrains.annotations.NotNull;
 
-public class CompilerScreen extends AbstractContainerScreen<CompilerMenu> {
-    private static final ResourceLocation TEXTURE = ResourceLocation.fromNamespaceAndPath(LogiCore.MOD_ID, "textures/gui/compiler_ui.png");
-
-    public int getGuiLeft() {
-        return this.leftPos;
-    }
-
-    public int getGuiTop() {
-        return this.topPos;
-    }
+public class CompilerScreen extends MyAbstractContainerScreen<CompilerMenu> {
 
     public CompilerScreen(CompilerMenu menu, Inventory playerInventory, Component title) {
         super(menu, playerInventory, title);
-        this.imageWidth = 231;
-        this.imageHeight = 243;
-
+        setTexture("textures/gui/compiler_ui.png");
+        this.renderInventoryLabel = false;
         this.titleLabelX = leftPos + 90;
         this.titleLabelY = topPos + 14;
-
         this.inventoryLabelX = leftPos + 30;
         this.inventoryLabelY = topPos + 140;
     }
 
     @Override
-    public void render(GuiGraphics graphics, int mouseX, int mouseY, float partialTicks) {
-        super.render(graphics, mouseX, mouseY, partialTicks);
-        renderTooltip(graphics, mouseX, mouseY);
-    }
-
-    @Override
     protected void renderBg(GuiGraphics graphics, float partialTicks, int mouseX, int mouseY) {
+        super.renderBg(graphics, partialTicks, mouseX, mouseY);
         int x = (this.width - this.imageWidth) / 2;
         int y = (this.height - this.imageHeight) / 2;
-        graphics.blit(TEXTURE, x, y, 0, 0, imageWidth, imageHeight);
 
         int progress = menu.getProgress();
         int maxProgress = menu.getMaxProgress();
@@ -81,12 +60,6 @@ public class CompilerScreen extends AbstractContainerScreen<CompilerMenu> {
     }
 
     @Override
-    protected void renderLabels(@NotNull GuiGraphics graphics, int mouseX, int mouseY) {
-        graphics.drawString(this.font, this.title.copy().withStyle(ChatFormatting.BOLD), this.titleLabelX, this.titleLabelY, 10461087, true);
-        //graphics.drawString(this.font, this.playerInventoryTitle, this.inventoryLabelX, this.inventoryLabelY, 7303023, false);
-    }
-
-    @Override
     public boolean mouseClicked(double mouseX, double mouseY, int button) {
         Slot hovered = this.hoveredSlot;
 
@@ -94,7 +67,7 @@ public class CompilerScreen extends AbstractContainerScreen<CompilerMenu> {
             ItemStack carried = this.menu.getCarried();
 
             PacketDistributor.sendToServer(new SetAutoCraftingTemplatePayload(
-                    this.menu.blockEntity.getBlockPos(),
+                    this.menu.getBlockEntity().getBlockPos(),
                     carried
             ));
 

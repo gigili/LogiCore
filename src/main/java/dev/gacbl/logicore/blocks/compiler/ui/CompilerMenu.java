@@ -2,22 +2,21 @@ package dev.gacbl.logicore.blocks.compiler.ui;
 
 import dev.gacbl.logicore.blocks.compiler.CompilerBlockEntity;
 import dev.gacbl.logicore.blocks.compiler.CompilerModule;
+import dev.gacbl.logicore.core.ui.MyAbstractContainerMenu;
 import dev.gacbl.logicore.items.stack_upgrade.StackUpgradeItem;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.inventory.*;
+import net.minecraft.world.inventory.ContainerData;
+import net.minecraft.world.inventory.SimpleContainerData;
+import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.neoforged.neoforge.items.SlotItemHandler;
 import org.jetbrains.annotations.NotNull;
 
-public class CompilerMenu extends AbstractContainerMenu {
-    public final CompilerBlockEntity blockEntity;
-    private final ContainerData data;
-
+public class CompilerMenu extends MyAbstractContainerMenu {
     public static final int TEMPLATE_SLOT_INDEX = 36;
 
     public CompilerMenu(int containerId, Inventory playerInventory, BlockPos pos) {
@@ -25,16 +24,11 @@ public class CompilerMenu extends AbstractContainerMenu {
     }
 
     public CompilerMenu(int containerId, Inventory playerInventory, BlockEntity entity, ContainerData data) {
-        super(CompilerModule.COMPILER_MENU.get(), containerId);
-        this.blockEntity = (CompilerBlockEntity) entity;
-        this.data = data;
+        super(CompilerModule.COMPILER_MENU.get(), containerId, playerInventory, entity, data);
 
-        addPlayerInventory(playerInventory);
-        addPlayerHotbar(playerInventory);
-
-        this.addSlot(new SlotItemHandler(this.blockEntity.getItemHandler(null), 0, 72, 82) {
+        this.addSlot(new SlotItemHandler(((CompilerBlockEntity) this.blockEntity).getItemHandler(null), 0, 72, 82) {
             @Override
-            public boolean mayPickup(Player playerIn) {
+            public boolean mayPickup(@NotNull Player playerIn) {
                 return false;
             }
 
@@ -43,17 +37,13 @@ public class CompilerMenu extends AbstractContainerMenu {
                 return false;
             }
         });
-
-        this.addSlot(new SlotItemHandler(this.blockEntity.getItemHandler(null), 1, 144, 82) {
+        this.addSlot(new SlotItemHandler(((CompilerBlockEntity) this.blockEntity).getItemHandler(null), 1, 144, 82) {
             @Override
             public boolean mayPlace(@NotNull ItemStack stack) {
                 return false;
             }
         });
-
-        this.addSlot(new SlotItemHandler(this.blockEntity.getUpgradeItemHandler(null), 0, 108, 118));
-
-        addDataSlots(data);
+        this.addSlot(new SlotItemHandler(((CompilerBlockEntity) this.blockEntity).getUpgradeItemHandler(null), 0, 108, 118));
     }
 
     public CompilerMenu(int i, Inventory inventory, RegistryFriendlyByteBuf registryFriendlyByteBuf) {
@@ -62,9 +52,11 @@ public class CompilerMenu extends AbstractContainerMenu {
 
     @Override
     public @NotNull ItemStack quickMoveStack(@NotNull Player playerIn, int pIndex) {
+        super.quickMoveStack(playerIn, pIndex);
+
+        Slot sourceSlot = slots.get(pIndex);
         if (pIndex == 37 || pIndex == 38) {
-            Slot sourceSlot = slots.get(pIndex);
-            if (sourceSlot != null && sourceSlot.hasItem()) {
+            if (sourceSlot.hasItem()) {
                 ItemStack source = sourceSlot.getItem();
                 ItemStack copy = source.copy();
                 if (!moveItemStackTo(source, 0, 36, true)) return ItemStack.EMPTY;
@@ -72,8 +64,7 @@ public class CompilerMenu extends AbstractContainerMenu {
                 return copy;
             }
         } else {
-            Slot sourceSlot = slots.get(pIndex);
-            if (sourceSlot != null && sourceSlot.hasItem()) {
+            if (sourceSlot.hasItem()) {
                 ItemStack source = sourceSlot.getItem();
                 if (source.getItem() instanceof StackUpgradeItem) {
                     ItemStack copy = source.copy();
@@ -83,27 +74,8 @@ public class CompilerMenu extends AbstractContainerMenu {
                 }
             }
         }
+
         return ItemStack.EMPTY;
-    }
-
-    @Override
-    public boolean stillValid(@NotNull Player player) {
-        Level level = player.level();
-        return stillValid(ContainerLevelAccess.create(level, blockEntity.getBlockPos()), player, CompilerModule.COMPILER_BLOCK.get());
-    }
-
-    private void addPlayerInventory(Inventory playerInventory) {
-        for (int i = 0; i < 3; ++i) {
-            for (int l = 0; l < 9; ++l) {
-                this.addSlot(new Slot(playerInventory, l + i * 9 + 9, 36 + l * 18, 157 + i * 18));
-            }
-        }
-    }
-
-    private void addPlayerHotbar(Inventory playerInventory) {
-        for (int i = 0; i < 9; ++i) {
-            this.addSlot(new Slot(playerInventory, i, 36 + i * 18, 213));
-        }
     }
 
     public int getProgress() {
@@ -112,9 +84,5 @@ public class CompilerMenu extends AbstractContainerMenu {
 
     public int getMaxProgress() {
         return this.data.get(1);
-    }
-
-    public int getStackUpgradeCount() {
-        return this.data.get(2);
     }
 }

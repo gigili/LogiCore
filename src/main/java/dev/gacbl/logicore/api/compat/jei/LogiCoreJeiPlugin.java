@@ -72,7 +72,7 @@ public class LogiCoreJeiPlugin implements IModPlugin {
                         public void accept(@NotNull I ingredient) {
                             ItemStack stack = (ItemStack) ingredient;
                             PacketDistributor.sendToServer(new SetAutoCraftingTemplatePayload(
-                                    gui.getMenu().blockEntity.getBlockPos(),
+                                    gui.getMenu().getBlockEntity().getBlockPos(),
                                     stack
                             ));
                         }

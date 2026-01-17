@@ -39,7 +39,7 @@ public class LogiCoreEmiPlugin implements EmiPlugin {
                 if (stacks.isEmpty()) return false;
 
                 PacketDistributor.sendToServer(new SetAutoCraftingTemplatePayload(
-                        screen.getMenu().blockEntity.getBlockPos(),
+                        screen.getMenu().getBlockEntity().getBlockPos(),
                         stacks.getFirst().getItemStack()
                 ));
 

@@ -1,40 +1,38 @@
 package dev.gacbl.logicore.blocks.serverrack.ui;
 
-import dev.gacbl.logicore.LogiCore;
+import dev.gacbl.logicore.Config;
 import dev.gacbl.logicore.blocks.computer.ComputerBlockEntity;
 import dev.gacbl.logicore.core.Utils;
+import dev.gacbl.logicore.core.ui.MyAbstractContainerScreen;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.gui.GuiGraphics;
-import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Inventory;
 import org.jetbrains.annotations.NotNull;
 
-public class ServerRackScreen extends AbstractContainerScreen<ServerRackMenu> {
-    private static final ResourceLocation TEXTURE = ResourceLocation.fromNamespaceAndPath(LogiCore.MOD_ID, "textures/gui/server_rack_gui.png");
-
+public class ServerRackScreen extends MyAbstractContainerScreen<ServerRackMenu> {
     public ServerRackScreen(ServerRackMenu menu, Inventory playerInventory, Component title) {
         super(menu, playerInventory, title);
-        this.imageWidth = 231;
-        this.imageHeight = 243;
-
         this.titleLabelX = leftPos + 80;
         this.titleLabelY = topPos + 14;
+        setTexture("textures/gui/server_rack_gui.png");
+        renderInventoryLabel = false;
 
-        this.inventoryLabelX = leftPos + 30;
-        this.inventoryLabelY = topPos + 140;
+        if (menu.getBlockEntity() instanceof ComputerBlockEntity) {
+            this.titleLabelX = 87;
+        }
     }
 
     @Override
     protected void renderBg(GuiGraphics graphics, float partialTicks, int mouseX, int mouseY) {
-        int x = (this.width - this.imageWidth) / 2;
-        int y = (this.height - this.imageHeight) / 2;
-        graphics.blit(TEXTURE, x, y, 0, 0, 231, 243);
-
+        super.renderBg(graphics, partialTicks, mouseX, mouseY);
         renderMainPowerBar(graphics);
         renderSidePowerBarAnimation(graphics);
         renderSideHorizontalPowerBarAnimation(graphics);
+
+        if (Config.RENDER_MACHINE_INFORMATION_IN_UI.get()) {
+            renderDescription(graphics);
+        }
     }
 
     private void renderMainPowerBar(GuiGraphics graphics) {
@@ -141,22 +139,6 @@ public class ServerRackScreen extends AbstractContainerScreen<ServerRackMenu> {
     }
 
     @Override
-    public void render(@NotNull GuiGraphics graphics, int mouseX, int mouseY, float partialTicks) {
-        super.render(graphics, mouseX, mouseY, partialTicks);
-        this.renderTooltip(graphics, mouseX, mouseY);
-        renderDescription(graphics, mouseX, mouseY, partialTicks);
-    }
-
-    @Override
-    protected void renderLabels(@NotNull GuiGraphics graphics, int mouseX, int mouseY) {
-        if (menu.blockEntity instanceof ComputerBlockEntity) {
-            this.titleLabelX = 87;
-        }
-        graphics.drawString(this.font, this.title.copy().withStyle(ChatFormatting.BOLD), this.titleLabelX, this.titleLabelY, 10461087, true);
-        //graphics.drawString(this.font, this.playerInventoryTitle, this.inventoryLabelX, this.inventoryLabelY, 7303023, false);
-    }
-
-    @Override
     protected void renderTooltip(@NotNull GuiGraphics guiGraphics, int mouseX, int mouseY) {
         super.renderTooltip(guiGraphics, mouseX, mouseY);
 
@@ -170,7 +152,7 @@ public class ServerRackScreen extends AbstractContainerScreen<ServerRackMenu> {
         }
     }
 
-    private void renderDescription(@NotNull GuiGraphics graphics, int mouseX, int mouseY, float partialTicks) {
+    private void renderDescription(@NotNull GuiGraphics graphics) {
         int labelSectionX = leftPos + 60;
         int labelSectionY = topPos + 45;
         int textColor = 10461087;
@@ -178,7 +160,7 @@ public class ServerRackScreen extends AbstractContainerScreen<ServerRackMenu> {
         int cycles = this.menu.getCycles();
         int maxCycles = this.menu.getMaxCycles();
 
-        boolean isComputer = menu.blockEntity instanceof ComputerBlockEntity;
+        boolean isComputer = menu.getBlockEntity() instanceof ComputerBlockEntity;
 
         graphics.drawString(this.font, Component.translatable("ui.tooltip.logicore.cycles").plainCopy().withStyle(ChatFormatting.BOLD), labelSectionX, labelSectionY, textColor, false);
         graphics.drawString(this.font, Component.translatable("ui.tooltip.logicore.base_cycles_generation").plainCopy().withStyle(ChatFormatting.BOLD), labelSectionX + (isComputer ? 95 : 85), labelSectionY, textColor, false);

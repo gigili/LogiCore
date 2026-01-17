@@ -170,6 +170,11 @@ public class GeneratorBlockEntity extends BlockEntity implements MenuProvider {
                             setChanged(level, pos, state);
                         }
                     }
+                } else {
+                    be.burnDuration[i] = 0;
+                    be.maxBurnDuration[i] = 0;
+                    be.feGenerationRate[i] = 0;
+                    setChanged(level, pos, state);
                 }
             }
         }

@@ -54,6 +54,9 @@ public class ResearchStationProvider implements IBlockComponentProvider, IServer
                         .color(0xFF2196F3, 0xFF0B1F38)
                         .textColor(0xFFFFFFFF);
 
+                Component textTime = Component.translatable("tooltip.logicore.research_time", maxProgress / 20);
+                tooltip.add(textTime);
+
                 tooltip.add(IElementHelper.get().progress(fillRatio, text, style, BoxStyle.getNestedBox(), false));
             }
         } else {

@@ -56,6 +56,7 @@
   "tooltip.logicore.items.researched": "Researched",
   "tooltip.logicore.processors": "Processors: %s / %s",
   "tooltip.logicore.research_progress": "Research progress: %s",
+  "tooltip.logicore.research_time": "Research time: %ss",
   "tooltip.logicore.ui.cloud_cycles": "Cloud Cycles: %s",
   "ui.tooltip.logicore.base_cycles_generation": "Base:",
   "ui.tooltip.logicore.cycles": "Cycles:",

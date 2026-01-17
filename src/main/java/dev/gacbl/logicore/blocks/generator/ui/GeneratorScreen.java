@@ -1,35 +1,25 @@
 package dev.gacbl.logicore.blocks.generator.ui;
 
-import dev.gacbl.logicore.LogiCore;
 import dev.gacbl.logicore.core.Utils;
+import dev.gacbl.logicore.core.ui.MyAbstractContainerScreen;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.gui.GuiGraphics;
-import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Inventory;
 import org.jetbrains.annotations.NotNull;
 
-public class GeneratorScreen extends AbstractContainerScreen<GeneratorMenu> {
-    private static final ResourceLocation TEXTURE = ResourceLocation.fromNamespaceAndPath(LogiCore.MOD_ID, "textures/gui/generator_ui.png");
-
+public class GeneratorScreen extends MyAbstractContainerScreen<GeneratorMenu> {
     public GeneratorScreen(GeneratorMenu menu, Inventory playerInventory, Component title) {
         super(menu, playerInventory, title);
-        this.imageWidth = 231;
-        this.imageHeight = 243;
-
         this.titleLabelX = leftPos + 80;
         this.titleLabelY = topPos + 14;
-
-        this.inventoryLabelX = leftPos + 30;
-        this.inventoryLabelY = topPos + 140;
+        setTexture("textures/gui/generator_ui.png");
+        renderInventoryLabel = false;
     }
 
     @Override
     protected void renderBg(GuiGraphics graphics, float partialTicks, int mouseX, int mouseY) {
-        int x = (this.width - this.imageWidth) / 2;
-        int y = (this.height - this.imageHeight) / 2;
-        graphics.blit(TEXTURE, x, y, 0, 0, 231, 243);
+        super.renderBg(graphics, partialTicks, mouseX, mouseY);
 
         renderMainPowerBar(graphics);
         renderSidePowerBarAnimation(graphics);
@@ -165,19 +155,9 @@ public class GeneratorScreen extends AbstractContainerScreen<GeneratorMenu> {
     }
 
     @Override
-    public void render(@NotNull GuiGraphics graphics, int mouseX, int mouseY, float partialTicks) {
-        super.render(graphics, mouseX, mouseY, partialTicks);
-        this.renderTooltip(graphics, mouseX, mouseY);
-    }
-
-    @Override
-    protected void renderLabels(@NotNull GuiGraphics graphics, int mouseX, int mouseY) {
-        graphics.drawString(this.font, this.title.copy().withStyle(ChatFormatting.BOLD), this.titleLabelX, this.titleLabelY, 10461087, true);
-        //graphics.drawString(this.font, this.playerInventoryTitle, this.inventoryLabelX, this.inventoryLabelY, 7303023, false);
-    }
-
-    @Override
     protected void renderTooltip(@NotNull GuiGraphics guiGraphics, int mouseX, int mouseY) {
+        super.renderTooltip(guiGraphics, mouseX, mouseY);
+
         if (this.hoveredSlot != null && this.hoveredSlot.hasItem() && !hasShiftDown()) {
             guiGraphics.renderTooltip(this.font, this.hoveredSlot.getItem(), mouseX, mouseY);
             return;
@@ -199,22 +179,26 @@ public class GeneratorScreen extends AbstractContainerScreen<GeneratorMenu> {
             }
 
             guiGraphics.renderComponentTooltip(this.font, tooltip, mouseX, mouseY);
+            return;
         }
 
         if (hasShiftDown()) {
             if (mouseX >= leftPos + 90 && mouseY >= topPos + 103 && mouseX <= leftPos + 105 && mouseY <= topPos + 118) {
                 int genRate = this.menu.getCurrentGenerationRateForSlot(0);
-                guiGraphics.renderTooltip(this.font, Component.translatable("tooltip.logicore.generating_fe_per_tick", Utils.formatValues(genRate)).withStyle(ChatFormatting.GRAY), mouseX, mouseY);
+                guiGraphics.renderTooltip(this.font, Component.translatable("tooltip.logicore.generating_fe_per_tick", Utils.formatValues(genRate)).withStyle(ChatFormatting.GRAY), mouseX, mouseY - 12);
+                return;
             }
 
             if (mouseX >= leftPos + 108 && mouseY >= topPos + 103 && mouseX <= leftPos + 123 && mouseY <= topPos + 118) {
                 int genRate = this.menu.getCurrentGenerationRateForSlot(1);
-                guiGraphics.renderTooltip(this.font, Component.translatable("tooltip.logicore.generating_fe_per_tick", Utils.formatValues(genRate)).withStyle(ChatFormatting.GRAY), mouseX, mouseY);
+                guiGraphics.renderTooltip(this.font, Component.translatable("tooltip.logicore.generating_fe_per_tick", Utils.formatValues(genRate)).withStyle(ChatFormatting.GRAY), mouseX, mouseY - 12);
+                return;
             }
 
             if (mouseX >= leftPos + 126 && mouseY >= topPos + 103 && mouseX <= leftPos + 141 && mouseY <= topPos + 118) {
                 int genRate = this.menu.getCurrentGenerationRateForSlot(2);
-                guiGraphics.renderTooltip(this.font, Component.translatable("tooltip.logicore.generating_fe_per_tick", Utils.formatValues(genRate)).withStyle(ChatFormatting.GRAY), mouseX, mouseY);
+                guiGraphics.renderTooltip(this.font, Component.translatable("tooltip.logicore.generating_fe_per_tick", Utils.formatValues(genRate)).withStyle(ChatFormatting.GRAY), mouseX, mouseY - 12);
+                return;
             }
             return;
         }

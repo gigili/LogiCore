@@ -49,7 +49,7 @@ public class ResearchStationBlockEntity extends BlockEntity implements MenuProvi
 
     public void setOwner(UUID owner) {
         this.ownerUUID = owner;
-        setChanged();    
+        setChanged();
     }
 
     public UUID getOwner() {
@@ -109,7 +109,11 @@ public class ResearchStationBlockEntity extends BlockEntity implements MenuProvi
     protected final ContainerData data = new ContainerData() {
         @Override
         public int get(int index) {
-            return 0;
+            return switch (index) {
+                case 0 -> ResearchStationBlockEntity.this.progress;
+                case 1 -> ResearchStationBlockEntity.this.maxProgress;
+                default -> 0;
+            };
         }
 
         @Override
@@ -118,7 +122,7 @@ public class ResearchStationBlockEntity extends BlockEntity implements MenuProvi
 
         @Override
         public int getCount() {
-            return 3;
+            return 2;
         }
     };
 
