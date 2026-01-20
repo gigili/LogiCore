@@ -1,0 +1,22 @@
+{
+  "name": "Recycler Enchantment",
+  "icon": "minecraft:enchanted_book",
+  "category": "logicore:architecture_category",
+  "pages": [
+	{
+	  "type": "patchouli:text",
+	  "title": "Recycler",
+	  "text": "The $(l)Recycler$() is a custom enchantment that can be applied to mining tools, most notably the $(l:logicore:components/cycle_pick)Cycle Pickaxe$().$(br)$(br)When a block with an assigned $(l:logicore:architecture/cycles)Cycle Value$() is mined, it is instantly converted into Cycles and added to your cloud storage instead of dropping as an item."
+	},
+	{
+	  "type": "patchouli:text",
+	  "title": "Usage & Mechanics",
+	  "text": "The Recycler respects $(l)Fortune$() and $(l)Looting$() enchantments, increasing the cycle yield accordingly.$(br)$(br)If you wish to obtain the block itself, hold $(l)Shift$() while mining to bypass the recycling process."
+	},
+	{
+	  "type": "patchouli:text",
+	  "title": "Recycler Blacklist",
+	  "text": "Some blocks are protected from the Recycler to prevent accidental destruction of critical infrastructure. This is managed via the $(l)logicore:recycler_blacklist$() block tag.$(br)$(br)By default, all LogiCore machines and components are blacklisted."
+	}
+  ]
+}

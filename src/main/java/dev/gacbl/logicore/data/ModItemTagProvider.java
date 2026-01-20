@@ -1,6 +1,7 @@
 package dev.gacbl.logicore.data;
 
 import dev.gacbl.logicore.LogiCore;
+import dev.gacbl.logicore.items.pickaxe.CyclePickModule;
 import dev.gacbl.logicore.items.wrench.WrenchModule;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.data.PackOutput;
@@ -22,5 +23,8 @@ public class ModItemTagProvider extends ItemTagsProvider {
     @Override
     protected void addTags(HolderLookup.@NotNull Provider provider) {
         tag(ItemTags.create(ResourceLocation.fromNamespaceAndPath("c", "tools/wrench"))).add(WrenchModule.WRENCH.get());
+        tag(ItemTags.PICKAXES).add(CyclePickModule.CYCLE_PICK.get());
+        tag(ItemTags.create(ResourceLocation.withDefaultNamespace("enchantable/mining_tool"))).add(CyclePickModule.CYCLE_PICK.get());
+        tag(ItemTags.create(ResourceLocation.withDefaultNamespace("enchantable/durability"))).add(CyclePickModule.CYCLE_PICK.get());
     }
 }

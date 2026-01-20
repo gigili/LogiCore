@@ -1,0 +1,24 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "redstone",
+  "key": {
+	"D": {
+	  "tag": "c:gems/diamond"
+	},
+	"P": {
+	  "item": "logicore:processor_unit"
+	},
+	"S": {
+	  "tag": "c:rods/wooden"
+	}
+  },
+  "pattern": [
+	"DPD",
+	" S ",
+	" S "
+  ],
+  "result": {
+	"count": 1,
+	"id": "logicore:cycle_pick"
+  }
+}

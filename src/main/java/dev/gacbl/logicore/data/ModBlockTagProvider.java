@@ -118,6 +118,21 @@ public class ModBlockTagProvider extends BlockTagsProvider {
         tag(BlockTags.create(ResourceLocation.fromNamespaceAndPath("mekanism", "cardboard_blacklist"))).add(ResearchStationModule.RESEARCH_STATION.get());
 
         setupOptionalTags();
+
+        tag(ModTags.Blocks.RECYCLER_BLACKLIST)
+                .add(ServerRackModule.SERVER_RACK_BLOCK.get())
+                .add(DataCableModule.DATA_CABLE_BLOCK.get())
+                .add(ComputerModule.COMPUTER_BLOCK.get())
+                .add(DatacenterModule.DATACENTER_CONTROLLER.get())
+                .add(CompilerModule.COMPILER_BLOCK.get())
+                .add(DatacenterPortModule.DATACENTER_PORT.get())
+                .add(GeneratorModule.GENERATOR.get())
+                .add(CloudInterfaceModule.CLOUD_INTERFACE.get())
+                .add(ResearchStationModule.RESEARCH_STATION.get());
+
+        BatteryModule.BLOCKS.getEntries().forEach(blockHolder -> {
+            tag(ModTags.Blocks.RECYCLER_BLACKLIST).add(blockHolder.get());
+        });
     }
 
     private void setupOptionalTags() {

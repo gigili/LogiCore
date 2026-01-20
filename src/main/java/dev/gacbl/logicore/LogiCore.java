@@ -24,6 +24,7 @@ import dev.gacbl.logicore.core.ModDataMaps;
 import dev.gacbl.logicore.core.MyCommands;
 import dev.gacbl.logicore.data.CreativeTabModule;
 import dev.gacbl.logicore.entity.drone.client.DroneModel;
+import dev.gacbl.logicore.items.pickaxe.CyclePickModule;
 import dev.gacbl.logicore.items.processorunit.ProcessorUnitModule;
 import dev.gacbl.logicore.items.stack_upgrade.StackUpgradeModule;
 import dev.gacbl.logicore.items.wrench.WrenchModule;
@@ -80,6 +81,7 @@ public class LogiCore {
         BatteryModule.register(modEventBus);
         StackUpgradeModule.register(modEventBus);
         ResearchStationModule.register(modEventBus);
+        CyclePickModule.register(modEventBus);
 
         IntegrationUtils.registerEvents();
         PacketHandler.register(modEventBus);
@@ -127,14 +129,10 @@ public class LogiCore {
         }
 
         @SubscribeEvent
-        public static void registerBER(EntityRenderersEvent.RegisterRenderers event) {
-            event.registerBlockEntityRenderer(CompilerModule.COMPILER_BLOCK_ENTITY.get(), CompilerBlockEntityRenderer::new);
-            event.registerBlockEntityRenderer(ResearchStationModule.RESEARCH_STATION_BE.get(), ResearchStationBlockEntityRenderer::new);
-        }
-
-        @SubscribeEvent
         public static void registerRenderers(EntityRenderersEvent.RegisterRenderers event) {
             //event.registerBlockEntityRenderer(DroneBayModule.DRONE_BAY_BE.get(), DroneBayRenderer::new);
+            event.registerBlockEntityRenderer(CompilerModule.COMPILER_BLOCK_ENTITY.get(), CompilerBlockEntityRenderer::new);
+            event.registerBlockEntityRenderer(ResearchStationModule.RESEARCH_STATION_BE.get(), ResearchStationBlockEntityRenderer::new);
             event.registerBlockEntityRenderer(BatteryModule.BATTERY_BE.get(), BatteryFillRenderer::new);
         }
 

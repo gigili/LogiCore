@@ -11,6 +11,7 @@ import dev.gacbl.logicore.blocks.datacenter_port.DatacenterPortModule;
 import dev.gacbl.logicore.blocks.generator.GeneratorModule;
 import dev.gacbl.logicore.blocks.research_station.ResearchStationModule;
 import dev.gacbl.logicore.blocks.serverrack.ServerRackModule;
+import dev.gacbl.logicore.items.pickaxe.CyclePickModule;
 import dev.gacbl.logicore.items.processorunit.ProcessorUnitModule;
 import dev.gacbl.logicore.items.stack_upgrade.StackUpgradeModule;
 import dev.gacbl.logicore.items.wrench.WrenchModule;
@@ -29,6 +30,7 @@ public class ModItemModelProvider extends ItemModelProvider {
         basicItem(ProcessorUnitModule.PROCESSOR_UNIT.get());
         basicItem(WrenchModule.WRENCH.get());
         basicItem(StackUpgradeModule.STACK_UPGRADE.get());
+        basicItem(CyclePickModule.CYCLE_PICK.get());
 
         withExistingParent(CompilerModule.COMPILER_ITEM.getId().getPath(), "logicore:block/" + CompilerModule.COMPILER_ITEM.getId().getPath());
         withExistingParent(ComputerModule.COMPUTER_ITEM.getId().getPath(), "logicore:block/" + ComputerModule.COMPUTER_ITEM.getId().getPath());

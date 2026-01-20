@@ -11,6 +11,7 @@ import dev.gacbl.logicore.blocks.datacenter_port.DatacenterPortModule;
 import dev.gacbl.logicore.blocks.generator.GeneratorModule;
 import dev.gacbl.logicore.blocks.research_station.ResearchStationModule;
 import dev.gacbl.logicore.blocks.serverrack.ServerRackModule;
+import dev.gacbl.logicore.items.pickaxe.CyclePickModule;
 import dev.gacbl.logicore.items.processorunit.ProcessorUnitModule;
 import dev.gacbl.logicore.items.stack_upgrade.StackUpgradeModule;
 import dev.gacbl.logicore.items.wrench.WrenchModule;
@@ -47,6 +48,7 @@ public class CreativeTabModule {
                         output.accept(BatteryModule.BATTERY_LARGE.get());
                         output.accept(StackUpgradeModule.STACK_UPGRADE.get());
                         output.accept(ResearchStationModule.RESEARCH_STATION.get());
+                        output.accept(CyclePickModule.CYCLE_PICK.get());
                     })
                     .build());
 

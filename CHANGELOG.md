@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.0.2
+
+- Added `Recycler` enchantment
+- Added `logicore:recycler_blacklist` tag to prevent `Recycler` enchantment from recycling certain blocks
+- Added Cycle pick pickaxe
+
 ## 0.0.1
 
 - Initial release

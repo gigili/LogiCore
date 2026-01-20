@@ -1,0 +1,18 @@
+{
+  "name": "Cycle Pickaxe",
+  "icon": "logicore:cycle_pick",
+  "category": "logicore:components_category",
+  "pages": [
+	{
+	  "type": "patchouli:spotlight",
+	  "item": "logicore:cycle_pick",
+	  "title": "Cycle Pickaxe",
+	  "text": "The Cycle Pickaxe is a high-performance mining tool designed for efficiency. It features exceptional durability and mining speed, making it superior to most conventional tools.$(br)$(br)Its true potential is unlocked when enchanted with the $(l:logicore:architecture/recycler)Recycler$() enchantment."
+	},
+	{
+	  "type": "patchouli:crafting",
+	  "recipe": "logicore:cycle_pick",
+	  "text": ""
+	}
+  ]
+}

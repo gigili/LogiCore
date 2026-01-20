@@ -1,0 +1,16 @@
+{
+  "values": [
+	"logicore:server_rack",
+	"logicore:data_cable",
+	"logicore:computer",
+	"logicore:datacenter_controller",
+	"logicore:compiler",
+	"logicore:datacenter_port",
+	"logicore:generator",
+	"logicore:cloud_interface",
+	"logicore:research_station",
+	"logicore:small_battery",
+	"logicore:medium_battery",
+	"logicore:large_battery"
+  ]
+}

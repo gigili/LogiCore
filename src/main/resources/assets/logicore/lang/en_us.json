@@ -34,6 +34,9 @@
   "errors.logicore.multiblock.too_large_or_open": "Invalid structure: It's not a valid size or not complete",
   "errors.logicore.multiblock.too_small": "Invalid structure: It's too small",
   "item.logicore.compiler": "Compiler",
+  "item.logicore.cycle_pick": "Cycle Pickaxe",
+  "enchantment.logicore.recycler": "Recycler",
+  "enchantment.logicore.recycler.desc": "Mined blocks with a cycle value are directly added to your cloud storage. Hold Shift to disable.",
   "item.logicore.drone": "Drone",
   "item.logicore.processor_unit": "Processor unit",
   "item.logicore.stack_upgrade": "Stack upgrade",
@@ -43,6 +46,8 @@
   "message.logicore.drone_died_at": "Drone %s died at %s",
   "sounds.logicore.datacenter.ambient": "Datacenter hum",
   "tooltip.item.logicore.stack_upgrade": "Increases number of compiled items and cost by 4",
+  "tooltip.logicore.battery_capacity": "Max capacity: %s FE",
+  "tooltip.logicore.battery_transfer_rate": "Max I/O: %s FE",
   "tooltip.logicore.compiler.stack_upgrades_max": "Stack upgrades: %s / %s",
   "tooltip.logicore.cycles": "Cycles: %s / %s C",
   "tooltip.logicore.cycles_demand": "Cycle demand: %s",
@@ -54,6 +59,7 @@
   "tooltip.logicore.items.cycles": "%s cycles",
   "tooltip.logicore.items.not_researched": "Not researched",
   "tooltip.logicore.items.researched": "Researched",
+  "tooltip.logicore.no_research_in_progress": "No research in progress",
   "tooltip.logicore.processors": "Processors: %s / %s",
   "tooltip.logicore.research_progress": "Research progress: %s",
   "tooltip.logicore.research_time": "Research time: %ss",
@@ -64,8 +70,5 @@
   "ui.tooltip.logicore.cycles_modifier": "Modifier:",
   "ui.tooltip.logicore.cycles_produced": "Produced:",
   "ui.tooltip.logicore.cycles_storage": "%s / %s",
-  "ui.tooltip.logicore.fe_per_tick": "Fe per tick:",
-  "tooltip.logicore.battery_capacity": "Max capacity: %s FE",
-  "tooltip.logicore.battery_transfer_rate": "Max I/O: %s FE",
-  "tooltip.logicore.no_research_in_progress": "No research in progress"
+  "ui.tooltip.logicore.fe_per_tick": "Fe per tick:"
 }
