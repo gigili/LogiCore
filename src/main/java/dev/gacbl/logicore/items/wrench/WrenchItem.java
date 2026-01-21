@@ -9,6 +9,7 @@ import net.minecraft.data.recipes.ShapedRecipeBuilder;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
+import net.minecraft.tags.ItemTags;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
@@ -30,9 +31,9 @@ public class WrenchItem extends Item {
                 .pattern(" QP")
                 .pattern(" SI")
                 .pattern("S  ")
-                .define('S', Items.STICK)
+                .define('S', ItemTags.create(ResourceLocation.fromNamespaceAndPath("c", "rods/wooden")))
                 .define('I', Items.IRON_INGOT)
-                .define('Q', Items.QUARTZ)
+                .define('Q', ItemTags.create(ResourceLocation.fromNamespaceAndPath("c", "gems/quartz")))
                 .define('P', ProcessorUnitModule.PROCESSOR_UNIT.get());
     }
 

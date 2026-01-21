@@ -23,7 +23,7 @@ public class ServerRackMenu extends MyAbstractContainerMenu {
 
     public ServerRackMenu(int containerId, Inventory playerInventory, BlockEntity entity, ContainerData data) {
         super(ServerRackModule.SERVER_RACK_MENU.get(), containerId, playerInventory, entity, data);
-        ServerRackMenu.TE_INVENTORY_SLOT_COUNT = 9;
+        this.TE_INVENTORY_SLOT_COUNT = 9;
         int slotSize = 18;
         int startX = 36;
         int startY = 133;
@@ -33,6 +33,11 @@ public class ServerRackMenu extends MyAbstractContainerMenu {
                 @Override
                 public boolean mayPlace(@NotNull ItemStack stack) {
                     return stack.is(ProcessorUnitModule.PROCESSOR_UNIT.get());
+                }
+
+                @Override
+                public int getMaxStackSize() {
+                    return 1;
                 }
             });
         }
@@ -51,32 +56,34 @@ public class ServerRackMenu extends MyAbstractContainerMenu {
             ItemStack slotStack = slot.getItem();
             itemstack = slotStack.copy();
 
-            int playerInvStart = TE_INVENTORY_SLOT_COUNT;
-            int playerInvEnd = playerInvStart + 27; // 3 rows
-            int playerHotbarEnd = playerInvEnd + 9;
+            // 0-35 is Player Inventory
+            // 36-44 is Server Rack Inventory
+            int rackStartIndex = 36;
+            int rackEndIndex = 36 + TE_INVENTORY_SLOT_COUNT; // 45
 
-            if (index < playerInvStart) {
-                // Trying to move item from rack to player inventory
-                if (!this.moveItemStackTo(slotStack, playerInvStart, playerHotbarEnd, true)) {
-                    return ItemStack.EMPTY;
-                }
-                slot.onQuickCraft(slotStack, itemstack);
-            } else {
-                // Trying to move item from player inventory to rack
+            if (index < rackStartIndex) {
+                // We are in Player Inventory (0-35)
+                // Try to move ProcessorUnits to the Rack
                 if (slotStack.is(ProcessorUnitModule.PROCESSOR_UNIT.get())) {
-                    if (!this.moveItemStackTo(slotStack, 0, playerInvStart, false)) {
+                    if (!this.moveItemStackTo(slotStack, rackStartIndex, rackEndIndex, false)) {
                         return ItemStack.EMPTY;
                     }
-                } else if (index < playerInvEnd) {
-                    // Move from the main inventory to the hotbar
-                    if (!this.moveItemStackTo(slotStack, playerInvEnd, playerHotbarEnd, false)) {
-                        return ItemStack.EMPTY;
+                } else if (index < 27) { // 0-26 is Hotbar + partial main?
+                    // Hotbar is 0-8, Main Inv is 9-35
+                    if (index < 9) { // Hotbar -> Main Inv
+                        if (!this.moveItemStackTo(slotStack, 9, 36, false)) {
+                            return ItemStack.EMPTY;
+                        }
+                    } else { // Main Inv -> Hotbar
+                        if (!this.moveItemStackTo(slotStack, 0, 9, false)) {
+                            return ItemStack.EMPTY;
+                        }
                     }
-                } else if (index < playerHotbarEnd) {
-                    // Move from the hotbar to the main inventory
-                    if (!this.moveItemStackTo(slotStack, playerInvStart, playerInvEnd, false)) {
-                        return ItemStack.EMPTY;
-                    }
+                }
+            } else {
+                // We are in the Rack (36-44) -> Move to Player Inventory
+                if (!this.moveItemStackTo(slotStack, 0, 36, true)) {
+                    return ItemStack.EMPTY;
                 }
             }
 

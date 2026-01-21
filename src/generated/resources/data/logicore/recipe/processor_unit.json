@@ -9,7 +9,7 @@
 	  "item": "minecraft:iron_ingot"
     },
     "Q": {
-      "item": "minecraft:quartz"
+	  "tag": "c:gems/quartz"
     },
     "R": {
       "item": "minecraft:redstone"

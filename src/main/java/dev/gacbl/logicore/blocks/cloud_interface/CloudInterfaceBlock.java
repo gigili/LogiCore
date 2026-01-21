@@ -14,7 +14,6 @@ import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.Items;
 import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
@@ -51,7 +50,7 @@ public class CloudInterfaceBlock extends BaseEntityBlock {
                 .pattern("PPP")
                 .pattern("NRN")
                 .define('N', ItemTags.create(ResourceLocation.fromNamespaceAndPath("c", "ender_pearls")))
-                .define('R', Items.REDSTONE)
+                .define('R', ItemTags.create(ResourceLocation.fromNamespaceAndPath("c", "dusts/redstons")))
                 .define('P', ProcessorUnitModule.PROCESSOR_UNIT.get());
     }
 

@@ -6,6 +6,8 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.data.recipes.RecipeCategory;
 import net.minecraft.data.recipes.ShapedRecipeBuilder;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.tags.ItemTags;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.level.Level;
@@ -35,7 +37,7 @@ public class DatacenterPortBlock extends BaseEntityBlock {
                 .pattern("RPR")
                 .pattern("III")
                 .define('I', Items.IRON_INGOT)
-                .define('R', Items.REDSTONE)
+                .define('R', ItemTags.create(ResourceLocation.fromNamespaceAndPath("c", "dusts/redstons")))
                 .define('P', ProcessorUnitModule.PROCESSOR_UNIT.get());
     }
 

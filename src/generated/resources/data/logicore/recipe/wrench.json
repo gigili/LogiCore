@@ -9,7 +9,7 @@
 	  "item": "logicore:processor_unit"
 	},
 	"Q": {
-	  "item": "minecraft:quartz"
+	  "tag": "c:gems/quartz"
 	},
 	"S": {
 	  "item": "minecraft:stick"

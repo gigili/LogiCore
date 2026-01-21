@@ -25,24 +25,26 @@ public class CompilerMenu extends MyAbstractContainerMenu {
 
     public CompilerMenu(int containerId, Inventory playerInventory, BlockEntity entity, ContainerData data) {
         super(CompilerModule.COMPILER_MENU.get(), containerId, playerInventory, entity, data);
+        this.TE_INVENTORY_SLOT_COUNT = 3;
 
         this.addSlot(new SlotItemHandler(((CompilerBlockEntity) this.blockEntity).getItemHandler(null), 0, 72, 82) {
             @Override
             public boolean mayPickup(@NotNull Player playerIn) {
                 return false;
             }
-
             @Override
             public boolean mayPlace(@NotNull ItemStack stack) {
                 return false;
             }
         });
+
         this.addSlot(new SlotItemHandler(((CompilerBlockEntity) this.blockEntity).getItemHandler(null), 1, 144, 82) {
             @Override
             public boolean mayPlace(@NotNull ItemStack stack) {
                 return false;
             }
         });
+
         this.addSlot(new SlotItemHandler(((CompilerBlockEntity) this.blockEntity).getUpgradeItemHandler(null), 0, 108, 118));
     }
 
@@ -52,30 +54,43 @@ public class CompilerMenu extends MyAbstractContainerMenu {
 
     @Override
     public @NotNull ItemStack quickMoveStack(@NotNull Player playerIn, int pIndex) {
-        super.quickMoveStack(playerIn, pIndex);
-
+        ItemStack sourceStack = ItemStack.EMPTY;
         Slot sourceSlot = slots.get(pIndex);
-        if (pIndex == 37 || pIndex == 38) {
-            if (sourceSlot.hasItem()) {
-                ItemStack source = sourceSlot.getItem();
-                ItemStack copy = source.copy();
-                if (!moveItemStackTo(source, 0, 36, true)) return ItemStack.EMPTY;
-                sourceSlot.onTake(playerIn, source);
-                return copy;
-            }
-        } else {
-            if (sourceSlot.hasItem()) {
-                ItemStack source = sourceSlot.getItem();
-                if (source.getItem() instanceof StackUpgradeItem) {
-                    ItemStack copy = source.copy();
-                    if (!moveItemStackTo(source, 38, 39, true)) return ItemStack.EMPTY;
-                    sourceSlot.onTake(playerIn, source);
-                    return copy;
+
+        if (sourceSlot.hasItem()) {
+            ItemStack copyStack = sourceSlot.getItem();
+            sourceStack = copyStack.copy();
+
+            // Player Inventory (0-35)
+            if (pIndex < 36) {
+                // If it's a StackUpgrade, try to move to Slot 38 (The Upgrade Slot)
+                if (sourceStack.getItem() instanceof StackUpgradeItem) {
+                    if (!moveItemStackTo(sourceStack, 38, 39, false)) {
+                        return ItemStack.EMPTY;
+                    }
                 }
             }
+            // Custom Slots (36, 37, 38) -> Move to Player Inventory
+            else {
+                if (!moveItemStackTo(sourceStack, 0, 36, true)) {
+                    return ItemStack.EMPTY;
+                }
+            }
+
+            if (sourceStack.getCount() == 0) {
+                sourceSlot.set(ItemStack.EMPTY);
+            } else {
+                sourceSlot.setChanged();
+            }
+
+            if (sourceStack.getCount() == copyStack.getCount()) {
+                return ItemStack.EMPTY;
+            }
+
+            sourceSlot.onTake(playerIn, sourceStack);
         }
 
-        return ItemStack.EMPTY;
+        return sourceStack;
     }
 
     public int getProgress() {

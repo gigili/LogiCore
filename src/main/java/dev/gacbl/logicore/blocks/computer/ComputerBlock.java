@@ -10,7 +10,6 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.ItemTags;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.item.Items;
 import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
@@ -62,10 +61,11 @@ public class ComputerBlock extends BaseEntityBlock {
     public static ShapedRecipeBuilder getRecipe() {
         return ShapedRecipeBuilder.shaped(RecipeCategory.REDSTONE, ComputerModule.COMPUTER_BLOCK.get())
                 .pattern("RNR")
-                .pattern("NPN")
+                .pattern("EPE")
                 .pattern("RNR")
-                .define('N', ItemTags.create(ResourceLocation.fromNamespaceAndPath("c", "ender_pearls")))
-                .define('R', Items.REDSTONE)
+                .define('N', ItemTags.create(ResourceLocation.fromNamespaceAndPath("c", "gems/quartz")))
+                .define('R', ItemTags.create(ResourceLocation.fromNamespaceAndPath("c", "dusts/redstons")))
+                .define('E', ItemTags.create(ResourceLocation.fromNamespaceAndPath("c", "ender_pearls")))
                 .define('P', ProcessorUnitModule.PROCESSOR_UNIT.get());
     }
 

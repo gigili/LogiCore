@@ -1,5 +1,14 @@
 # Changelog
 
+## 0.0.3
+
+- Fixed recipes
+  - so that `Server Rack` is more expensive than `Computer`
+  - so that Quartz uses a tag
+  - so that Redstone uses a tag
+- Fixed a crash with `Compiler` menu and shift + click
+- Fixed shift click in and out of UI in general
+
 ## 0.0.2
 
 - Added `Recycler` enchantment

@@ -2,6 +2,8 @@ package dev.gacbl.logicore.items.processorunit;
 
 import net.minecraft.data.recipes.RecipeCategory;
 import net.minecraft.data.recipes.ShapedRecipeBuilder;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.tags.ItemTags;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.Items;
 
@@ -17,7 +19,7 @@ public class ProcessorUnitItem extends Item {
                 .pattern("RQR")
                 .define('I', Items.IRON_INGOT)
                 .define('G', Items.GOLD_INGOT)
-                .define('R', Items.REDSTONE)
-                .define('Q', Items.QUARTZ);
+                .define('R', ItemTags.create(ResourceLocation.fromNamespaceAndPath("c", "dusts/redstons")))
+                .define('Q', ItemTags.create(ResourceLocation.fromNamespaceAndPath("c", "gems/quartz")));
     }
 }

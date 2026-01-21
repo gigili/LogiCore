@@ -22,7 +22,7 @@ public class GeneratorMenu extends MyAbstractContainerMenu {
 
     public GeneratorMenu(int containerId, Inventory playerInventory, BlockEntity entity, ContainerData data) {
         super(GeneratorModule.GENERATOR_MENU.get(), containerId, playerInventory, entity, data);
-        GeneratorMenu.TE_INVENTORY_SLOT_COUNT = 3;
+        this.TE_INVENTORY_SLOT_COUNT = 3;
 
         for (int row = 0; row < 3; row++) {
             this.addSlot(new SlotItemHandler(((GeneratorBlockEntity) this.blockEntity).getItemHandler(null), row, 90 + row * 18, 103));

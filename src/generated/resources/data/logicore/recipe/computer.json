@@ -2,9 +2,12 @@
   "type": "minecraft:crafting_shaped",
   "category": "redstone",
   "key": {
-    "N": {
+	"E": {
 	  "tag": "c:ender_pearls"
     },
+	"N": {
+	  "tag": "c:gems/quartz"
+	},
     "P": {
       "item": "logicore:processor_unit"
     },
@@ -14,7 +17,7 @@
   },
   "pattern": [
     "RNR",
-    "NPN",
+	"EPE",
     "RNR"
   ],
   "result": {

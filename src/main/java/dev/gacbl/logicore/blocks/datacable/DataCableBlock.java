@@ -20,7 +20,6 @@ import net.minecraft.data.recipes.ShapedRecipeBuilder;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.tags.ItemTags;
-import net.minecraft.world.item.Items;
 import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
@@ -84,7 +83,7 @@ public class DataCableBlock extends BaseEntityBlock implements SimpleWaterlogged
                 .pattern("RPR")
                 .pattern("GGG")
                 .define('G', ItemTags.create(ResourceLocation.fromNamespaceAndPath("c", "glass_blocks")))
-                .define('R', Items.REDSTONE)
+                .define('R', ItemTags.create(ResourceLocation.fromNamespaceAndPath("c", "dusts/redstons")))
                 .define('P', ProcessorUnitModule.PROCESSOR_UNIT.get());
     }
 

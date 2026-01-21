@@ -32,7 +32,7 @@ public class MyAbstractContainerMenu extends AbstractContainerMenu {
     protected static final int TE_INVENTORY_FIRST_SLOT_INDEX = VANILLA_FIRST_SLOT_INDEX + VANILLA_SLOT_COUNT;
 
     // THIS YOU HAVE TO DEFINE!
-    protected static int TE_INVENTORY_SLOT_COUNT = 0;
+    protected int TE_INVENTORY_SLOT_COUNT = 0;
 
     public MyAbstractContainerMenu(@Nullable MenuType<?> menuType, int containerId, Inventory playerInventory, BlockEntity entity, ContainerData data) {
         super(menuType, containerId);

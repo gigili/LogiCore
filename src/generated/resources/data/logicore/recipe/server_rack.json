@@ -5,20 +5,20 @@
     "E": {
       "tag": "c:ender_pearls"
     },
-    "N": {
-	  "item": "minecraft:quartz"
-    },
     "P": {
       "item": "logicore:processor_unit"
     },
+	"Q": {
+	  "tag": "c:gems/quartz"
+	},
     "R": {
       "item": "minecraft:redstone"
     }
   },
   "pattern": [
-    "RNR",
+	"REQ",
     "EPE",
-    "RNR"
+	"QER"
   ],
   "result": {
     "count": 1,
