@@ -64,7 +64,7 @@ public class ComputerBlock extends BaseEntityBlock {
                 .pattern("EPE")
                 .pattern("RNR")
                 .define('N', ItemTags.create(ResourceLocation.fromNamespaceAndPath("c", "gems/quartz")))
-                .define('R', ItemTags.create(ResourceLocation.fromNamespaceAndPath("c", "dusts/redstons")))
+                .define('R', ItemTags.create(ResourceLocation.fromNamespaceAndPath("c", "dusts/redstone")))
                 .define('E', ItemTags.create(ResourceLocation.fromNamespaceAndPath("c", "ender_pearls")))
                 .define('P', ProcessorUnitModule.PROCESSOR_UNIT.get());
     }

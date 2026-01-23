@@ -49,7 +49,7 @@ public class RepairStationBlock extends BaseEntityBlock {
                 .pattern("GRG")
                 .pattern("EPE")
                 .pattern("GRG")
-                .define('R', ItemTags.create(ResourceLocation.fromNamespaceAndPath("c", "dusts/redstons")))
+                .define('R', ItemTags.create(ResourceLocation.fromNamespaceAndPath("c", "dusts/redstone")))
                 .define('E', Items.EMERALD)
                 .define('G', Items.GOLD_INGOT)
                 .define('P', ProcessorUnitModule.PROCESSOR_UNIT.get());

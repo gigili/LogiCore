@@ -84,7 +84,7 @@ public class DataCableBlock extends BaseEntityBlock implements SimpleWaterlogged
                 .pattern("RPR")
                 .pattern("GGG")
                 .define('G', ItemTags.create(ResourceLocation.fromNamespaceAndPath("c", "glass_blocks")))
-                .define('R', ItemTags.create(ResourceLocation.fromNamespaceAndPath("c", "dusts/redstons")))
+                .define('R', ItemTags.create(ResourceLocation.fromNamespaceAndPath("c", "dusts/redstone")))
                 .define('P', ProcessorUnitModule.PROCESSOR_UNIT.get());
     }
 

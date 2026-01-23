@@ -16,18 +16,18 @@
 	  "y": 90
 	},
 	"facing=north,repairing=true": {
-	  "model": "logicore:block/repair_station_on"
+	  "model": "logicore:block/repair_station"
 	},
 	"facing=south,repairing=true": {
-	  "model": "logicore:block/repair_station_on",
+	  "model": "logicore:block/repair_station",
 	  "y": 180
 	},
 	"facing=west,repairing=true": {
-	  "model": "logicore:block/repair_station_on",
+	  "model": "logicore:block/repair_station",
 	  "y": 270
 	},
 	"facing=east,repairing=true": {
-	  "model": "logicore:block/repair_station_on",
+	  "model": "logicore:block/repair_station",
 	  "y": 90
 	}
   }

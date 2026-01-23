@@ -50,7 +50,7 @@ public class CloudInterfaceBlock extends BaseEntityBlock {
                 .pattern("PPP")
                 .pattern("NRN")
                 .define('N', ItemTags.create(ResourceLocation.fromNamespaceAndPath("c", "ender_pearls")))
-                .define('R', ItemTags.create(ResourceLocation.fromNamespaceAndPath("c", "dusts/redstons")))
+                .define('R', ItemTags.create(ResourceLocation.fromNamespaceAndPath("c", "dusts/redstone")))
                 .define('P', ProcessorUnitModule.PROCESSOR_UNIT.get());
     }
 

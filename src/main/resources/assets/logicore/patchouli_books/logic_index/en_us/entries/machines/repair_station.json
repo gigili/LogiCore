@@ -1,0 +1,23 @@
+{
+  "name": "Repair station",
+  "icon": "logicore:repair_station",
+  "category": "logicore:machines_category",
+  "pages": [
+	{
+	  "type": "patchouli:spotlight",
+	  "item": "logicore:repair_station",
+	  "title": "Repair station",
+	  "text": "The Repair station restores durability on damaged tools and armor by consuming $(l:logicore:architecture/cycles)Cycles$(). Insert a damaged item and the station will start repairing it."
+	},
+	{
+	  "type": "patchouli:text",
+	  "title": "Power",
+	  "text": "The station draws cycles from your network through adjacent $(l:logicore:components/data_cable)Data Cables$(). Each point of durability costs cycles, so higher-cost items take longer and consume more. It holds one item at a time."
+	},
+	{
+	  "type": "patchouli:crafting",
+	  "recipe": "logicore:repair_station",
+	  "text": "A single-slot machine that automatically repairs damaged gear."
+	}
+  ]
+}

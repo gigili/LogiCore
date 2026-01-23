@@ -46,7 +46,7 @@ public class CompilerBlock extends BaseEntityBlock {
                 .pattern("PNP")
                 .pattern("RPR")
                 .define('N', ItemTags.create(ResourceLocation.fromNamespaceAndPath("c", "ender_pearls")))
-                .define('R', ItemTags.create(ResourceLocation.fromNamespaceAndPath("c", "dusts/redstons")))
+                .define('R', ItemTags.create(ResourceLocation.fromNamespaceAndPath("c", "dusts/redstone")))
                 .define('P', ProcessorUnitModule.PROCESSOR_UNIT.get());
     }
 

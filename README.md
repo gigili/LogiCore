@@ -10,11 +10,9 @@ infrastructure, power management, and data processing.
 
 ### 💾 The Cycle System
 
-Every item in the world consists of data. LogiCore assigns a **Cycle Value** to items.
-
-- **Compiler:** The heart of your operation. It turns **Cycles** into any item that has a **Cycle** value attached to
-  it.
-- **Dynamic Calculation:** The system automatically calculates the value of complex crafted items based on their raw
+* **Compiler:** The heart of your operation. It turns **Cycles** into any item that has a **Cycle** value attached to
+  it, but that item first needs to be researched.
+* **Dynamic Calculation:** The system automatically calculates the value of complex crafted items based on their raw
   components.
 
 -----
@@ -28,7 +26,7 @@ You are able to modify cycles values by modifying the `config/logicore/custom_cy
   "_comment": "Define custom cycle values here. Keys can be Item IDs (minecraft:cobblestone) or Tags (#minecraft:logs).",
   "values": {
 	"minecraft:dirt": 256,
-	"c:stones": 10
+    "#c:stones": 10
   }
 }
 ```
@@ -41,9 +39,9 @@ By calling the `/reload` command it will refresh your cycle cache and update cyc
 
 Forget magical chests with infinite space. In LogiCore, you build physical infrastructure.
 
-- **Multiblock Structures:** Construct custom-sized Data Centers using **Controllers**, **Ports**, and **Frames**.
-- **Massive Storage:** Store billions of Cycles in a centralized network.
-- **Sealed Systems:** Your Data Center must be a fully sealed, valid multiblock to function.
+* **Multiblock Structures:** Construct custom-sized Data Centers using **Controllers**, **Ports**, and **Frames**.
+* **Massive Storage:** Store billions of Cycles in a centralized network.
+* **Sealed Systems:** Your Data Center must be a fully sealed, valid multiblock to function.
 
 Datacenter consists of `Wall`, `Frame` and `Inner` blocks.
 
@@ -53,13 +51,17 @@ Datacenter consists of `Wall`, `Frame` and `Inner` blocks.
 
 `Inner` blocks are any block that has a tag: `logicore:valid_datacenter_inner_block`.
 
+-----
+
 ### 🔌 Power & Processing
 
 Data requires energy.
 
-- **Server Racks:** High-density processing units that maintain your Cycle network.
-- **Power Consumption:** Certain machines (Server rack, Computer) require **Forge Energy (FE)** to generate **Cycles**.
-- **Generators:** Early-game power solutions to kickstart your digital empire.
+* **Server Racks:** High-density processing units that maintain your Cycle network.
+* **Power Consumption:** Certain machines (Server rack, Computer) require **Forge Energy (FE)** to generate **Cycles**.
+* **Generators:** Early-game power solutions to kickstart your digital empire.
+
+-----
 
 ### 📚 In-Game Guide
 
@@ -72,19 +74,20 @@ machine and mechanic.
 
 1. **Generate Power:** Craft a **Generator** and fuel it to start producing FE.
 2. **Computer:** Early game machine that slowly turns FE into Cycles.
-3. **The Compiler:** It converts Cycles into items.
-4. **Digitize:** Place simple items (Cobblestone, Dirt) into the Compiler to generate your first Cycles.
+3. **Research station:** Machine used to learn new items so they can be reproduced.
+4. **The Compiler:** It converts Cycles into items.
 5. **Expand:** As your Cycle count grows, construct a **Data Center** (7x7x7 or larger) using a **Datacenter Controller
    ** and **Data Cables** to expand your storage cap.
-6. Start researching items
-7. Connect with your AE2 system to get access to all the researched items
+6. Connect with your AE2 system to get access to all the researched items.
 
 -----
 
 ## 📸 Screenshots
 
-![Max size datacenter multiblock](./assets/showcase_1.png)
+![AE2 integration](./assets/showcase_4.png)
 ![All mod items and blocks](./assets/showcase_2.png)
+![Repair station](./assets/showcase_3.png)
+![Max size datacenter multiblock](./assets/showcase_1.png)
 
 -----
 

@@ -19,7 +19,7 @@ public class ProcessorUnitItem extends Item {
                 .pattern("RQR")
                 .define('I', Items.IRON_INGOT)
                 .define('G', Items.GOLD_INGOT)
-                .define('R', ItemTags.create(ResourceLocation.fromNamespaceAndPath("c", "dusts/redstons")))
+                .define('R', ItemTags.create(ResourceLocation.fromNamespaceAndPath("c", "dusts/redstone")))
                 .define('Q', ItemTags.create(ResourceLocation.fromNamespaceAndPath("c", "gems/quartz")));
     }
 }
