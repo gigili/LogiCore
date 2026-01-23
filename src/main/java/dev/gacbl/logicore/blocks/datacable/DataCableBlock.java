@@ -10,6 +10,7 @@ import dev.gacbl.logicore.blocks.drone_bay.DroneBayBlock;
 import dev.gacbl.logicore.blocks.drone_bay.DroneBayBlockEntity;
 import dev.gacbl.logicore.blocks.generator.GeneratorBlock;
 import dev.gacbl.logicore.blocks.generator.GeneratorBlockEntity;
+import dev.gacbl.logicore.blocks.repair_station.RepairStationBlock;
 import dev.gacbl.logicore.blocks.research_station.ResearchStationBlock;
 import dev.gacbl.logicore.blocks.serverrack.ServerRackBlock;
 import dev.gacbl.logicore.items.processorunit.ProcessorUnitModule;
@@ -177,7 +178,8 @@ public class DataCableBlock extends BaseEntityBlock implements SimpleWaterlogged
                 DatacenterPortBlock.class,
                 DroneBayBlock.class,
                 CloudInterfaceBlock.class,
-                ResearchStationBlock.class
+                ResearchStationBlock.class,
+                RepairStationBlock.class
         );
         if (level instanceof ServerLevel server) {
             Block block = server.getBlockState(pos).getBlock();

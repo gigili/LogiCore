@@ -1,0 +1,85 @@
+package dev.gacbl.logicore.api.compat.jade.providers;
+
+import dev.gacbl.logicore.LogiCore;
+import dev.gacbl.logicore.blocks.repair_station.RepairStationBlockEntity;
+import dev.gacbl.logicore.core.Utils;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.chat.Component;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.level.block.entity.BlockEntity;
+import snownee.jade.api.BlockAccessor;
+import snownee.jade.api.IBlockComponentProvider;
+import snownee.jade.api.IServerDataProvider;
+import snownee.jade.api.ITooltip;
+import snownee.jade.api.config.IPluginConfig;
+import snownee.jade.api.ui.BoxStyle;
+import snownee.jade.api.ui.IElementHelper;
+
+public class RepairStationProvider implements IBlockComponentProvider, IServerDataProvider<BlockAccessor> {
+    public static final RepairStationProvider INSTANCE = new RepairStationProvider();
+
+    @Override
+    public void appendTooltip(ITooltip tooltip, BlockAccessor accessor, IPluginConfig config) {
+        long cycles = 0;
+        long cyclesStored = 0;
+
+        if (accessor.getServerData().contains("CyclesDemand")) {
+            cycles = accessor.getServerData().getLong("CyclesDemand");
+        }
+
+        if (accessor.getServerData().contains("CyclesStored")) {
+            cyclesStored = accessor.getServerData().getLong("CyclesStored");
+        }
+
+        tooltip.add(Component.translatable("tooltip.logicore.cycles_stored", Utils.formatValues(cyclesStored)));
+        tooltip.add(Component.translatable("tooltip.logicore.cycles_demand", Utils.formatValues(cycles)));
+        if (accessor.getServerData().contains("progress") && accessor.getServerData().contains("maxProgress")) {
+            int progress = 0;
+            int maxProgress = 0;
+
+            if (accessor.getServerData().contains("progress")) {
+                progress = accessor.getServerData().getInt("progress");
+            }
+            if (accessor.getServerData().contains("maxProgress")) {
+                maxProgress = accessor.getServerData().getInt("maxProgress");
+            }
+
+            if (maxProgress > 0) {
+                float fillRatio = (float) progress / (float) maxProgress;
+                int percentage = (int) (fillRatio * 100);
+
+                Component text = Component.translatable("tooltip.logicore.repair_progress", percentage);
+
+                var style = IElementHelper.get().progressStyle()
+                        .color(0xFF2196F3, 0xFF0B1F38)
+                        .textColor(0xFFFFFFFF);
+
+                tooltip.add(IElementHelper.get().progress(fillRatio, text, style, BoxStyle.getNestedBox(), false));
+            }
+        } else {
+            tooltip.add(Component.translatable("tooltip.logicore.no_research_in_progress"));
+        }
+    }
+
+    @Override
+    public boolean shouldRequestData(BlockAccessor accessor) {
+        BlockEntity be = accessor.getLevel().getBlockEntity(accessor.getPosition());
+        return be instanceof RepairStationBlockEntity;
+    }
+
+    @Override
+    public void appendServerData(CompoundTag data, BlockAccessor accessor) {
+        RepairStationBlockEntity blockEntity = (RepairStationBlockEntity) accessor.getBlockEntity();
+        if (blockEntity == null) return;
+
+        data.putInt("progress", blockEntity.getProgress());
+        data.putInt("maxProgress", blockEntity.getMaxProgress());
+        data.putLong("CyclesDemand", blockEntity.getCycleDemand());
+        data.putLong("CyclesStored", blockEntity.getCyclesStored());
+    }
+
+    @Override
+    public ResourceLocation getUid() {
+        return ResourceLocation.fromNamespaceAndPath(LogiCore.MOD_ID, "repair_station");
+    }
+}

@@ -14,6 +14,9 @@ import dev.gacbl.logicore.blocks.datacenter.DatacenterModule;
 import dev.gacbl.logicore.blocks.datacenter_port.DatacenterPortModule;
 import dev.gacbl.logicore.blocks.generator.GeneratorModule;
 import dev.gacbl.logicore.blocks.generator.ui.GeneratorScreen;
+import dev.gacbl.logicore.blocks.repair_station.RepairStationBlockEntityRenderer;
+import dev.gacbl.logicore.blocks.repair_station.RepairStationModule;
+import dev.gacbl.logicore.blocks.repair_station.ui.RepairStationScreen;
 import dev.gacbl.logicore.blocks.research_station.ResearchStationBlockEntityRenderer;
 import dev.gacbl.logicore.blocks.research_station.ResearchStationModule;
 import dev.gacbl.logicore.blocks.research_station.ui.ResearchStationScreen;
@@ -82,6 +85,7 @@ public class LogiCore {
         StackUpgradeModule.register(modEventBus);
         ResearchStationModule.register(modEventBus);
         CyclePickModule.register(modEventBus);
+        RepairStationModule.register(modEventBus);
 
         IntegrationUtils.registerEvents();
         PacketHandler.register(modEventBus);
@@ -126,6 +130,7 @@ public class LogiCore {
             event.register(CompilerModule.COMPILER_MENU.get(), CompilerScreen::new);
             event.register(GeneratorModule.GENERATOR_MENU.get(), GeneratorScreen::new);
             event.register(ResearchStationModule.RESEARCH_STATION_MENU.get(), ResearchStationScreen::new);
+            event.register(RepairStationModule.REPAIR_STATION_MENU.get(), RepairStationScreen::new);
         }
 
         @SubscribeEvent
@@ -134,6 +139,7 @@ public class LogiCore {
             event.registerBlockEntityRenderer(CompilerModule.COMPILER_BLOCK_ENTITY.get(), CompilerBlockEntityRenderer::new);
             event.registerBlockEntityRenderer(ResearchStationModule.RESEARCH_STATION_BE.get(), ResearchStationBlockEntityRenderer::new);
             event.registerBlockEntityRenderer(BatteryModule.BATTERY_BE.get(), BatteryFillRenderer::new);
+            event.registerBlockEntityRenderer(RepairStationModule.REPAIR_STATION_BE.get(), RepairStationBlockEntityRenderer::new);
         }
 
         @SubscribeEvent

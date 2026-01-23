@@ -11,6 +11,7 @@
 	"logicore:small_battery",
 	"logicore:medium_battery",
 	"logicore:large_battery",
-	"logicore:research_station"
+	"logicore:research_station",
+	"logicore:repair_station"
   ]
 }

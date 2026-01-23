@@ -12,7 +12,7 @@
 	  "tag": "c:gems/quartz"
     },
     "R": {
-      "item": "minecraft:redstone"
+	  "tag": "c:dusts/redstons"
     }
   },
   "pattern": [

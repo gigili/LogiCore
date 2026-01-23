@@ -9,6 +9,7 @@ import dev.gacbl.logicore.blocks.datacable.DataCableModule;
 import dev.gacbl.logicore.blocks.datacenter.DatacenterModule;
 import dev.gacbl.logicore.blocks.datacenter_port.DatacenterPortModule;
 import dev.gacbl.logicore.blocks.generator.GeneratorModule;
+import dev.gacbl.logicore.blocks.repair_station.RepairStationModule;
 import dev.gacbl.logicore.blocks.research_station.ResearchStationModule;
 import dev.gacbl.logicore.blocks.serverrack.ServerRackModule;
 import dev.gacbl.logicore.items.pickaxe.CyclePickModule;
@@ -42,6 +43,7 @@ public class ModItemModelProvider extends ItemModelProvider {
         withExistingParent(GeneratorModule.GENERATOR_ITEM.getId().getPath(), "logicore:block/" + GeneratorModule.GENERATOR_ITEM.getId().getPath());
         withExistingParent(CloudInterfaceModule.CLOUD_INTERFACE.getId().getPath(), "logicore:block/" + CloudInterfaceModule.CLOUD_INTERFACE.getId().getPath());
         withExistingParent(ResearchStationModule.RESEARCH_STATION.getId().getPath(), "logicore:block/" + ResearchStationModule.RESEARCH_STATION.getId().getPath());
+        withExistingParent(RepairStationModule.REPAIR_STATION.getId().getPath(), "logicore:block/" + RepairStationModule.REPAIR_STATION.getId().getPath());
 
         BatteryModule.BLOCKS.getEntries().forEach(blockHolder -> {
             withExistingParent(blockHolder.getId().getPath(), "logicore:block/" + blockHolder.getId().getPath());

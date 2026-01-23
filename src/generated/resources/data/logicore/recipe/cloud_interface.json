@@ -9,7 +9,7 @@
 	  "item": "logicore:processor_unit"
 	},
 	"R": {
-	  "item": "minecraft:redstone"
+	  "tag": "c:dusts/redstons"
 	}
   },
   "pattern": [

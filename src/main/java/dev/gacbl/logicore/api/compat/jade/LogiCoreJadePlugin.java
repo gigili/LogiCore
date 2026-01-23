@@ -1,16 +1,15 @@
 package dev.gacbl.logicore.api.compat.jade;
 
 import dev.gacbl.logicore.LogiCore;
-import dev.gacbl.logicore.api.compat.jade.providers.CompilerProvider;
-import dev.gacbl.logicore.api.compat.jade.providers.CoreCycleProvider;
-import dev.gacbl.logicore.api.compat.jade.providers.DatacenterProvider;
-import dev.gacbl.logicore.api.compat.jade.providers.ResearchStationProvider;
+import dev.gacbl.logicore.api.compat.jade.providers.*;
 import dev.gacbl.logicore.blocks.compiler.CompilerBlock;
 import dev.gacbl.logicore.blocks.compiler.CompilerBlockEntity;
 import dev.gacbl.logicore.blocks.computer.ComputerBlock;
 import dev.gacbl.logicore.blocks.computer.ComputerBlockEntity;
 import dev.gacbl.logicore.blocks.datacenter_port.DatacenterPortBlock;
 import dev.gacbl.logicore.blocks.datacenter_port.DatacenterPortBlockEntity;
+import dev.gacbl.logicore.blocks.repair_station.RepairStationBlock;
+import dev.gacbl.logicore.blocks.repair_station.RepairStationBlockEntity;
 import dev.gacbl.logicore.blocks.research_station.ResearchStationBlock;
 import dev.gacbl.logicore.blocks.research_station.ResearchStationBlockEntity;
 import dev.gacbl.logicore.blocks.serverrack.ServerRackBlock;
@@ -32,6 +31,7 @@ public class LogiCoreJadePlugin implements IWailaPlugin {
         registration.registerBlockComponent(DatacenterProvider.INSTANCE, DatacenterPortBlock.class);
         //registration.registerBlockComponent(DroneBayProvider.INSTANCE, DroneBayBlock.class);
         registration.registerBlockComponent(ResearchStationProvider.INSTANCE, ResearchStationBlock.class);
+        registration.registerBlockComponent(RepairStationProvider.INSTANCE, RepairStationBlock.class);
 
         //registration.registerEntityComponent(DroneEntityProvider.INSTANCE, DroneEntity.class);
     }
@@ -44,6 +44,7 @@ public class LogiCoreJadePlugin implements IWailaPlugin {
         registration.registerBlockDataProvider(DatacenterProvider.INSTANCE, DatacenterPortBlockEntity.class);
         //registration.registerBlockDataProvider(DroneBayProvider.INSTANCE, DroneBayBlockEntity.class);
         registration.registerBlockDataProvider(ResearchStationProvider.INSTANCE, ResearchStationBlockEntity.class);
+        registration.registerBlockDataProvider(RepairStationProvider.INSTANCE, RepairStationBlockEntity.class);
 
         //registration.registerEntityDataProvider(DroneEntityProvider.INSTANCE, DroneEntity.class);
     }

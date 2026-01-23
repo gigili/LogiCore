@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.0.4
+
+- Added `Repair Station` block
+- Added `Recycler` block
+
 ## 0.0.3
 
 - Fixed recipes

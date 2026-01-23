@@ -53,7 +53,6 @@ public class ResearchStationBlockEntityRenderer implements BlockEntityRenderer<R
         // 5. FLIP & ORIENT
         pPoseStack.translate(0.0, 0.05, 0.0); // Anti-Z-fighting
 
-        // CHANGE HERE: Changed 90f to -90f (270f).
         // This flips the item over so the "Face" points Skyward/Player-ward.
         pPoseStack.mulPose(Axis.XP.rotationDegrees(-90f));
 

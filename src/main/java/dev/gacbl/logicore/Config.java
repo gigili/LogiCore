@@ -47,6 +47,9 @@ public class Config {
     public static final ModConfigSpec.ConfigValue<Integer> RS_CYCLES_PROCESSED_PER_TICK;
     public static final ModConfigSpec.ConfigValue<Integer> RS_MAX_TICK_DURATION;
 
+    // Repair station
+    public static final ModConfigSpec.ConfigValue<Integer> RP_BASE_REPAIR_COST;
+
     //Batteries
     public static final ModConfigSpec.ConfigValue<Integer> SMALL_BATTERY_CAPACITY;
     public static final ModConfigSpec.ConfigValue<Integer> SMALL_BATTERY_TRANSFER_RATE;
@@ -176,6 +179,14 @@ public class Config {
         RS_MAX_TICK_DURATION = BUILDER
                 .comment(" Cap the most expensive items to this value in ticks")
                 .defineInRange("max_duration_cap", 600, 20, Integer.MAX_VALUE);
+        BUILDER.pop();
+        //</editor-fold>
+
+        // <editor-fold desc="Repair station">
+        BUILDER.push("Repair station");
+        RP_BASE_REPAIR_COST = BUILDER
+                .comment(" How many cycles does it cost to repair 1 durability on an item.")
+                .defineInRange("cycles_processed_per_tick", 1000, 1, Integer.MAX_VALUE);
         BUILDER.pop();
         //</editor-fold>
 
