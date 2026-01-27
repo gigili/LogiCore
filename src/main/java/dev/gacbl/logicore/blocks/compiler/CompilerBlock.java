@@ -4,12 +4,14 @@ import com.mojang.serialization.MapCodec;
 import dev.gacbl.logicore.items.processorunit.ProcessorUnitModule;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.core.HolderGetter;
 import net.minecraft.data.recipes.RecipeCategory;
 import net.minecraft.data.recipes.ShapedRecipeBuilder;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.ItemTags;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
@@ -23,7 +25,7 @@ import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
-import net.minecraft.world.level.block.state.properties.DirectionProperty;
+import net.minecraft.world.level.block.state.properties.EnumProperty;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
@@ -31,7 +33,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 public class CompilerBlock extends BaseEntityBlock {
-    public static final DirectionProperty FACING = BlockStateProperties.HORIZONTAL_FACING;
+    public static final EnumProperty<Direction> FACING = BlockStateProperties.HORIZONTAL_FACING;
     public static final MapCodec<CompilerBlock> CODEC = simpleCodec(CompilerBlock::new);
     private static final VoxelShape SHAPE = Block.box(0, 0, 0, 16, 16, 16);
 
@@ -40,8 +42,8 @@ public class CompilerBlock extends BaseEntityBlock {
         this.registerDefaultState(this.stateDefinition.any().setValue(FACING, Direction.NORTH));
     }
 
-    public static ShapedRecipeBuilder getRecipe() {
-        return ShapedRecipeBuilder.shaped(RecipeCategory.REDSTONE, CompilerModule.COMPILER_BLOCK.get())
+    public static ShapedRecipeBuilder getRecipe(HolderGetter<Item> items) {
+        return ShapedRecipeBuilder.shaped(items, RecipeCategory.REDSTONE, CompilerModule.COMPILER_BLOCK.get())
                 .pattern("RPR")
                 .pattern("PNP")
                 .pattern("RPR")

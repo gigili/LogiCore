@@ -1,3 +1,6 @@
 {
-  "parent": "logicore:block/server_rack"
+  "parent": "minecraft:item/generated",
+  "textures": {
+	"layer0": "logicore:block/server_rack"
+  }
 }

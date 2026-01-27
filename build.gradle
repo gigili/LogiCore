@@ -2,7 +2,7 @@ plugins {
     id 'java-library'
     id 'maven-publish'
     id 'idea'
-    id 'net.neoforged.moddev' version '2.0.116'
+    id 'net.neoforged.moddev' version '2.0.139'
 }
 
 version = mod_version
@@ -106,7 +106,9 @@ neoForge {
         }
 
         data {
-            data()
+            clientData()
+            //serverData()
+
 
             // example of overriding the workingDirectory set in configureEach above, uncomment if you want to use it
             // gameDirectory = project.file('run-data')
@@ -160,8 +162,8 @@ configurations {
 
 dependencies {
     //Architectury
-    compileOnly "curse.maven:architectury-api-419699:5786327"
-    localRuntime "curse.maven:architectury-api-419699:5786327"
+    compileOnly "curse.maven:architectury-api-419699:5850078"
+    localRuntime "curse.maven:architectury-api-419699:5850078"
 
     // JEI
     compileOnly "mezz.jei:jei-${minecraft_version}-common-api:${jei_version}"
@@ -170,28 +172,24 @@ dependencies {
 
     // EMI
     compileOnly "dev.emi:emi-neoforge:${emi_version}:api"
-    localRuntime "dev.emi:emi-neoforge:${emi_version}"
-
-    // Architectury
+    //localRuntime "dev.emi:emi-neoforge:${emi_version}"
     compileOnly "dev.emi:emi-xplat-intermediary:${emi_version}:api"
-
-    // MultiLoader Template/VanillaGradle
     compileOnly "dev.emi:emi-xplat-mojmap:${emi_version}:api"
 
     // Jade
-    localRuntime "maven.modrinth:jade:15.10.3+neoforge"
-    compileOnly "curse.maven:jade-324717:6853386"
+    compileOnly "curse.maven:jade-324717:6170888"
+    //localRuntime "curse.maven:jade-324717:5835088"
 
     // Patchouli
     compileOnly "vazkii.patchouli:Patchouli:1.21.1-92-NEOFORGE:api"
-    localRuntime "vazkii.patchouli:Patchouli:1.21.1-92-NEOFORGE"
+    //localRuntime "vazkii.patchouli:Patchouli:1.21.1-92-NEOFORGE"
 
     // GuidME
     compileOnly "org.appliedenergistics:guideme:21.1.15:api"
-    localRuntime "org.appliedenergistics:guideme:21.1.15"
+    //localRuntime "org.appliedenergistics:guideme:21.1.15"
 
     // Tags viewer
-    localRuntime "curse.maven:tv-1119728:5807896"
+    //localRuntime "curse.maven:tv-1119728:5807896"
 
     // Kotlin, Observable
     //localRuntime "curse.maven:kotlin-351264:6994056"
@@ -221,26 +219,26 @@ dependencies {
     //localRuntime "curse.maven:mekanismgen-268566:7132171"
 
     // Construction sticks
-    localRuntime "curse.maven:cs-1156098:6912513"
+    //localRuntime "curse.maven:cs-1156098:6912513"
 
     // Torchmaster
-    localRuntime "curse.maven:torchmaster-254268:7197218"
+    //localRuntime "curse.maven:torchmaster-254268:7197218"
 
     // Titanium, Functional storage
     //localRuntime "curse.maven:titanium-287342:6875285"
     //localRuntime "curse.maven:function_storage-556861:7061714"
 
     // FTB Chunks, FTB Library, FTB Teams
-    localRuntime "curse.maven:ftb-chunks-forge-314906:7157142"
-    localRuntime "curse.maven:ftb-library-forge-404465:7312258"
+    //localRuntime "curse.maven:ftb-chunks-forge-314906:7157142"
+    //localRuntime "curse.maven:ftb-library-forge-404465:7312258"
     compileOnly "curse.maven:ftb-teams-forge-404468:7315210"
-    localRuntime "curse.maven:ftb-teams-forge-404468:7315210"
-    localRuntime "curse.maven:ftb-ranks-314905:6431744"
-    localRuntime "curse.maven:ftb-ultimine-386134:7188395"
+    //localRuntime "curse.maven:ftb-teams-forge-404468:7315210"
+    //localRuntime "curse.maven:ftb-ranks-314905:6431744"
+    //localRuntime "curse.maven:ftb-ultimine-386134:7188395"
 
     // AE2
     compileOnly "org.appliedenergistics:appliedenergistics2:19.2.17:api"
-    localRuntime "org.appliedenergistics:appliedenergistics2:19.2.17"
+    //localRuntime "org.appliedenergistics:appliedenergistics2:19.2.17"
 
     // AdvancedAE
     //localRuntime "curse.maven:gecko-388172:6920810"

@@ -5,6 +5,7 @@ import dev.gacbl.logicore.Config;
 import dev.gacbl.logicore.items.processorunit.ProcessorUnitModule;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.core.HolderGetter;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.data.recipes.RecipeCategory;
 import net.minecraft.data.recipes.ShapedRecipeBuilder;
@@ -14,12 +15,13 @@ import net.minecraft.util.RandomSource;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.LevelReader;
+import net.minecraft.world.level.ScheduledTickAccess;
 import net.minecraft.world.level.block.*;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityTicker;
@@ -27,9 +29,9 @@ import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
-import net.minecraft.world.level.block.state.properties.DirectionProperty;
 import net.minecraft.world.level.block.state.properties.DoubleBlockHalf;
 import net.minecraft.world.level.block.state.properties.EnumProperty;
+import net.minecraft.world.level.redstone.Orientation;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
@@ -38,7 +40,7 @@ import org.jetbrains.annotations.Nullable;
 
 public class ServerRackBlock extends BaseEntityBlock {
     public static final VoxelShape SHAPE = Block.box(0.0D, 0.0D, 0.0D, 16.0D, 16.0D, 16.0D);
-    public static final DirectionProperty FACING = BlockStateProperties.HORIZONTAL_FACING;
+    public static final EnumProperty<Direction> FACING = BlockStateProperties.HORIZONTAL_FACING;
     public static final EnumProperty<DoubleBlockHalf> HALF = BlockStateProperties.DOUBLE_BLOCK_HALF;
     public static final MapCodec<ServerRackBlock> CODEC = simpleCodec(ServerRackBlock::new);
 
@@ -50,8 +52,8 @@ public class ServerRackBlock extends BaseEntityBlock {
                 .setValue(ServerRackModule.GENERATING, false));
     }
 
-    public static ShapedRecipeBuilder getRecipe() {
-        return ShapedRecipeBuilder.shaped(RecipeCategory.REDSTONE, ServerRackModule.SERVER_RACK_BLOCK.get())
+    public static ShapedRecipeBuilder getRecipe(HolderGetter<Item> items) {
+        return ShapedRecipeBuilder.shaped(items, RecipeCategory.REDSTONE, ServerRackModule.SERVER_RACK_BLOCK.get())
                 .pattern("REQ")
                 .pattern("EPE")
                 .pattern("QER")
@@ -76,7 +78,7 @@ public class ServerRackBlock extends BaseEntityBlock {
     public BlockState getStateForPlacement(BlockPlaceContext context) {
         BlockPos pos = context.getClickedPos();
         Level level = context.getLevel();
-        if (pos.getY() < level.getMaxBuildHeight() - 1 && level.getBlockState(pos.above()).canBeReplaced(context)) {
+        if (level.isInWorldBounds(pos) && level.getBlockState(pos.above()).canBeReplaced(context)) {
             return this.defaultBlockState()
                     .setValue(FACING, context.getHorizontalDirection().getOpposite())
                     .setValue(HALF, DoubleBlockHalf.LOWER)
@@ -166,7 +168,7 @@ public class ServerRackBlock extends BaseEntityBlock {
     }
 
     @Override
-    public void neighborChanged(@NotNull BlockState state, Level level, @NotNull BlockPos pos, @NotNull Block block, @NotNull BlockPos fromPos, boolean isMoving) {
+    public void neighborChanged(@NotNull BlockState state, Level level, @NotNull BlockPos pos, @NotNull Block block, Orientation orientation, boolean isMoving) {
         if (!level.isClientSide) {
             if (!state.canSurvive(level, pos)) {
                 level.destroyBlock(pos, true);
@@ -175,11 +177,11 @@ public class ServerRackBlock extends BaseEntityBlock {
     }
 
     @Override
-    protected @NotNull BlockState updateShape(@NotNull BlockState state, @NotNull Direction facing, @NotNull BlockState facingState, @NotNull LevelAccessor level, @NotNull BlockPos currentPos, @NotNull BlockPos facingPos) {
+    protected @NotNull BlockState updateShape(@NotNull BlockState state, @NotNull LevelReader level, @NotNull ScheduledTickAccess scheduledTickAccess, @NotNull BlockPos currentPos, @NotNull Direction facing, @NotNull BlockPos neighborPos, @NotNull BlockState neighborState, @NotNull RandomSource random) {
         DoubleBlockHalf half = state.getValue(HALF);
         if (facing.getAxis() == Direction.Axis.Y) {
             if ((half == DoubleBlockHalf.LOWER && facing == Direction.UP) || (half == DoubleBlockHalf.UPPER && facing == Direction.DOWN)) {
-                if (!facingState.is(this) || facingState.getValue(HALF) == half) {
+                if (!neighborState.is(this) || neighborState.getValue(HALF) == half) {
                     return Blocks.AIR.defaultBlockState();
                 }
             }
@@ -189,7 +191,7 @@ public class ServerRackBlock extends BaseEntityBlock {
             return Blocks.AIR.defaultBlockState();
         }
 
-        return super.updateShape(state, facing, facingState, level, currentPos, facingPos);
+        return super.updateShape(state, level, scheduledTickAccess, currentPos, facing, neighborPos, neighborState, random);
     }
 
     @Nullable

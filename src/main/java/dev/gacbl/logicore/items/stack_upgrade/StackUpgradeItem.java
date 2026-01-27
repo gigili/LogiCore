@@ -1,6 +1,7 @@
 package dev.gacbl.logicore.items.stack_upgrade;
 
 import dev.gacbl.logicore.items.processorunit.ProcessorUnitModule;
+import net.minecraft.core.HolderGetter;
 import net.minecraft.data.recipes.RecipeCategory;
 import net.minecraft.data.recipes.ShapedRecipeBuilder;
 import net.minecraft.network.chat.Component;
@@ -18,8 +19,8 @@ public class StackUpgradeItem extends Item {
         super(properties);
     }
 
-    public static ShapedRecipeBuilder getRecipe() {
-        return ShapedRecipeBuilder.shaped(RecipeCategory.REDSTONE, StackUpgradeModule.STACK_UPGRADE.get())
+    public static ShapedRecipeBuilder getRecipe(HolderGetter<Item> items) {
+        return ShapedRecipeBuilder.shaped(items, RecipeCategory.REDSTONE, StackUpgradeModule.STACK_UPGRADE.get())
                 .pattern("EEE")
                 .pattern("EPE")
                 .pattern("EEE")

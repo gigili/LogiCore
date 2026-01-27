@@ -14,7 +14,6 @@ import net.minecraft.server.MinecraftServer;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.item.crafting.Recipe;
 import net.minecraft.world.item.crafting.RecipeHolder;
 import net.minecraft.world.item.crafting.RecipeManager;
@@ -109,7 +108,7 @@ public class CycleValueManager {
 
     private static void calculateValues(RecipeManager recipeManager, RegistryAccess registryAccess, File customFile) {
         try {
-            registryAccess.registryOrThrow(Registries.ITEM).holders().forEach(holder -> {
+            registryAccess.lookupOrThrow(Registries.ITEM).listElements().forEach(holder -> {
                 Integer value = holder.getData(ModDataMaps.ITEM_CYCLES);
                 if (value != null) {
                     CYCLE_VALUES.put(holder.value(), value);
@@ -133,7 +132,7 @@ public class CycleValueManager {
             for (RecipeHolder<?> holder : recipeManager.getRecipes()) {
                 try {
                     Recipe<?> recipe = holder.value();
-                    ItemStack result = recipe.getResultItem(registryAccess);
+                    ItemStack result = recipe.assemble(null, registryAccess);
 
                     if (result.isEmpty() || CYCLE_VALUES.containsKey(result.getItem())) continue;
 
@@ -165,7 +164,7 @@ public class CycleValueManager {
                     if (key.startsWith("#")) {
                         try {
                             TagKey<Item> tagKey = TagKey.create(Registries.ITEM, ResourceLocation.parse(key.substring(1)));
-                            registryAccess.registryOrThrow(Registries.ITEM).getTag(tagKey).ifPresent(tag -> {
+                            registryAccess.lookupOrThrow(Registries.ITEM).get(tagKey).ifPresent(tag -> {
                                 tag.stream().forEach(holder -> CYCLE_VALUES.put(holder.value(), value));
                             });
                         } catch (Exception e) {
@@ -174,7 +173,7 @@ public class CycleValueManager {
                     } else {
                         ResourceLocation id = ResourceLocation.tryParse(key);
                         if (id != null) {
-                            Item item = BuiltInRegistries.ITEM.get(id);
+                            Item item = BuiltInRegistries.ITEM.getValue(id);
                             if (item != net.minecraft.world.item.Items.AIR || id.getPath().equals("air")) {
                                 CYCLE_VALUES.put(item, value);
                             }
@@ -190,13 +189,15 @@ public class CycleValueManager {
 
     private static int calculateRecipeCost(Recipe<?> recipe) {
         int totalCost = 0;
-        for (Ingredient ingredient : recipe.getIngredients()) {
-            if (ingredient.isEmpty()) continue;
+        //TODO: Fix
+        /*for (Ingredient ingredient : recipe.getIngredients()) {
+            if (ingredient.items().isEmpty()) continue;
             int minIngredientCost = Integer.MAX_VALUE;
             boolean foundValue = false;
-            for (ItemStack stack : ingredient.getItems()) {
-                if (CYCLE_VALUES.containsKey(stack.getItem())) {
-                    int val = CYCLE_VALUES.get(stack.getItem());
+            for (net.minecraft.core.Holder<Item> holder : ingredient.items()) {
+                Item item = holder.value();
+                if (CYCLE_VALUES.containsKey(item)) {
+                    int val = CYCLE_VALUES.get(item);
                     if (val < minIngredientCost) {
                         minIngredientCost = val;
                         foundValue = true;
@@ -205,7 +206,7 @@ public class CycleValueManager {
             }
             if (!foundValue) return 0;
             totalCost += minIngredientCost;
-        }
+        }*/
         return totalCost;
     }
 
@@ -232,7 +233,7 @@ public class CycleValueManager {
             for (Map.Entry<String, JsonElement> entry : json.entrySet()) {
                 ResourceLocation id = ResourceLocation.tryParse(entry.getKey());
                 if (id != null) {
-                    Item item = BuiltInRegistries.ITEM.get(id);
+                    Item item = BuiltInRegistries.ITEM.getValue(id);
                     if (item != net.minecraft.world.item.Items.AIR || id.getPath().equals("air")) {
                         CYCLE_VALUES.put(item, entry.getValue().getAsInt());
                     }

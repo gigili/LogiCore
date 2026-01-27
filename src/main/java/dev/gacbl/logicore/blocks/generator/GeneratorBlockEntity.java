@@ -55,7 +55,8 @@ public class GeneratorBlockEntity extends BlockEntity implements MenuProvider {
 
         @Override
         public boolean isItemValid(int slot, @NotNull ItemStack stack) {
-            return stack.getBurnTime(RecipeType.SMELTING) > 0;
+            if (level == null) return false;
+            return stack.getBurnTime(RecipeType.SMELTING, level.fuelValues()) > 0;
         }
 
         @Override
@@ -148,12 +149,12 @@ public class GeneratorBlockEntity extends BlockEntity implements MenuProvider {
                 ItemStack stack = be.itemHandler.getStackInSlot(i);
 
                 if (!stack.isEmpty()) {
-                    int potentialFe = getFePerTick(stack);
+                    int potentialFe = getFePerTick(stack, level);
                     int maxStorage = be.energyStorage.getMaxEnergyStored();
                     int currentStorage = be.energyStorage.getEnergyStored();
 
                     if (currentStorage + potentialFe <= maxStorage) {
-                        int burnTime = stack.getBurnTime(RecipeType.SMELTING);
+                        int burnTime = stack.getBurnTime(RecipeType.SMELTING, level.fuelValues());
 
                         if (burnTime > 0) {
                             be.burnDuration[i] = burnTime;
@@ -206,14 +207,14 @@ public class GeneratorBlockEntity extends BlockEntity implements MenuProvider {
         }
     }
 
-    private static int getFePerTick(ItemStack stack) {
+    private static int getFePerTick(ItemStack stack, Level level) {
         if (stack.is(ItemTags.COALS)) return 120; // Coal/Charcoal
         if (stack.is(Items.COAL_BLOCK)) return 1200;
         if (stack.is(ItemTags.LOGS)) return 60;   // Logs
         if (stack.is(ItemTags.PLANKS)) return 40; // Planks
         if (stack.is(Items.BLAZE_ROD)) return 200;
 
-        int burnTime = stack.getBurnTime(RecipeType.SMELTING);
+        int burnTime = stack.getBurnTime(RecipeType.SMELTING, level.fuelValues());
         return Math.max(10, burnTime / 10);
     }
 

@@ -36,7 +36,7 @@ public class BatteryFillRenderer implements BlockEntityRenderer<BaseBatteryEntit
         float fillRatio = (float) currentEnergy / maxEnergy;
 
         TextureAtlasSprite sprite = Minecraft.getInstance()
-                .getTextureAtlas(InventoryMenu.BLOCK_ATLAS)
+                .getTextureAtlas(InventoryMenu.EMPTY_ARMOR_SLOT_BOOTS)
                 .apply(ResourceLocation.withDefaultNamespace("block/white_concrete"));
 
         BlockPos pos = blockEntity.getBlockPos();

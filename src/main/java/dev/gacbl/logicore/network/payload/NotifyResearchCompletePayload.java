@@ -26,7 +26,7 @@ public record NotifyResearchCompletePayload(ItemStack stack) implements CustomPa
 
     public static final IPayloadHandler<NotifyResearchCompletePayload> HANDLER = (payload, context) -> {
         context.enqueueWork(() -> {
-            Minecraft.getInstance().getToasts().addToast(new ResearchToast(payload.stack()));
+            Minecraft.getInstance().getToastManager().addToast(new ResearchToast(payload.stack()));
         });
     };
 }

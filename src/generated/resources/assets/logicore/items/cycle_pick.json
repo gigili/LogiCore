@@ -1,0 +1,6 @@
+{
+  "model": {
+	"type": "minecraft:model",
+	"model": "logicore:item/cycle_pick"
+  }
+}

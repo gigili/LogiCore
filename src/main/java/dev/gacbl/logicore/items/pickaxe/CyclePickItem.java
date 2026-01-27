@@ -1,20 +1,21 @@
 package dev.gacbl.logicore.items.pickaxe;
 
 import dev.gacbl.logicore.items.processorunit.ProcessorUnitModule;
+import net.minecraft.core.HolderGetter;
 import net.minecraft.data.recipes.RecipeCategory;
 import net.minecraft.data.recipes.ShapedRecipeBuilder;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.ItemTags;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.item.PickaxeItem;
-import net.minecraft.world.item.Tier;
 
 public class CyclePickItem extends PickaxeItem {
-    public CyclePickItem(Tier tier, Properties properties) {
-        super(tier, properties);
+    public CyclePickItem(Properties properties) {
+        super(ModMaterials.CYCLE_PICK, 1f, -2.8f, properties);
     }
 
-    public static ShapedRecipeBuilder getRecipe() {
-        return ShapedRecipeBuilder.shaped(RecipeCategory.REDSTONE, CyclePickModule.CYCLE_PICK.get())
+    public static ShapedRecipeBuilder getRecipe(HolderGetter<Item> items) {
+        return ShapedRecipeBuilder.shaped(items, RecipeCategory.REDSTONE, CyclePickModule.CYCLE_PICK.get())
                 .pattern("DPD")
                 .pattern(" S ")
                 .pattern(" S ")

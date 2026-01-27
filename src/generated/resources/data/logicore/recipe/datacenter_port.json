@@ -2,15 +2,9 @@
   "type": "minecraft:crafting_shaped",
   "category": "redstone",
   "key": {
-	"I": {
-	  "item": "minecraft:iron_ingot"
-	},
-	"P": {
-	  "item": "logicore:processor_unit"
-	},
-	"R": {
-	  "tag": "c:dusts/redstone"
-	}
+	"I": "minecraft:iron_ingot",
+	"P": "logicore:processor_unit",
+	"R": "#c:dusts/redstone"
   },
   "pattern": [
 	"III",

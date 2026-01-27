@@ -3,6 +3,7 @@ package dev.gacbl.logicore.items.wrench;
 import dev.gacbl.logicore.LogiCore;
 import dev.gacbl.logicore.items.processorunit.ProcessorUnitModule;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.HolderGetter;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.data.recipes.RecipeCategory;
 import net.minecraft.data.recipes.ShapedRecipeBuilder;
@@ -26,8 +27,8 @@ public class WrenchItem extends Item {
         super(properties);
     }
 
-    public static ShapedRecipeBuilder getRecipe() {
-        return ShapedRecipeBuilder.shaped(RecipeCategory.REDSTONE, WrenchModule.WRENCH.get())
+    public static ShapedRecipeBuilder getRecipe(HolderGetter<Item> items) {
+        return ShapedRecipeBuilder.shaped(items, RecipeCategory.REDSTONE, WrenchModule.WRENCH.get())
                 .pattern(" QP")
                 .pattern(" SI")
                 .pattern("S  ")

@@ -3,6 +3,7 @@ package dev.gacbl.logicore.blocks.compiler.ui;
 import dev.gacbl.logicore.core.ui.MyAbstractContainerScreen;
 import dev.gacbl.logicore.network.payload.SetAutoCraftingTemplatePayload;
 import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.renderer.RenderType;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.inventory.Slot;
@@ -37,7 +38,7 @@ public class CompilerScreen extends MyAbstractContainerScreen<CompilerMenu> {
                 float localPercent = Math.min(1.0f, percent / 0.36f);
                 int width = (int) (20 * localPercent);
                 if (width > 0) {
-                    graphics.blit(TEXTURE, x + 89, y + 87, 232, 0, width, 5);
+                    graphics.blit(RenderType::guiTextured, TEXTURE, x + 89, y + 87, 232f, 0f, width, 5, 256, 256);
                 }
             }
 
@@ -45,7 +46,7 @@ public class CompilerScreen extends MyAbstractContainerScreen<CompilerMenu> {
                 float localPercent = Math.min(1.0f, (percent - 0.36f) / 0.27f);
                 int width = (int) (15 * localPercent);
                 if (width > 0) {
-                    graphics.blit(TEXTURE, x + 109, y + 82, 232, 12, width, 15);
+                    graphics.blit(RenderType::guiTextured, TEXTURE, x + 109, y + 82, 232, 12, width, 15, 256, 256);
                 }
             }
 
@@ -53,7 +54,7 @@ public class CompilerScreen extends MyAbstractContainerScreen<CompilerMenu> {
                 float localPercent = (percent - 0.63f) / 0.37f;
                 int width = (int) (20 * localPercent);
                 if (width > 0) {
-                    graphics.blit(TEXTURE, x + 124, y + 87, 232, 6, width, 5);
+                    graphics.blit(RenderType::guiTextured, TEXTURE, x + 124, y + 87, 232, 6, width, 5, 256, 256);
                 }
             }
         }

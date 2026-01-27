@@ -2,15 +2,9 @@
   "type": "minecraft:crafting_shaped",
   "category": "redstone",
   "key": {
-	"D": {
-	  "tag": "c:gems/diamond"
-	},
-	"P": {
-	  "item": "logicore:processor_unit"
-	},
-	"S": {
-	  "tag": "c:rods/wooden"
-	}
+	"D": "#c:gems/diamond",
+	"P": "logicore:processor_unit",
+	"S": "#c:rods/wooden"
   },
   "pattern": [
 	"DPD",

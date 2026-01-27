@@ -1,3 +1,6 @@
 {
-  "parent": "logicore:block/datacenter_controller"
+  "parent": "minecraft:item/generated",
+  "textures": {
+    "layer0": "logicore:block/datacenter_controller"
+  }
 }

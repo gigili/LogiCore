@@ -3,6 +3,8 @@ package dev.gacbl.logicore.blocks.datacenter_port;
 import dev.gacbl.logicore.LogiCore;
 import dev.gacbl.logicore.core.ModCapabilities;
 import net.minecraft.core.registries.Registries;
+import net.minecraft.resources.ResourceKey;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.level.block.Block;
@@ -24,14 +26,15 @@ public class DatacenterPortModule {
             () -> new DatacenterPortBlock(BlockBehaviour.Properties.of()
                     .mapColor(MapColor.METAL)
                     .strength(3.0F, 3.0F)
-                    .requiresCorrectToolForDrops()));
+                    .requiresCorrectToolForDrops()
+                    .setId(ResourceKey.create(Registries.BLOCK, ResourceLocation.fromNamespaceAndPath(LogiCore.MOD_ID, "datacenter_port")))
+            ));
 
-    public static final DeferredHolder<Item, BlockItem> DATACENTER_PORT_ITEM = ITEMS.register("datacenter_port",
-            () -> new BlockItem(DATACENTER_PORT.get(), new Item.Properties()));
+    public static final DeferredHolder<Item, BlockItem> DATACENTER_PORT_ITEM = ITEMS.registerSimpleBlockItem(DATACENTER_PORT, new Item.Properties().useBlockDescriptionPrefix());
 
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<DatacenterPortBlockEntity>> DATACENTER_PORT_BE =
             BLOCK_ENTITIES.register("datacenter_port",
-                    () -> BlockEntityType.Builder.of(DatacenterPortBlockEntity::new, DATACENTER_PORT.get()).build(null));
+                    () -> new BlockEntityType<>(DatacenterPortBlockEntity::new, DATACENTER_PORT.get()));
 
     public static void register(IEventBus eventBus) {
         BLOCKS.register(eventBus);

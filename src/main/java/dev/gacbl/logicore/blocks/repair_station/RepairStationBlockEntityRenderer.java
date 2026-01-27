@@ -63,7 +63,7 @@ public class RepairStationBlockEntityRenderer implements BlockEntityRenderer<Rep
         if (pBlockEntity.getLevel() == null) return;
 
         long gameTime = pBlockEntity.getLevel().getGameTime();
-        float time = ((gameTime % 40) + Minecraft.getInstance().getTimer().getGameTimeDeltaPartialTick(true)) / 40.0f;
+        float time = ((gameTime % 40) + Minecraft.getInstance().getDeltaTracker().getGameTimeDeltaPartialTick(true)) / 40.0f;
         float oscillation = (float) Math.sin(time * Math.PI * 2) * 0.08f;
         float oscillationZ = (float) Math.cos(time * Math.PI * 2) * 0.03f;
 
@@ -100,7 +100,7 @@ public class RepairStationBlockEntityRenderer implements BlockEntityRenderer<Rep
             poseStack.translate(position.x + offX, position.y + offY, position.z + offZ);
 
             // Spin the particles
-            float spin = (gameTime % 20 + Minecraft.getInstance().getTimer().getGameTimeDeltaPartialTick(true)) * 18.0f;
+            float spin = (gameTime % 20 + Minecraft.getInstance().getDeltaTracker().getGameTimeDeltaPartialTick(true)) * 18.0f;
             poseStack.mulPose(Axis.YP.rotationDegrees(spin));
             poseStack.mulPose(Axis.XP.rotationDegrees(spin));
 
@@ -201,7 +201,7 @@ public class RepairStationBlockEntityRenderer implements BlockEntityRenderer<Rep
                 : Direction.NORTH;
 
         TextureAtlasSprite sprite = Minecraft.getInstance()
-                .getTextureAtlas(InventoryMenu.BLOCK_ATLAS)
+                .getTextureAtlas(InventoryMenu.EMPTY_ARMOR_SLOT_BOOTS)
                 .apply(ResourceLocation.withDefaultNamespace("block/white_concrete"));
 
         poseStack.pushPose();

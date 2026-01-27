@@ -2,15 +2,9 @@
   "type": "minecraft:crafting_shaped",
   "category": "redstone",
   "key": {
-	"G": {
-	  "item": "minecraft:gold_ingot"
-	},
-	"P": {
-	  "item": "logicore:processor_unit"
-	},
-	"R": {
-	  "item": "minecraft:redstone"
-	}
+	"G": "minecraft:gold_ingot",
+	"P": "logicore:processor_unit",
+	"R": "minecraft:redstone"
   },
   "pattern": [
 	"RGR",

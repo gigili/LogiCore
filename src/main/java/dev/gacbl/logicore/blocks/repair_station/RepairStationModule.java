@@ -5,6 +5,8 @@ import dev.gacbl.logicore.blocks.repair_station.ui.RepairStationMenu;
 import dev.gacbl.logicore.core.ModCapabilities;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;
+import net.minecraft.resources.ResourceKey;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.inventory.MenuType;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.Item;
@@ -34,14 +36,15 @@ public class RepairStationModule {
                     .mapColor(MapColor.METAL)
                     .strength(3.0F, 3.0F)
                     .requiresCorrectToolForDrops()
-                    .noOcclusion()));
+                    .noOcclusion()
+                    .setId(ResourceKey.create(Registries.BLOCK, ResourceLocation.fromNamespaceAndPath(LogiCore.MOD_ID, "repair_station")))
+            ));
 
-    public static final DeferredHolder<Item, BlockItem> REPAIR_STATION_ITEM = ITEMS.register("repair_station",
-            () -> new BlockItem(REPAIR_STATION.get(), new Item.Properties()));
+    public static final DeferredHolder<Item, BlockItem> REPAIR_STATION_ITEM = ITEMS.registerSimpleBlockItem(REPAIR_STATION, new Item.Properties().useBlockDescriptionPrefix());
 
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<RepairStationBlockEntity>> REPAIR_STATION_BE =
             BLOCK_ENTITIES.register("repair_station",
-                    () -> BlockEntityType.Builder.of(RepairStationBlockEntity::new, REPAIR_STATION.get()).build(null));
+                    () -> new BlockEntityType<>(RepairStationBlockEntity::new, REPAIR_STATION.get()));
 
     public static final DeferredHolder<MenuType<?>, MenuType<RepairStationMenu>> REPAIR_STATION_MENU =
             MENUS.register("repair_station_menu", () -> IMenuTypeExtension.create(RepairStationMenu::new));

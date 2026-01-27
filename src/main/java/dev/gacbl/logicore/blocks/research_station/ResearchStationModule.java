@@ -5,6 +5,8 @@ import dev.gacbl.logicore.blocks.research_station.ui.ResearchStationMenu;
 import dev.gacbl.logicore.core.ModCapabilities;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;
+import net.minecraft.resources.ResourceKey;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.inventory.MenuType;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.Item;
@@ -34,14 +36,15 @@ public class ResearchStationModule {
                     .mapColor(MapColor.METAL)
                     .strength(3.0F, 3.0F)
                     .requiresCorrectToolForDrops()
-                    .noOcclusion()));
+                    .noOcclusion()
+                    .setId(ResourceKey.create(Registries.BLOCK, ResourceLocation.fromNamespaceAndPath(LogiCore.MOD_ID, "research_station")))
+            ));
 
-    public static final DeferredHolder<Item, BlockItem> RESEARCH_STATION_ITEM = ITEMS.register("research_station",
-            () -> new BlockItem(RESEARCH_STATION.get(), new Item.Properties()));
+    public static final DeferredHolder<Item, BlockItem> RESEARCH_STATION_ITEM = ITEMS.registerSimpleBlockItem(RESEARCH_STATION, new Item.Properties().useBlockDescriptionPrefix());
 
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<ResearchStationBlockEntity>> RESEARCH_STATION_BE =
             BLOCK_ENTITIES.register("research_station",
-                    () -> BlockEntityType.Builder.of(ResearchStationBlockEntity::new, RESEARCH_STATION.get()).build(null));
+                    () -> new BlockEntityType<>(ResearchStationBlockEntity::new, RESEARCH_STATION.get()));
 
     public static final net.neoforged.neoforge.registries.DeferredHolder<MenuType<?>, MenuType<ResearchStationMenu>> RESEARCH_STATION_MENU =
             MENUS.register("research_station_menu", () -> IMenuTypeExtension.create(ResearchStationMenu::new));

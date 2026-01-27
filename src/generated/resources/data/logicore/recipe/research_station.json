@@ -2,18 +2,10 @@
   "type": "minecraft:crafting_shaped",
   "category": "redstone",
   "key": {
-	"G": {
-	  "item": "minecraft:gold_ingot"
-	},
-	"I": {
-	  "item": "minecraft:iron_ingot"
-	},
-	"P": {
-	  "item": "logicore:processor_unit"
-	},
-	"S": {
-	  "tag": "c:stones"
-	}
+	"G": "minecraft:gold_ingot",
+	"I": "minecraft:iron_ingot",
+	"P": "logicore:processor_unit",
+	"S": "#c:stones"
   },
   "pattern": [
 	"GIG",

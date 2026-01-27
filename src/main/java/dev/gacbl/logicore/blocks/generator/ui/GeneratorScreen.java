@@ -4,6 +4,7 @@ import dev.gacbl.logicore.core.Utils;
 import dev.gacbl.logicore.core.ui.MyAbstractContainerScreen;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.renderer.RenderType;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.player.Inventory;
 import org.jetbrains.annotations.NotNull;
@@ -42,7 +43,7 @@ public class GeneratorScreen extends MyAbstractContainerScreen<GeneratorMenu> {
                 int yOffset = barHeight - filledHeight;
                 int vOffset = textureTotalHeight - filledHeight;
 
-                graphics.blit(TEXTURE,
+                graphics.blit(RenderType::guiTextured, TEXTURE,
                         leftPos + 36, topPos + 70 + yOffset, // Screen Position (X, Y)
                         237, 61 + vOffset,                       // Texture Coordinates (U, V)
                         barWidth, filledHeight,             // Size (Width, Height)
@@ -71,7 +72,7 @@ public class GeneratorScreen extends MyAbstractContainerScreen<GeneratorMenu> {
                 int yOffset = barHeight - filledHeight;
                 int vOffset = textureTotalHeight - filledHeight + 56;
 
-                graphics.blit(TEXTURE,
+                graphics.blit(RenderType::guiTextured, TEXTURE,
                         leftPos + 16, topPos + 61 + yOffset,
                         232, vOffset,
                         barWidth, filledHeight,
@@ -99,7 +100,7 @@ public class GeneratorScreen extends MyAbstractContainerScreen<GeneratorMenu> {
                 int filledHeightCpu = (int) (scaledRatioCpu * cpuSize);
 
                 if (filledHeightCpu > 0) {
-                    graphics.blit(TEXTURE,
+                    graphics.blit(RenderType::guiTextured, TEXTURE,
                             leftPos + 11, topPos + 46 + 15 - filledHeightCpu,  // X, Y (Fixed position)
                             232, 211 + 15 - filledHeightCpu,                    // U, V (Start of texture)
                             cpuSize, filledHeightCpu,
@@ -119,7 +120,7 @@ public class GeneratorScreen extends MyAbstractContainerScreen<GeneratorMenu> {
                 int filledWidth = (int) (scaledRatio * barWidth);
 
                 if (filledWidth > 0) {
-                    graphics.blit(TEXTURE,
+                    graphics.blit(RenderType::guiTextured, TEXTURE,
                             leftPos + 26, topPos + 51,  // X, Y (Fixed position)
                             237, 56,                    // U, V (Start of texture)
                             filledWidth, barHeight,     // Width grows, Height is fixed
@@ -141,13 +142,15 @@ public class GeneratorScreen extends MyAbstractContainerScreen<GeneratorMenu> {
 
                 if (remainingHeight > 0) {
                     graphics.blit(
+                            RenderType::guiTextured,
                             TEXTURE,
                             getGuiLeft() + xOffsets[i],
                             getGuiTop() + 87 + 11 - remainingHeight,
                             232,
                             12 - remainingHeight,
                             13,
-                            remainingHeight
+                            remainingHeight,
+                            256, 256
                     );
                 }
             }

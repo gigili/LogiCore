@@ -6,8 +6,6 @@ import dev.gacbl.logicore.blocks.compiler.CompilerBlock;
 import dev.gacbl.logicore.blocks.computer.ComputerBlock;
 import dev.gacbl.logicore.blocks.datacable.cable_network.NetworkManager;
 import dev.gacbl.logicore.blocks.datacenter_port.DatacenterPortBlock;
-import dev.gacbl.logicore.blocks.drone_bay.DroneBayBlock;
-import dev.gacbl.logicore.blocks.drone_bay.DroneBayBlockEntity;
 import dev.gacbl.logicore.blocks.generator.GeneratorBlock;
 import dev.gacbl.logicore.blocks.generator.GeneratorBlockEntity;
 import dev.gacbl.logicore.blocks.repair_station.RepairStationBlock;
@@ -16,23 +14,23 @@ import dev.gacbl.logicore.blocks.serverrack.ServerRackBlock;
 import dev.gacbl.logicore.items.processorunit.ProcessorUnitModule;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.core.HolderGetter;
 import net.minecraft.data.recipes.RecipeCategory;
 import net.minecraft.data.recipes.ShapedRecipeBuilder;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.tags.ItemTags;
+import net.minecraft.util.RandomSource;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.item.context.BlockPlaceContext;
-import net.minecraft.world.level.BlockGetter;
-import net.minecraft.world.level.Level;
-import net.minecraft.world.level.LevelAccessor;
-import net.minecraft.world.level.LevelReader;
+import net.minecraft.world.level.*;
 import net.minecraft.world.level.block.*;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.level.block.state.properties.BooleanProperty;
-import net.minecraft.world.level.block.state.properties.DirectionProperty;
+import net.minecraft.world.level.block.state.properties.EnumProperty;
 import net.minecraft.world.level.material.FluidState;
 import net.minecraft.world.level.material.Fluids;
 import net.minecraft.world.phys.shapes.CollisionContext;
@@ -61,7 +59,7 @@ public class DataCableBlock extends BaseEntityBlock implements SimpleWaterlogged
     public static final BooleanProperty UP = PipeBlock.UP;
     public static final BooleanProperty DOWN = PipeBlock.DOWN;
     public static final MapCodec<DataCableBlock> CODEC = simpleCodec(DataCableBlock::new);
-    public static final DirectionProperty FACING = HorizontalDirectionalBlock.FACING;
+    public static final EnumProperty<Direction> FACING = HorizontalDirectionalBlock.FACING;
 
     public static final BooleanProperty WATERLOGGED;
 
@@ -78,8 +76,8 @@ public class DataCableBlock extends BaseEntityBlock implements SimpleWaterlogged
         );
     }
 
-    public static ShapedRecipeBuilder getRecipe() {
-        return ShapedRecipeBuilder.shaped(RecipeCategory.REDSTONE, DataCableModule.DATA_CABLE_ITEM.get())
+    public static ShapedRecipeBuilder getRecipe(HolderGetter<Item> items) {
+        return ShapedRecipeBuilder.shaped(items, RecipeCategory.REDSTONE, DataCableModule.DATA_CABLE_ITEM.get())
                 .pattern("GGG")
                 .pattern("RPR")
                 .pattern("GGG")
@@ -140,7 +138,7 @@ public class DataCableBlock extends BaseEntityBlock implements SimpleWaterlogged
     }
 
     @Override
-    public @NotNull BlockState updateShape(@NotNull BlockState state, @NotNull Direction direction, @NotNull BlockState neighborState, @NotNull LevelAccessor level, @NotNull BlockPos currentPos, @NotNull BlockPos neighborPos) {
+    protected @NotNull BlockState updateShape(@NotNull BlockState state, @NotNull LevelReader level, @NotNull ScheduledTickAccess scheduledTickAccess, @NotNull BlockPos currentPos, @NotNull Direction direction, @NotNull BlockPos neighborPos, @NotNull BlockState neighborState, @NotNull RandomSource random) {
         BooleanProperty property = PipeBlock.PROPERTY_BY_DIRECTION.get(direction);
 
         boolean canConnectTo = this.canConnectTo(level, neighborPos, direction);
@@ -176,7 +174,6 @@ public class DataCableBlock extends BaseEntityBlock implements SimpleWaterlogged
                 ComputerBlock.class,
                 CompilerBlock.class,
                 DatacenterPortBlock.class,
-                DroneBayBlock.class,
                 CloudInterfaceBlock.class,
                 ResearchStationBlock.class,
                 RepairStationBlock.class
@@ -195,14 +192,14 @@ public class DataCableBlock extends BaseEntityBlock implements SimpleWaterlogged
                 }
             }
 
-            if (server.getBlockEntity(pos) instanceof DroneBayBlockEntity) {
+            /*if (server.getBlockEntity(pos) instanceof DroneBayBlockEntity) {
                 BlockState state = server.getBlockState(pos);
                 Direction neighborFace = direction.getOpposite();
                 Direction bayFront = state.getValue(GeneratorBlock.FACING);
                 if (neighborFace != bayFront.getOpposite()) {
                     isAllowed = false;
                 }
-            }
+            }*/
 
             return isAllowed;
         }
@@ -236,11 +233,6 @@ public class DataCableBlock extends BaseEntityBlock implements SimpleWaterlogged
     @Override
     public float getShadeBrightness(@NotNull BlockState blockState, @NotNull BlockGetter blockGetter, @NotNull BlockPos blockPos) {
         return 1.0F;
-    }
-
-    @Override
-    public boolean propagatesSkylightDown(@NotNull BlockState blockState, @NotNull BlockGetter blockGetter, @NotNull BlockPos blockPos) {
-        return true;
     }
 
     protected @NotNull FluidState getFluidState(BlockState state) {

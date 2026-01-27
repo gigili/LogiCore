@@ -97,7 +97,6 @@ public class ModDataMapProvider extends DataMapProvider {
         addBase(builder, Items.SMALL_DRIPLEAF, 24);
         addBase(builder, Items.BIG_DRIPLEAF, 32);
         addTag(builder, ItemTags.SMALL_FLOWERS, 16);
-        addTag(builder, ItemTags.TALL_FLOWERS, 32);
         addBase(builder, Items.RED_MUSHROOM, 32);
         addBase(builder, Items.BROWN_MUSHROOM, 32);
         addBase(builder, Items.SUGAR_CANE, 32);
@@ -166,7 +165,7 @@ public class ModDataMapProvider extends DataMapProvider {
         addTag(builder, Tags.Items.CROPS_WHEAT, 24);
         addTag(builder, Tags.Items.CROPS_NETHER_WART, 24);
         addBase(builder, Items.APPLE, 128);
-        addTag(builder, Tags.Items.PUMPKINS_NORMAL, 144);
+        addTag(builder, Tags.Items.CROPS_PUMPKIN, 144);
         addBase(builder, Items.HONEY_BOTTLE, 48);
         addBase(builder, Items.PORKCHOP, 64);
         addBase(builder, Items.BEEF, 64);

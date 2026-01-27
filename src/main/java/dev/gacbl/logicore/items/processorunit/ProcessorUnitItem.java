@@ -1,5 +1,6 @@
 package dev.gacbl.logicore.items.processorunit;
 
+import net.minecraft.core.HolderGetter;
 import net.minecraft.data.recipes.RecipeCategory;
 import net.minecraft.data.recipes.ShapedRecipeBuilder;
 import net.minecraft.resources.ResourceLocation;
@@ -12,8 +13,8 @@ public class ProcessorUnitItem extends Item {
         super(properties);
     }
 
-    public static ShapedRecipeBuilder getRecipe() {
-        return ShapedRecipeBuilder.shaped(RecipeCategory.REDSTONE, ProcessorUnitModule.PROCESSOR_UNIT.get())
+    public static ShapedRecipeBuilder getRecipe(HolderGetter<Item> items) {
+        return ShapedRecipeBuilder.shaped(items, RecipeCategory.REDSTONE, ProcessorUnitModule.PROCESSOR_UNIT.get())
                 .pattern("RQR")
                 .pattern("IGI")
                 .pattern("RQR")

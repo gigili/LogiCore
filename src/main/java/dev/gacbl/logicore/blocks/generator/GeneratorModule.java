@@ -4,6 +4,8 @@ import dev.gacbl.logicore.LogiCore;
 import dev.gacbl.logicore.blocks.generator.ui.GeneratorMenu;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;
+import net.minecraft.resources.ResourceKey;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.inventory.MenuType;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.Item;
@@ -30,14 +32,15 @@ public class GeneratorModule {
                     .mapColor(MapColor.METAL)
                     .strength(3.0F, 3.0F)
                     .requiresCorrectToolForDrops()
-                    .noOcclusion()));
+                    .noOcclusion()
+                    .setId(ResourceKey.create(Registries.BLOCK, ResourceLocation.fromNamespaceAndPath(LogiCore.MOD_ID, "generator")))
+            ));
 
-    public static final DeferredHolder<Item, BlockItem> GENERATOR_ITEM = ITEMS.register("generator",
-            () -> new BlockItem(GENERATOR.get(), new Item.Properties()));
+    public static final DeferredHolder<Item, BlockItem> GENERATOR_ITEM = ITEMS.registerSimpleBlockItem(GENERATOR, new Item.Properties().useBlockDescriptionPrefix());
 
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<GeneratorBlockEntity>> GENERATOR_BE =
             BLOCK_ENTITIES.register("generator",
-                    () -> BlockEntityType.Builder.of(GeneratorBlockEntity::new, GENERATOR.get()).build(null));
+                    () -> new BlockEntityType<>(GeneratorBlockEntity::new, GENERATOR.get()));
 
     public static final net.neoforged.neoforge.registries.DeferredHolder<MenuType<?>, MenuType<GeneratorMenu>> GENERATOR_MENU =
             MENUS.register("generator_menu", () -> IMenuTypeExtension.create(GeneratorMenu::new));

@@ -32,8 +32,8 @@ public class RecyclerEnchantmentModule {
         if (tool.isEmpty()) return;
 
         ServerLevel level = player.serverLevel();
-        var enchantmentRegistry = level.registryAccess().registryOrThrow(Registries.ENCHANTMENT);
-        var recyclerEnchantment = enchantmentRegistry.getHolderOrThrow(RECYCLER);
+        var enchantmentRegistry = level.registryAccess().lookupOrThrow(Registries.ENCHANTMENT);
+        var recyclerEnchantment = enchantmentRegistry.getOrThrow(RECYCLER);
 
         if (EnchantmentHelper.getTagEnchantmentLevel(recyclerEnchantment, tool) <= 0) return;
 
@@ -44,9 +44,9 @@ public class RecyclerEnchantmentModule {
             int cyclesValue = CycleValueManager.getCycleValue(dropStack);
 
             // Respect Fortune/Looting
-            int bonusLevel = EnchantmentHelper.getTagEnchantmentLevel(enchantmentRegistry.getHolderOrThrow(Enchantments.FORTUNE), tool);
+            int bonusLevel = EnchantmentHelper.getTagEnchantmentLevel(enchantmentRegistry.getOrThrow(Enchantments.FORTUNE), tool);
             if (bonusLevel == 0) {
-                bonusLevel = EnchantmentHelper.getTagEnchantmentLevel(enchantmentRegistry.getHolderOrThrow(Enchantments.LOOTING), tool);
+                bonusLevel = EnchantmentHelper.getTagEnchantmentLevel(enchantmentRegistry.getOrThrow(Enchantments.LOOTING), tool);
             }
 
             if (bonusLevel > 0) {

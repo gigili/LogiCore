@@ -2,15 +2,9 @@
   "type": "minecraft:crafting_shaped",
   "category": "redstone",
   "key": {
-	"I": {
-	  "item": "minecraft:iron_block"
-	},
-	"O": {
-	  "item": "minecraft:obsidian"
-	},
-	"P": {
-	  "item": "logicore:processor_unit"
-	}
+	"I": "minecraft:iron_block",
+	"O": "minecraft:obsidian",
+	"P": "logicore:processor_unit"
   },
   "pattern": [
 	"III",

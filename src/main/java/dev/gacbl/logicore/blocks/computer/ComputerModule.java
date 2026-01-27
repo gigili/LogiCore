@@ -4,6 +4,9 @@ import dev.gacbl.logicore.LogiCore;
 import dev.gacbl.logicore.blocks.serverrack.ui.ServerRackMenu;
 import dev.gacbl.logicore.core.ModCapabilities;
 import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.core.registries.Registries;
+import net.minecraft.resources.ResourceKey;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.inventory.MenuType;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.Item;
@@ -24,14 +27,13 @@ public class ComputerModule {
     public static final DeferredRegister<MenuType<?>> MENUS = DeferredRegister.create(BuiltInRegistries.MENU, LogiCore.MOD_ID);
 
     public static final DeferredHolder<Block, ComputerBlock> COMPUTER_BLOCK =
-            BLOCKS.register("computer", () -> new ComputerBlock(BlockBehaviour.Properties.of().requiresCorrectToolForDrops().strength(0.5f).noOcclusion()));
+            BLOCKS.register("computer", () -> new ComputerBlock(BlockBehaviour.Properties.of().requiresCorrectToolForDrops().strength(0.5f).noOcclusion().setId(ResourceKey.create(Registries.BLOCK, ResourceLocation.fromNamespaceAndPath(LogiCore.MOD_ID, "computer")))));
 
-    public static final DeferredHolder<Item, BlockItem> COMPUTER_ITEM =
-            ITEMS.register("computer", () -> new BlockItem(COMPUTER_BLOCK.get(), new Item.Properties()));
+    public static final DeferredHolder<Item, BlockItem> COMPUTER_ITEM = ITEMS.registerSimpleBlockItem(COMPUTER_BLOCK, new Item.Properties().useBlockDescriptionPrefix());
 
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<ComputerBlockEntity>> COMPUTER_BLOCK_ENTITY =
-            BLOCK_ENTITIES.register("computer", () -> BlockEntityType.Builder.of(
-                    ComputerBlockEntity::new, COMPUTER_BLOCK.get()).build(null));
+            BLOCK_ENTITIES.register("computer", () -> new BlockEntityType<>(
+                    ComputerBlockEntity::new, COMPUTER_BLOCK.get()));
 
     public static final DeferredHolder<MenuType<?>, MenuType<ServerRackMenu>> SERVER_RACK_MENU =
             MENUS.register("computer_menu", () -> IMenuTypeExtension.create(ServerRackMenu::new));

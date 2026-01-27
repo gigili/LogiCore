@@ -4,6 +4,9 @@ import dev.gacbl.logicore.LogiCore;
 import dev.gacbl.logicore.blocks.serverrack.ui.ServerRackMenu;
 import dev.gacbl.logicore.core.ModCapabilities;
 import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.core.registries.Registries;
+import net.minecraft.resources.ResourceKey;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.inventory.MenuType;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.Item;
@@ -28,14 +31,18 @@ public class ServerRackModule {
 
     public static final net.neoforged.neoforge.registries.DeferredHolder<Block, ServerRackBlock> SERVER_RACK_BLOCK =
             BLOCKS.register("server_rack", () -> new ServerRackBlock(BlockBehaviour.Properties.of()
-                    .mapColor(MapColor.METAL).strength(2.0f).requiresCorrectToolForDrops().noOcclusion()));
+                    .mapColor(MapColor.METAL)
+                    .strength(2.0f)
+                    .requiresCorrectToolForDrops()
+                    .noOcclusion()
+                    .setId(ResourceKey.create(Registries.BLOCK, ResourceLocation.fromNamespaceAndPath(LogiCore.MOD_ID, "server_rack")))
+            ));
 
-    public static final net.neoforged.neoforge.registries.DeferredHolder<Item, BlockItem> SERVER_RACK_ITEM =
-            ITEMS.register("server_rack", () -> new BlockItem(SERVER_RACK_BLOCK.get(), new Item.Properties()));
+    public static final net.neoforged.neoforge.registries.DeferredHolder<Item, BlockItem> SERVER_RACK_ITEM = ITEMS.registerSimpleBlockItem(SERVER_RACK_BLOCK, new Item.Properties().useBlockDescriptionPrefix());
 
     public static final net.neoforged.neoforge.registries.DeferredHolder<BlockEntityType<?>, BlockEntityType<ServerRackBlockEntity>> SERVER_RACK_BLOCK_ENTITY =
-            BLOCK_ENTITIES.register("server_rack", () -> BlockEntityType.Builder.of(
-                    ServerRackBlockEntity::new, SERVER_RACK_BLOCK.get()).build(null));
+            BLOCK_ENTITIES.register("server_rack", () -> new BlockEntityType<>(
+                    ServerRackBlockEntity::new, SERVER_RACK_BLOCK.get()));
 
     public static final net.neoforged.neoforge.registries.DeferredHolder<MenuType<?>, MenuType<ServerRackMenu>> SERVER_RACK_MENU =
             MENUS.register("server_rack_menu", () -> IMenuTypeExtension.create(ServerRackMenu::new));

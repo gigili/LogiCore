@@ -3,6 +3,9 @@ package dev.gacbl.logicore.blocks.cloud_interface;
 import dev.gacbl.logicore.LogiCore;
 import dev.gacbl.logicore.core.ModCapabilities;
 import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.core.registries.Registries;
+import net.minecraft.resources.ResourceKey;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.level.block.Block;
@@ -20,14 +23,13 @@ public class CloudInterfaceModule {
     public static final DeferredRegister<BlockEntityType<?>> BLOCK_ENTITIES = DeferredRegister.create(BuiltInRegistries.BLOCK_ENTITY_TYPE, LogiCore.MOD_ID);
 
     public static final DeferredHolder<Block, CloudInterfaceBlock> CLOUD_INTERFACE =
-            BLOCKS.register("cloud_interface", () -> new CloudInterfaceBlock(BlockBehaviour.Properties.of().requiresCorrectToolForDrops().strength(0.5f).noOcclusion()));
+            BLOCKS.register("cloud_interface", () -> new CloudInterfaceBlock(BlockBehaviour.Properties.of().requiresCorrectToolForDrops().strength(0.5f).noOcclusion().setId(ResourceKey.create(Registries.BLOCK, ResourceLocation.fromNamespaceAndPath(LogiCore.MOD_ID, "cloud_interface")))));
 
-    public static final DeferredHolder<Item, BlockItem> CLOUD_INTERFACE_ITEM =
-            ITEMS.register("cloud_interface", () -> new BlockItem(CLOUD_INTERFACE.get(), new Item.Properties()));
+    public static final DeferredHolder<Item, BlockItem> CLOUD_INTERFACE_ITEM = ITEMS.registerSimpleBlockItem(CLOUD_INTERFACE, new Item.Properties().useBlockDescriptionPrefix());
 
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<CloudInterfaceBlockEntity>> CLOUD_INTERFACE_BE =
-            BLOCK_ENTITIES.register("cloud_interface", () -> BlockEntityType.Builder.of(
-                    CloudInterfaceBlockEntity::new, CLOUD_INTERFACE.get()).build(null));
+            BLOCK_ENTITIES.register("cloud_interface", () -> new BlockEntityType<>(
+                    CloudInterfaceBlockEntity::new, CLOUD_INTERFACE.get()));
 
     public static void register(IEventBus modEventBus) {
         BLOCKS.register(modEventBus);

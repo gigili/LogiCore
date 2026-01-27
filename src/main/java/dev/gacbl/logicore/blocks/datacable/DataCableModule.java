@@ -2,6 +2,9 @@ package dev.gacbl.logicore.blocks.datacable;
 
 import dev.gacbl.logicore.LogiCore;
 import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.core.registries.Registries;
+import net.minecraft.resources.ResourceKey;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.level.block.Block;
@@ -24,15 +27,15 @@ public class DataCableModule {
                                     .strength(0.5f)
                                     .noOcclusion()
                                     .isViewBlocking((blockState, blockGetter, blockPos) -> false)
+                                    .setId(ResourceKey.create(Registries.BLOCK, ResourceLocation.fromNamespaceAndPath(LogiCore.MOD_ID, "data_cable")))
                     )
             );
 
-    public static final net.neoforged.neoforge.registries.DeferredHolder<Item, BlockItem> DATA_CABLE_ITEM =
-            ITEMS.register("data_cable", () -> new BlockItem(DATA_CABLE_BLOCK.get(), new Item.Properties()));
+    public static final net.neoforged.neoforge.registries.DeferredHolder<Item, BlockItem> DATA_CABLE_ITEM = ITEMS.registerSimpleBlockItem(DATA_CABLE_BLOCK, new Item.Properties().useBlockDescriptionPrefix());
 
     public static final net.neoforged.neoforge.registries.DeferredHolder<BlockEntityType<?>, BlockEntityType<DataCableBlockEntity>> DATA_CABLE_BLOCK_ENTITY =
-            BLOCK_ENTITIES.register("data_cable", () -> BlockEntityType.Builder.of(
-                    DataCableBlockEntity::new, DATA_CABLE_BLOCK.get()).build(null));
+            BLOCK_ENTITIES.register("data_cable", () -> new BlockEntityType<>(
+                    DataCableBlockEntity::new, DATA_CABLE_BLOCK.get()));
 
     public static void register(IEventBus modEventBus) {
         BLOCKS.register(modEventBus);

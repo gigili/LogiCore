@@ -1,3 +1,6 @@
 {
-  "parent": "logicore:block/large_battery"
+  "parent": "minecraft:item/generated",
+  "textures": {
+    "layer0": "logicore:block/large_battery"
+  }
 }

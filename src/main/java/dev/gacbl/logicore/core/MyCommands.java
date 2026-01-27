@@ -10,6 +10,7 @@ import dev.gacbl.logicore.client.ClientKnowledgeData;
 import net.minecraft.commands.CommandBuildContext;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
+import net.minecraft.core.Holder;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
@@ -90,9 +91,12 @@ public class MyCommands {
         Set<String> knowledge = data.getKnowledge(ownerKey);
         Set<String> items = new HashSet<>();
         for (String kn : knowledge) {
-            Item item = BuiltInRegistries.ITEM.get(ResourceLocation.parse(kn)).asItem();
-            ItemStack stack = new ItemStack(item);
-            items.add(item.getName(stack).getString());
+            if (BuiltInRegistries.ITEM.get(ResourceLocation.parse(kn)).isPresent()) {
+                Holder.Reference<Item> refItem = BuiltInRegistries.ITEM.get(ResourceLocation.parse(kn)).get();
+                Item item = refItem.value();
+                ItemStack stack = new ItemStack(item);
+                items.add(item.getName(stack).getString());
+            }
         }
         source.sendSuccess(() -> Component.literal("Knowledge list: " + items), false);
         return 1;

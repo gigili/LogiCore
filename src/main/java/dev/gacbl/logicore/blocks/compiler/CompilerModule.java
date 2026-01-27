@@ -4,6 +4,9 @@ import dev.gacbl.logicore.LogiCore;
 import dev.gacbl.logicore.blocks.compiler.ui.CompilerMenu;
 import dev.gacbl.logicore.core.ModCapabilities;
 import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.core.registries.Registries;
+import net.minecraft.resources.ResourceKey;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.inventory.MenuType;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.Item;
@@ -26,14 +29,13 @@ public class CompilerModule {
     public static final DeferredRegister<MenuType<?>> MENUS = DeferredRegister.create(BuiltInRegistries.MENU, LogiCore.MOD_ID);
 
     public static final DeferredHolder<Block, CompilerBlock> COMPILER_BLOCK =
-            BLOCKS.register("compiler", () -> new CompilerBlock(BlockBehaviour.Properties.of().requiresCorrectToolForDrops().strength(0.5f).noOcclusion()));
+            BLOCKS.register("compiler", () -> new CompilerBlock(BlockBehaviour.Properties.of().requiresCorrectToolForDrops().strength(0.5f).noOcclusion().setId(ResourceKey.create(Registries.BLOCK, ResourceLocation.fromNamespaceAndPath(LogiCore.MOD_ID, "compiler")))));
 
-    public static final DeferredHolder<Item, BlockItem> COMPILER_ITEM =
-            ITEMS.register("compiler", () -> new BlockItem(COMPILER_BLOCK.get(), new Item.Properties()));
+    public static final DeferredHolder<Item, BlockItem> COMPILER_ITEM = ITEMS.registerSimpleBlockItem(COMPILER_BLOCK, new Item.Properties().useBlockDescriptionPrefix());
 
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<CompilerBlockEntity>> COMPILER_BLOCK_ENTITY =
-            BLOCK_ENTITIES.register("compiler", () -> BlockEntityType.Builder.of(
-                    CompilerBlockEntity::new, COMPILER_BLOCK.get()).build(null));
+            BLOCK_ENTITIES.register("compiler", () -> new BlockEntityType<>(
+                    CompilerBlockEntity::new, COMPILER_BLOCK.get()));
 
     public static final DeferredHolder<MenuType<?>, MenuType<CompilerMenu>> COMPILER_MENU =
             MENUS.register("compiler_menu", () -> IMenuTypeExtension.create(CompilerMenu::new));

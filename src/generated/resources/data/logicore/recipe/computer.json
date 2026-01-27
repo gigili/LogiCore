@@ -2,18 +2,10 @@
   "type": "minecraft:crafting_shaped",
   "category": "redstone",
   "key": {
-	"E": {
-	  "tag": "c:ender_pearls"
-    },
-	"N": {
-	  "tag": "c:gems/quartz"
-	},
-    "P": {
-      "item": "logicore:processor_unit"
-    },
-    "R": {
-	  "tag": "c:dusts/redstone"
-    }
+	"E": "#c:ender_pearls",
+	"N": "#c:gems/quartz",
+	"P": "logicore:processor_unit",
+	"R": "#c:dusts/redstone"
   },
   "pattern": [
     "RNR",

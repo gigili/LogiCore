@@ -3,6 +3,7 @@ package dev.gacbl.logicore.blocks.datacenter;
 import dev.gacbl.logicore.LogiCore;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;
+import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.world.item.BlockItem;
@@ -29,14 +30,15 @@ public class DatacenterModule {
             () -> new DatacenterControllerBlock(BlockBehaviour.Properties.of()
                     .mapColor(MapColor.METAL)
                     .strength(3.0F, 3.0F)
-                    .requiresCorrectToolForDrops()));
+                    .requiresCorrectToolForDrops()
+                    .setId(ResourceKey.create(Registries.BLOCK, ResourceLocation.fromNamespaceAndPath(LogiCore.MOD_ID, "datacenter_controller")))
+            ));
 
-    public static final DeferredHolder<Item, BlockItem> DATACENTER_CONTROLLER_ITEM = ITEMS.register("datacenter_controller",
-            () -> new BlockItem(DATACENTER_CONTROLLER.get(), new Item.Properties()));
+    public static final DeferredHolder<Item, BlockItem> DATACENTER_CONTROLLER_ITEM = ITEMS.registerSimpleBlockItem(DATACENTER_CONTROLLER, new Item.Properties().useBlockDescriptionPrefix());
 
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<DatacenterControllerBlockEntity>> DATACENTER_CONTROLLER_BE =
             BLOCK_ENTITIES.register("datacenter_controller",
-                    () -> BlockEntityType.Builder.of(DatacenterControllerBlockEntity::new, DATACENTER_CONTROLLER.get()).build(null));
+                    () -> new BlockEntityType<>(DatacenterControllerBlockEntity::new, DATACENTER_CONTROLLER.get()));
 
     public static final Supplier<SoundEvent> DATACENTER_AMBIENT = registerSoundEvent("datacenter_ambient");
 

@@ -1,3 +1,6 @@
 {
-  "parent": "logicore:block/generator"
+  "parent": "minecraft:item/generated",
+  "textures": {
+	"layer0": "logicore:block/generator"
+  }
 }

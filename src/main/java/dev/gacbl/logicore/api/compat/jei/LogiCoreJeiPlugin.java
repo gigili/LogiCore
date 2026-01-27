@@ -46,7 +46,7 @@ public class LogiCoreJeiPlugin implements IModPlugin {
     @Override
     public void registerRecipes(@NotNull IRecipeRegistration registration) {
         if (Minecraft.getInstance().level == null) return;
-        final var recipeManager = Minecraft.getInstance().level.getRecipeManager();
+        //final var recipeManager = Minecraft.getInstance().level.getRecipeManager();
         //registration.addRecipes(CompilerRecipeCategory.TYPE, recipeManager.getAllRecipesFor(CompilerModule.COMPILER_TYPE.get()).stream().map(RecipeHolder::value).toList());
     }
 
