@@ -9,6 +9,7 @@ import dev.gacbl.logicore.blocks.datacable.DataCableModule;
 import dev.gacbl.logicore.blocks.datacenter.DatacenterModule;
 import dev.gacbl.logicore.blocks.datacenter_port.DatacenterPortModule;
 import dev.gacbl.logicore.blocks.generator.GeneratorModule;
+import dev.gacbl.logicore.blocks.recycler.RecyclerModule;
 import dev.gacbl.logicore.blocks.repair_station.RepairStationModule;
 import dev.gacbl.logicore.blocks.research_station.ResearchStationModule;
 import dev.gacbl.logicore.blocks.serverrack.ServerRackModule;
@@ -125,6 +126,14 @@ public class ModBlockTagProvider extends BlockTagsProvider {
         tag(BlockTags.create(ResourceLocation.fromNamespaceAndPath("justdirethings", "swapper_deny"))).add(RepairStationModule.REPAIR_STATION.get());
         tag(BlockTags.create(ResourceLocation.fromNamespaceAndPath("c", "relocation_not_supported"))).add(RepairStationModule.REPAIR_STATION.get());
         tag(BlockTags.create(ResourceLocation.fromNamespaceAndPath("mekanism", "cardboard_blacklist"))).add(RepairStationModule.REPAIR_STATION.get());
+
+        tag(BlockTags.MINEABLE_WITH_PICKAXE).add(RecyclerModule.RECYCLER.get());
+        tag(BlockTags.NEEDS_IRON_TOOL).add(RecyclerModule.RECYCLER.get());
+        tag(BlockTags.create(ResourceLocation.fromNamespaceAndPath("justdirethings", "eclipsegate_deny"))).add(RecyclerModule.RECYCLER.get());
+        tag(BlockTags.create(ResourceLocation.fromNamespaceAndPath("justdirethings", "phase_deny"))).add(RecyclerModule.RECYCLER.get());
+        tag(BlockTags.create(ResourceLocation.fromNamespaceAndPath("justdirethings", "swapper_deny"))).add(RecyclerModule.RECYCLER.get());
+        tag(BlockTags.create(ResourceLocation.fromNamespaceAndPath("c", "relocation_not_supported"))).add(RecyclerModule.RECYCLER.get());
+        tag(BlockTags.create(ResourceLocation.fromNamespaceAndPath("mekanism", "cardboard_blacklist"))).add(RecyclerModule.RECYCLER.get());
 
         setupOptionalTags();
 

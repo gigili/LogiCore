@@ -1,0 +1,34 @@
+{
+  "variants": {
+	"facing=north,crushing=false": {
+	  "model": "logicore:block/recycler"
+	},
+	"facing=south,crushing=false": {
+	  "model": "logicore:block/recycler",
+	  "y": 180
+	},
+	"facing=west,crushing=false": {
+	  "model": "logicore:block/recycler",
+	  "y": 270
+	},
+	"facing=east,crushing=false": {
+	  "model": "logicore:block/recycler",
+	  "y": 90
+	},
+	"facing=north,crushing=true": {
+	  "model": "logicore:block/recycler"
+	},
+	"facing=south,crushing=true": {
+	  "model": "logicore:block/recycler",
+	  "y": 180
+	},
+	"facing=west,crushing=true": {
+	  "model": "logicore:block/recycler",
+	  "y": 270
+	},
+	"facing=east,crushing=true": {
+	  "model": "logicore:block/recycler",
+	  "y": 90
+	}
+  }
+}

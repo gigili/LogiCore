@@ -95,15 +95,22 @@ versionRange = "[21.1.15,)"
 
 [[dependencies."${mod_id}"]]
 modId = "ftb_teams"
-type = "OPTIONAL"
+type = "optional"
 versionRange = "[2101.1.8,)"
 ordering = "AFTER"
 side = "BOTH"
 
 [[dependencies."${mod_id}"]]
 modId = "ae2"
-type = "OPTIONAL"
+type = "optional"
 versionRange = "[19.2.17,)"
+ordering = "AFTER"
+side = "BOTH"
+
+[[dependencies."${mod_id}"]]
+modId = "geckolib"
+type = "required"
+versionRange = "[4.8.3,)"
 ordering = "AFTER"
 side = "BOTH"
 

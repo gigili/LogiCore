@@ -9,6 +9,7 @@ import dev.gacbl.logicore.blocks.datacable.DataCableLootTableProvider;
 import dev.gacbl.logicore.blocks.datacenter.DataCenterControllerLootTableProvider;
 import dev.gacbl.logicore.blocks.datacenter.DatacenterPortLootTableProvider;
 import dev.gacbl.logicore.blocks.generator.GeneratorLootTableProvider;
+import dev.gacbl.logicore.blocks.recycler.RecyclerLootTableProvider;
 import dev.gacbl.logicore.blocks.repair_station.RepairStationLootTableProvider;
 import dev.gacbl.logicore.blocks.research_station.ResearchStationLootTableProvider;
 import dev.gacbl.logicore.blocks.serverrack.ServerRackLootTableProvider;
@@ -60,7 +61,8 @@ public class DataGenerators {
                                 new LootTableProvider.SubProviderEntry(GeneratorLootTableProvider::new, LootContextParamSets.BLOCK),
                                 new LootTableProvider.SubProviderEntry(BatteryLootTableProvider::new, LootContextParamSets.BLOCK),
                                 new LootTableProvider.SubProviderEntry(ResearchStationLootTableProvider::new, LootContextParamSets.BLOCK),
-                                new LootTableProvider.SubProviderEntry(RepairStationLootTableProvider::new, LootContextParamSets.BLOCK)
+                                new LootTableProvider.SubProviderEntry(RepairStationLootTableProvider::new, LootContextParamSets.BLOCK),
+                                new LootTableProvider.SubProviderEntry(RecyclerLootTableProvider::new, LootContextParamSets.BLOCK)
                         ),
                         lookupProvider
                 )

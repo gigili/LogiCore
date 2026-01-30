@@ -8,6 +8,7 @@ import dev.gacbl.logicore.blocks.datacable.DataCableBlock;
 import dev.gacbl.logicore.blocks.datacenter.DatacenterControllerBlock;
 import dev.gacbl.logicore.blocks.datacenter_port.DatacenterPortBlock;
 import dev.gacbl.logicore.blocks.generator.GeneratorBlock;
+import dev.gacbl.logicore.blocks.recycler.RecyclerBlock;
 import dev.gacbl.logicore.blocks.repair_station.RepairStationBlock;
 import dev.gacbl.logicore.blocks.research_station.ResearchStationBlock;
 import dev.gacbl.logicore.blocks.serverrack.ServerRackBlock;
@@ -56,6 +57,7 @@ public class ModRecipeProvider extends RecipeProvider implements IConditionBuild
         ResearchStationBlock.getRecipe().unlockedBy("has_processor", has(ProcessorUnitModule.PROCESSOR_UNIT.get())).save(recipeOutput);
         RepairStationBlock.getRecipe().unlockedBy("has_processor", has(ProcessorUnitModule.PROCESSOR_UNIT.get())).save(recipeOutput);
         CyclePickItem.getRecipe().unlockedBy("has_processor", has(ProcessorUnitModule.PROCESSOR_UNIT.get())).save(recipeOutput);
+        RecyclerBlock.getRecipe().unlockedBy("has_processor", has(ProcessorUnitModule.PROCESSOR_UNIT.get())).save(recipeOutput);
 
         List<Item> batteryItems = BatteryModule.ITEMS.getEntries().stream()
                 .map(Holder::value)

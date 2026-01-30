@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.0.5
+
+- Added GeckoLib as dependency
+- Added `Recycler` block - WIP
+
 ## 0.0.4
 
 - Added `Repair Station` block

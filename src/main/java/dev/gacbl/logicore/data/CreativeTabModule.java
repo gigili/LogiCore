@@ -21,13 +21,14 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.ItemStack;
 import net.neoforged.bus.api.IEventBus;
+import net.neoforged.neoforge.registries.DeferredHolder;
 import net.neoforged.neoforge.registries.DeferredRegister;
 
 public class CreativeTabModule {
     public static final DeferredRegister<CreativeModeTab> CREATIVE_MODE_TABS =
             DeferredRegister.create(Registries.CREATIVE_MODE_TAB, LogiCore.MOD_ID);
 
-    public static final net.neoforged.neoforge.registries.DeferredHolder<CreativeModeTab, CreativeModeTab> LOGICORE_TAB =
+    public static final DeferredHolder<CreativeModeTab, CreativeModeTab> LOGICORE_TAB =
             CREATIVE_MODE_TABS.register("logicore_tab", () -> CreativeModeTab.builder()
                     .title(Component.translatable("creativetab.logicore.tab"))
                     .icon(() -> new ItemStack(ProcessorUnitModule.PROCESSOR_UNIT.get()))
@@ -39,8 +40,6 @@ public class CreativeTabModule {
                         output.accept(DatacenterModule.DATACENTER_CONTROLLER.get());
                         output.accept(CompilerModule.COMPILER_ITEM.get());
                         output.accept(DatacenterPortModule.DATACENTER_PORT.get());
-                        //output.accept(DroneBayModule.DRONE_BAY.get());
-                        //output.accept(DroneModule.DRONE_ITEM.get());
                         output.accept(GeneratorModule.GENERATOR.get());
                         output.accept(CloudInterfaceModule.CLOUD_INTERFACE.get());
                         output.accept(WrenchModule.WRENCH.get());
@@ -51,6 +50,7 @@ public class CreativeTabModule {
                         output.accept(ResearchStationModule.RESEARCH_STATION.get());
                         output.accept(CyclePickModule.CYCLE_PICK.get());
                         output.accept(RepairStationModule.REPAIR_STATION.get());
+                        //output.accept(RecyclerModule.RECYCLER.get());
                     })
                     .build());
 

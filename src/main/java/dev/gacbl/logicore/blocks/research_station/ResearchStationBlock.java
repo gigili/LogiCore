@@ -64,8 +64,7 @@ public class ResearchStationBlock extends BaseEntityBlock {
 
     @Override
     protected void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> builder) {
-        builder.add(ResearchStationModule.RESEARCHING);
-        builder.add(FACING);
+        builder.add(FACING, ResearchStationModule.RESEARCHING);
     }
 
     @Nullable

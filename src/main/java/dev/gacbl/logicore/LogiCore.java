@@ -14,6 +14,8 @@ import dev.gacbl.logicore.blocks.datacenter.DatacenterModule;
 import dev.gacbl.logicore.blocks.datacenter_port.DatacenterPortModule;
 import dev.gacbl.logicore.blocks.generator.GeneratorModule;
 import dev.gacbl.logicore.blocks.generator.ui.GeneratorScreen;
+import dev.gacbl.logicore.blocks.recycler.RecyclerModule;
+import dev.gacbl.logicore.blocks.recycler.client.RecyclerBlockRenderer;
 import dev.gacbl.logicore.blocks.repair_station.RepairStationBlockEntityRenderer;
 import dev.gacbl.logicore.blocks.repair_station.RepairStationModule;
 import dev.gacbl.logicore.blocks.repair_station.ui.RepairStationScreen;
@@ -86,6 +88,7 @@ public class LogiCore {
         ResearchStationModule.register(modEventBus);
         CyclePickModule.register(modEventBus);
         RepairStationModule.register(modEventBus);
+        RecyclerModule.register(modEventBus);
 
         IntegrationUtils.registerEvents();
         PacketHandler.register(modEventBus);
@@ -140,6 +143,7 @@ public class LogiCore {
             event.registerBlockEntityRenderer(ResearchStationModule.RESEARCH_STATION_BE.get(), ResearchStationBlockEntityRenderer::new);
             event.registerBlockEntityRenderer(BatteryModule.BATTERY_BE.get(), BatteryFillRenderer::new);
             event.registerBlockEntityRenderer(RepairStationModule.REPAIR_STATION_BE.get(), RepairStationBlockEntityRenderer::new);
+            event.registerBlockEntityRenderer(RecyclerModule.RECYCLER_BE.get(), context -> new RecyclerBlockRenderer());
         }
 
         @SubscribeEvent

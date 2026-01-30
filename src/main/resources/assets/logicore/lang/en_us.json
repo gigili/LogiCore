@@ -13,6 +13,7 @@
   "block.logicore.research_station": "Research station",
   "block.logicore.server_rack": "Server rack",
   "block.logicore.small_battery": "Small battery",
+  "block.logicore.recycler": "Recycler",
   "config.jade.plugin_logicore.compiler": "Compiler",
   "config.jade.plugin_logicore.datacenter_controller": "Datacenter controller",
   "config.jade.plugin_logicore.datacenter_port": "Datacenter port",
