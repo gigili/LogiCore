@@ -1,0 +1,24 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "redstone",
+  "key": {
+	"I": {
+	  "item": "minecraft:iron_ingot"
+	},
+	"P": {
+	  "item": "logicore:processor_unit"
+	},
+	"S": {
+	  "tag": "c:stones"
+	}
+  },
+  "pattern": [
+	"III",
+	"IPI",
+	"SSS"
+  ],
+  "result": {
+	"count": 1,
+	"id": "logicore:recycler"
+  }
+}
