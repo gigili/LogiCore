@@ -7,9 +7,14 @@ import net.minecraft.core.Direction;
 import net.minecraft.data.recipes.RecipeCategory;
 import net.minecraft.data.recipes.ShapedRecipeBuilder;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.sounds.SoundEvents;
+import net.minecraft.sounds.SoundSource;
 import net.minecraft.tags.ItemTags;
+import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
+import net.minecraft.world.ItemInteractionResult;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
@@ -28,6 +33,7 @@ import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
+import net.neoforged.neoforge.items.ItemStackHandler;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -140,5 +146,31 @@ public class ComputerBlock extends BaseEntityBlock {
             }
         }
         return InteractionResult.SUCCESS;
+    }
+
+    @Override
+    protected @NotNull ItemInteractionResult useItemOn(@NotNull ItemStack stack, @NotNull BlockState state, @NotNull Level level, @NotNull BlockPos pos, @NotNull Player player, @NotNull InteractionHand hand, @NotNull BlockHitResult hitResult) {
+        if (level.isClientSide()) return super.useItemOn(stack, state, level, pos, player, hand, hitResult);
+        if (stack.is(ProcessorUnitModule.PROCESSOR_UNIT)) {
+            if (level.getBlockEntity(pos) instanceof ComputerBlockEntity pc) {
+                ItemStackHandler handler = pc.getItemHandler();
+                boolean inserted = false;
+                for (int slot = 0; slot < handler.getSlots(); slot++) {
+                    ItemStack s = pc.getItemHandler().getStackInSlot(slot);
+                    if (s.isEmpty() && !stack.isEmpty()) {
+                        pc.getItemHandler().setStackInSlot(slot, new ItemStack(stack.getItem(), 1));
+                        stack.shrink(1);
+                        inserted = true;
+                    }
+                }
+
+                if (inserted) {
+                    level.playSound(null, pos, SoundEvents.ITEM_PICKUP, SoundSource.BLOCKS, 1.0f, 1.0f);
+                    level.sendBlockUpdated(pos, state, state, Block.UPDATE_ALL);
+                    return ItemInteractionResult.CONSUME;
+                }
+            }
+        }
+        return super.useItemOn(stack, state, level, pos, player, hand, hitResult);
     }
 }

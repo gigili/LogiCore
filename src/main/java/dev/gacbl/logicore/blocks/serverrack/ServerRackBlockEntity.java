@@ -51,6 +51,11 @@ public class ServerRackBlockEntity extends CoreCycleProviderBlockEntity implemen
     }
 
     @Override
+    public int getMaxProcessorCount() {
+        return RACK_CAPACITY;
+    }
+
+    @Override
     protected void saveAdditional(@NotNull CompoundTag tag, @NotNull HolderLookup.Provider registries) {
         super.saveAdditional(tag, registries);
         tag.put("inventory", itemHandler.serializeNBT(registries));

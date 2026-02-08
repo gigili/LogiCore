@@ -83,12 +83,6 @@ public class ModBlockTagProvider extends BlockTagsProvider {
         tag(BlockTags.create(ResourceLocation.fromNamespaceAndPath("mekanism", "cardboard_blacklist"))).add(DatacenterPortModule.DATACENTER_PORT.get());
         tag(ModTags.Blocks.VALID_DATACENTER_WALL_BLOCK).add(DatacenterPortModule.DATACENTER_PORT.get());
 
-        //tag(BlockTags.MINEABLE_WITH_PICKAXE).add(DroneBayModule.DRONE_BAY.get());
-        //tag(BlockTags.NEEDS_IRON_TOOL).add(DroneBayModule.DRONE_BAY.get());
-        //tag(BlockTags.create(ResourceLocation.fromNamespaceAndPath("justdirethings", "eclipsegate_deny"))).add(DroneBayModule.DRONE_BAY.get());
-        //tag(BlockTags.create(ResourceLocation.fromNamespaceAndPath("justdirethings", "phase_deny"))).add(DroneBayModule.DRONE_BAY.get());
-        //tag(BlockTags.create(ResourceLocation.fromNamespaceAndPath("justdirethings", "swapper_deny"))).add(DroneBayModule.DRONE_BAY.get());
-
         tag(BlockTags.MINEABLE_WITH_PICKAXE).add(GeneratorModule.GENERATOR.get());
         tag(BlockTags.NEEDS_IRON_TOOL).add(GeneratorModule.GENERATOR.get());
         tag(ModTags.Blocks.IS_ENERGY_GENERATOR).add(GeneratorModule.GENERATOR.get());

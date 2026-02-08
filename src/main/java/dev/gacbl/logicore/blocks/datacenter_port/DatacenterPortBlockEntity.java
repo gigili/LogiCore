@@ -2,6 +2,7 @@ package dev.gacbl.logicore.blocks.datacenter_port;
 
 import dev.gacbl.logicore.api.computation.ICycleProvider;
 import dev.gacbl.logicore.blocks.datacenter.DatacenterControllerBlockEntity;
+import dev.gacbl.logicore.core.CoreCycleProviderBlockEntity;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
@@ -39,10 +40,42 @@ public class DatacenterPortBlockEntity extends BlockEntity implements ICycleProv
         }
     }
 
+    public long getCpuCount() {
+        if (level == null) return 0;
+        if (!validController() || controllerPos == null) return 0;
+        if (!isValidState()) return 0;
+
+        long total = 0;
+        if (level.getBlockEntity(controllerPos) instanceof DatacenterControllerBlockEntity controllerBlockEntity) {
+            for (BlockPos pos : controllerBlockEntity.getInteriorProviders()) {
+                if (level.getBlockEntity(pos) instanceof CoreCycleProviderBlockEntity cBe) {
+                    total += cBe.getProcessorCount();
+                }
+            }
+        }
+        return total;
+    }
+
+    public long getCpuMaxCount() {
+        if (level == null) return 0;
+        if (!validController() || controllerPos == null) return 0;
+        if (!isValidState()) return 0;
+
+        long total = 0;
+        if (level.getBlockEntity(controllerPos) instanceof DatacenterControllerBlockEntity controllerBlockEntity) {
+            for (BlockPos pos : controllerBlockEntity.getInteriorProviders()) {
+                if (level.getBlockEntity(pos) instanceof CoreCycleProviderBlockEntity cBe) {
+                    total += cBe.getMaxProcessorCount();
+                }
+            }
+        }
+        return total;
+    }
+
     @Override
     public long getCyclesAvailable() {
         if (level == null) return 0;
-        if (controllerPos == null) return 0;
+        if (!validController() || controllerPos == null) return 0;
         if (!isValidState()) return 0;
 
         long total = 0;
@@ -59,7 +92,7 @@ public class DatacenterPortBlockEntity extends BlockEntity implements ICycleProv
     @Override
     public long getCycleCapacity() {
         if (level == null) return 0;
-        if (controllerPos == null) return 0;
+        if (!validController() || controllerPos == null) return 0;
         if (!isValidState()) return 0;
 
         long total = 0;
@@ -76,7 +109,7 @@ public class DatacenterPortBlockEntity extends BlockEntity implements ICycleProv
     @Override
     public long extractCycles(long maxExtract, boolean simulate) {
         if (level == null) return 0;
-        if (controllerPos == null) return 0;
+        if (!validController() || controllerPos == null) return 0;
         if (!isValidState()) return 0;
 
         long extractedTotal = 0;
@@ -130,6 +163,10 @@ public class DatacenterPortBlockEntity extends BlockEntity implements ICycleProv
         if (controllerPos != null) {
             tag.putLong("ControllerPos", controllerPos.asLong());
         }
+    }
+
+    private boolean validController() {
+        return controllerPos != null && level != null && level.isLoaded(controllerPos) && level.getBlockEntity(controllerPos) instanceof DatacenterControllerBlockEntity;
     }
 
     @Override

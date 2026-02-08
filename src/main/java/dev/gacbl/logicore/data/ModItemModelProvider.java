@@ -39,7 +39,6 @@ public class ModItemModelProvider extends ItemModelProvider {
         withExistingParent(DataCableModule.DATA_CABLE_ITEM.getId().getPath(), "logicore:block/data_cable_core");
         withExistingParent(DatacenterModule.DATACENTER_CONTROLLER_ITEM.getId().getPath(), "logicore:block/" + DatacenterModule.DATACENTER_CONTROLLER_ITEM.getId().getPath());
         withExistingParent(DatacenterPortModule.DATACENTER_PORT_ITEM.getId().getPath(), "logicore:block/" + DatacenterPortModule.DATACENTER_PORT_ITEM.getId().getPath());
-        //withExistingParent(DroneBayModule.DRONE_BAY_ITEM.getId().getPath(), "logicore:block/" + DroneBayModule.DRONE_BAY_ITEM.getId().getPath());
         withExistingParent(ServerRackModule.SERVER_RACK_ITEM.getId().getPath(), "logicore:block/" + ServerRackModule.SERVER_RACK_ITEM.getId().getPath());
         withExistingParent(GeneratorModule.GENERATOR_ITEM.getId().getPath(), "logicore:block/" + GeneratorModule.GENERATOR_ITEM.getId().getPath());
         withExistingParent(CloudInterfaceModule.CLOUD_INTERFACE.getId().getPath(), "logicore:block/" + CloudInterfaceModule.CLOUD_INTERFACE.getId().getPath());

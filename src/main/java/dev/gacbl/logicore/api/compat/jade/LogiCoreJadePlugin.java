@@ -29,11 +29,8 @@ public class LogiCoreJadePlugin implements IWailaPlugin {
         registration.registerBlockComponent(CoreCycleProvider.INSTANCE, ComputerBlock.class);
         registration.registerBlockComponent(CompilerProvider.INSTANCE, CompilerBlock.class);
         registration.registerBlockComponent(DatacenterProvider.INSTANCE, DatacenterPortBlock.class);
-        //registration.registerBlockComponent(DroneBayProvider.INSTANCE, DroneBayBlock.class);
         registration.registerBlockComponent(ResearchStationProvider.INSTANCE, ResearchStationBlock.class);
         registration.registerBlockComponent(RepairStationProvider.INSTANCE, RepairStationBlock.class);
-
-        //registration.registerEntityComponent(DroneEntityProvider.INSTANCE, DroneEntity.class);
     }
 
     @Override
@@ -42,10 +39,7 @@ public class LogiCoreJadePlugin implements IWailaPlugin {
         registration.registerBlockDataProvider(CoreCycleProvider.INSTANCE, ComputerBlockEntity.class);
         registration.registerBlockDataProvider(CompilerProvider.INSTANCE, CompilerBlockEntity.class);
         registration.registerBlockDataProvider(DatacenterProvider.INSTANCE, DatacenterPortBlockEntity.class);
-        //registration.registerBlockDataProvider(DroneBayProvider.INSTANCE, DroneBayBlockEntity.class);
         registration.registerBlockDataProvider(ResearchStationProvider.INSTANCE, ResearchStationBlockEntity.class);
         registration.registerBlockDataProvider(RepairStationProvider.INSTANCE, RepairStationBlockEntity.class);
-
-        //registration.registerEntityDataProvider(DroneEntityProvider.INSTANCE, DroneEntity.class);
     }
 }

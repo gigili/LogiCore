@@ -2,8 +2,15 @@
 
 ## 0.0.5
 
-- Added GeckoLib as dependency
-- Added `Recycler` block - WIP
+* Added GeckoLib as dependency
+* Added `Recycler` block - WIP
+  * Not visible in JEI/EMI
+  * Only available via give command
+  * No functionality, only animation at this moment
+  * No documentation
+* Added support for right-clicking `Serverack` and `Computer` with `Processor unit` to install them.
+* Added installed number and max number of processors to the `Jade` integration for `Datacenter Port`
+* Removed the `Drone` and the `Drone Bay`
 
 ## 0.0.4
 

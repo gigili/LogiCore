@@ -92,6 +92,8 @@ public abstract class CoreCycleProviderBlockEntity extends BlockEntity implement
 
     public abstract int getProcessorCount();
 
+    public abstract int getMaxProcessorCount();
+
     @Override
     public long getCyclesAvailable() {
         return this.cycleStorage.getCyclesAvailable();

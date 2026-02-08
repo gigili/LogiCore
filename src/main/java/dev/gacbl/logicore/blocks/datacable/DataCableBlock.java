@@ -6,8 +6,6 @@ import dev.gacbl.logicore.blocks.compiler.CompilerBlock;
 import dev.gacbl.logicore.blocks.computer.ComputerBlock;
 import dev.gacbl.logicore.blocks.datacable.cable_network.NetworkManager;
 import dev.gacbl.logicore.blocks.datacenter_port.DatacenterPortBlock;
-import dev.gacbl.logicore.blocks.drone_bay.DroneBayBlock;
-import dev.gacbl.logicore.blocks.drone_bay.DroneBayBlockEntity;
 import dev.gacbl.logicore.blocks.generator.GeneratorBlock;
 import dev.gacbl.logicore.blocks.generator.GeneratorBlockEntity;
 import dev.gacbl.logicore.blocks.repair_station.RepairStationBlock;
@@ -176,7 +174,6 @@ public class DataCableBlock extends BaseEntityBlock implements SimpleWaterlogged
                 ComputerBlock.class,
                 CompilerBlock.class,
                 DatacenterPortBlock.class,
-                DroneBayBlock.class,
                 CloudInterfaceBlock.class,
                 ResearchStationBlock.class,
                 RepairStationBlock.class
@@ -191,15 +188,6 @@ public class DataCableBlock extends BaseEntityBlock implements SimpleWaterlogged
                 Direction neighborFace = direction.getOpposite();
                 Direction generatorFront = state.getValue(GeneratorBlock.FACING);
                 if (neighborFace == Direction.UP || neighborFace == generatorFront) {
-                    isAllowed = false;
-                }
-            }
-
-            if (server.getBlockEntity(pos) instanceof DroneBayBlockEntity) {
-                BlockState state = server.getBlockState(pos);
-                Direction neighborFace = direction.getOpposite();
-                Direction bayFront = state.getValue(GeneratorBlock.FACING);
-                if (neighborFace != bayFront.getOpposite()) {
                     isAllowed = false;
                 }
             }

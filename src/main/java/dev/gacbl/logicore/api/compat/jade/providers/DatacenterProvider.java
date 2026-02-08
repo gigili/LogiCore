@@ -20,7 +20,17 @@ public class DatacenterProvider implements IBlockComponentProvider, IServerDataP
     public void appendTooltip(ITooltip tooltip, BlockAccessor accessor, IPluginConfig config) {
         long cyclesCapacity = accessor.getServerData().getLong("CyclesCapacity");
         long cyclesAvailable = accessor.getServerData().getLong("CyclesAvailable");
-        tooltip.add(Component.translatable("tooltip.logicore.cycles", Utils.formatValues(cyclesAvailable), Utils.formatValues(cyclesCapacity)));
+
+        long cpuCapacity = accessor.getServerData().getLong("CpuCapacity");
+        long cpuAvailable = accessor.getServerData().getLong("CpuAvailable");
+        if (accessor.getPlayer().isCrouching()) {
+            tooltip.add(Component.translatable("tooltip.logicore.cycles", cyclesAvailable, cyclesCapacity));
+            tooltip.add(Component.translatable("tooltip.logicore.cpus", cpuAvailable, cpuCapacity));
+        } else {
+            tooltip.add(Component.translatable("tooltip.logicore.cycles", Utils.formatValues(cyclesAvailable), Utils.formatValues(cyclesCapacity)));
+            tooltip.add(Component.translatable("tooltip.logicore.cpus", Utils.formatValues(cpuAvailable), Utils.formatValues(cpuCapacity)));
+        }
+
     }
 
     @Override
@@ -37,6 +47,8 @@ public class DatacenterProvider implements IBlockComponentProvider, IServerDataP
 
         data.putLong("CyclesCapacity", blockEntity.getCycleCapacity());
         data.putLong("CyclesAvailable", blockEntity.getCyclesAvailable());
+        data.putLong("CpuAvailable", blockEntity.getCpuCount());
+        data.putLong("CpuCapacity", blockEntity.getCpuMaxCount());
     }
 
     @Override

@@ -28,7 +28,6 @@ import dev.gacbl.logicore.core.IntegrationUtils;
 import dev.gacbl.logicore.core.ModDataMaps;
 import dev.gacbl.logicore.core.MyCommands;
 import dev.gacbl.logicore.data.CreativeTabModule;
-import dev.gacbl.logicore.entity.drone.client.DroneModel;
 import dev.gacbl.logicore.items.pickaxe.CyclePickModule;
 import dev.gacbl.logicore.items.processorunit.ProcessorUnitModule;
 import dev.gacbl.logicore.items.stack_upgrade.StackUpgradeModule;
@@ -78,11 +77,9 @@ public class LogiCore {
         DatacenterModule.register(modEventBus);
         DatacenterPortModule.register(modEventBus);
         CompilerModule.register(modEventBus);
-        //DroneBayModule.register(modEventBus);
         GeneratorModule.register(modEventBus);
         CloudInterfaceModule.register(modEventBus);
         WrenchModule.register(modEventBus);
-        //DroneModule.register(modEventBus);
         BatteryModule.register(modEventBus);
         StackUpgradeModule.register(modEventBus);
         ResearchStationModule.register(modEventBus);
@@ -124,7 +121,6 @@ public class LogiCore {
     public static class ClientModEvents {
         @SubscribeEvent
         public static void onClientSetup(FMLClientSetupEvent event) {
-            //EntityRenderers.register(DroneModule.DRONE.get(), DroneRenderer::new);
         }
 
         @SubscribeEvent
@@ -138,7 +134,6 @@ public class LogiCore {
 
         @SubscribeEvent
         public static void registerRenderers(EntityRenderersEvent.RegisterRenderers event) {
-            //event.registerBlockEntityRenderer(DroneBayModule.DRONE_BAY_BE.get(), DroneBayRenderer::new);
             event.registerBlockEntityRenderer(CompilerModule.COMPILER_BLOCK_ENTITY.get(), CompilerBlockEntityRenderer::new);
             event.registerBlockEntityRenderer(ResearchStationModule.RESEARCH_STATION_BE.get(), ResearchStationBlockEntityRenderer::new);
             event.registerBlockEntityRenderer(BatteryModule.BATTERY_BE.get(), BatteryFillRenderer::new);
@@ -148,7 +143,7 @@ public class LogiCore {
 
         @SubscribeEvent
         public static void registerLayers(EntityRenderersEvent.RegisterLayerDefinitions event) {
-            event.registerLayerDefinition(DroneModel.LAYER_LOCATION, DroneModel::createBodyLayer);
+            //
         }
 
         @SubscribeEvent

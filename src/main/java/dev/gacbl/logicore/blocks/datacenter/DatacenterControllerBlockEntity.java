@@ -5,6 +5,7 @@ import dev.gacbl.logicore.api.multiblock.AbstractSealedController;
 import dev.gacbl.logicore.api.multiblock.MultiblockValidationException;
 import dev.gacbl.logicore.api.multiblock.MultiblockValidator;
 import dev.gacbl.logicore.blocks.datacenter_port.DatacenterPortBlockEntity;
+import dev.gacbl.logicore.blocks.serverrack.ServerRackBlockEntity;
 import dev.gacbl.logicore.core.CoreCycleProviderBlockEntity;
 import dev.gacbl.logicore.core.ModTags;
 import net.minecraft.core.BlockPos;
@@ -18,10 +19,13 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
+import net.minecraft.world.level.block.state.properties.DoubleBlockHalf;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.HashSet;
 import java.util.Set;
+
+import static dev.gacbl.logicore.blocks.serverrack.ServerRackBlock.HALF;
 
 public class DatacenterControllerBlockEntity extends AbstractSealedController {
     private final Set<BlockPos> interiorProviders = new HashSet<>();
@@ -151,6 +155,9 @@ public class DatacenterControllerBlockEntity extends AbstractSealedController {
 
         BlockPos.betweenClosedStream(minPos, maxPos).forEach(pos -> {
             if (level.getBlockEntity(pos) instanceof CoreCycleProviderBlockEntity) {
+                if (level.getBlockEntity(pos) instanceof ServerRackBlockEntity srv) {
+                    pos = srv.getBlockState().getValue(HALF) == DoubleBlockHalf.LOWER ? pos : pos.below();
+                }
                 interiorProviders.add(pos.immutable());
             }
 
