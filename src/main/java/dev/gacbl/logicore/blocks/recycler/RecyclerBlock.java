@@ -16,6 +16,8 @@ import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.*;
 import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.level.block.entity.BlockEntityTicker;
+import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
@@ -27,7 +29,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 public class RecyclerBlock extends BaseEntityBlock implements EntityBlock {
-    public static final VoxelShape SHAPE = Block.box(0.0D, 0.0D, 0.0D, 16.0D, 16.0D, 16.0D);
+    public static final VoxelShape SHAPE = Block.box(0.0D, 0.0D, 0.0D, 16.0D, 10.0D, 16.0D);
     public static final MapCodec<RecyclerBlock> CODEC = simpleCodec(RecyclerBlock::new);
     public static final DirectionProperty FACING = BlockStateProperties.HORIZONTAL_FACING;
 
@@ -86,8 +88,37 @@ public class RecyclerBlock extends BaseEntityBlock implements EntityBlock {
     }
 
     @Override
-    protected @NotNull InteractionResult useWithoutItem(@NotNull BlockState state, @NotNull Level level, @NotNull BlockPos pos, @NotNull Player player, @NotNull BlockHitResult hitResult) {
-        level.setBlock(pos, state.setValue(RecyclerModule.CRUSHING, !state.getValue(RecyclerModule.CRUSHING)), 3);
-        return InteractionResult.SUCCESS_NO_ITEM_USED;
+    public void onRemove(@NotNull BlockState state, @NotNull Level level, @NotNull BlockPos pos, @NotNull BlockState newState, boolean isMoving) {
+        if (state.is(newState.getBlock())) {
+            return;
+        }
+
+        BlockEntity blockEntity = level.getBlockEntity(pos);
+        if (blockEntity instanceof RecyclerBlockEntity be) {
+            be.dropContents();
+        }
+        super.onRemove(state, level, pos, newState, isMoving);
+    }
+
+    @Nullable
+    @Override
+    public <T extends BlockEntity> BlockEntityTicker<T> getTicker(Level level, @NotNull BlockState state, @NotNull BlockEntityType<T> type) {
+        if (!level.isClientSide()) {
+            return createTickerHelper(type, RecyclerModule.RECYCLER_BE.get(), RecyclerBlockEntity::serverTick);
+        }
+        return null;
+    }
+
+    @Override
+    protected @NotNull InteractionResult useWithoutItem(@NotNull BlockState state, Level level, @NotNull BlockPos pos, @NotNull Player player, @NotNull BlockHitResult hit) {
+        if (!level.isClientSide()) {
+            BlockEntity be = level.getBlockEntity(pos);
+
+            if (be instanceof RecyclerBlockEntity blockEntity) {
+                player.openMenu(blockEntity, pos);
+                return InteractionResult.CONSUME;
+            }
+        }
+        return InteractionResult.SUCCESS;
     }
 }

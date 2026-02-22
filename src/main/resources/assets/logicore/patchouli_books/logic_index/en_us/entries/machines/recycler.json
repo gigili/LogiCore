@@ -1,0 +1,28 @@
+{
+  "name": "Recycler",
+  "icon": "logicore:recycler",
+  "category": "logicore:machines_category",
+  "pages": [
+	{
+	  "type": "patchouli:spotlight",
+	  "item": "logicore:recycler",
+	  "title": "Recycler",
+	  "text": "The $(l)Recycler$() is a machine that converts physical items back into $(l:logicore:architecture/cycles)Cycles$(). It allows you to reclaim computational value from items you no longer need, provided you have already $(l:logicore:machines/reserach_station)researched$() them."
+	},
+	{
+	  "type": "patchouli:text",
+	  "title": "Operation",
+	  "text": "The Recycler requires $(l)FE$() (Forge Energy) to operate. When provided with power and an item that has a known $(l:logicore:architecture/cycles)Cycle Value$(), it will break down the item and generate Cycles.$(br)$(br)Only items that have been fully researched can be recycled by this machine."
+	},
+	{
+	  "type": "patchouli:text",
+	  "title": "Cycle Distribution",
+	  "text": "By default, generated Cycles are stored in the Recycler's internal buffer and can be distributed to the network via $(l:logicore:components/data_cable)Data Cables$().$(br)$(br)If a $(l:logicore:machines/cloud_interface)Cloud Interface$() is connected (with its back to the Recycler), it will automatically upload the Cycles directly to your cloud storage."
+	},
+	{
+	  "type": "patchouli:crafting",
+	  "recipe": "logicore:recycler",
+	  "text": ""
+	}
+  ]
+}

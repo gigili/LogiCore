@@ -31,10 +31,6 @@ repositories {
         url = "https://api.modrinth.com/maven"
     }
 
-    repositories {
-        maven { url 'https://maven.blamejared.com' }
-    }
-
     maven {
         name = "TerraformersMC"
         url = "https://maven.terraformersmc.com/"

@@ -5,6 +5,7 @@ import net.minecraft.core.HolderLookup;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.data.PackOutput;
 import net.minecraft.resources.ResourceKey;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.ItemTags;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.item.*;
@@ -278,6 +279,7 @@ public class ModDataMapProvider extends DataMapProvider {
         addBase(builder, Items.SNOUT_ARMOR_TRIM_SMITHING_TEMPLATE, 7_533);
         addBase(builder, Items.FLOW_ARMOR_TRIM_SMITHING_TEMPLATE, 30_528);
         addBase(builder, Items.BOLT_ARMOR_TRIM_SMITHING_TEMPLATE, 10_176);
+        addTag(builder, ItemTags.create(ResourceLocation.fromNamespaceAndPath("ae2", "sky_dust")), 16);
     }
 
     private ItemStack horn(HolderLookup.Provider registries, ResourceKey<Instrument> instrument) {

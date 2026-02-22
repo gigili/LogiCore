@@ -4,6 +4,7 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
+import dev.gacbl.logicore.Config;
 import dev.gacbl.logicore.LogiCore;
 import dev.gacbl.logicore.core.ModDataMaps;
 import net.minecraft.core.RegistryAccess;
@@ -108,15 +109,17 @@ public class CycleValueManager {
     }
 
     private static void calculateValues(RecipeManager recipeManager, RegistryAccess registryAccess, File customFile) {
-        try {
-            registryAccess.registryOrThrow(Registries.ITEM).holders().forEach(holder -> {
-                Integer value = holder.getData(ModDataMaps.ITEM_CYCLES);
-                if (value != null) {
-                    CYCLE_VALUES.put(holder.value(), value);
-                }
-            });
-        } catch (Exception e) {
-            LogiCore.LOGGER.error("Failed to load base cycle values from DataMap", e);
+        if (!Config.CLEAN_SLATE.get()) {
+            try {
+                registryAccess.registryOrThrow(Registries.ITEM).holders().forEach(holder -> {
+                    Integer value = holder.getData(ModDataMaps.ITEM_CYCLES);
+                    if (value != null) {
+                        CYCLE_VALUES.put(holder.value(), value);
+                    }
+                });
+            } catch (Exception e) {
+                LogiCore.LOGGER.error("Failed to load base cycle values from DataMap", e);
+            }
         }
 
         if (customFile.exists()) {

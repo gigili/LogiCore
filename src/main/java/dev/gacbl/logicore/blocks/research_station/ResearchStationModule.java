@@ -43,7 +43,7 @@ public class ResearchStationModule {
             BLOCK_ENTITIES.register("research_station",
                     () -> BlockEntityType.Builder.of(ResearchStationBlockEntity::new, RESEARCH_STATION.get()).build(null));
 
-    public static final net.neoforged.neoforge.registries.DeferredHolder<MenuType<?>, MenuType<ResearchStationMenu>> RESEARCH_STATION_MENU =
+    public static final DeferredHolder<MenuType<?>, MenuType<ResearchStationMenu>> RESEARCH_STATION_MENU =
             MENUS.register("research_station_menu", () -> IMenuTypeExtension.create(ResearchStationMenu::new));
 
     public static void register(IEventBus eventBus) {

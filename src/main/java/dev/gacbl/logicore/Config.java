@@ -10,6 +10,7 @@ public class Config {
     public static final ModConfigSpec.ConfigValue<Boolean> ALLOW_JEI_DRAG;
     public static final ModConfigSpec.ConfigValue<Boolean> ENABLE_AE2_INTEGRATION;
     public static final ModConfigSpec.ConfigValue<Boolean> RENDER_MACHINE_INFORMATION_IN_UI;
+    public static final ModConfigSpec.ConfigValue<Boolean> CLEAN_SLATE;
 
     //Server rack
     public static final ModConfigSpec.ConfigValue<Integer> SERVER_RACK_BASE_CYCLE_GENERATION;
@@ -50,6 +51,11 @@ public class Config {
     // Repair station
     public static final ModConfigSpec.ConfigValue<Integer> RP_BASE_REPAIR_COST;
 
+    // Recycle station
+    public static final ModConfigSpec.ConfigValue<Integer> RECYCLE_FE_COST_PER_ITEM;
+    public static final ModConfigSpec.ConfigValue<Integer> RECYCLE_TIME;
+    public static final ModConfigSpec.ConfigValue<Boolean> RECYCLE_EACH_TICK_CONSUMES_FE;
+
     //Batteries
     public static final ModConfigSpec.ConfigValue<Integer> SMALL_BATTERY_CAPACITY;
     public static final ModConfigSpec.ConfigValue<Integer> SMALL_BATTERY_TRANSFER_RATE;
@@ -72,6 +78,10 @@ public class Config {
         RENDER_MACHINE_INFORMATION_IN_UI = BUILDER
                 .comment(" Should machine UIs show information about its process? Useful if you don't have jade/top/waila installed")
                 .define("render_machine_information_in_ui", true);
+
+        CLEAN_SLATE = BUILDER
+                .comment(" If set to true, it will only read values from custom_cycles.json file")
+                .define("clean_slate", false);
         BUILDER.pop();
         //</editor-fold>
 
@@ -187,6 +197,22 @@ public class Config {
         RP_BASE_REPAIR_COST = BUILDER
                 .comment(" How many cycles does it cost to repair 1 durability on an item.")
                 .defineInRange("cycles_processed_per_tick", 1000, 1, Integer.MAX_VALUE);
+        BUILDER.pop();
+        //</editor-fold>
+
+        //<editor-fold desc="Recycle station">
+        BUILDER.push("Recycle station");
+        RECYCLE_FE_COST_PER_ITEM = BUILDER
+                .comment(" How much FE is required to convert an item back into the cycles.")
+                .defineInRange("recycle_fe_cost_per_item", 150, 1, Integer.MAX_VALUE);
+
+        RECYCLE_TIME = BUILDER
+                .comment(" How many ticks to recycle an item.")
+                .defineInRange("recycle_time", 20, 1, Integer.MAX_VALUE);
+
+        RECYCLE_EACH_TICK_CONSUMES_FE = BUILDER
+                .comment(" Should each tick consume FE while recycling.")
+                .define("recycle_tick_consumes_fe", true);
         BUILDER.pop();
         //</editor-fold>
 

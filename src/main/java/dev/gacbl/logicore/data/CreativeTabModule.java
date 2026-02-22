@@ -9,6 +9,7 @@ import dev.gacbl.logicore.blocks.datacable.DataCableModule;
 import dev.gacbl.logicore.blocks.datacenter.DatacenterModule;
 import dev.gacbl.logicore.blocks.datacenter_port.DatacenterPortModule;
 import dev.gacbl.logicore.blocks.generator.GeneratorModule;
+import dev.gacbl.logicore.blocks.recycler.RecyclerModule;
 import dev.gacbl.logicore.blocks.repair_station.RepairStationModule;
 import dev.gacbl.logicore.blocks.research_station.ResearchStationModule;
 import dev.gacbl.logicore.blocks.serverrack.ServerRackModule;
@@ -50,7 +51,7 @@ public class CreativeTabModule {
                         output.accept(ResearchStationModule.RESEARCH_STATION.get());
                         output.accept(CyclePickModule.CYCLE_PICK.get());
                         output.accept(RepairStationModule.REPAIR_STATION.get());
-                        //output.accept(RecyclerModule.RECYCLER.get());
+                        output.accept(RecyclerModule.RECYCLER.get());
                     })
                     .build());
 

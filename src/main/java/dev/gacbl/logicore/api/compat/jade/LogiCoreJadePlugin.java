@@ -8,6 +8,8 @@ import dev.gacbl.logicore.blocks.computer.ComputerBlock;
 import dev.gacbl.logicore.blocks.computer.ComputerBlockEntity;
 import dev.gacbl.logicore.blocks.datacenter_port.DatacenterPortBlock;
 import dev.gacbl.logicore.blocks.datacenter_port.DatacenterPortBlockEntity;
+import dev.gacbl.logicore.blocks.recycler.RecyclerBlock;
+import dev.gacbl.logicore.blocks.recycler.RecyclerBlockEntity;
 import dev.gacbl.logicore.blocks.repair_station.RepairStationBlock;
 import dev.gacbl.logicore.blocks.repair_station.RepairStationBlockEntity;
 import dev.gacbl.logicore.blocks.research_station.ResearchStationBlock;
@@ -31,6 +33,7 @@ public class LogiCoreJadePlugin implements IWailaPlugin {
         registration.registerBlockComponent(DatacenterProvider.INSTANCE, DatacenterPortBlock.class);
         registration.registerBlockComponent(ResearchStationProvider.INSTANCE, ResearchStationBlock.class);
         registration.registerBlockComponent(RepairStationProvider.INSTANCE, RepairStationBlock.class);
+        registration.registerBlockComponent(RecyclerProvider.INSTANCE, RecyclerBlock.class);
     }
 
     @Override
@@ -41,5 +44,6 @@ public class LogiCoreJadePlugin implements IWailaPlugin {
         registration.registerBlockDataProvider(DatacenterProvider.INSTANCE, DatacenterPortBlockEntity.class);
         registration.registerBlockDataProvider(ResearchStationProvider.INSTANCE, ResearchStationBlockEntity.class);
         registration.registerBlockDataProvider(RepairStationProvider.INSTANCE, RepairStationBlockEntity.class);
+        registration.registerBlockDataProvider(RecyclerProvider.INSTANCE, RecyclerBlockEntity.class);
     }
 }

@@ -8,6 +8,7 @@ import dev.gacbl.logicore.blocks.datacable.cable_network.NetworkManager;
 import dev.gacbl.logicore.blocks.datacenter_port.DatacenterPortBlock;
 import dev.gacbl.logicore.blocks.generator.GeneratorBlock;
 import dev.gacbl.logicore.blocks.generator.GeneratorBlockEntity;
+import dev.gacbl.logicore.blocks.recycler.RecyclerBlock;
 import dev.gacbl.logicore.blocks.repair_station.RepairStationBlock;
 import dev.gacbl.logicore.blocks.research_station.ResearchStationBlock;
 import dev.gacbl.logicore.blocks.serverrack.ServerRackBlock;
@@ -176,7 +177,8 @@ public class DataCableBlock extends BaseEntityBlock implements SimpleWaterlogged
                 DatacenterPortBlock.class,
                 CloudInterfaceBlock.class,
                 ResearchStationBlock.class,
-                RepairStationBlock.class
+                RepairStationBlock.class,
+                RecyclerBlock.class
         );
         if (level instanceof ServerLevel server) {
             Block block = server.getBlockState(pos).getBlock();

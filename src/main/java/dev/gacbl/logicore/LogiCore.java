@@ -16,6 +16,7 @@ import dev.gacbl.logicore.blocks.generator.GeneratorModule;
 import dev.gacbl.logicore.blocks.generator.ui.GeneratorScreen;
 import dev.gacbl.logicore.blocks.recycler.RecyclerModule;
 import dev.gacbl.logicore.blocks.recycler.client.RecyclerBlockRenderer;
+import dev.gacbl.logicore.blocks.recycler.ui.RecyclerScreen;
 import dev.gacbl.logicore.blocks.repair_station.RepairStationBlockEntityRenderer;
 import dev.gacbl.logicore.blocks.repair_station.RepairStationModule;
 import dev.gacbl.logicore.blocks.repair_station.ui.RepairStationScreen;
@@ -130,6 +131,7 @@ public class LogiCore {
             event.register(GeneratorModule.GENERATOR_MENU.get(), GeneratorScreen::new);
             event.register(ResearchStationModule.RESEARCH_STATION_MENU.get(), ResearchStationScreen::new);
             event.register(RepairStationModule.REPAIR_STATION_MENU.get(), RepairStationScreen::new);
+            event.register(RecyclerModule.RECYCLER_MENU.get(), RecyclerScreen::new);
         }
 
         @SubscribeEvent
