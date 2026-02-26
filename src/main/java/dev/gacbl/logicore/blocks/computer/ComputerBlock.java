@@ -1,6 +1,7 @@
 package dev.gacbl.logicore.blocks.computer;
 
 import com.mojang.serialization.MapCodec;
+import dev.gacbl.logicore.items.processorunit.ProcessorUnitItem;
 import dev.gacbl.logicore.items.processorunit.ProcessorUnitModule;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -72,7 +73,7 @@ public class ComputerBlock extends BaseEntityBlock {
                 .define('N', ItemTags.create(ResourceLocation.fromNamespaceAndPath("c", "gems/quartz")))
                 .define('R', ItemTags.create(ResourceLocation.fromNamespaceAndPath("c", "dusts/redstone")))
                 .define('E', ItemTags.create(ResourceLocation.fromNamespaceAndPath("c", "ender_pearls")))
-                .define('P', ProcessorUnitModule.PROCESSOR_UNIT.get());
+                .define('P', ProcessorUnitModule.PROCESSOR_UNIT_BASIC.get());
     }
 
     @Override
@@ -151,7 +152,7 @@ public class ComputerBlock extends BaseEntityBlock {
     @Override
     protected @NotNull ItemInteractionResult useItemOn(@NotNull ItemStack stack, @NotNull BlockState state, @NotNull Level level, @NotNull BlockPos pos, @NotNull Player player, @NotNull InteractionHand hand, @NotNull BlockHitResult hitResult) {
         if (level.isClientSide()) return super.useItemOn(stack, state, level, pos, player, hand, hitResult);
-        if (stack.is(ProcessorUnitModule.PROCESSOR_UNIT)) {
+        if (stack.getItem() instanceof ProcessorUnitItem) {
             if (level.getBlockEntity(pos) instanceof ComputerBlockEntity pc) {
                 ItemStackHandler handler = pc.getItemHandler();
                 boolean inserted = false;

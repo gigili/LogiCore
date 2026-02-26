@@ -13,6 +13,6 @@ public class ModTiers {
             12.0F,
             4.0F,
             15,
-            () -> Ingredient.of(ProcessorUnitModule.PROCESSOR_UNIT.get())
+            () -> Ingredient.of(ProcessorUnitModule.PROCESSOR_UNIT_BASIC.get())
     );
 }

@@ -19,7 +19,7 @@ public class CyclePickItem extends PickaxeItem {
                 .pattern(" S ")
                 .pattern(" S ")
                 .define('D', ItemTags.create(ResourceLocation.fromNamespaceAndPath("c", "gems/diamond")))
-                .define('P', ProcessorUnitModule.PROCESSOR_UNIT.get())
+                .define('P', ProcessorUnitModule.PROCESSOR_UNIT_BASIC.get())
                 .define('S', ItemTags.create(ResourceLocation.fromNamespaceAndPath("c", "rods/wooden")));
     }
 }

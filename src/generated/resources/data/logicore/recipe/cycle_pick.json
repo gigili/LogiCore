@@ -6,7 +6,7 @@
 	  "tag": "c:gems/diamond"
 	},
 	"P": {
-	  "item": "logicore:processor_unit"
+	  "item": "logicore:processor_unit_basic"
 	},
 	"S": {
 	  "tag": "c:rods/wooden"

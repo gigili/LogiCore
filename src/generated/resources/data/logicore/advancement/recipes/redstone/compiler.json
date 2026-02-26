@@ -5,7 +5,7 @@
 	  "conditions": {
 		"items": [
 		  {
-			"items": "logicore:processor_unit"
+			"items": "logicore:processor_unit_basic"
 		  }
 		]
 	  },

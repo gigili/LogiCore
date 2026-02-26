@@ -18,8 +18,9 @@ public class RecyclerMenu extends MyAbstractContainerMenu {
 
     public RecyclerMenu(int containerId, Inventory playerInventory, BlockEntity entity, ContainerData data) {
         super(RecyclerModule.RECYCLER_MENU.get(), containerId, playerInventory, entity, data);
-        this.TE_INVENTORY_SLOT_COUNT = 1;
-        this.addSlot(new SlotItemHandler(((RecyclerBlockEntity) this.blockEntity).getItemHandler(), 0, 107, 82));
+        this.TE_INVENTORY_SLOT_COUNT = 2;
+        this.addSlot(new SlotItemHandler(((RecyclerBlockEntity) this.blockEntity).getItemHandler(), 0, 90, 82));
+        this.addSlot(new SlotItemHandler(((RecyclerBlockEntity) this.blockEntity).getItemHandler(), 1, 125, 82));
     }
 
     public RecyclerMenu(int i, Inventory inventory, RegistryFriendlyByteBuf registryFriendlyByteBuf) {

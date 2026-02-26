@@ -24,7 +24,7 @@ public class StackUpgradeItem extends Item {
                 .pattern("EPE")
                 .pattern("EEE")
                 .define('E', ItemTags.create(ResourceLocation.fromNamespaceAndPath("c", "gems/emerald")))
-                .define('P', ProcessorUnitModule.PROCESSOR_UNIT.get());
+                .define('P', ProcessorUnitModule.PROCESSOR_UNIT_BASIC.get());
     }
 
     @Override

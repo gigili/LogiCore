@@ -48,7 +48,7 @@ public class RecyclerBlock extends BaseEntityBlock implements EntityBlock {
                 .pattern("SSS")
                 .define('S', ItemTags.create(ResourceLocation.fromNamespaceAndPath("c", "stones")))
                 .define('I', Items.IRON_INGOT)
-                .define('P', ProcessorUnitModule.PROCESSOR_UNIT.get());
+                .define('P', ProcessorUnitModule.PROCESSOR_UNIT_BASIC.get());
     }
 
     @Override

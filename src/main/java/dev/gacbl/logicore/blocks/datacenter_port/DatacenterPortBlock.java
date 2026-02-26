@@ -38,7 +38,7 @@ public class DatacenterPortBlock extends BaseEntityBlock {
                 .pattern("III")
                 .define('I', Items.IRON_INGOT)
                 .define('R', ItemTags.create(ResourceLocation.fromNamespaceAndPath("c", "dusts/redstone")))
-                .define('P', ProcessorUnitModule.PROCESSOR_UNIT.get());
+                .define('P', ProcessorUnitModule.PROCESSOR_UNIT_BASIC.get());
     }
 
     @Override

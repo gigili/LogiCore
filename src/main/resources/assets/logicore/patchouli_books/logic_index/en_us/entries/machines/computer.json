@@ -12,7 +12,7 @@
     {
       "type": "patchouli:text",
       "title": "System Requirements",
-      "text": "To function, the Computer requires a valid $(l:logicore:components/processor_unit)Processor Unit$() installed in its chassis and a connection to a power source via $(l:logicore:components/data_cable)Data Cable$().$(br)$(br)$(l)Performance:$()$(br)Expect lower cycle generation rates compared to industrial hardware."
+	  "text": "To function, the Computer requires a valid $(l:logicore:components/processor_units)Processor Unit$() installed in its chassis and a connection to a power source via $(l:logicore:components/data_cable)Data Cable$().$(br)$(br)$(l)Performance:$()$(br)Expect lower cycle generation rates compared to industrial hardware."
     },
     {
       "type": "patchouli:text",

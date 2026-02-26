@@ -1,6 +1,6 @@
 {
   "parent": "minecraft:item/generated",
   "textures": {
-    "layer0": "logicore:item/processor_unit"
+	"layer0": "logicore:item/processor_unit_basic"
   }
 }

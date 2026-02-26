@@ -6,13 +6,13 @@ public class Config {
     private static final ModConfigSpec.Builder BUILDER = new ModConfigSpec.Builder();
     public static final ModConfigSpec SPEC;
 
-    //General
+    // General
     public static final ModConfigSpec.ConfigValue<Boolean> ALLOW_JEI_DRAG;
     public static final ModConfigSpec.ConfigValue<Boolean> ENABLE_AE2_INTEGRATION;
     public static final ModConfigSpec.ConfigValue<Boolean> RENDER_MACHINE_INFORMATION_IN_UI;
     public static final ModConfigSpec.ConfigValue<Boolean> CLEAN_SLATE;
 
-    //Server rack
+    // Server rack
     public static final ModConfigSpec.ConfigValue<Integer> SERVER_RACK_BASE_CYCLE_GENERATION;
     public static final ModConfigSpec.ConfigValue<Integer> SERVER_RACK_CYCLES_PER_PROCESSOR;
     public static final ModConfigSpec.ConfigValue<Integer> SERVER_RACK_FE_PER_CYCLE;
@@ -21,7 +21,7 @@ public class Config {
     public static final ModConfigSpec.ConfigValue<Integer> SERVER_RACK_DATACENTER_BOOST;
     public static final ModConfigSpec.ConfigValue<Boolean> SERVER_RACK_PRODUCES_PARTICLES;
 
-    //Computer
+    // Computer
     public static final ModConfigSpec.ConfigValue<Integer> COMPUTER_BASE_CYCLE_GENERATION;
     public static final ModConfigSpec.ConfigValue<Integer> COMPUTER_CYCLES_PER_PROCESSOR;
     public static final ModConfigSpec.ConfigValue<Integer> COMPUTER_FE_PER_CYCLE;
@@ -29,18 +29,18 @@ public class Config {
     public static final ModConfigSpec.ConfigValue<Integer> COMPUTER_FE_CAPACITY;
     public static final ModConfigSpec.ConfigValue<Integer> COMPUTER_DATACENTER_BOOST;
 
-    //Data center
+    // Data center
     public static final ModConfigSpec.ConfigValue<Integer> DATACENTER_MIN_MULTIBLOCK_SIZE;
     public static final ModConfigSpec.ConfigValue<Integer> DATACENTER_MAX_MULTIBLOCK_SIZE;
     public static final ModConfigSpec.ConfigValue<Boolean> DATACENTER_PRODUCES_SOUND;
     public static final ModConfigSpec.ConfigValue<Boolean> DATACENTER_PRODUCES_PARTICLES;
 
-    //Compiler
+    // Compiler
     public static final ModConfigSpec.ConfigValue<Integer> COMPILER_CYCLES_PROCESSED_PER_TICK;
     public static final ModConfigSpec.ConfigValue<Integer> COMPILER_MAX_PROGRESS;
     public static final ModConfigSpec.ConfigValue<Integer> COMPILER_MAX_TICK_DURATION;
 
-    //Cloud interface
+    // Cloud interface
     public static final ModConfigSpec.ConfigValue<Long> CI_MAX_TRANSFER_RATE;
 
     // Research station
@@ -56,13 +56,18 @@ public class Config {
     public static final ModConfigSpec.ConfigValue<Integer> RECYCLE_TIME;
     public static final ModConfigSpec.ConfigValue<Boolean> RECYCLE_EACH_TICK_CONSUMES_FE;
 
-    //Batteries
+    // Batteries
     public static final ModConfigSpec.ConfigValue<Integer> SMALL_BATTERY_CAPACITY;
     public static final ModConfigSpec.ConfigValue<Integer> SMALL_BATTERY_TRANSFER_RATE;
     public static final ModConfigSpec.ConfigValue<Integer> MEDIUM_BATTERY_CAPACITY;
     public static final ModConfigSpec.ConfigValue<Integer> MEDIUM_BATTERY_TRANSFER_RATE;
     public static final ModConfigSpec.ConfigValue<Integer> LARGE_BATTERY_CAPACITY;
     public static final ModConfigSpec.ConfigValue<Integer> LARGE_BATTERY_TRANSFER_RATE;
+
+    // Processor Units
+    public static final ModConfigSpec.ConfigValue<Long> BASIC_CPU_RATE;
+    public static final ModConfigSpec.ConfigValue<Long> ADVANCED_CPU_RATE;
+    public static final ModConfigSpec.ConfigValue<Long> ULTIMATE_CPU_RATE;
 
     static {
         BUILDER.comment("LogiCore Configuration");
@@ -274,6 +279,30 @@ public class Config {
                 .comment(" Maximum I/O rate of the battery")
                 .defineInRange("large_battery_transfer_rate", 100_000_000, 1, Integer.MAX_VALUE);
 
+        BUILDER.pop();
+        BUILDER.pop();
+        //</editor-fold>
+
+        //<editor-fold desc="Processor units">
+        BUILDER.push("Processor units");
+        BUILDER.comment(" Configuration for processor units and it's tiers");
+
+        BUILDER.push("Basic");
+        BASIC_CPU_RATE = BUILDER
+                .comment(" How many cycles does it produce per operation")
+                .defineInRange("basic_cpu_rate", 1000L, 1, Integer.MAX_VALUE);
+        BUILDER.pop();
+
+        BUILDER.push("Advance");
+        ADVANCED_CPU_RATE = BUILDER
+                .comment(" How many cycles does it produce per operation")
+                .defineInRange("medium_battery_capacity", 5000L, 1, Integer.MAX_VALUE);
+        BUILDER.pop();
+
+        BUILDER.push("Ultimate");
+        ULTIMATE_CPU_RATE = BUILDER
+                .comment(" How many cycles does it produce per operation")
+                .defineInRange("medium_battery_capacity", 10000L, 1, Integer.MAX_VALUE);
         BUILDER.pop();
         BUILDER.pop();
         //</editor-fold>

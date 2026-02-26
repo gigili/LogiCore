@@ -32,11 +32,13 @@ public class CreativeTabModule {
     public static final DeferredHolder<CreativeModeTab, CreativeModeTab> LOGICORE_TAB =
             CREATIVE_MODE_TABS.register("logicore_tab", () -> CreativeModeTab.builder()
                     .title(Component.translatable("creativetab.logicore.tab"))
-                    .icon(() -> new ItemStack(ProcessorUnitModule.PROCESSOR_UNIT.get()))
+                    .icon(() -> new ItemStack(ProcessorUnitModule.PROCESSOR_UNIT_BASIC.get()))
                     .displayItems((params, output) -> {
                         output.accept(ServerRackModule.SERVER_RACK_ITEM.get());
                         output.accept(DataCableModule.DATA_CABLE_ITEM.get());
-                        output.accept(ProcessorUnitModule.PROCESSOR_UNIT.get());
+                        output.accept(ProcessorUnitModule.PROCESSOR_UNIT_BASIC.get());
+                        output.accept(ProcessorUnitModule.PROCESSOR_UNIT_ADVANCE.get());
+                        output.accept(ProcessorUnitModule.PROCESSOR_UNIT_ULTIMATE.get());
                         output.accept(ComputerModule.COMPUTER_ITEM.get());
                         output.accept(DatacenterModule.DATACENTER_CONTROLLER.get());
                         output.accept(CompilerModule.COMPILER_ITEM.get());

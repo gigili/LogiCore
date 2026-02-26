@@ -7,7 +7,7 @@
 	  "type": "patchouli:spotlight",
 	  "item": "logicore:datacenter_controller",
 	  "title": "Datacenter controller",
-	  "text": "This block is a heart of the datacenter. It check if the structure if formed correctly.$(br2)Checkout $(l:logicore:architecture/datacenter)Datacenter$() page for multiblock guide."
+	  "text": "This block is a heart of the datacenter. It check if the structure if formed correctly.$(br2)Checkout $(l:logicore:architecture/datacenter)Datacenter$() page for multiblock guide.$(br2)It can also be used to insert $(l:logicore:components/processor_units)Processor$() units into all the $(l:logicore:machines/server_rack)Server Racks$() and $(l:logicore:machines/computer)Computers$() inside of the multiblock."
 	},
 	{
 	  "type": "patchouli:crafting",

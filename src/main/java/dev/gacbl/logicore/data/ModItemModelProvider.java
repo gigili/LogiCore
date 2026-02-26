@@ -29,7 +29,9 @@ public class ModItemModelProvider extends ItemModelProvider {
 
     @Override
     protected void registerModels() {
-        basicItem(ProcessorUnitModule.PROCESSOR_UNIT.get());
+        basicItem(ProcessorUnitModule.PROCESSOR_UNIT_BASIC.get());
+        basicItem(ProcessorUnitModule.PROCESSOR_UNIT_ADVANCE.get());
+        basicItem(ProcessorUnitModule.PROCESSOR_UNIT_ULTIMATE.get());
         basicItem(WrenchModule.WRENCH.get());
         basicItem(StackUpgradeModule.STACK_UPGRADE.get());
         basicItem(CyclePickModule.CYCLE_PICK.get());

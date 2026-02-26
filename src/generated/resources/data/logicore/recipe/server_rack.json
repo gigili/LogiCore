@@ -6,7 +6,7 @@
       "tag": "c:ender_pearls"
     },
     "P": {
-      "item": "logicore:processor_unit"
+	  "item": "logicore:processor_unit_basic"
     },
 	"Q": {
 	  "tag": "c:gems/quartz"

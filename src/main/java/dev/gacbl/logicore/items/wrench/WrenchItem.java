@@ -34,7 +34,7 @@ public class WrenchItem extends Item {
                 .define('S', ItemTags.create(ResourceLocation.fromNamespaceAndPath("c", "rods/wooden")))
                 .define('I', Items.IRON_INGOT)
                 .define('Q', ItemTags.create(ResourceLocation.fromNamespaceAndPath("c", "gems/quartz")))
-                .define('P', ProcessorUnitModule.PROCESSOR_UNIT.get());
+                .define('P', ProcessorUnitModule.PROCESSOR_UNIT_BASIC.get());
     }
 
     @Override

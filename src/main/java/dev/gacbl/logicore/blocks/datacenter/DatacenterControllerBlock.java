@@ -12,7 +12,10 @@ import net.minecraft.sounds.SoundSource;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
+import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
@@ -32,6 +35,8 @@ import net.minecraft.world.phys.BlockHitResult;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.List;
+
 public class DatacenterControllerBlock extends Block implements EntityBlock {
     public static final DirectionProperty FACING = BlockStateProperties.FACING;
     public static final BooleanProperty FORMED = BooleanProperty.create("formed");
@@ -48,7 +53,7 @@ public class DatacenterControllerBlock extends Block implements EntityBlock {
                 .pattern("III")
                 .define('I', Items.IRON_BLOCK)
                 .define('O', Items.OBSIDIAN)
-                .define('P', ProcessorUnitModule.PROCESSOR_UNIT.get());
+                .define('P', ProcessorUnitModule.PROCESSOR_UNIT_BASIC.get());
     }
 
     @Override
@@ -73,10 +78,27 @@ public class DatacenterControllerBlock extends Block implements EntityBlock {
     }
 
     @Override
+    public void onRemove(@NotNull BlockState state, @NotNull Level level, @NotNull BlockPos pos, @NotNull BlockState newState, boolean isMoving) {
+        if (state.is(newState.getBlock())) {
+            return;
+        }
+
+        BlockEntity blockEntity = level.getBlockEntity(pos);
+        if (blockEntity instanceof DatacenterControllerBlockEntity be) {
+            be.dropContents();
+        }
+        super.onRemove(state, level, pos, newState, isMoving);
+    }
+
+    @Override
     protected @NotNull InteractionResult useWithoutItem(@NotNull BlockState state, Level level, @NotNull BlockPos pos, @NotNull Player player, @NotNull BlockHitResult hitResult) {
-        if (!level.isClientSide) {
+        if (!level.isClientSide()) {
             BlockEntity be = level.getBlockEntity(pos);
-            if (be instanceof DatacenterControllerBlockEntity controller) {
+
+            if (be instanceof DatacenterControllerBlockEntity controller && !player.isCrouching()) {
+                player.openMenu(controller, pos);
+                return InteractionResult.CONSUME;
+            } else if (be instanceof DatacenterControllerBlockEntity controller && player.isCrouching()) {
                 if (!state.getValue(FORMED)) {
                     controller.attemptFormation();
                     BlockState newState = level.getBlockState(pos);
@@ -93,6 +115,7 @@ public class DatacenterControllerBlock extends Block implements EntityBlock {
                 } else {
                     player.displayClientMessage(Component.translatable("message.logicore.datacenter.formed"), true);
                 }
+                return InteractionResult.SUCCESS;
             }
         }
         return InteractionResult.SUCCESS;
@@ -149,5 +172,11 @@ public class DatacenterControllerBlock extends Block implements EntityBlock {
                 );
             }
         }
+    }
+
+    @Override
+    public void appendHoverText(@NotNull ItemStack stack, Item.@NotNull TooltipContext context, @NotNull List<Component> tooltipComponents, @NotNull TooltipFlag tooltipFlag) {
+        super.appendHoverText(stack, context, tooltipComponents, tooltipFlag);
+        tooltipComponents.add(Component.translatable("tooltip.logicore.datacenter.tooltip"));
     }
 }

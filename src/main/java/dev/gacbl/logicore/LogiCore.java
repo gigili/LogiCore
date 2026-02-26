@@ -11,6 +11,7 @@ import dev.gacbl.logicore.blocks.computer.ComputerModule;
 import dev.gacbl.logicore.blocks.datacable.DataCableModule;
 import dev.gacbl.logicore.blocks.datacable.cable_network.NetworkManager;
 import dev.gacbl.logicore.blocks.datacenter.DatacenterModule;
+import dev.gacbl.logicore.blocks.datacenter.ui.DatacenterControllerScreen;
 import dev.gacbl.logicore.blocks.datacenter_port.DatacenterPortModule;
 import dev.gacbl.logicore.blocks.generator.GeneratorModule;
 import dev.gacbl.logicore.blocks.generator.ui.GeneratorScreen;
@@ -132,6 +133,7 @@ public class LogiCore {
             event.register(ResearchStationModule.RESEARCH_STATION_MENU.get(), ResearchStationScreen::new);
             event.register(RepairStationModule.REPAIR_STATION_MENU.get(), RepairStationScreen::new);
             event.register(RecyclerModule.RECYCLER_MENU.get(), RecyclerScreen::new);
+            event.register(DatacenterModule.DATACENTER_CONTROLLER_MENU.get(), DatacenterControllerScreen::new);
         }
 
         @SubscribeEvent

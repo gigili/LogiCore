@@ -6,7 +6,7 @@
 	  "item": "minecraft:iron_ingot"
 	},
 	"P": {
-	  "item": "logicore:processor_unit"
+	  "item": "logicore:processor_unit_basic"
 	},
 	"R": {
 	  "tag": "c:dusts/redstone"

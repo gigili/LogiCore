@@ -191,6 +191,6 @@ public class ServerRackScreen extends MyAbstractContainerScreen<ServerRackMenu> 
         if (this.menu.hasDataCenterBoost() && cyclesToGenerate > 0) {
             cyclesToGenerate -= this.menu.getDataCenterBoost();
         }
-        graphics.drawString(this.font, Component.literal(String.valueOf(cyclesToGenerate * this.menu.getFePerCycle())), labelSectionX, labelSectionY, textColor, false);
+        graphics.drawString(this.font, Component.literal(Utils.formatValues(Math.min(cyclesToGenerate * this.menu.getFePerCycle(), 100_000))), labelSectionX, labelSectionY, textColor, false);
     }
 }

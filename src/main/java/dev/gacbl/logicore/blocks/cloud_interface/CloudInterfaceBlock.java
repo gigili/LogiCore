@@ -51,7 +51,7 @@ public class CloudInterfaceBlock extends BaseEntityBlock {
                 .pattern("NRN")
                 .define('N', ItemTags.create(ResourceLocation.fromNamespaceAndPath("c", "ender_pearls")))
                 .define('R', ItemTags.create(ResourceLocation.fromNamespaceAndPath("c", "dusts/redstone")))
-                .define('P', ProcessorUnitModule.PROCESSOR_UNIT.get());
+                .define('P', ProcessorUnitModule.PROCESSOR_UNIT_BASIC.get());
     }
 
     @Override

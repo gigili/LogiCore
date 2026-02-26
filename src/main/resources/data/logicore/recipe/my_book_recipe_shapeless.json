@@ -11,7 +11,7 @@
       "item": "minecraft:book"
     },
     {
-      "item": "logicore:processor_unit"
+	  "item": "logicore:processor_unit_basic"
     }
   ],
   "result": {

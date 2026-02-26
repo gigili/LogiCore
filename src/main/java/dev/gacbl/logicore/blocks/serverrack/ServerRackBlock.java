@@ -2,6 +2,7 @@ package dev.gacbl.logicore.blocks.serverrack;
 
 import com.mojang.serialization.MapCodec;
 import dev.gacbl.logicore.Config;
+import dev.gacbl.logicore.items.processorunit.ProcessorUnitItem;
 import dev.gacbl.logicore.items.processorunit.ProcessorUnitModule;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -63,7 +64,7 @@ public class ServerRackBlock extends BaseEntityBlock {
                 .define('Q', ItemTags.create(ResourceLocation.fromNamespaceAndPath("c", "gems/quartz")))
                 .define('R', ItemTags.create(ResourceLocation.fromNamespaceAndPath("c", "dusts/redstone")))
                 .define('E', ItemTags.create(ResourceLocation.fromNamespaceAndPath("c", "ender_pearls")))
-                .define('P', ProcessorUnitModule.PROCESSOR_UNIT.get());
+                .define('P', ProcessorUnitModule.PROCESSOR_UNIT_BASIC.get());
     }
 
     @Override
@@ -137,7 +138,7 @@ public class ServerRackBlock extends BaseEntityBlock {
         if (level.isClientSide()) return super.useItemOn(stack, state, level, pos, player, hand, hitResult);
         BlockPos bePos = state.getValue(HALF) == DoubleBlockHalf.LOWER ? pos : pos.below();
 
-        if (stack.is(ProcessorUnitModule.PROCESSOR_UNIT)) {
+        if (stack.getItem() instanceof ProcessorUnitItem) {
             if (level.getBlockEntity(bePos) instanceof ServerRackBlockEntity rack) {
                 ItemStackHandler handler = rack.getItemHandler();
                 boolean inserted = false;

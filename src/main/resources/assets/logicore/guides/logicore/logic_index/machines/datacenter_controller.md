@@ -17,7 +17,9 @@ This block is a heart of the datacenter. It check if the structure if formed cor
 
 Checkout [Datacenter](../architecture/datacenter.md) page for multiblock guide.
 
+It can also be used to insert all the missing [Processor units](../components/processor_unit.md) into all
+the [Server Racks](../machines/server_rack.md) and [Computers](../machines/computer.md) inside the multiblock.
+
 A machines used for constructing the multiblock.
 
 <Recipe id="logicore:datacenter_controller" />
-

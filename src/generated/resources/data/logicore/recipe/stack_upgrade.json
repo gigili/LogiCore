@@ -6,7 +6,7 @@
 	  "tag": "c:gems/emerald"
 	},
 	"P": {
-	  "item": "logicore:processor_unit"
+	  "item": "logicore:processor_unit_basic"
 	}
   },
   "pattern": [

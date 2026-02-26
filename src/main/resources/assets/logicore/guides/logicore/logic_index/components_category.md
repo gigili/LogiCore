@@ -1,7 +1,7 @@
 ---
 navigation:
   title: "Components"
-  icon: "logicore:processor_unit"
+  icon: "logicore:processor_unit_basic"
 ---
 
 # Components

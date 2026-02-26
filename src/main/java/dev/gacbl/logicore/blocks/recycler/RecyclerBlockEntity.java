@@ -6,6 +6,7 @@ import dev.gacbl.logicore.api.computation.ICycleProvider;
 import dev.gacbl.logicore.api.cycles.CycleValueManager;
 import dev.gacbl.logicore.blocks.recycler.ui.RecyclerMenu;
 import dev.gacbl.logicore.client.ClientKnowledgeData;
+import dev.gacbl.logicore.items.stack_upgrade.StackUpgradeItem;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.core.registries.BuiltInRegistries;
@@ -72,17 +73,27 @@ public class RecyclerBlockEntity extends BlockEntity implements GeoBlockEntity, 
         return cache;
     }
 
-    private final ItemStackHandler itemHandler = new ItemStackHandler(1) {
+    private final ItemStackHandler itemHandler = new ItemStackHandler(2) {
         @Override
         protected void onContentsChanged(int slot) {
             setChanged();
-
         }
 
         @Override
         public boolean isItemValid(int slot, @NotNull ItemStack stack) {
-            ResourceLocation itemRes = BuiltInRegistries.ITEM.getKey(stack.getItem());
-            return CycleValueManager.hasCycleValue(stack) && ClientKnowledgeData.isUnlocked(itemRes.toString()) && (cycleStorage.getCycleCapacity() - cycleStorage.getCyclesAvailable()) >= CycleValueManager.getCycleValue(itemHandler.getStackInSlot(0).copyWithCount(1));
+            if (slot == 0) {
+                return stack.getItem() instanceof StackUpgradeItem;
+            } else if (slot == 1) {
+                ResourceLocation itemRes = BuiltInRegistries.ITEM.getKey(stack.getItem());
+                long value = CycleValueManager.getCycleValue(stack);
+                return value > 0 && ClientKnowledgeData.isUnlocked(itemRes.toString()) && (cycleStorage.getCycleCapacity() - cycleStorage.getCyclesAvailable()) >= value;
+            }
+            return false;
+        }
+
+        @Override
+        public int getSlotLimit(int slot) {
+            return slot == 0 ? 16 : super.getSlotLimit(slot);
         }
     };
 
@@ -145,21 +156,21 @@ public class RecyclerBlockEntity extends BlockEntity implements GeoBlockEntity, 
     }
 
     public void serverTick(ServerLevel serverLevel, BlockPos blockPos, BlockState blockState) {
-        if (energyStorage.getEnergyStored() == 0 || energyStorage.getEnergyStored() < Config.RECYCLE_FE_COST_PER_ITEM.get() || itemHandler.getStackInSlot(0).isEmpty()) {
+        if (energyStorage.getEnergyStored() == 0 || energyStorage.getEnergyStored() < Config.RECYCLE_FE_COST_PER_ITEM.get() || itemHandler.getStackInSlot(1).isEmpty()) {
             progress = 0;
             maxProgress = 20;
             toggleCrushingState(false);
             return;
         }
 
-        if ((cycleStorage.getCycleCapacity() - cycleStorage.getCyclesAvailable()) < CycleValueManager.getCycleValue(itemHandler.getStackInSlot(0).copyWithCount(1))) {
+        if ((cycleStorage.getCycleCapacity() - cycleStorage.getCyclesAvailable()) < CycleValueManager.getCycleValue(itemHandler.getStackInSlot(1).copyWithCount(1))) {
             progress = 0;
             maxProgress = 20;
             toggleCrushingState(false);
             return;
         }
 
-        ItemStack template = itemHandler.getStackInSlot(0);
+        ItemStack template = itemHandler.getStackInSlot(1);
         if (template.isEmpty()) {
             if (progress > 0) {
                 progress = 0;
@@ -174,22 +185,33 @@ public class RecyclerBlockEntity extends BlockEntity implements GeoBlockEntity, 
         }
 
         progress++;
+
+        ItemStack itemStack = itemHandler.getStackInSlot(1);
+        ItemStack upgradeStack = itemHandler.getStackInSlot(0);
+
+        int maxPerCycle = upgradeStack.isEmpty() ? 1 : (upgradeStack.getCount() * 4);
+        int itemsToProcess = Math.min(itemStack.getCount(), maxPerCycle);
+
+        long singleItemValue = CycleValueManager.getCycleValue(itemStack.copyWithCount(1));
+        long totalCycleValue = singleItemValue * itemsToProcess;
+        long feCost = (long) Config.RECYCLE_FE_COST_PER_ITEM.get() * itemsToProcess;
+
         if (progress >= maxProgress) {
             progress = 0;
             maxProgress = Config.RECYCLE_TIME.get();
-            ItemStack stack = itemHandler.getStackInSlot(0);
-            if (!stack.isEmpty()) {
-                long inserted = cycleStorage.receiveCycles(CycleValueManager.getCycleValue(stack), false);
-                if (inserted < CycleValueManager.getCycleValue(stack)) {
-                    internalCycleBuffer += CycleValueManager.getCycleValue(stack) - inserted;
-                }
-                itemHandler.extractItem(0, 1, false);
-                energyStorage.extractEnergy(Config.RECYCLE_FE_COST_PER_ITEM.get(), false);
-            }
-        } else if (Config.RECYCLE_EACH_TICK_CONSUMES_FE.get()) {
-            energyStorage.extractEnergy(Config.RECYCLE_FE_COST_PER_ITEM.get(), false);
-        }
+            if (!itemStack.isEmpty()) {
+                long inserted = cycleStorage.receiveCycles(totalCycleValue, false);
 
+                if (inserted < totalCycleValue) {
+                    internalCycleBuffer += (totalCycleValue - inserted);
+                }
+
+                itemHandler.extractItem(1, itemsToProcess, false);
+                energyStorage.extractEnergy((int) feCost, false);
+            }
+        } else if (Config.RECYCLE_EACH_TICK_CONSUMES_FE.get() && !itemHandler.getStackInSlot(1).isEmpty()) {
+            energyStorage.extractEnergy((int) feCost, false);
+        }
 
         if (internalCycleBuffer > 0 && cycleStorage.getCycleCapacity() - cycleStorage.getCyclesAvailable() > 0) {
             long extracted = cycleStorage.receiveCycles(internalCycleBuffer, false);

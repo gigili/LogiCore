@@ -4,10 +4,12 @@ import dev.gacbl.logicore.Config;
 import dev.gacbl.logicore.api.multiblock.AbstractSealedController;
 import dev.gacbl.logicore.api.multiblock.MultiblockValidationException;
 import dev.gacbl.logicore.api.multiblock.MultiblockValidator;
+import dev.gacbl.logicore.blocks.datacenter.ui.DatacenterControllerMenu;
 import dev.gacbl.logicore.blocks.datacenter_port.DatacenterPortBlockEntity;
 import dev.gacbl.logicore.blocks.serverrack.ServerRackBlockEntity;
 import dev.gacbl.logicore.core.CoreCycleProviderBlockEntity;
 import dev.gacbl.logicore.core.ModTags;
+import dev.gacbl.logicore.items.processorunit.ProcessorUnitItem;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.HolderLookup;
@@ -15,19 +17,30 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.LongTag;
 import net.minecraft.nbt.Tag;
+import net.minecraft.network.chat.Component;
+import net.minecraft.world.Containers;
+import net.minecraft.world.MenuProvider;
+import net.minecraft.world.entity.player.Inventory;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.inventory.AbstractContainerMenu;
+import net.minecraft.world.inventory.ContainerData;
+import net.minecraft.world.inventory.SimpleContainerData;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.level.block.state.properties.DoubleBlockHalf;
+import net.neoforged.neoforge.items.ItemStackHandler;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.HashSet;
 import java.util.Set;
 
 import static dev.gacbl.logicore.blocks.serverrack.ServerRackBlock.HALF;
 
-public class DatacenterControllerBlockEntity extends AbstractSealedController {
+public class DatacenterControllerBlockEntity extends AbstractSealedController implements MenuProvider {
     private final Set<BlockPos> interiorProviders = new HashSet<>();
     private final Set<BlockPos> ports = new HashSet<>();
     private boolean cacheDirty = true;
@@ -123,6 +136,13 @@ public class DatacenterControllerBlockEntity extends AbstractSealedController {
             portsTag.add(LongTag.valueOf(portPos.asLong()));
         }
         tag.put("Ports", portsTag);
+
+        ListTag providersTag = new ListTag();
+        for (BlockPos provider : interiorProviders) {
+            providersTag.add(LongTag.valueOf(provider.asLong()));
+        }
+        tag.put("Providers", providersTag);
+        tag.put("inventory", itemHandler.serializeNBT(registries));
     }
 
     @Override
@@ -135,6 +155,15 @@ public class DatacenterControllerBlockEntity extends AbstractSealedController {
         ListTag portsTag = tag.getList("Ports", Tag.TAG_LONG);
         for (Tag value : portsTag) {
             ports.add(BlockPos.of(((LongTag) value).getAsLong()));
+        }
+
+        ListTag providersTag = tag.getList("Providers", Tag.TAG_LONG);
+        for (Tag value : providersTag) {
+            interiorProviders.add(BlockPos.of(((LongTag) value).getAsLong()));
+        }
+
+        if (tag.contains("inventory")) {
+            itemHandler.deserializeNBT(registries, tag.getCompound("inventory"));
         }
     }
 
@@ -154,9 +183,19 @@ public class DatacenterControllerBlockEntity extends AbstractSealedController {
         ports.clear();
 
         BlockPos.betweenClosedStream(minPos, maxPos).forEach(pos -> {
-            if (level.getBlockEntity(pos) instanceof CoreCycleProviderBlockEntity) {
+            if (level.getBlockEntity(pos) instanceof CoreCycleProviderBlockEntity providerEntity) {
                 if (level.getBlockEntity(pos) instanceof ServerRackBlockEntity srv) {
                     pos = srv.getBlockState().getValue(HALF) == DoubleBlockHalf.LOWER ? pos : pos.below();
+                }
+
+                ItemStackHandler handler = providerEntity.getItemHandler();
+                if (handler != null && providerEntity.getProcessorCount() < providerEntity.getMaxProcessorCount()) {
+                    for (int index = 0; index < handler.getSlots(); index++) {
+                        if (handler.getStackInSlot(index).isEmpty() && !itemHandler.getStackInSlot(0).isEmpty()) {
+                            handler.insertItem(index, itemHandler.getStackInSlot(0).copyWithCount(1), false);
+                            itemHandler.getStackInSlot(0).shrink(1);
+                        }
+                    }
                 }
                 interiorProviders.add(pos.immutable());
             }
@@ -196,4 +235,42 @@ public class DatacenterControllerBlockEntity extends AbstractSealedController {
             }
         }
     }
+
+    private final ItemStackHandler itemHandler = new ItemStackHandler(1) {
+        @Override
+        protected void onContentsChanged(int slot) {
+            setChanged();
+        }
+
+        @Override
+        public boolean isItemValid(int slot, @NotNull ItemStack stack) {
+            return stack.getItem() instanceof ProcessorUnitItem;
+        }
+
+        @Override
+        public int getSlotLimit(int slot) {
+            return 64;
+        }
+    };
+
+    public ItemStackHandler getItemHandler() {
+        return itemHandler;
+    }
+
+    public void dropContents() {
+        if (this.level == null) return;
+        Containers.dropItemStack(this.level, this.worldPosition.getX(), this.worldPosition.getY(), this.worldPosition.getZ(), itemHandler.getStackInSlot(0));
+    }
+
+    @Override
+    public @NotNull Component getDisplayName() {
+        return Component.translatable("block.logicore.datacenter_controller");
+    }
+
+    @Override
+    public @Nullable AbstractContainerMenu createMenu(int containerId, @NotNull Inventory inventory, @NotNull Player player) {
+        return new DatacenterControllerMenu(containerId, inventory, this, data);
+    }
+
+    public ContainerData data = new SimpleContainerData(1);
 }

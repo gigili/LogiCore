@@ -1,6 +1,18 @@
 # Changelog
 
+## 0.0.7
+
+* Added tiered processors (basic - 1K, advance - 5K, ultimate - 10K)
+* Added stack upgrade support to `Recycler`
+* Added ability to insert all processors in a multiblock via `Datacenter controller` block
+* Fix texture flickering when `Cloud interface` is next to a full block
+
 ## 0.0.6
+
+* Added Recycler block
+* Updated documentation
+* Added support for having no precalculated values for easier pack changes via config clean_slate option
+* Added ae2:sky_dust to a list of predetermined cycle values
 
 ## 0.0.5
 

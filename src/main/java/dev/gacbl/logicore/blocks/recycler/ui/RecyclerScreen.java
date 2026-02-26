@@ -12,7 +12,7 @@ public class RecyclerScreen extends MyAbstractContainerScreen<RecyclerMenu> {
         super(menu, playerInventory, title);
         this.titleLabelX = leftPos + 90;
         this.titleLabelY = topPos + 14;
-        setTexture("textures/gui/research_station_ui.png");
+        setTexture("textures/gui/recycler_ui.png");
         renderInventoryLabel = false;
     }
 
@@ -24,7 +24,7 @@ public class RecyclerScreen extends MyAbstractContainerScreen<RecyclerMenu> {
             int percentage = (int) (fillRatio * 100);
 
             Component text = Component.translatable("tooltip.logicore.recycle_progress", percentage);
-            graphics.drawString(this.font, text, leftPos + 65, topPos + 110, this.titleLabelColor);
+            graphics.drawString(this.font, text, leftPos + 65, topPos + 120, this.titleLabelColor);
         }
     }
 }

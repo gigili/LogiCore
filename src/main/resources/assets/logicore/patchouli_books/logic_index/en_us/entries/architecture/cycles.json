@@ -1,6 +1,6 @@
 {
   "name": "Cycles",
-  "icon": "logicore:processor_unit",
+  "icon": "logicore:processor_unit_basic",
   "category": "logicore:architecture_category",
   "pages": [
     {

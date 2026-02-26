@@ -1,0 +1,28 @@
+{
+  "name": "Processor Units",
+  "icon": "logicore:processor_unit_basic",
+  "category": "logicore:components_category",
+  "pages": [
+	{
+	  "type": "patchouli:spotlight",
+	  "item": "logicore:processor_unit_basic",
+	  "title": "Processor Unit",
+	  "text": "The silicon heart of your operations. The Processor Unit is the primary component responsible for generating $(l:logicore:architecture/cycles)Cycles$().$(br)$(br)It must be installed in $(l:logicore:machines/server_rack)Server Racks$() or $(l:logicore:machines/computer)Computers$(). Without a processor, these machines are inert—producing nothing even if connected to power."
+	},
+	{
+	  "type": "patchouli:crafting",
+	  "recipe": "logicore:processor_unit_basic",
+	  "text": "Basic version of the processor capable of producing 1000 $(l:logicore:architecture/cycles)Cycles$() per processor."
+	},
+	{
+	  "type": "patchouli:crafting",
+	  "recipe": "logicore:processor_unit_advance",
+	  "text": "Advanced version of the processor capable of producing 5000 $(l:logicore:architecture/cycles)Cycles$() per processor."
+	},
+	{
+	  "type": "patchouli:crafting",
+	  "recipe": "logicore:processor_unit_ultimate",
+	  "text": "Ultimate version of the processor capable of producing 10000 $(l:logicore:architecture/cycles)Cycles$() per processor."
+	}
+  ]
+}

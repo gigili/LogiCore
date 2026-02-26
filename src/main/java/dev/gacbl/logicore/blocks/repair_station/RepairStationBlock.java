@@ -52,7 +52,7 @@ public class RepairStationBlock extends BaseEntityBlock {
                 .define('R', ItemTags.create(ResourceLocation.fromNamespaceAndPath("c", "dusts/redstone")))
                 .define('E', Items.EMERALD)
                 .define('G', Items.GOLD_INGOT)
-                .define('P', ProcessorUnitModule.PROCESSOR_UNIT.get());
+                .define('P', ProcessorUnitModule.PROCESSOR_UNIT_BASIC.get());
     }
 
     @Override

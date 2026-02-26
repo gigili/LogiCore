@@ -12,7 +12,7 @@
     {
       "type": "patchouli:text",
       "title": "Configuration",
-      "text": "To operate, the rack requires a $(l:logicore:components/processor_unit)Processor Unit$() installed in its bay and a connection to the network via $(l:logicore:components/data_cable)Data Cable$().$(br)$(br)Due to its high throughput, ensure your power generation can sustain its energy demands."
+	  "text": "To operate, the rack requires a $(l:logicore:components/processor_units)Processor Unit$() installed in its bay and a connection to the network via $(l:logicore:components/data_cable)Data Cable$().$(br)$(br)Due to its high throughput, ensure your power generation can sustain its energy demands."
     },
     {
       "type": "patchouli:text",

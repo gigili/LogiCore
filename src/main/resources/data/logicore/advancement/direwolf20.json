@@ -1,7 +1,7 @@
 {
   "display": {
 	"icon": {
-	  "id": "logicore:processor_unit"
+	  "id": "logicore:processor_unit_advance"
 	},
 	"title": "Be aware of Dire wire!",
 	"description": "The wire can get Dire!",

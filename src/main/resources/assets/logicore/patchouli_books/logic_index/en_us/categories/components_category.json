@@ -1,5 +1,5 @@
 {
   "name": "Components",
   "description": "Fundamental parts, cabling, and logic units required for system construction.",
-  "icon": "logicore:processor_unit"
+  "icon": "logicore:processor_unit_basic"
 }

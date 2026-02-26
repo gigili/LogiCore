@@ -105,7 +105,7 @@ public class ClientEvents {
         if (event.getEntity().level().isClientSide) return;
         if (!(event.getEntity() instanceof ServerPlayer player)) return;
 
-        if (event.getCrafting().is(ProcessorUnitModule.PROCESSOR_UNIT.get())) {
+        if (event.getCrafting().is(ProcessorUnitModule.PROCESSOR_UNIT_BASIC.get())) {
             if (List.of(LASH_UUID, DIRE_UUID, GAC_UUID, DEV_UUID).contains(player.getUUID())) {
                 grantDevAdvancement(player);
             }

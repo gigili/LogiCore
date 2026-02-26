@@ -6,6 +6,7 @@ import dev.gacbl.logicore.api.computation.ICycleStorage;
 import dev.gacbl.logicore.api.multiblock.AbstractSealedController;
 import dev.gacbl.logicore.blocks.serverrack.ServerRackBlock;
 import dev.gacbl.logicore.blocks.serverrack.ServerRackModule;
+import dev.gacbl.logicore.items.processorunit.ProcessorUnitItem;
 import dev.gacbl.logicore.network.PacketHandler;
 import dev.gacbl.logicore.network.payload.SyncCycleDataPayload;
 import net.minecraft.core.BlockPos;
@@ -53,7 +54,7 @@ public abstract class CoreCycleProviderBlockEntity extends BlockEntity implement
         BASE_CYCLE_GENERATION = baseCycleGeneration;
         CYCLES_PER_PROCESSOR = cyclePerProcessor;
         FE_PER_CYCLE = fePerCycle;
-        energyStorage = new EnergyStorage(feCapacity, 10_000, 10_000);
+        energyStorage = new EnergyStorage(feCapacity, 100_000, 100_000);
         cycleStorage = new CycleStorage(cycleCapacity);
         this.dataCenterBoost = dataCenterBoost;
     }
@@ -66,7 +67,7 @@ public abstract class CoreCycleProviderBlockEntity extends BlockEntity implement
                 case 1 -> CoreCycleProviderBlockEntity.this.energyStorage.getMaxEnergyStored();
                 case 2 -> CoreCycleProviderBlockEntity.this.cycleStorage.getCyclesAvailable();
                 case 3 -> CoreCycleProviderBlockEntity.this.cycleStorage.getCycleCapacity();
-                case 4 -> CoreCycleProviderBlockEntity.this.BASE_CYCLE_GENERATION;
+                case 4 -> CoreCycleProviderBlockEntity.this.calculateBaseCycleGeneration();
                 case 5 -> CoreCycleProviderBlockEntity.this.CYCLES_PER_PROCESSOR;
                 case 6 -> CoreCycleProviderBlockEntity.this.FE_PER_CYCLE;
                 case 7 -> getProcessorCount();
@@ -86,8 +87,18 @@ public abstract class CoreCycleProviderBlockEntity extends BlockEntity implement
         }
     };
 
-    public ContainerData getContainerData() {
-        return this.data;
+    public int calculateBaseCycleGeneration() {
+        long cyclesToGenerate = BASE_CYCLE_GENERATION;
+        ItemStackHandler handler = getItemHandler();
+        if (handler != null) {
+            for (int i = 0; i < handler.getSlots(); i++) {
+                var stack = handler.getStackInSlot(i);
+                if (stack.getItem() instanceof ProcessorUnitItem processor) {
+                    cyclesToGenerate += processor.tier.cycleRate.get();
+                }
+            }
+        }
+        return (int) cyclesToGenerate;
     }
 
     public abstract int getProcessorCount();
@@ -205,8 +216,9 @@ public abstract class CoreCycleProviderBlockEntity extends BlockEntity implement
             return;
         }
 
-        long cyclesToGenerate = BASE_CYCLE_GENERATION + ((long) processorCount * CYCLES_PER_PROCESSOR);
-        long feCost = cyclesToGenerate * FE_PER_CYCLE;
+        long cyclesToGenerate = calculateBaseCycleGeneration();
+
+        long feCost = Math.min(cyclesToGenerate * FE_PER_CYCLE, 99_999L);
         if (hasDataCenterBoost) {
             cyclesToGenerate += 100;
         }
