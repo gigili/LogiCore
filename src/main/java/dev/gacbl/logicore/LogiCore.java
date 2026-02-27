@@ -35,8 +35,6 @@ import dev.gacbl.logicore.items.processorunit.ProcessorUnitModule;
 import dev.gacbl.logicore.items.stack_upgrade.StackUpgradeModule;
 import dev.gacbl.logicore.items.wrench.WrenchModule;
 import dev.gacbl.logicore.network.PacketHandler;
-import guideme.Guide;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.IEventBus;
@@ -95,7 +93,9 @@ public class LogiCore {
         modContainer.registerConfig(ModConfig.Type.COMMON, Config.SPEC, "logicore/logicore.toml");
         modEventBus.addListener(this::registerDataMaps);
 
-        Guide.builder(ResourceLocation.parse("logicore:guide")).build();
+        if (net.neoforged.fml.ModList.get().isLoaded("guideme")) {
+            dev.gacbl.logicore.api.compat.GuideMeSupport.setupGuide();
+        }
     }
 
     private void registerDataMaps(RegisterDataMapTypesEvent event) {

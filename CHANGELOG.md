@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.0.8
+
+* Fixed a crash when GuideMe is not installed
+
 ## 0.0.7
 
 * Added tiered processors (basic - 1K, advance - 5K, ultimate - 10K)
