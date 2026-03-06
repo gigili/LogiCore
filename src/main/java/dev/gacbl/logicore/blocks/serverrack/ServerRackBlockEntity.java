@@ -14,13 +14,19 @@ import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.neoforged.neoforge.items.ItemStackHandler;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import software.bernie.geckolib.animatable.GeoBlockEntity;
+import software.bernie.geckolib.animatable.instance.AnimatableInstanceCache;
+import software.bernie.geckolib.animatable.instance.SingletonAnimatableInstanceCache;
+import software.bernie.geckolib.animation.*;
 
-public class ServerRackBlockEntity extends CoreCycleProviderBlockEntity implements MenuProvider {
+public class ServerRackBlockEntity extends CoreCycleProviderBlockEntity implements MenuProvider, GeoBlockEntity {
     public static final int RACK_CAPACITY = 9;
+    private final AnimatableInstanceCache cache = new SingletonAnimatableInstanceCache(this);
 
     public ServerRackBlockEntity(BlockPos pos, BlockState state) {
         super(
@@ -32,6 +38,33 @@ public class ServerRackBlockEntity extends CoreCycleProviderBlockEntity implemen
                 Config.SERVER_RACK_DATACENTER_BOOST.get(),
                 ServerRackModule.SERVER_RACK_BLOCK_ENTITY.get(), pos, state
         );
+    }
+
+    @Override
+    public void registerControllers(AnimatableManager.ControllerRegistrar controllers) {
+        controllers.add(new AnimationController<>(this, "controller", 0, this::predicate));
+    }
+
+    private PlayState predicate(AnimationState<ServerRackBlockEntity> recyclerBlockEntityAnimationState) {
+        if (level != null) {
+            BlockState state = level.getBlockState(worldPosition);
+            BlockEntity entity = level.getBlockEntity(worldPosition);
+            if (entity instanceof ServerRackBlockEntity) {
+                if (state.getValue(ServerRackBlock.DOOR_OPENING)) {
+                    recyclerBlockEntityAnimationState.setAndContinue(RawAnimation.begin().then("door_open", Animation.LoopType.HOLD_ON_LAST_FRAME));
+                } else if (state.getValue(ServerRackBlock.DOOR_CLOSING)) {
+                    recyclerBlockEntityAnimationState.setAndContinue(RawAnimation.begin().then("door_close", Animation.LoopType.HOLD_ON_LAST_FRAME));
+                } else {
+                    recyclerBlockEntityAnimationState.setAndContinue(RawAnimation.begin().then("idle", Animation.LoopType.PLAY_ONCE));
+                }
+            }
+        }
+        return PlayState.CONTINUE;
+    }
+
+    @Override
+    public AnimatableInstanceCache getAnimatableInstanceCache() {
+        return cache;
     }
 
     @Override

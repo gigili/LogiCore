@@ -5,7 +5,6 @@ import dev.gacbl.logicore.api.computation.ICycleProvider;
 import dev.gacbl.logicore.api.computation.ICycleStorage;
 import dev.gacbl.logicore.api.multiblock.AbstractSealedController;
 import dev.gacbl.logicore.blocks.serverrack.ServerRackBlock;
-import dev.gacbl.logicore.blocks.serverrack.ServerRackModule;
 import dev.gacbl.logicore.items.processorunit.ProcessorUnitItem;
 import dev.gacbl.logicore.network.PacketHandler;
 import dev.gacbl.logicore.network.payload.SyncCycleDataPayload;
@@ -170,11 +169,11 @@ public abstract class CoreCycleProviderBlockEntity extends BlockEntity implement
         }
         be.generateCycles();
 
-        if (state.hasProperty(ServerRackModule.GENERATING)) {
-            boolean currentGeneratingState = state.getValue(ServerRackModule.GENERATING);
+        if (state.hasProperty(ServerRackBlock.GENERATING)) {
+            boolean currentGeneratingState = state.getValue(ServerRackBlock.GENERATING);
 
             if (be.isGenerating != currentGeneratingState) {
-                level.setBlock(pos, state.setValue(ServerRackModule.GENERATING, be.isGenerating), 3);
+                level.setBlock(pos, state.setValue(ServerRackBlock.GENERATING, be.isGenerating), 3);
                 if (state.hasProperty(ServerRackBlock.HALF)) {
                     updateOtherHalf(level, pos, state, be.isGenerating);
                 }
@@ -189,7 +188,7 @@ public abstract class CoreCycleProviderBlockEntity extends BlockEntity implement
         BlockState otherState = level.getBlockState(otherPos);
 
         if (otherState.getBlock() instanceof ServerRackBlock) {
-            level.setBlock(otherPos, otherState.setValue(ServerRackModule.GENERATING, isWorking), 3);
+            level.setBlock(otherPos, otherState.setValue(ServerRackBlock.GENERATING, isWorking), 3);
         }
     }
 

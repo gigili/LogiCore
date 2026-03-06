@@ -10,12 +10,12 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockBehaviour;
-import net.minecraft.world.level.block.state.properties.BooleanProperty;
 import net.minecraft.world.level.material.MapColor;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.neoforge.capabilities.Capabilities;
 import net.neoforged.neoforge.capabilities.RegisterCapabilitiesEvent;
 import net.neoforged.neoforge.common.extensions.IMenuTypeExtension;
+import net.neoforged.neoforge.registries.DeferredHolder;
 import net.neoforged.neoforge.registries.DeferredRegister;
 
 public class ServerRackModule {
@@ -24,20 +24,22 @@ public class ServerRackModule {
     public static final DeferredRegister<BlockEntityType<?>> BLOCK_ENTITIES = DeferredRegister.create(BuiltInRegistries.BLOCK_ENTITY_TYPE, LogiCore.MOD_ID);
     public static final DeferredRegister<MenuType<?>> MENUS = DeferredRegister.create(BuiltInRegistries.MENU, LogiCore.MOD_ID);
 
-    public static final BooleanProperty GENERATING = BooleanProperty.create("generating");
-
-    public static final net.neoforged.neoforge.registries.DeferredHolder<Block, ServerRackBlock> SERVER_RACK_BLOCK =
+    public static final DeferredHolder<Block, ServerRackBlock> SERVER_RACK_BLOCK =
             BLOCKS.register("server_rack", () -> new ServerRackBlock(BlockBehaviour.Properties.of()
-                    .mapColor(MapColor.METAL).strength(2.0f).requiresCorrectToolForDrops().noOcclusion()));
+                    .mapColor(MapColor.METAL)
+                    .strength(3.0F, 3.0F)
+                    .requiresCorrectToolForDrops()
+                    .noOcclusion()
+            ));
 
-    public static final net.neoforged.neoforge.registries.DeferredHolder<Item, BlockItem> SERVER_RACK_ITEM =
+    public static final DeferredHolder<Item, BlockItem> SERVER_RACK_ITEM =
             ITEMS.register("server_rack", () -> new BlockItem(SERVER_RACK_BLOCK.get(), new Item.Properties()));
 
-    public static final net.neoforged.neoforge.registries.DeferredHolder<BlockEntityType<?>, BlockEntityType<ServerRackBlockEntity>> SERVER_RACK_BLOCK_ENTITY =
+    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<ServerRackBlockEntity>> SERVER_RACK_BLOCK_ENTITY =
             BLOCK_ENTITIES.register("server_rack", () -> BlockEntityType.Builder.of(
                     ServerRackBlockEntity::new, SERVER_RACK_BLOCK.get()).build(null));
 
-    public static final net.neoforged.neoforge.registries.DeferredHolder<MenuType<?>, MenuType<ServerRackMenu>> SERVER_RACK_MENU =
+    public static final DeferredHolder<MenuType<?>, MenuType<ServerRackMenu>> SERVER_RACK_MENU =
             MENUS.register("server_rack_menu", () -> IMenuTypeExtension.create(ServerRackMenu::new));
 
     public static void register(IEventBus modEventBus) {
