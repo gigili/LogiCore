@@ -82,5 +82,6 @@
   "ui.tooltip.logicore.cycles_modifier": "Modifier:",
   "ui.tooltip.logicore.cycles_produced": "Produced:",
   "ui.tooltip.logicore.cycles_storage": "%s / %s",
-  "ui.tooltip.logicore.fe_per_tick": "Fe per tick:"
+  "ui.tooltip.logicore.fe_per_tick": "Fe per tick:",
+  "item.logicore.server": "Server"
 }

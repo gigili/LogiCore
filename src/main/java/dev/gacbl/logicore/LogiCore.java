@@ -33,6 +33,8 @@ import dev.gacbl.logicore.core.MyCommands;
 import dev.gacbl.logicore.data.CreativeTabModule;
 import dev.gacbl.logicore.items.pickaxe.CyclePickModule;
 import dev.gacbl.logicore.items.processorunit.ProcessorUnitModule;
+import dev.gacbl.logicore.items.server.ServerModule;
+import dev.gacbl.logicore.items.server.ui.ServerScreen;
 import dev.gacbl.logicore.items.stack_upgrade.StackUpgradeModule;
 import dev.gacbl.logicore.items.wrench.WrenchModule;
 import dev.gacbl.logicore.network.PacketHandler;
@@ -87,6 +89,7 @@ public class LogiCore {
         CyclePickModule.register(modEventBus);
         RepairStationModule.register(modEventBus);
         RecyclerModule.register(modEventBus);
+        ServerModule.register(modEventBus);
 
         IntegrationUtils.registerEvents();
         PacketHandler.register(modEventBus);
@@ -135,6 +138,7 @@ public class LogiCore {
             event.register(RepairStationModule.REPAIR_STATION_MENU.get(), RepairStationScreen::new);
             event.register(RecyclerModule.RECYCLER_MENU.get(), RecyclerScreen::new);
             event.register(DatacenterModule.DATACENTER_CONTROLLER_MENU.get(), DatacenterControllerScreen::new);
+            event.register(ServerModule.SERVER_MENU.get(), ServerScreen::new);
         }
 
         @SubscribeEvent
