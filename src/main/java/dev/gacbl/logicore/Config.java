@@ -110,11 +110,11 @@ public class Config {
 
         SERVER_RACK_CYCLE_CAPACITY = BUILDER
                 .comment(" How many cycles can be stored in the server rack")
-                .defineInRange("cycle_capacity", 1_000_000, 1, 1_000_000_000);
+                .defineInRange("cycle_capacity", 10_000_000, 1, 1_000_000_000);
 
         SERVER_RACK_FE_CAPACITY = BUILDER
                 .comment(" How much FE can be stored in the server rack")
-                .defineInRange("fe_capacity", 100_000, 1, 1_000_000);
+                .defineInRange("fe_capacity", 10_000_000, 1, 1_000_000_000);
 
         SERVER_RACK_DATACENTER_BOOST = BUILDER
                 .comment(" How much of a boost in cycle production the server rack gets from being in datacenter")

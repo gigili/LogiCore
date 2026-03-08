@@ -27,20 +27,20 @@ import org.jetbrains.annotations.NotNull;
 import java.util.Objects;
 
 public abstract class CoreCycleProviderBlockEntity extends BlockEntity implements ICycleProvider {
-    private int BASE_CYCLE_GENERATION;
-    private int CYCLES_PER_PROCESSOR;
-    private int FE_PER_CYCLE;
+    protected int BASE_CYCLE_GENERATION;
+    protected int CYCLES_PER_PROCESSOR;
+    protected int FE_PER_CYCLE;
 
-    private EnergyStorage energyStorage;
-    private CycleStorage cycleStorage;
+    protected EnergyStorage energyStorage;
+    protected CycleStorage cycleStorage;
 
     public boolean isGenerating = false;
 
     public BlockPos dataCenterController = null;
 
-    private boolean hasDataCenterBoost = false;
+    protected boolean hasDataCenterBoost = false;
 
-    private int dataCenterBoost = 0;
+    protected int dataCenterBoost = 0;
 
     protected int cachedProcessorCount = 0;
 
@@ -192,8 +192,12 @@ public abstract class CoreCycleProviderBlockEntity extends BlockEntity implement
         }
     }
 
+    protected boolean canGenerate() {
+        return true;
+    }
+
     private void generateCycles() {
-        if (this.level == null || this.level.isClientSide) {
+        if (this.level == null || this.level.isClientSide || !canGenerate()) {
             isGenerating = false;
             return;
         }
@@ -219,7 +223,7 @@ public abstract class CoreCycleProviderBlockEntity extends BlockEntity implement
 
         long feCost = Math.min(cyclesToGenerate * FE_PER_CYCLE, 99_999L);
         if (hasDataCenterBoost) {
-            cyclesToGenerate += 100;
+            cyclesToGenerate += dataCenterBoost;
         }
 
         boolean prevGenerating = isGenerating;

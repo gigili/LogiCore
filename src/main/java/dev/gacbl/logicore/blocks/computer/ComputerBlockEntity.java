@@ -1,8 +1,6 @@
 package dev.gacbl.logicore.blocks.computer;
 
-import dev.gacbl.logicore.Config;
 import dev.gacbl.logicore.blocks.serverrack.ui.ServerRackMenu;
-import dev.gacbl.logicore.core.CoreCycleProviderBlockEntity;
 import dev.gacbl.logicore.items.processorunit.ProcessorUnitItem;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.HolderLookup;
@@ -14,22 +12,19 @@ import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.neoforged.neoforge.items.ItemStackHandler;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-public class ComputerBlockEntity extends CoreCycleProviderBlockEntity implements MenuProvider {
+public class ComputerBlockEntity extends BlockEntity implements MenuProvider {
     public static final int RACK_CAPACITY = 9;
 
     public ComputerBlockEntity(BlockPos pos, BlockState state) {
         super(
-                Config.COMPUTER_BASE_CYCLE_GENERATION.get(),
-                Config.COMPUTER_CYCLES_PER_PROCESSOR.get(),
-                Config.COMPUTER_FE_PER_CYCLE.get(),
-                Config.COMPUTER_CYCLE_CAPACITY.get(),
-                Config.COMPUTER_FE_CAPACITY.get(),
-                Config.COMPUTER_DATACENTER_BOOST.get(),
+
                 ComputerModule.COMPUTER_BLOCK_ENTITY.get(), pos, state
         );
     }
@@ -42,17 +37,7 @@ public class ComputerBlockEntity extends CoreCycleProviderBlockEntity implements
     @Nullable
     @Override
     public AbstractContainerMenu createMenu(int containerId, @NotNull Inventory playerInventory, @NotNull Player player) {
-        return new ServerRackMenu(containerId, playerInventory, this, this.data);
-    }
-
-    @Override
-    public int getProcessorCount() {
-        return this.cachedProcessorCount;
-    }
-
-    @Override
-    public int getMaxProcessorCount() {
-        return RACK_CAPACITY;
+        return new ServerRackMenu(containerId, playerInventory, this, null);
     }
 
     @Override
@@ -86,7 +71,6 @@ public class ComputerBlockEntity extends CoreCycleProviderBlockEntity implements
         }
     };
 
-    @Override
     public ItemStackHandler getItemHandler() {
         return this.itemHandler;
     }
@@ -105,6 +89,10 @@ public class ComputerBlockEntity extends CoreCycleProviderBlockEntity implements
                 count++;
             }
         }
-        this.cachedProcessorCount = count;
+        //this.cachedProcessorCount = count;
+    }
+
+    public static void serverTick(Level level, BlockPos blockPos, BlockState blockState, ComputerBlockEntity computerBlockEntity) {
+
     }
 }

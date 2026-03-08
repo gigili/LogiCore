@@ -1,15 +1,12 @@
 package dev.gacbl.logicore.blocks.serverrack;
 
 import com.mojang.serialization.MapCodec;
-import dev.gacbl.logicore.items.processorunit.ProcessorUnitItem;
 import dev.gacbl.logicore.items.processorunit.ProcessorUnitModule;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.data.recipes.RecipeCategory;
 import net.minecraft.data.recipes.ShapedRecipeBuilder;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.sounds.SoundEvents;
-import net.minecraft.sounds.SoundSource;
 import net.minecraft.tags.ItemTags;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
@@ -32,7 +29,6 @@ import net.minecraft.world.level.block.state.properties.*;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
-import net.neoforged.neoforge.items.ItemStackHandler;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -136,42 +132,21 @@ public class ServerRackBlock extends BaseEntityBlock implements EntityBlock {
 
     @Override
     protected @NotNull ItemInteractionResult useItemOn(@NotNull ItemStack stack, @NotNull BlockState state, @NotNull Level level, @NotNull BlockPos pos, @NotNull Player player, @NotNull InteractionHand hand, @NotNull BlockHitResult hitResult) {
-        if (level.isClientSide()) return super.useItemOn(stack, state, level, pos, player, hand, hitResult);
         BlockPos bePos = state.getValue(HALF) == DoubleBlockHalf.LOWER ? pos : pos.below();
-
-        if (stack.getItem() instanceof ProcessorUnitItem) {
-            if (level.getBlockEntity(bePos) instanceof ServerRackBlockEntity rack) {
-                ItemStackHandler handler = rack.getItemHandler();
-                boolean inserted = false;
-                for (int slot = 0; slot < handler.getSlots(); slot++) {
-                    ItemStack s = rack.getItemHandler().getStackInSlot(slot);
-                    if (s.isEmpty() && !stack.isEmpty()) {
-                        rack.getItemHandler().setStackInSlot(slot, new ItemStack(stack.getItem(), 1));
-                        stack.shrink(1);
-                        inserted = true;
-                    }
-                }
-
-                if (inserted) {
-                    level.playSound(null, pos, SoundEvents.ITEM_PICKUP, SoundSource.BLOCKS, 1.0f, 1.0f);
-                    level.sendBlockUpdated(pos, state, state, Block.UPDATE_ALL);
-                    return ItemInteractionResult.CONSUME;
-                }
-            }
+        BlockEntity be = level.getBlockEntity(bePos);
+        if (be instanceof ServerRackBlockEntity serverRack) {
+            return serverRack.handleItemClick(stack, player, hitResult);
         }
         return super.useItemOn(stack, state, level, pos, player, hand, hitResult);
     }
 
     @Override
     protected @NotNull InteractionResult useWithoutItem(@NotNull BlockState state, Level level, @NotNull BlockPos pos, @NotNull Player player, @NotNull BlockHitResult hit) {
-        if (!level.isClientSide) {
-            BlockPos bePos = state.getValue(HALF) == DoubleBlockHalf.LOWER ? pos : pos.below();
-            BlockEntity be = level.getBlockEntity(bePos);
+        BlockPos bePos = state.getValue(HALF) == DoubleBlockHalf.LOWER ? pos : pos.below();
+        BlockEntity be = level.getBlockEntity(bePos);
 
-            if (be instanceof ServerRackBlockEntity serverRack) {
-                player.openMenu(serverRack, bePos);
-                return InteractionResult.CONSUME;
-            }
+        if (be instanceof ServerRackBlockEntity serverRack) {
+            return serverRack.handleRightClick(player, hit);
         }
         return InteractionResult.SUCCESS;
     }
