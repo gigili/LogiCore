@@ -24,8 +24,8 @@ import dev.gacbl.logicore.blocks.repair_station.ui.RepairStationScreen;
 import dev.gacbl.logicore.blocks.research_station.ResearchStationBlockEntityRenderer;
 import dev.gacbl.logicore.blocks.research_station.ResearchStationModule;
 import dev.gacbl.logicore.blocks.research_station.ui.ResearchStationScreen;
+import dev.gacbl.logicore.blocks.serverrack.ServerRackBlockEntityRenderer;
 import dev.gacbl.logicore.blocks.serverrack.ServerRackModule;
-import dev.gacbl.logicore.blocks.serverrack.client.ServerRackBlockRenderer;
 import dev.gacbl.logicore.blocks.serverrack.ui.ServerRackScreen;
 import dev.gacbl.logicore.core.IntegrationUtils;
 import dev.gacbl.logicore.core.ModDataMaps;
@@ -148,7 +148,7 @@ public class LogiCore {
             event.registerBlockEntityRenderer(BatteryModule.BATTERY_BE.get(), BatteryFillRenderer::new);
             event.registerBlockEntityRenderer(RepairStationModule.REPAIR_STATION_BE.get(), RepairStationBlockEntityRenderer::new);
             event.registerBlockEntityRenderer(RecyclerModule.RECYCLER_BE.get(), context -> new RecyclerBlockRenderer());
-            event.registerBlockEntityRenderer(ServerRackModule.SERVER_RACK_BLOCK_ENTITY.get(), context -> new ServerRackBlockRenderer());
+            event.registerBlockEntityRenderer(ServerRackModule.SERVER_RACK_BLOCK_ENTITY.get(), ServerRackBlockEntityRenderer::new);
         }
 
         @SubscribeEvent

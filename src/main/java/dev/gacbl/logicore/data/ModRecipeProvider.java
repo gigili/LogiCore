@@ -14,6 +14,7 @@ import dev.gacbl.logicore.blocks.research_station.ResearchStationBlock;
 import dev.gacbl.logicore.blocks.serverrack.ServerRackBlock;
 import dev.gacbl.logicore.items.pickaxe.CyclePickItem;
 import dev.gacbl.logicore.items.processorunit.ProcessorUnitModule;
+import dev.gacbl.logicore.items.server.ServerItem;
 import dev.gacbl.logicore.items.stack_upgrade.StackUpgradeItem;
 import dev.gacbl.logicore.items.wrench.WrenchItem;
 import net.minecraft.core.Holder;
@@ -57,6 +58,7 @@ public class ModRecipeProvider extends RecipeProvider implements IConditionBuild
         RepairStationBlock.getRecipe().unlockedBy("has_processor", has(ProcessorUnitModule.PROCESSOR_UNIT_BASIC.get())).save(recipeOutput);
         CyclePickItem.getRecipe().unlockedBy("has_processor", has(ProcessorUnitModule.PROCESSOR_UNIT_BASIC.get())).save(recipeOutput);
         RecyclerBlock.getRecipe().unlockedBy("has_processor", has(ProcessorUnitModule.PROCESSOR_UNIT_BASIC.get())).save(recipeOutput);
+        ServerItem.getRecipe().unlockedBy("has_processor", has(ProcessorUnitModule.PROCESSOR_UNIT_BASIC.get())).save(recipeOutput);
 
         List<Item> batteryItems = BatteryModule.ITEMS.getEntries().stream()
                 .map(Holder::value)

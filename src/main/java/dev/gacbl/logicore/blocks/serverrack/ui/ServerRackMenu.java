@@ -32,7 +32,7 @@ public class ServerRackMenu extends MyAbstractContainerMenu {
             this.addSlot(new SlotItemHandler(((CoreCycleProviderBlockEntity) this.blockEntity).getItemHandler(), row, startX + row * slotSize, startY) {
                 @Override
                 public boolean mayPlace(@NotNull ItemStack stack) {
-                    return stack.getItem() instanceof ServerItem;
+                    return super.mayPlace(stack);
                 }
 
                 @Override
