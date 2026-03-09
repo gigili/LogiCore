@@ -52,7 +52,7 @@ public class ServerRackBlock extends BaseEntityBlock implements EntityBlock {
     }
 
     public static ShapedRecipeBuilder getRecipe() {
-        return ShapedRecipeBuilder.shaped(RecipeCategory.REDSTONE, ServerRackModule.SERVER_RACK_BLOCK.get())
+        return ShapedRecipeBuilder.shaped(RecipeCategory.REDSTONE, ServerRackModule.SERVER_RACK.get())
                 .pattern("REQ")
                 .pattern("EPE")
                 .pattern("QER")

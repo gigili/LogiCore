@@ -1,12 +1,16 @@
 package dev.gacbl.logicore.api.compat.jade.providers;
 
 import dev.gacbl.logicore.LogiCore;
+import dev.gacbl.logicore.blocks.serverrack.ServerRackBlock;
 import dev.gacbl.logicore.blocks.serverrack.ServerRackBlockEntity;
 import dev.gacbl.logicore.core.CoreCycleProviderBlockEntity;
+import dev.gacbl.logicore.core.Utils;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.block.state.properties.DoubleBlockHalf;
 import snownee.jade.api.BlockAccessor;
 import snownee.jade.api.IBlockComponentProvider;
 import snownee.jade.api.IServerDataProvider;
@@ -31,8 +35,12 @@ public class CoreCycleProvider implements IBlockComponentProvider, IServerDataPr
             max = accessor.getServerData().getLong("MaxCycles");
         }
 
-        tooltip.add(Component.translatable("tooltip.logicore.cycles", String.format("%,d", cycles), String.format("%,d", max)));
-        tooltip.add(Component.translatable("tooltip.logicore.processors", count, ServerRackBlockEntity.RACK_CAPACITY));
+        if (!accessor.getPlayer().isCrouching()) {
+            tooltip.add(Component.translatable("tooltip.logicore.cycles", Utils.formatValues(cycles), Utils.formatValues(max)));
+        } else {
+            tooltip.add(Component.translatable("tooltip.logicore.cycles", String.format("%,d", cycles), String.format("%,d", max)));
+        }
+        tooltip.add(Component.translatable("tooltip.logicore.processors", count, ServerRackBlockEntity.RACK_CAPACITY * 9));
     }
 
     @Override
@@ -44,17 +52,25 @@ public class CoreCycleProvider implements IBlockComponentProvider, IServerDataPr
 
     @Override
     public void appendServerData(CompoundTag data, BlockAccessor accessor) {
-        CoreCycleProviderBlockEntity rackBlockEntity = (CoreCycleProviderBlockEntity) accessor.getBlockEntity();
-
-        if (rackBlockEntity == null) {
-            rackBlockEntity = (CoreCycleProviderBlockEntity) accessor.getLevel().getBlockEntity(accessor.getPosition().below());
+        CoreCycleProviderBlockEntity blockEntity = (CoreCycleProviderBlockEntity) accessor.getBlockEntity();
+        if (accessor.getBlock() instanceof ServerRackBlock) {
+            BlockState state = accessor.getBlockState();
+            if (state.getValue(ServerRackBlock.HALF) == DoubleBlockHalf.LOWER) {
+                blockEntity = (CoreCycleProviderBlockEntity) accessor.getBlockEntity();
+            } else {
+                blockEntity = (CoreCycleProviderBlockEntity) accessor.getLevel().getBlockEntity(accessor.getPosition().below());
+            }
         }
 
-        if (rackBlockEntity == null) return;
+        if (blockEntity == null) {
+            blockEntity = (CoreCycleProviderBlockEntity) accessor.getLevel().getBlockEntity(accessor.getPosition().below());
+        }
 
-        data.putInt("Count", rackBlockEntity.getProcessorCount());
-        data.putLong("Cycles", rackBlockEntity.getCycleStorage().getCyclesAvailable());
-        data.putLong("MaxCycles", rackBlockEntity.getCycleStorage().getCycleCapacity());
+        if (blockEntity == null) return;
+
+        data.putInt("Count", blockEntity.getProcessorCount());
+        data.putLong("Cycles", blockEntity.getCycleStorage().getCyclesAvailable());
+        data.putLong("MaxCycles", blockEntity.getCycleStorage().getCycleCapacity());
     }
 
     @Override

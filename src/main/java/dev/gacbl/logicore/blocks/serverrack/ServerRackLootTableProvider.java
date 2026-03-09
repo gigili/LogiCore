@@ -20,7 +20,7 @@ public class ServerRackLootTableProvider extends BlockLootSubProvider {
     @Override
     protected void generate() {
         this.add(
-                ServerRackModule.SERVER_RACK_BLOCK.get(),
+                ServerRackModule.SERVER_RACK.get(),
                 block -> createSinglePropConditionTable(
                         block, BlockStateProperties.DOUBLE_BLOCK_HALF, DoubleBlockHalf.LOWER
                 )
