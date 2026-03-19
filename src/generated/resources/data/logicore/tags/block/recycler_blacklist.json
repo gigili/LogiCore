@@ -11,6 +11,7 @@
 	"logicore:research_station",
 	"logicore:small_battery",
 	"logicore:medium_battery",
-	"logicore:large_battery"
+	"logicore:large_battery",
+	"logicore:creative_battery"
   ]
 }

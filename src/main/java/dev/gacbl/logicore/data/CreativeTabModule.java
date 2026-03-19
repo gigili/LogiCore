@@ -50,6 +50,7 @@ public class CreativeTabModule {
                         output.accept(BatteryModule.BATTERY_SMALL.get());
                         output.accept(BatteryModule.BATTERY_MEDIUM.get());
                         output.accept(BatteryModule.BATTERY_LARGE.get());
+                        output.accept(BatteryModule.BATTERY_CREATIVE.get());
                         output.accept(StackUpgradeModule.STACK_UPGRADE.get());
                         output.accept(ResearchStationModule.RESEARCH_STATION.get());
                         output.accept(CyclePickModule.CYCLE_PICK.get());

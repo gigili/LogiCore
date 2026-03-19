@@ -1,6 +1,8 @@
 package dev.gacbl.logicore.data;
 
+import dev.gacbl.logicore.blocks.battery.BatteryBlock;
 import dev.gacbl.logicore.blocks.battery.BatteryModule;
+import dev.gacbl.logicore.blocks.battery.BatteryTier;
 import dev.gacbl.logicore.blocks.cloud_interface.CloudInterfaceBlock;
 import dev.gacbl.logicore.blocks.compiler.CompilerBlock;
 import dev.gacbl.logicore.blocks.computer.ComputerBlock;
@@ -91,6 +93,8 @@ public class ModRecipeProvider extends RecipeProvider implements IConditionBuild
         index.set(0);
 
         BatteryModule.BLOCKS.getEntries().forEach(blockHolder -> {
+            if (blockHolder.get() instanceof BatteryBlock batteryBlock && batteryBlock.getTier() == BatteryTier.CREATIVE)
+                return;
             int i = index.getAndIncrement();
             ItemLike coreIngredient = (i == 0) ? ProcessorUnitModule.PROCESSOR_UNIT_BASIC.get() : batteryItems.get(i - 1);
             Item gold = (i == 0) ? Items.GOLD_INGOT : (i == 2) ? Items.DIAMOND_BLOCK : Items.GOLD_BLOCK;

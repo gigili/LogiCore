@@ -4,6 +4,7 @@
 	"logicore:small_battery",
 	"logicore:medium_battery",
 	"logicore:large_battery",
+	"logicore:creative_battery",
 	"logicore:server_rack",
 	"logicore:computer",
 	"logicore:data_cable",

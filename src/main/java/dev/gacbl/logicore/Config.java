@@ -63,6 +63,8 @@ public class Config {
     public static final ModConfigSpec.ConfigValue<Integer> MEDIUM_BATTERY_TRANSFER_RATE;
     public static final ModConfigSpec.ConfigValue<Integer> LARGE_BATTERY_CAPACITY;
     public static final ModConfigSpec.ConfigValue<Integer> LARGE_BATTERY_TRANSFER_RATE;
+    public static final ModConfigSpec.ConfigValue<Integer> CREATIVE_BATTERY_CAPACITY;
+    public static final ModConfigSpec.ConfigValue<Integer> CREATIVE_BATTERY_TRANSFER_RATE;
 
     // Processor Units
     public static final ModConfigSpec.ConfigValue<Long> BASIC_CPU_RATE;
@@ -278,6 +280,17 @@ public class Config {
         LARGE_BATTERY_TRANSFER_RATE = BUILDER
                 .comment(" Maximum I/O rate of the battery")
                 .defineInRange("large_battery_transfer_rate", 100_000_000, 1, Integer.MAX_VALUE);
+
+        BUILDER.pop();
+
+        BUILDER.push("Creative");
+        CREATIVE_BATTERY_CAPACITY = BUILDER
+                .comment(" Maximum capacity of the battery")
+                .defineInRange("creative_battery_capacity", Integer.MAX_VALUE, 1, Integer.MAX_VALUE);
+
+        CREATIVE_BATTERY_TRANSFER_RATE = BUILDER
+                .comment(" Maximum I/O rate of the battery")
+                .defineInRange("creative_battery_transfer_rate", Integer.MAX_VALUE, 1, Integer.MAX_VALUE);
 
         BUILDER.pop();
         BUILDER.pop();

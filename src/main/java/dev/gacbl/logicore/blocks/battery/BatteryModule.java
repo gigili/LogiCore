@@ -20,12 +20,14 @@ public class BatteryModule {
     public static final DeferredBlock<BatteryBlock> BATTERY_SMALL = registerBattery("small_battery", BatteryTier.SMALL);
     public static final DeferredBlock<BatteryBlock> BATTERY_MEDIUM = registerBattery("medium_battery", BatteryTier.MEDIUM);
     public static final DeferredBlock<BatteryBlock> BATTERY_LARGE = registerBattery("large_battery", BatteryTier.LARGE);
+    public static final DeferredBlock<BatteryBlock> BATTERY_CREATIVE = registerBattery("creative_battery", BatteryTier.CREATIVE);
 
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<BaseBatteryEntity>> BATTERY_BE = BLOCK_ENTITIES.register("battery",
             () -> BlockEntityType.Builder.of(BaseBatteryEntity::new,
                     BATTERY_SMALL.get(),
                     BATTERY_MEDIUM.get(),
-                    BATTERY_LARGE.get()
+                    BATTERY_LARGE.get(),
+                    BATTERY_CREATIVE.get()
             ).build(null));
 
     public static void register(IEventBus modEventBus) {
