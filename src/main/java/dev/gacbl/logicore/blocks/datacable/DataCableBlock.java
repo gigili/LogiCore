@@ -12,6 +12,7 @@ import dev.gacbl.logicore.blocks.recycler.RecyclerBlock;
 import dev.gacbl.logicore.blocks.repair_station.RepairStationBlock;
 import dev.gacbl.logicore.blocks.research_station.ResearchStationBlock;
 import dev.gacbl.logicore.blocks.serverrack.ServerRackBlock;
+import dev.gacbl.logicore.core.ModTags;
 import dev.gacbl.logicore.items.processorunit.ProcessorUnitModule;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -158,7 +159,7 @@ public class DataCableBlock extends BaseEntityBlock implements SimpleWaterlogged
         BlockState state = level.getBlockState(pos);
         Block block = state.getBlock();
 
-        if (block instanceof DataCableBlock) {
+        if (state.is(ModTags.Blocks.IS_ENERGY_GENERATOR) || block instanceof DataCableBlock) {
             return true;
         }
 
