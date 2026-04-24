@@ -4,6 +4,7 @@ import dev.gacbl.logicore.Config;
 import dev.gacbl.logicore.blocks.serverrack.ui.ServerRackMenu;
 import dev.gacbl.logicore.core.CoreCycleProviderBlockEntity;
 import dev.gacbl.logicore.items.processorunit.ProcessorUnitItem;
+import dev.gacbl.logicore.items.processorunit.ProcessorUnitTier;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
@@ -20,7 +21,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 public class ComputerBlockEntity extends CoreCycleProviderBlockEntity implements MenuProvider {
-    public static final int RACK_CAPACITY = 9;
+    public static final int COMPUTER_CPU_CAPACITY = 9;
 
     public ComputerBlockEntity(BlockPos pos, BlockState state) {
         super(
@@ -52,7 +53,7 @@ public class ComputerBlockEntity extends CoreCycleProviderBlockEntity implements
 
     @Override
     public int getMaxProcessorCount() {
-        return RACK_CAPACITY;
+        return COMPUTER_CPU_CAPACITY;
     }
 
     @Override
@@ -68,7 +69,7 @@ public class ComputerBlockEntity extends CoreCycleProviderBlockEntity implements
         updateProcessorCountCache();
     }
 
-    private final ItemStackHandler itemHandler = new ItemStackHandler(RACK_CAPACITY) {
+    private final ItemStackHandler itemHandler = new ItemStackHandler(COMPUTER_CPU_CAPACITY) {
         @Override
         protected void onContentsChanged(int slot) {
             updateProcessorCountCache();
@@ -77,7 +78,10 @@ public class ComputerBlockEntity extends CoreCycleProviderBlockEntity implements
 
         @Override
         public boolean isItemValid(int slot, @NotNull ItemStack stack) {
-            return stack.getItem() instanceof ProcessorUnitItem;
+            if (stack.getItem() instanceof ProcessorUnitItem p) {
+                return p.tier == ProcessorUnitTier.BASIC || p.tier == ProcessorUnitTier.ADVANCED;
+            }
+            return false;
         }
 
         @Override
@@ -86,7 +90,6 @@ public class ComputerBlockEntity extends CoreCycleProviderBlockEntity implements
         }
     };
 
-    @Override
     public ItemStackHandler getItemHandler() {
         return this.itemHandler;
     }

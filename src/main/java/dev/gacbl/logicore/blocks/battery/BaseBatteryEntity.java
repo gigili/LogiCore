@@ -1,6 +1,7 @@
 package dev.gacbl.logicore.blocks.battery;
 
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.protocol.Packet;
@@ -10,6 +11,7 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
+import net.neoforged.neoforge.capabilities.Capabilities;
 import net.neoforged.neoforge.energy.EnergyStorage;
 import net.neoforged.neoforge.energy.IEnergyStorage;
 import org.jetbrains.annotations.NotNull;
@@ -18,7 +20,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.Objects;
 
 public class BaseBatteryEntity extends BlockEntity {
-    private final EnergyStorage energyStorage;
+    private final IEnergyStorage energyStorage;
     private int lastSyncedEnergy = -1;
 
     public BaseBatteryEntity(BlockPos pos, BlockState blockState) {
@@ -26,7 +28,11 @@ public class BaseBatteryEntity extends BlockEntity {
 
         if (blockState.getBlock() instanceof BatteryBlock batteryBlock) {
             BatteryTier tier = batteryBlock.getTier();
-            this.energyStorage = new EnergyStorage(tier.capacity.get(), tier.maxTransfer.get(), tier.maxTransfer.get());
+            if (tier == BatteryTier.CREATIVE) {
+                this.energyStorage = new CreativeEnergyStorage();
+            } else {
+                this.energyStorage = new EnergyStorage(tier.capacity.get(), tier.maxTransfer.get(), tier.maxTransfer.get());
+            }
         } else {
             this.energyStorage = new EnergyStorage(1000, 100, 100);
         }
@@ -39,19 +45,30 @@ public class BaseBatteryEntity extends BlockEntity {
     @Override
     protected void saveAdditional(@NotNull CompoundTag tag, @NotNull HolderLookup.Provider registries) {
         super.saveAdditional(tag, registries);
-        tag.put("energy", this.energyStorage.serializeNBT(registries));
+        if (this.energyStorage instanceof EnergyStorage es) {
+            tag.put("energy", es.serializeNBT(registries));
+        }
     }
 
     @Override
     protected void loadAdditional(@NotNull CompoundTag tag, @NotNull HolderLookup.Provider registries) {
         super.loadAdditional(tag, registries);
-        if (tag.contains("energy", 3) && tag.get("energy") != null) {
-            this.energyStorage.deserializeNBT(registries, Objects.requireNonNull(tag.get("energy")));
+        if (tag.contains("energy") && tag.get("energy") != null && this.energyStorage instanceof EnergyStorage es) {
+            es.deserializeNBT(registries, Objects.requireNonNull(tag.get("energy")));
         }
     }
 
     public static void serverTick(Level level, BlockPos blockPos, BlockState blockState, BaseBatteryEntity batteryBlockEntity) {
         if (level.isClientSide) return;
+
+        if (batteryBlockEntity.energyStorage instanceof CreativeEnergyStorage) {
+            for (Direction direction : Direction.values()) {
+                IEnergyStorage target = level.getCapability(Capabilities.EnergyStorage.BLOCK, blockPos.relative(direction), direction.getOpposite());
+                if (target != null && target.canReceive()) {
+                    target.receiveEnergy(Integer.MAX_VALUE, false);
+                }
+            }
+        }
 
         int currentEnergy = batteryBlockEntity.energyStorage.getEnergyStored();
         if (currentEnergy != batteryBlockEntity.lastSyncedEnergy) {

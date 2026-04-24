@@ -1,7 +1,7 @@
 package dev.gacbl.logicore.blocks.generator;
 
 import dev.gacbl.logicore.blocks.generator.ui.GeneratorMenu;
-import dev.gacbl.logicore.blocks.serverrack.ServerRackModule;
+import dev.gacbl.logicore.blocks.serverrack.ServerRackBlock;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.HolderLookup;
@@ -132,7 +132,7 @@ public class GeneratorBlockEntity extends BlockEntity implements MenuProvider {
             currentlyGenerating = false;
             setChanged(level, pos, state);
             be.isGenerating = currentlyGenerating;
-            level.setBlock(pos, state.setValue(ServerRackModule.GENERATING, be.isGenerating), 3);
+            level.setBlock(pos, state.setValue(ServerRackBlock.GENERATING, be.isGenerating), 3);
             return;
         }
 
@@ -181,7 +181,7 @@ public class GeneratorBlockEntity extends BlockEntity implements MenuProvider {
 
         if (wasGenerating != currentlyGenerating) {
             be.isGenerating = currentlyGenerating;
-            level.setBlock(pos, state.setValue(ServerRackModule.GENERATING, be.isGenerating), 3);
+            level.setBlock(pos, state.setValue(ServerRackBlock.GENERATING, be.isGenerating), 3);
             setChanged(level, pos, state);
         }
     }

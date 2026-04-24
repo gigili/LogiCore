@@ -24,6 +24,7 @@ import dev.gacbl.logicore.blocks.repair_station.ui.RepairStationScreen;
 import dev.gacbl.logicore.blocks.research_station.ResearchStationBlockEntityRenderer;
 import dev.gacbl.logicore.blocks.research_station.ResearchStationModule;
 import dev.gacbl.logicore.blocks.research_station.ui.ResearchStationScreen;
+import dev.gacbl.logicore.blocks.serverrack.ServerRackBlockEntityRenderer;
 import dev.gacbl.logicore.blocks.serverrack.ServerRackModule;
 import dev.gacbl.logicore.blocks.serverrack.ui.ServerRackScreen;
 import dev.gacbl.logicore.core.IntegrationUtils;
@@ -32,6 +33,8 @@ import dev.gacbl.logicore.core.MyCommands;
 import dev.gacbl.logicore.data.CreativeTabModule;
 import dev.gacbl.logicore.items.pickaxe.CyclePickModule;
 import dev.gacbl.logicore.items.processorunit.ProcessorUnitModule;
+import dev.gacbl.logicore.items.server.ServerModule;
+import dev.gacbl.logicore.items.server.ui.ServerScreen;
 import dev.gacbl.logicore.items.stack_upgrade.StackUpgradeModule;
 import dev.gacbl.logicore.items.wrench.WrenchModule;
 import dev.gacbl.logicore.network.PacketHandler;
@@ -86,6 +89,7 @@ public class LogiCore {
         CyclePickModule.register(modEventBus);
         RepairStationModule.register(modEventBus);
         RecyclerModule.register(modEventBus);
+        ServerModule.register(modEventBus);
 
         IntegrationUtils.registerEvents();
         PacketHandler.register(modEventBus);
@@ -134,6 +138,7 @@ public class LogiCore {
             event.register(RepairStationModule.REPAIR_STATION_MENU.get(), RepairStationScreen::new);
             event.register(RecyclerModule.RECYCLER_MENU.get(), RecyclerScreen::new);
             event.register(DatacenterModule.DATACENTER_CONTROLLER_MENU.get(), DatacenterControllerScreen::new);
+            event.register(ServerModule.SERVER_MENU.get(), ServerScreen::new);
         }
 
         @SubscribeEvent
@@ -143,6 +148,7 @@ public class LogiCore {
             event.registerBlockEntityRenderer(BatteryModule.BATTERY_BE.get(), BatteryFillRenderer::new);
             event.registerBlockEntityRenderer(RepairStationModule.REPAIR_STATION_BE.get(), RepairStationBlockEntityRenderer::new);
             event.registerBlockEntityRenderer(RecyclerModule.RECYCLER_BE.get(), context -> new RecyclerBlockRenderer());
+            event.registerBlockEntityRenderer(ServerRackModule.SERVER_RACK_BLOCK_ENTITY.get(), ServerRackBlockEntityRenderer::new);
         }
 
         @SubscribeEvent

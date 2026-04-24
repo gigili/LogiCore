@@ -5,7 +5,6 @@ import dev.gacbl.logicore.api.computation.ICycleProvider;
 import dev.gacbl.logicore.api.computation.ICycleStorage;
 import dev.gacbl.logicore.api.multiblock.AbstractSealedController;
 import dev.gacbl.logicore.blocks.serverrack.ServerRackBlock;
-import dev.gacbl.logicore.blocks.serverrack.ServerRackModule;
 import dev.gacbl.logicore.items.processorunit.ProcessorUnitItem;
 import dev.gacbl.logicore.network.PacketHandler;
 import dev.gacbl.logicore.network.payload.SyncCycleDataPayload;
@@ -28,20 +27,20 @@ import org.jetbrains.annotations.NotNull;
 import java.util.Objects;
 
 public abstract class CoreCycleProviderBlockEntity extends BlockEntity implements ICycleProvider {
-    private int BASE_CYCLE_GENERATION;
-    private int CYCLES_PER_PROCESSOR;
-    private int FE_PER_CYCLE;
+    protected int BASE_CYCLE_GENERATION;
+    protected int CYCLES_PER_PROCESSOR;
+    protected int FE_PER_CYCLE;
 
-    private EnergyStorage energyStorage;
-    private CycleStorage cycleStorage;
+    protected EnergyStorage energyStorage;
+    protected CycleStorage cycleStorage;
 
     public boolean isGenerating = false;
 
     public BlockPos dataCenterController = null;
 
-    private boolean hasDataCenterBoost = false;
+    protected boolean hasDataCenterBoost = false;
 
-    private int dataCenterBoost = 0;
+    protected int dataCenterBoost = 0;
 
     protected int cachedProcessorCount = 0;
 
@@ -170,11 +169,11 @@ public abstract class CoreCycleProviderBlockEntity extends BlockEntity implement
         }
         be.generateCycles();
 
-        if (state.hasProperty(ServerRackModule.GENERATING)) {
-            boolean currentGeneratingState = state.getValue(ServerRackModule.GENERATING);
+        if (state.hasProperty(ServerRackBlock.GENERATING)) {
+            boolean currentGeneratingState = state.getValue(ServerRackBlock.GENERATING);
 
             if (be.isGenerating != currentGeneratingState) {
-                level.setBlock(pos, state.setValue(ServerRackModule.GENERATING, be.isGenerating), 3);
+                level.setBlock(pos, state.setValue(ServerRackBlock.GENERATING, be.isGenerating), 3);
                 if (state.hasProperty(ServerRackBlock.HALF)) {
                     updateOtherHalf(level, pos, state, be.isGenerating);
                 }
@@ -189,12 +188,16 @@ public abstract class CoreCycleProviderBlockEntity extends BlockEntity implement
         BlockState otherState = level.getBlockState(otherPos);
 
         if (otherState.getBlock() instanceof ServerRackBlock) {
-            level.setBlock(otherPos, otherState.setValue(ServerRackModule.GENERATING, isWorking), 3);
+            level.setBlock(otherPos, otherState.setValue(ServerRackBlock.GENERATING, isWorking), 3);
         }
     }
 
+    protected boolean canGenerate() {
+        return true;
+    }
+
     private void generateCycles() {
-        if (this.level == null || this.level.isClientSide) {
+        if (this.level == null || this.level.isClientSide || !canGenerate()) {
             isGenerating = false;
             return;
         }
@@ -220,7 +223,7 @@ public abstract class CoreCycleProviderBlockEntity extends BlockEntity implement
 
         long feCost = Math.min(cyclesToGenerate * FE_PER_CYCLE, 99_999L);
         if (hasDataCenterBoost) {
-            cyclesToGenerate += 100;
+            cyclesToGenerate += dataCenterBoost;
         }
 
         boolean prevGenerating = isGenerating;
@@ -247,9 +250,7 @@ public abstract class CoreCycleProviderBlockEntity extends BlockEntity implement
         return this.energyStorage;
     }
 
-    public ItemStackHandler getItemHandler() {
-        return null;
-    }
+    abstract public ItemStackHandler getItemHandler();
 
     public void setDataCenterController(BlockPos controllerPos) {
         this.dataCenterController = controllerPos;

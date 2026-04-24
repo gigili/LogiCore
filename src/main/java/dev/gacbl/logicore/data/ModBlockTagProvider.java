@@ -33,13 +33,13 @@ public class ModBlockTagProvider extends BlockTagsProvider {
 
     @Override
     protected void addTags(HolderLookup.@NotNull Provider provider) {
-        tag(BlockTags.MINEABLE_WITH_PICKAXE).add(ServerRackModule.SERVER_RACK_BLOCK.get());
-        tag(BlockTags.NEEDS_IRON_TOOL).add(ServerRackModule.SERVER_RACK_BLOCK.get());
-        tag(BlockTags.create(ResourceLocation.fromNamespaceAndPath("justdirethings", "eclipsegate_deny"))).add(ServerRackModule.SERVER_RACK_BLOCK.get());
-        tag(BlockTags.create(ResourceLocation.fromNamespaceAndPath("justdirethings", "phase_deny"))).add(ServerRackModule.SERVER_RACK_BLOCK.get());
-        tag(BlockTags.create(ResourceLocation.fromNamespaceAndPath("justdirethings", "swapper_deny"))).add(ServerRackModule.SERVER_RACK_BLOCK.get());
-        tag(BlockTags.create(ResourceLocation.fromNamespaceAndPath("c", "relocation_not_supported"))).add(ServerRackModule.SERVER_RACK_BLOCK.get());
-        tag(BlockTags.create(ResourceLocation.fromNamespaceAndPath("mekanism", "cardboard_blacklist"))).add(ServerRackModule.SERVER_RACK_BLOCK.get());
+        tag(BlockTags.MINEABLE_WITH_PICKAXE).add(ServerRackModule.SERVER_RACK.get());
+        tag(BlockTags.NEEDS_IRON_TOOL).add(ServerRackModule.SERVER_RACK.get());
+        tag(BlockTags.create(ResourceLocation.fromNamespaceAndPath("justdirethings", "eclipsegate_deny"))).add(ServerRackModule.SERVER_RACK.get());
+        tag(BlockTags.create(ResourceLocation.fromNamespaceAndPath("justdirethings", "phase_deny"))).add(ServerRackModule.SERVER_RACK.get());
+        tag(BlockTags.create(ResourceLocation.fromNamespaceAndPath("justdirethings", "swapper_deny"))).add(ServerRackModule.SERVER_RACK.get());
+        tag(BlockTags.create(ResourceLocation.fromNamespaceAndPath("c", "relocation_not_supported"))).add(ServerRackModule.SERVER_RACK.get());
+        tag(BlockTags.create(ResourceLocation.fromNamespaceAndPath("mekanism", "cardboard_blacklist"))).add(ServerRackModule.SERVER_RACK.get());
 
         tag(BlockTags.MINEABLE_WITH_PICKAXE).add(DataCableModule.DATA_CABLE_BLOCK.get());
         tag(BlockTags.NEEDS_IRON_TOOL).add(DataCableModule.DATA_CABLE_BLOCK.get());
@@ -132,7 +132,7 @@ public class ModBlockTagProvider extends BlockTagsProvider {
         setupOptionalTags();
 
         tag(ModTags.Blocks.RECYCLER_BLACKLIST)
-                .add(ServerRackModule.SERVER_RACK_BLOCK.get())
+                .add(ServerRackModule.SERVER_RACK.get())
                 .add(DataCableModule.DATA_CABLE_BLOCK.get())
                 .add(ComputerModule.COMPUTER_BLOCK.get())
                 .add(DatacenterModule.DATACENTER_CONTROLLER.get())
@@ -173,7 +173,7 @@ public class ModBlockTagProvider extends BlockTagsProvider {
         tag(ModTags.Blocks.VALID_DATACENTER_WALL_BLOCK).addTag(BlockTags.create(ResourceLocation.fromNamespaceAndPath("c", "glass_blocks")));
 
         //Inner blocks
-        tag(ModTags.Blocks.VALID_DATACENTER_INNER_BLOCK).add(ServerRackModule.SERVER_RACK_BLOCK.get());
+        tag(ModTags.Blocks.VALID_DATACENTER_INNER_BLOCK).add(ServerRackModule.SERVER_RACK.get());
         tag(ModTags.Blocks.VALID_DATACENTER_INNER_BLOCK).add(ComputerModule.COMPUTER_BLOCK.get());
         tag(ModTags.Blocks.VALID_DATACENTER_INNER_BLOCK).add(DataCableModule.DATA_CABLE_BLOCK.get());
         tag(ModTags.Blocks.VALID_DATACENTER_INNER_BLOCK).add(Blocks.TORCH);

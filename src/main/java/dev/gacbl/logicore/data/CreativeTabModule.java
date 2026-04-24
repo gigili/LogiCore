@@ -15,6 +15,7 @@ import dev.gacbl.logicore.blocks.research_station.ResearchStationModule;
 import dev.gacbl.logicore.blocks.serverrack.ServerRackModule;
 import dev.gacbl.logicore.items.pickaxe.CyclePickModule;
 import dev.gacbl.logicore.items.processorunit.ProcessorUnitModule;
+import dev.gacbl.logicore.items.server.ServerModule;
 import dev.gacbl.logicore.items.stack_upgrade.StackUpgradeModule;
 import dev.gacbl.logicore.items.wrench.WrenchModule;
 import net.minecraft.core.registries.Registries;
@@ -49,11 +50,13 @@ public class CreativeTabModule {
                         output.accept(BatteryModule.BATTERY_SMALL.get());
                         output.accept(BatteryModule.BATTERY_MEDIUM.get());
                         output.accept(BatteryModule.BATTERY_LARGE.get());
+                        output.accept(BatteryModule.BATTERY_CREATIVE.get());
                         output.accept(StackUpgradeModule.STACK_UPGRADE.get());
                         output.accept(ResearchStationModule.RESEARCH_STATION.get());
                         output.accept(CyclePickModule.CYCLE_PICK.get());
                         output.accept(RepairStationModule.REPAIR_STATION.get());
                         output.accept(RecyclerModule.RECYCLER.get());
+                        output.accept(ServerModule.SERVER.get());
                     })
                     .build());
 

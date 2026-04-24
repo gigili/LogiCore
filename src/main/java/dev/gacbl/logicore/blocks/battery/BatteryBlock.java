@@ -103,9 +103,18 @@ public class BatteryBlock extends BaseEntityBlock {
                 capacity = Config.LARGE_BATTERY_CAPACITY.get();
                 transferRate = Config.LARGE_BATTERY_TRANSFER_RATE.get();
             }
+            case CREATIVE -> {
+                capacity = Config.CREATIVE_BATTERY_CAPACITY.get();
+                transferRate = Config.CREATIVE_BATTERY_TRANSFER_RATE.get();
+            }
         }
 
-        tooltipComponents.add(Component.translatable("tooltip.logicore.battery_capacity", Utils.formatValues(capacity)));
-        tooltipComponents.add(Component.translatable("tooltip.logicore.battery_transfer_rate", Utils.formatValues(transferRate)));
+        if (tier == BatteryTier.CREATIVE) {
+            tooltipComponents.add(Component.translatable("tooltip.logicore.battery_capacity", Component.translatable("tooltip.logicore.infinite")));
+            tooltipComponents.add(Component.translatable("tooltip.logicore.battery_transfer_rate", Component.translatable("tooltip.logicore.infinite")));
+        } else {
+            tooltipComponents.add(Component.translatable("tooltip.logicore.battery_capacity", Utils.formatValues(capacity)));
+            tooltipComponents.add(Component.translatable("tooltip.logicore.battery_transfer_rate", Utils.formatValues(transferRate)));
+        }
     }
 }

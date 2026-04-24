@@ -7,6 +7,7 @@
   "block.logicore.datacenter_port": "Datacenter port",
   "block.logicore.drone_bay": "Drone bay",
   "block.logicore.generator": "Generator",
+  "block.logicore.creative_battery": "Creative battery",
   "block.logicore.large_battery": "Large battery",
   "block.logicore.medium_battery": "Medium battery",
   "block.logicore.recycler": "Recycler",
@@ -53,6 +54,7 @@
   "sounds.logicore.datacenter.ambient": "Datacenter hum",
   "tooltip.item.logicore.stack_upgrade": "Increases number of compiled items and cost by 4",
   "tooltip.logicore.battery_capacity": "Max capacity: %s FE",
+  "tooltip.logicore.infinite": "Infinite",
   "tooltip.logicore.battery_transfer_rate": "Max I/O: %s FE",
   "tooltip.logicore.compiler.stack_upgrades_max": "Stack upgrades: %s / %s",
   "tooltip.logicore.cpus": "Installed CPUs: %s / %s",
@@ -82,5 +84,11 @@
   "ui.tooltip.logicore.cycles_modifier": "Modifier:",
   "ui.tooltip.logicore.cycles_produced": "Produced:",
   "ui.tooltip.logicore.cycles_storage": "%s / %s",
-  "ui.tooltip.logicore.fe_per_tick": "Fe per tick:"
+  "ui.tooltip.logicore.fe_per_tick": "Fe per tick:",
+  "item.logicore.server": "Server",
+  "cpu.tooltip.logicore.basic_tier_count": "§6Basic CPUs: %d",
+  "cpu.tooltip.logicore.advance_tier_count": "§2Advance CPUs: %d",
+  "cpu.tooltip.logicore.ultimate_tier_count": "§5Ultimate CPUs: %d",
+  "item.processorunit.cycle_generation_tooltip": "Generates: %d cycles",
+  "item.logicore.server.total_generation_tooltip": "Generates: %d cycles"
 }

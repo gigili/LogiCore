@@ -1,6 +1,8 @@
 package dev.gacbl.logicore.data;
 
+import dev.gacbl.logicore.blocks.battery.BatteryBlock;
 import dev.gacbl.logicore.blocks.battery.BatteryModule;
+import dev.gacbl.logicore.blocks.battery.BatteryTier;
 import dev.gacbl.logicore.blocks.cloud_interface.CloudInterfaceBlock;
 import dev.gacbl.logicore.blocks.compiler.CompilerBlock;
 import dev.gacbl.logicore.blocks.computer.ComputerBlock;
@@ -14,6 +16,7 @@ import dev.gacbl.logicore.blocks.research_station.ResearchStationBlock;
 import dev.gacbl.logicore.blocks.serverrack.ServerRackBlock;
 import dev.gacbl.logicore.items.pickaxe.CyclePickItem;
 import dev.gacbl.logicore.items.processorunit.ProcessorUnitModule;
+import dev.gacbl.logicore.items.server.ServerItem;
 import dev.gacbl.logicore.items.stack_upgrade.StackUpgradeItem;
 import dev.gacbl.logicore.items.wrench.WrenchItem;
 import net.minecraft.core.Holder;
@@ -57,6 +60,7 @@ public class ModRecipeProvider extends RecipeProvider implements IConditionBuild
         RepairStationBlock.getRecipe().unlockedBy("has_processor", has(ProcessorUnitModule.PROCESSOR_UNIT_BASIC.get())).save(recipeOutput);
         CyclePickItem.getRecipe().unlockedBy("has_processor", has(ProcessorUnitModule.PROCESSOR_UNIT_BASIC.get())).save(recipeOutput);
         RecyclerBlock.getRecipe().unlockedBy("has_processor", has(ProcessorUnitModule.PROCESSOR_UNIT_BASIC.get())).save(recipeOutput);
+        ServerItem.getRecipe().unlockedBy("has_processor", has(ProcessorUnitModule.PROCESSOR_UNIT_BASIC.get())).save(recipeOutput);
 
         List<Item> batteryItems = BatteryModule.ITEMS.getEntries().stream()
                 .map(Holder::value)
@@ -89,6 +93,8 @@ public class ModRecipeProvider extends RecipeProvider implements IConditionBuild
         index.set(0);
 
         BatteryModule.BLOCKS.getEntries().forEach(blockHolder -> {
+            if (blockHolder.get() instanceof BatteryBlock batteryBlock && batteryBlock.getTier() == BatteryTier.CREATIVE)
+                return;
             int i = index.getAndIncrement();
             ItemLike coreIngredient = (i == 0) ? ProcessorUnitModule.PROCESSOR_UNIT_BASIC.get() : batteryItems.get(i - 1);
             Item gold = (i == 0) ? Items.GOLD_INGOT : (i == 2) ? Items.DIAMOND_BLOCK : Items.GOLD_BLOCK;

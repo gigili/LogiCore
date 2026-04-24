@@ -1,5 +1,25 @@
 # Changelog
 
+## 0.0.9
+
+* Created new GeckoLib texture for server rack
+* Created new texture for the server (2U)
+* Rewrote server rack logic
+* Created server item
+* Moved processor unit into the server item
+* Allowed server racks to accept servers
+* Updated server rack UI texture
+* Render servers inside the server racks
+* Add a server recipe
+* Fix the computer so that it produces cycles again but accepting only processor units
+* Added a tooltip to the server to show how many and which CPUs it has and how many cycles it generates
+* Fix shift click stack upgrade into compiler
+* Added creative battery with infinite energy and INT max capacity
+* Creative battery now automatically pushes energy to adjacent blocks
+* Rebalanced processor generation values
+* Added tooltips to the Processor item to show how many cycles it generates
+* Made it so that the Datacenter controller accepts both processors and servers and distributes appropriately
+
 ## 0.0.8
 
 * Fixed a crash when GuideMe is not installed

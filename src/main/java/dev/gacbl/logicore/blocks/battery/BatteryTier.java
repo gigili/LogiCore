@@ -8,7 +8,8 @@ import org.jetbrains.annotations.NotNull;
 public enum BatteryTier implements StringRepresentable {
     SMALL("small", Config.SMALL_BATTERY_CAPACITY, Config.SMALL_BATTERY_TRANSFER_RATE),
     MEDIUM("medium", Config.MEDIUM_BATTERY_CAPACITY, Config.MEDIUM_BATTERY_TRANSFER_RATE),
-    LARGE("large", Config.LARGE_BATTERY_CAPACITY, Config.LARGE_BATTERY_TRANSFER_RATE);
+    LARGE("large", Config.LARGE_BATTERY_CAPACITY, Config.LARGE_BATTERY_TRANSFER_RATE),
+    CREATIVE("creative", Config.CREATIVE_BATTERY_CAPACITY, Config.CREATIVE_BATTERY_TRANSFER_RATE);
 
     public static final StringRepresentable.StringRepresentableCodec<BatteryTier> CODEC = StringRepresentable.fromEnum(BatteryTier::values);
 

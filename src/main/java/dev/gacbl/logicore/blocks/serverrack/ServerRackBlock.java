@@ -1,19 +1,13 @@
 package dev.gacbl.logicore.blocks.serverrack;
 
 import com.mojang.serialization.MapCodec;
-import dev.gacbl.logicore.Config;
-import dev.gacbl.logicore.items.processorunit.ProcessorUnitItem;
 import dev.gacbl.logicore.items.processorunit.ProcessorUnitModule;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
-import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.data.recipes.RecipeCategory;
 import net.minecraft.data.recipes.ShapedRecipeBuilder;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.sounds.SoundEvents;
-import net.minecraft.sounds.SoundSource;
 import net.minecraft.tags.ItemTags;
-import net.minecraft.util.RandomSource;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.ItemInteractionResult;
@@ -31,33 +25,34 @@ import net.minecraft.world.level.block.entity.BlockEntityTicker;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
-import net.minecraft.world.level.block.state.properties.BlockStateProperties;
-import net.minecraft.world.level.block.state.properties.DirectionProperty;
-import net.minecraft.world.level.block.state.properties.DoubleBlockHalf;
-import net.minecraft.world.level.block.state.properties.EnumProperty;
+import net.minecraft.world.level.block.state.properties.*;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
-import net.neoforged.neoforge.items.ItemStackHandler;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-public class ServerRackBlock extends BaseEntityBlock {
+public class ServerRackBlock extends BaseEntityBlock implements EntityBlock {
     public static final VoxelShape SHAPE = Block.box(0.0D, 0.0D, 0.0D, 16.0D, 16.0D, 16.0D);
     public static final DirectionProperty FACING = BlockStateProperties.HORIZONTAL_FACING;
     public static final EnumProperty<DoubleBlockHalf> HALF = BlockStateProperties.DOUBLE_BLOCK_HALF;
     public static final MapCodec<ServerRackBlock> CODEC = simpleCodec(ServerRackBlock::new);
+    public static final BooleanProperty GENERATING = BooleanProperty.create("generating");
+    public static final BooleanProperty DOOR_OPENING = BooleanProperty.create("door_opening");
+    public static final BooleanProperty DOOR_CLOSING = BooleanProperty.create("door_closing");
 
     public ServerRackBlock(Properties properties) {
         super(properties);
         this.registerDefaultState(this.stateDefinition.any()
                 .setValue(FACING, Direction.NORTH)
                 .setValue(HALF, DoubleBlockHalf.LOWER)
-                .setValue(ServerRackModule.GENERATING, false));
+                .setValue(GENERATING, false)
+                .setValue(DOOR_CLOSING, false)
+                .setValue(DOOR_OPENING, false));
     }
 
     public static ShapedRecipeBuilder getRecipe() {
-        return ShapedRecipeBuilder.shaped(RecipeCategory.REDSTONE, ServerRackModule.SERVER_RACK_BLOCK.get())
+        return ShapedRecipeBuilder.shaped(RecipeCategory.REDSTONE, ServerRackModule.SERVER_RACK.get())
                 .pattern("REQ")
                 .pattern("EPE")
                 .pattern("QER")
@@ -74,7 +69,7 @@ public class ServerRackBlock extends BaseEntityBlock {
 
     @Override
     protected void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> builder) {
-        builder.add(FACING, HALF, ServerRackModule.GENERATING);
+        builder.add(FACING, HALF, GENERATING, DOOR_CLOSING, DOOR_OPENING);
     }
 
     @Nullable
@@ -86,7 +81,9 @@ public class ServerRackBlock extends BaseEntityBlock {
             return this.defaultBlockState()
                     .setValue(FACING, context.getHorizontalDirection().getOpposite())
                     .setValue(HALF, DoubleBlockHalf.LOWER)
-                    .setValue(ServerRackModule.GENERATING, false);
+                    .setValue(GENERATING, false)
+                    .setValue(DOOR_CLOSING, false)
+                    .setValue(DOOR_OPENING, false);
         }
         return null;
     }
@@ -102,8 +99,8 @@ public class ServerRackBlock extends BaseEntityBlock {
     }
 
     @Override
-    public @NotNull RenderShape getRenderShape(@NotNull BlockState state) {
-        return RenderShape.MODEL;
+    protected @NotNull RenderShape getRenderShape(@NotNull BlockState state) {
+        return RenderShape.ENTITYBLOCK_ANIMATED;
     }
 
     @Override
@@ -135,42 +132,21 @@ public class ServerRackBlock extends BaseEntityBlock {
 
     @Override
     protected @NotNull ItemInteractionResult useItemOn(@NotNull ItemStack stack, @NotNull BlockState state, @NotNull Level level, @NotNull BlockPos pos, @NotNull Player player, @NotNull InteractionHand hand, @NotNull BlockHitResult hitResult) {
-        if (level.isClientSide()) return super.useItemOn(stack, state, level, pos, player, hand, hitResult);
         BlockPos bePos = state.getValue(HALF) == DoubleBlockHalf.LOWER ? pos : pos.below();
-
-        if (stack.getItem() instanceof ProcessorUnitItem) {
-            if (level.getBlockEntity(bePos) instanceof ServerRackBlockEntity rack) {
-                ItemStackHandler handler = rack.getItemHandler();
-                boolean inserted = false;
-                for (int slot = 0; slot < handler.getSlots(); slot++) {
-                    ItemStack s = rack.getItemHandler().getStackInSlot(slot);
-                    if (s.isEmpty() && !stack.isEmpty()) {
-                        rack.getItemHandler().setStackInSlot(slot, new ItemStack(stack.getItem(), 1));
-                        stack.shrink(1);
-                        inserted = true;
-                    }
-                }
-
-                if (inserted) {
-                    level.playSound(null, pos, SoundEvents.ITEM_PICKUP, SoundSource.BLOCKS, 1.0f, 1.0f);
-                    level.sendBlockUpdated(pos, state, state, Block.UPDATE_ALL);
-                    return ItemInteractionResult.CONSUME;
-                }
-            }
+        BlockEntity be = level.getBlockEntity(bePos);
+        if (be instanceof ServerRackBlockEntity serverRack) {
+            return serverRack.handleItemClick(stack, player, hitResult);
         }
         return super.useItemOn(stack, state, level, pos, player, hand, hitResult);
     }
 
     @Override
     protected @NotNull InteractionResult useWithoutItem(@NotNull BlockState state, Level level, @NotNull BlockPos pos, @NotNull Player player, @NotNull BlockHitResult hit) {
-        if (!level.isClientSide) {
-            BlockPos bePos = state.getValue(HALF) == DoubleBlockHalf.LOWER ? pos : pos.below();
-            BlockEntity be = level.getBlockEntity(bePos);
+        BlockPos bePos = state.getValue(HALF) == DoubleBlockHalf.LOWER ? pos : pos.below();
+        BlockEntity be = level.getBlockEntity(bePos);
 
-            if (be instanceof ServerRackBlockEntity serverRack) {
-                player.openMenu(serverRack, bePos);
-                return InteractionResult.CONSUME;
-            }
+        if (be instanceof ServerRackBlockEntity serverRack) {
+            return serverRack.handleRightClick(player, hit);
         }
         return InteractionResult.SUCCESS;
     }
@@ -243,41 +219,5 @@ public class ServerRackBlock extends BaseEntityBlock {
         level.updateNeighborsAt(pos, this);
         level.updateNeighborsAt(pos.above(), this);
         level.updateNeighborsAt(pos.below(), this);
-    }
-
-    @Override
-    public void animateTick(BlockState state, @NotNull Level level, @NotNull BlockPos pos, @NotNull RandomSource random) {
-        if (!state.getValue(ServerRackModule.GENERATING) || !Config.SERVER_RACK_PRODUCES_PARTICLES.get()) {
-            return;
-        }
-
-        if (random.nextInt(5) == 0) {
-            Direction facing = state.getValue(FACING);
-            Direction left = facing.getCounterClockWise();
-            Direction right = facing.getClockWise();
-
-            BlockPos leftPos = pos.relative(left);
-            if (level.getBlockState(leftPos).isAir()) {
-                spawnSmokeAt(level, pos, left, random);
-            }
-
-            BlockPos rightPos = pos.relative(right);
-            if (level.getBlockState(rightPos).isAir()) {
-                spawnSmokeAt(level, pos, right, random);
-            }
-        }
-    }
-
-    private void spawnSmokeAt(Level level, BlockPos pos, Direction direction, RandomSource random) {
-        double x = pos.getX() + 0.5D;
-        double y = pos.getY();
-        double z = pos.getZ() + 0.5D;
-
-        x += direction.getStepX() * 0.6D;
-        z += direction.getStepZ() * 0.6D;
-
-        y += (random.nextDouble() * 0.8D) + 0.1D;
-
-        level.addParticle(ParticleTypes.LARGE_SMOKE, x, y, z, 0.0D, 0.0D, 0.0D);
     }
 }

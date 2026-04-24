@@ -54,12 +54,12 @@ public class CompilerMenu extends MyAbstractContainerMenu {
 
     @Override
     public @NotNull ItemStack quickMoveStack(@NotNull Player playerIn, int pIndex) {
-        ItemStack sourceStack = ItemStack.EMPTY;
+        ItemStack copyOfSourceStack = ItemStack.EMPTY;
         Slot sourceSlot = slots.get(pIndex);
 
-        if (sourceSlot.hasItem()) {
-            ItemStack copyStack = sourceSlot.getItem();
-            sourceStack = copyStack.copy();
+        if (sourceSlot != null && sourceSlot.hasItem()) {
+            ItemStack sourceStack = sourceSlot.getItem();
+            copyOfSourceStack = sourceStack.copy();
 
             // Player Inventory (0-35)
             if (pIndex < 36) {
@@ -77,20 +77,20 @@ public class CompilerMenu extends MyAbstractContainerMenu {
                 }
             }
 
-            if (sourceStack.getCount() == 0) {
+            if (sourceStack.isEmpty()) {
                 sourceSlot.set(ItemStack.EMPTY);
             } else {
                 sourceSlot.setChanged();
             }
 
-            if (sourceStack.getCount() == copyStack.getCount()) {
+            if (sourceStack.getCount() == copyOfSourceStack.getCount()) {
                 return ItemStack.EMPTY;
             }
 
             sourceSlot.onTake(playerIn, sourceStack);
         }
 
-        return sourceStack;
+        return copyOfSourceStack;
     }
 
     public int getProgress() {

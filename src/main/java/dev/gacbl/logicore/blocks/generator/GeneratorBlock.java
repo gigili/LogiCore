@@ -2,7 +2,6 @@ package dev.gacbl.logicore.blocks.generator;
 
 import com.mojang.serialization.MapCodec;
 import dev.gacbl.logicore.blocks.serverrack.ServerRackBlock;
-import dev.gacbl.logicore.blocks.serverrack.ServerRackModule;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.data.recipes.RecipeCategory;
@@ -41,7 +40,7 @@ public class GeneratorBlock extends BaseEntityBlock {
         super(properties);
         this.registerDefaultState(this.stateDefinition.any()
                 .setValue(FACING, Direction.NORTH)
-                .setValue(ServerRackModule.GENERATING, false));
+                .setValue(ServerRackBlock.GENERATING, false));
     }
 
     public static ShapedRecipeBuilder getRecipe() {
@@ -62,7 +61,7 @@ public class GeneratorBlock extends BaseEntityBlock {
 
     @Override
     protected void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> builder) {
-        builder.add(ServerRackModule.GENERATING);
+        builder.add(ServerRackBlock.GENERATING);
         builder.add(FACING);
     }
 
