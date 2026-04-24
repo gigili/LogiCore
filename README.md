@@ -1,5 +1,9 @@
 # LogiCore
 
+Alchemy but make it technological
+
+-----
+
 ### Matter is just Data.
 
 **LogiCore** allows you to digitize the physical world. By breaking down matter into its fundamental "Cycles," you can
