@@ -88,5 +88,7 @@
   "item.logicore.server": "Server",
   "cpu.tooltip.logicore.basic_tier_count": "§6Basic CPUs: %d",
   "cpu.tooltip.logicore.advance_tier_count": "§2Advance CPUs: %d",
-  "cpu.tooltip.logicore.ultimate_tier_count": "§5Ultimate CPUs: %d"
+  "cpu.tooltip.logicore.ultimate_tier_count": "§5Ultimate CPUs: %d",
+  "item.processorunit.cycle_generation_tooltip": "Generates: %d cycles",
+  "item.logicore.server.total_generation_tooltip": "Generates: %d cycles"
 }

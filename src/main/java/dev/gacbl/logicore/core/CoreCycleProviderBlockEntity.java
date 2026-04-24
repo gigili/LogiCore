@@ -250,9 +250,7 @@ public abstract class CoreCycleProviderBlockEntity extends BlockEntity implement
         return this.energyStorage;
     }
 
-    public ItemStackHandler getItemHandler() {
-        return null;
-    }
+    abstract public ItemStackHandler getItemHandler();
 
     public void setDataCenterController(BlockPos controllerPos) {
         this.dataCenterController = controllerPos;

@@ -10,6 +10,7 @@ import dev.gacbl.logicore.blocks.serverrack.ServerRackBlockEntity;
 import dev.gacbl.logicore.core.CoreCycleProviderBlockEntity;
 import dev.gacbl.logicore.core.ModTags;
 import dev.gacbl.logicore.items.processorunit.ProcessorUnitItem;
+import dev.gacbl.logicore.items.server.ServerItem;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.HolderLookup;
@@ -174,6 +175,9 @@ public class DatacenterControllerBlockEntity extends AbstractSealedController im
             this.cacheDirty = true;
             validateCacheIfNeeded();
         }
+        if (!itemHandler.getStackInSlot(0).isEmpty()) {
+            this.distributeProcessorsAndServers();
+        }
     }
 
     private void validateCacheIfNeeded() {
@@ -181,6 +185,18 @@ public class DatacenterControllerBlockEntity extends AbstractSealedController im
 
         interiorProviders.clear();
         ports.clear();
+
+        BlockPos.betweenClosedStream(minPos, maxPos).forEach(pos -> {
+            if (level.getBlockEntity(pos) instanceof DatacenterPortBlockEntity) {
+                ports.add(pos.immutable());
+            }
+        });
+
+        cacheDirty = false;
+    }
+
+    private void distributeProcessorsAndServers() {
+        if (level == null || level.isClientSide()) return;
 
         BlockPos.betweenClosedStream(minPos, maxPos).forEach(pos -> {
             if (level.getBlockEntity(pos) instanceof CoreCycleProviderBlockEntity providerEntity) {
@@ -191,7 +207,7 @@ public class DatacenterControllerBlockEntity extends AbstractSealedController im
                 ItemStackHandler handler = providerEntity.getItemHandler();
                 if (handler != null && providerEntity.getProcessorCount() < providerEntity.getMaxProcessorCount()) {
                     for (int index = 0; index < handler.getSlots(); index++) {
-                        if (handler.getStackInSlot(index).isEmpty() && !itemHandler.getStackInSlot(0).isEmpty()) {
+                        if (handler.getStackInSlot(index).isEmpty() && !itemHandler.getStackInSlot(0).isEmpty() && handler.isItemValid(0, itemHandler.getStackInSlot(0))) {
                             handler.insertItem(index, itemHandler.getStackInSlot(0).copyWithCount(1), false);
                             itemHandler.getStackInSlot(0).shrink(1);
                         }
@@ -199,13 +215,7 @@ public class DatacenterControllerBlockEntity extends AbstractSealedController im
                 }
                 interiorProviders.add(pos.immutable());
             }
-
-            if (level.getBlockEntity(pos) instanceof DatacenterPortBlockEntity) {
-                ports.add(pos.immutable());
-            }
         });
-
-        cacheDirty = false;
     }
 
     public Set<BlockPos> getInteriorProviders() {
@@ -244,7 +254,7 @@ public class DatacenterControllerBlockEntity extends AbstractSealedController im
 
         @Override
         public boolean isItemValid(int slot, @NotNull ItemStack stack) {
-            return stack.getItem() instanceof ProcessorUnitItem;
+            return stack.getItem() instanceof ProcessorUnitItem || stack.getItem() instanceof ServerItem;
         }
 
         @Override

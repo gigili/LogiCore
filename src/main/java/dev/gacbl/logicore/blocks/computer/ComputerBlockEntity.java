@@ -4,6 +4,7 @@ import dev.gacbl.logicore.Config;
 import dev.gacbl.logicore.blocks.serverrack.ui.ServerRackMenu;
 import dev.gacbl.logicore.core.CoreCycleProviderBlockEntity;
 import dev.gacbl.logicore.items.processorunit.ProcessorUnitItem;
+import dev.gacbl.logicore.items.processorunit.ProcessorUnitTier;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
@@ -77,7 +78,10 @@ public class ComputerBlockEntity extends CoreCycleProviderBlockEntity implements
 
         @Override
         public boolean isItemValid(int slot, @NotNull ItemStack stack) {
-            return stack.getItem() instanceof ProcessorUnitItem;
+            if (stack.getItem() instanceof ProcessorUnitItem p) {
+                return p.tier == ProcessorUnitTier.BASIC || p.tier == ProcessorUnitTier.ADVANCED;
+            }
+            return false;
         }
 
         @Override

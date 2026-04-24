@@ -13,8 +13,6 @@ public class Config {
     public static final ModConfigSpec.ConfigValue<Boolean> CLEAN_SLATE;
 
     // Server rack
-    public static final ModConfigSpec.ConfigValue<Integer> SERVER_RACK_BASE_CYCLE_GENERATION;
-    public static final ModConfigSpec.ConfigValue<Integer> SERVER_RACK_CYCLES_PER_PROCESSOR;
     public static final ModConfigSpec.ConfigValue<Integer> SERVER_RACK_FE_PER_CYCLE;
     public static final ModConfigSpec.ConfigValue<Integer> SERVER_RACK_CYCLE_CAPACITY;
     public static final ModConfigSpec.ConfigValue<Integer> SERVER_RACK_FE_CAPACITY;
@@ -98,14 +96,6 @@ public class Config {
         //<editor-fold desc="ServerRack">
         BUILDER.push("Server rack");
 
-        SERVER_RACK_BASE_CYCLE_GENERATION = BUILDER
-                .comment(" How many cycles are generated per tick")
-                .defineInRange("base_cycle_generation", 100, 1, 1_000_000_000);
-
-        SERVER_RACK_CYCLES_PER_PROCESSOR = BUILDER
-                .comment(" How many cycles are generated per cpu in the rack")
-                .defineInRange("base_cycle_generation", 50, 1, 1_000_000_000);
-
         SERVER_RACK_FE_PER_CYCLE = BUILDER
                 .comment(" How much FE is consumed to generate a cycle")
                 .defineInRange("fe_per_cycle", 2, 1, Integer.MAX_VALUE);
@@ -179,7 +169,7 @@ public class Config {
         BUILDER.push("Cloud interface");
         CI_MAX_TRANSFER_RATE = BUILDER
                 .comment(" How many cycles per tick are transferred to and from the cloud.")
-                .defineInRange("cycles_processed_per_tick", 1_000_000L, 1L, 1_000_000_000L);
+                .defineInRange("cycles_processed_per_tick", 5_000_000L, 1L, Integer.MAX_VALUE);
         BUILDER.pop();
         //</editor-fold>
 
@@ -309,13 +299,13 @@ public class Config {
         BUILDER.push("Advance");
         ADVANCED_CPU_RATE = BUILDER
                 .comment(" How many cycles does it produce per operation")
-                .defineInRange("medium_battery_capacity", 5000L, 1, Integer.MAX_VALUE);
+                .defineInRange("medium_battery_capacity", 2500L, 1, Integer.MAX_VALUE);
         BUILDER.pop();
 
         BUILDER.push("Ultimate");
         ULTIMATE_CPU_RATE = BUILDER
                 .comment(" How many cycles does it produce per operation")
-                .defineInRange("medium_battery_capacity", 10000L, 1, Integer.MAX_VALUE);
+                .defineInRange("medium_battery_capacity", 5000L, 1, Integer.MAX_VALUE);
         BUILDER.pop();
         BUILDER.pop();
         //</editor-fold>

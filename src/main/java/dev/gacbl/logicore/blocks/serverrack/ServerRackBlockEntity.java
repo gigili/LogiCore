@@ -42,8 +42,8 @@ public class ServerRackBlockEntity extends CoreCycleProviderBlockEntity implemen
 
     public ServerRackBlockEntity(BlockPos pos, BlockState state) {
         super(
-                Config.SERVER_RACK_BASE_CYCLE_GENERATION.get(),
-                Config.SERVER_RACK_CYCLES_PER_PROCESSOR.get(),
+                0,
+                0,
                 Config.SERVER_RACK_FE_PER_CYCLE.get(),
                 Config.SERVER_RACK_CYCLE_CAPACITY.get(),
                 Config.SERVER_RACK_FE_CAPACITY.get(),
@@ -259,11 +259,11 @@ public class ServerRackBlockEntity extends CoreCycleProviderBlockEntity implemen
             }
         }
 
-        // Natural generation: reward populated racks with efficiency boost
+        /* Natural generation: reward populated racks with efficiency boost
         // 1.0 + (serverCount - 1) * 0.05 => 1.4x boost at 9 servers
-        double efficiency = 1.0 + (Math.max(0, serverCacheCount - 1) * 0.05);
-
-        return (int) (cyclesToGenerate * efficiency);
+         double efficiency = 1.0;// + (Math.max(0, serverCacheCount - 1) * 0.05);
+         return (int) (cyclesToGenerate * efficiency); */
+        return (int) cyclesToGenerate;
     }
 
     public static void serverTick(net.minecraft.world.level.Level level, BlockPos pos, BlockState state, ServerRackBlockEntity be) {

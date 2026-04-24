@@ -1,7 +1,6 @@
 package dev.gacbl.logicore.blocks.computer;
 
 import dev.gacbl.logicore.LogiCore;
-import dev.gacbl.logicore.blocks.serverrack.ui.ServerRackMenu;
 import dev.gacbl.logicore.core.ModCapabilities;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.world.inventory.MenuType;
@@ -13,7 +12,6 @@ import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.neoforge.capabilities.Capabilities;
 import net.neoforged.neoforge.capabilities.RegisterCapabilitiesEvent;
-import net.neoforged.neoforge.common.extensions.IMenuTypeExtension;
 import net.neoforged.neoforge.registries.DeferredHolder;
 import net.neoforged.neoforge.registries.DeferredRegister;
 
@@ -32,9 +30,6 @@ public class ComputerModule {
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<ComputerBlockEntity>> COMPUTER_BLOCK_ENTITY =
             BLOCK_ENTITIES.register("computer", () -> BlockEntityType.Builder.of(
                     ComputerBlockEntity::new, COMPUTER_BLOCK.get()).build(null));
-
-    public static final DeferredHolder<MenuType<?>, MenuType<ServerRackMenu>> SERVER_RACK_MENU =
-            MENUS.register("computer_menu", () -> IMenuTypeExtension.create(ServerRackMenu::new));
 
     public static void register(IEventBus modEventBus) {
         BLOCKS.register(modEventBus);

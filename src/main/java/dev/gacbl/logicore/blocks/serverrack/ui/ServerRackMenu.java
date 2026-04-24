@@ -1,8 +1,11 @@
 package dev.gacbl.logicore.blocks.serverrack.ui;
 
+import dev.gacbl.logicore.blocks.computer.ComputerBlockEntity;
+import dev.gacbl.logicore.blocks.serverrack.ServerRackBlockEntity;
 import dev.gacbl.logicore.blocks.serverrack.ServerRackModule;
 import dev.gacbl.logicore.core.CoreCycleProviderBlockEntity;
 import dev.gacbl.logicore.core.ui.MyAbstractContainerMenu;
+import dev.gacbl.logicore.items.processorunit.ProcessorUnitItem;
 import dev.gacbl.logicore.items.server.ServerItem;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.RegistryFriendlyByteBuf;
@@ -64,7 +67,11 @@ public class ServerRackMenu extends MyAbstractContainerMenu {
             if (index < rackStartIndex) {
                 // We are in Player Inventory (0-35)
                 // Try to move ProcessorUnits to the Rack
-                if (slotStack.getItem() instanceof ServerItem) {
+                if (this.blockEntity instanceof ServerRackBlockEntity && slotStack.getItem() instanceof ServerItem) {
+                    if (!this.moveItemStackTo(slotStack, rackStartIndex, rackEndIndex, false)) {
+                        return ItemStack.EMPTY;
+                    }
+                } else if (this.blockEntity instanceof ComputerBlockEntity && slotStack.getItem() instanceof ProcessorUnitItem) {
                     if (!this.moveItemStackTo(slotStack, rackStartIndex, rackEndIndex, false)) {
                         return ItemStack.EMPTY;
                     }

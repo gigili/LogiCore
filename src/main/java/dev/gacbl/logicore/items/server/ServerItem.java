@@ -64,10 +64,12 @@ public class ServerItem extends Item {
 
         ItemContainerContents contents = stack.getOrDefault(DataComponents.CONTAINER, ItemContainerContents.EMPTY);
         HashMap<String, Integer> cpuCount = new HashMap<>();
+        long totalGenerationCount = 0;
         for (int i = 0; i < contents.getSlots(); i++) {
             Item it = contents.getStackInSlot(i).getItem();
             if (it instanceof ProcessorUnitItem item) {
                 cpuCount.put(item.tier.name, cpuCount.getOrDefault(item.tier.name, 0) + 1);
+                totalGenerationCount += item.tier.cycleRate.get();
             }
         }
 
@@ -82,5 +84,7 @@ public class ServerItem extends Item {
         if (cpuCount.containsKey(ProcessorUnitTier.ULTIMATE.name)) {
             tooltipComponents.add(Component.translatable("cpu.tooltip.logicore.ultimate_tier_count", cpuCount.get(ProcessorUnitTier.ULTIMATE.name)));
         }
+
+        tooltipComponents.add(Component.translatable("item.logicore.server.total_generation_tooltip", totalGenerationCount));
     }
 }
