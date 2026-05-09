@@ -10,7 +10,7 @@ import org.jetbrains.annotations.NotNull;
 public class ResearchStationScreen extends MyAbstractContainerScreen<ResearchStationMenu> {
     public ResearchStationScreen(ResearchStationMenu menu, Inventory playerInventory, Component title) {
         super(menu, playerInventory, title);
-        this.titleLabelX = leftPos + 65;
+        this.titleLabelX = leftPos + 75;
         this.titleLabelY = topPos + 14;
         setTexture("textures/gui/research_station_ui.png");
         renderInventoryLabel = false;

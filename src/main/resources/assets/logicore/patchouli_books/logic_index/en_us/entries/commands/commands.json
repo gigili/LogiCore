@@ -1,0 +1,36 @@
+{
+  "name": "Commands",
+  "icon": "minecraft:command_block",
+  "category": "logicore:commands_category",
+  "pages": [
+	{
+	  "type": "patchouli:text",
+	  "title": "/logicore",
+	  "text": "All mod commands are available under the $(bold)/logicore$() root command.$(br)$(br)These commands require $(italic)op level 2$() permissions to execute.$(br)$(br)Subcommands are organized into two groups: $(l:logicore:commands/commands#network_text)network$() and $(l:logicore:commands/commands#knowledge_list)knowledge$()."
+	},
+	{
+	  "type": "patchouli:text",
+	  "title": "/logicore network",
+	  "anchor": "network_text",
+	  "text": "$(bold)list$()$(br)Lists all active computation networks and their unique IDs. Useful for debugging and monitoring network topology.$(br)$(br)$(bold)clear$()$(br)Removes all registered computation networks from the world. Use with caution — this cannot be undone."
+	},
+	{
+	  "type": "patchouli:text",
+	  "title": "Knowledge list",
+	  "anchor": "knowledge_list",
+	  "text": "$(bold)/logicore knowledge list$()$(br)Displays the names of all items you have researched so far directly in chat."
+	},
+	{
+	  "type": "patchouli:text",
+	  "title": "Knowledge clear",
+	  "anchor": "knowledge_clear",
+	  "text": "$(bold)/logicore knowledge clear$()$(br)Wipes your entire research knowledge database. All items will need to be researched again."
+	},
+	{
+	  "type": "patchouli:text",
+	  "title": "Knowledge show",
+	  "anchor": "knowledge_show",
+	  "text": "$(bold)/logicore knowledge show$()$(br)Opens the Knowledge Base UI — a scrollable 9x9 grid showing all researched items with a search bar to quickly find specific entries."
+	}
+  ]
+}

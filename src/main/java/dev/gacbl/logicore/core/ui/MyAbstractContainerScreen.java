@@ -1,7 +1,6 @@
 package dev.gacbl.logicore.core.ui;
 
 import dev.gacbl.logicore.LogiCore;
-import net.minecraft.ChatFormatting;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.network.chat.Component;
@@ -47,7 +46,7 @@ public class MyAbstractContainerScreen<T extends AbstractContainerMenu> extends 
     @Override
     protected void renderLabels(@NotNull GuiGraphics graphics, int mouseX, int mouseY) {
         if (renderTitleLabel) {
-            graphics.drawString(this.font, this.title.copy().withStyle(ChatFormatting.BOLD), this.titleLabelX, this.titleLabelY, titleLabelColor, true);
+            graphics.drawString(this.font, this.title.copy(), this.titleLabelX, this.titleLabelY, titleLabelColor, true);
         }
 
         if (renderInventoryLabel) {

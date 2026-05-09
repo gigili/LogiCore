@@ -10,7 +10,7 @@ import org.jetbrains.annotations.NotNull;
 public class RecyclerScreen extends MyAbstractContainerScreen<RecyclerMenu> {
     public RecyclerScreen(RecyclerMenu menu, Inventory playerInventory, Component title) {
         super(menu, playerInventory, title);
-        this.titleLabelX = leftPos + 90;
+        this.titleLabelX = leftPos + 96;
         this.titleLabelY = topPos + 14;
         setTexture("textures/gui/recycler_ui.png");
         renderInventoryLabel = false;

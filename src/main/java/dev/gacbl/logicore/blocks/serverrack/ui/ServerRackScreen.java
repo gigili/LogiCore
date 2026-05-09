@@ -13,13 +13,13 @@ import org.jetbrains.annotations.NotNull;
 public class ServerRackScreen extends MyAbstractContainerScreen<ServerRackMenu> {
     public ServerRackScreen(ServerRackMenu menu, Inventory playerInventory, Component title) {
         super(menu, playerInventory, title);
-        this.titleLabelX = leftPos + 80;
+        this.titleLabelX = leftPos + 83;
         this.titleLabelY = topPos + 14;
         setTexture("textures/gui/server_rack_gui.png");
         renderInventoryLabel = false;
 
         if (menu.getBlockEntity() instanceof ComputerBlockEntity) {
-            this.titleLabelX = 87;
+            this.titleLabelX = 93;
         }
     }
 

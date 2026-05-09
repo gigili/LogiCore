@@ -10,7 +10,7 @@ import org.jetbrains.annotations.NotNull;
 public class DatacenterControllerScreen extends MyAbstractContainerScreen<DatacenterControllerMenu> {
     public DatacenterControllerScreen(DatacenterControllerMenu menu, Inventory playerInventory, Component title) {
         super(menu, playerInventory, title);
-        this.titleLabelX = leftPos + 50;
+        this.titleLabelX = leftPos + 60;
         this.titleLabelY = topPos + 14;
         setTexture("textures/gui/datacenter_controller_ui.png");
         renderInventoryLabel = false;

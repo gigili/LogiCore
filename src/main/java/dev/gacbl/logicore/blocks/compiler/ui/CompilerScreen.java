@@ -15,7 +15,7 @@ public class CompilerScreen extends MyAbstractContainerScreen<CompilerMenu> {
         super(menu, playerInventory, title);
         setTexture("textures/gui/compiler_ui.png");
         this.renderInventoryLabel = false;
-        this.titleLabelX = leftPos + 90;
+        this.titleLabelX = leftPos + 96;
         this.titleLabelY = topPos + 14;
         this.inventoryLabelX = leftPos + 30;
         this.inventoryLabelY = topPos + 140;

@@ -86,6 +86,7 @@
   "ui.tooltip.logicore.cycles_storage": "%s / %s",
   "ui.tooltip.logicore.fe_per_tick": "Fe per tick:",
   "ui.logicore.knowledge.title": "Knowledge base",
+  "ui.logicore.knowledge.search": "Search...",
   "item.logicore.server": "Server",
   "cpu.tooltip.logicore.basic_tier_count": "§6Basic CPUs: %d",
   "cpu.tooltip.logicore.advance_tier_count": "§2Advance CPUs: %d",

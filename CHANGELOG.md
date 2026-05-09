@@ -11,9 +11,10 @@ will need to learn them again.**
 values.**
 
 * Changed NeoForge version to be `21.1.220`
-* Updated documentation
+* Updated in game documentation to reflect changes from `0.0.9` and to include in game commands as well
 * Fixed server rack texture missing particles
-* Fixed AE2 integration to now handle potions and enchanted books
+* Fixed AE2 integration to now handle potions
+* Added `logicore knowledge show` command which opens up a UI that shows all the researched items
 
 ## 0.0.9
 

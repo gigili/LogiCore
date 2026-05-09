@@ -7,7 +7,7 @@ import net.minecraft.world.entity.player.Inventory;
 public class ServerScreen extends MyAbstractContainerScreen<ServerMenu> {
     public ServerScreen(ServerMenu menu, Inventory playerInventory, Component title) {
         super(menu, playerInventory, title);
-        this.titleLabelX = leftPos + 90;
+        this.titleLabelX = leftPos + 96;
         this.titleLabelY = topPos + 14;
         setTexture("textures/gui/server_ui.png");
         renderInventoryLabel = false;

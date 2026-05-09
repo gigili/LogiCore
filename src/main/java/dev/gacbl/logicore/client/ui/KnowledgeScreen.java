@@ -3,7 +3,9 @@ package dev.gacbl.logicore.client.ui;
 import dev.gacbl.logicore.client.ClientKnowledgeData;
 import dev.gacbl.logicore.core.Utils;
 import dev.gacbl.logicore.core.ui.MyAbstractContainerScreen;
+import net.minecraft.ChatFormatting;
 import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.components.EditBox;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.item.ItemStack;
@@ -28,10 +30,19 @@ public class KnowledgeScreen extends MyAbstractContainerScreen<KnowledgeMenu> {
     private static final int SCROLL_BAR_THUMB_HEIGHT = 13;
     private static final int SCROLL_BAR_TEX_X = 232;
     private static final int SCROLL_BAR_TEX_Y = 0;
+    private static final long DEBOUNCE_DELAY = 800;
+    private static final int SEARCH_LEFT = 26;
+    private static final int SEARCH_TOP = 44;
+    private static final int SEARCH_WIDTH = 162;
+    private static final int SEARCH_HEIGHT = 13;
 
+    private final List<ItemStack> allItems = new ArrayList<>();
     private final List<ItemStack> items = new ArrayList<>();
     private int scrollOffset = 0;
     private int maxScrollOffset = 0;
+    private EditBox searchBox;
+    private String appliedFilter = "";
+    private long lastInputTime = 0;
 
     public KnowledgeScreen(KnowledgeMenu menu, Inventory playerInventory, Component title) {
         super(menu, playerInventory, title);
@@ -45,16 +56,50 @@ public class KnowledgeScreen extends MyAbstractContainerScreen<KnowledgeMenu> {
     protected void init() {
         super.init();
 
-        items.clear();
+        allItems.clear();
         Set<String> unlockedItems = ClientKnowledgeData.getUnlockedItems();
         for (String itemKey : unlockedItems) {
             ItemStack stack = Utils.getItemStackFromKey(itemKey);
             if (stack != null && !stack.isEmpty()) {
+                allItems.add(stack);
+            }
+        }
+        allItems.sort(Comparator.comparing(s -> s.getHoverName().getString()));
+
+        items.clear();
+        items.addAll(allItems);
+
+        int totalSlots = GRID_COLS * GRID_ROWS;
+        maxScrollOffset = Math.max(0, (int) Math.ceil((items.size() - totalSlots) / (double) GRID_COLS));
+
+        searchBox = new EditBox(font, leftPos + SEARCH_LEFT, topPos + SEARCH_TOP, SEARCH_WIDTH, SEARCH_HEIGHT,
+                Component.translatable("ui.logicore.knowledge.search"));
+        //searchBox.setBordered(false);
+        searchBox.setTextColor(0xFFFFFFFF);
+        searchBox.setMaxLength(25);
+        searchBox.setResponder(text -> lastInputTime = System.currentTimeMillis());
+        searchBox.setHint(Component.translatable("ui.logicore.knowledge.search").withStyle(ChatFormatting.GRAY));
+        addRenderableWidget(searchBox);
+    }
+
+    @Override
+    public void containerTick() {
+        super.containerTick();
+        if (!searchBox.getValue().equals(appliedFilter) && System.currentTimeMillis() - lastInputTime >= DEBOUNCE_DELAY) {
+            appliedFilter = searchBox.getValue();
+            applyFilter();
+        }
+    }
+
+    private void applyFilter() {
+        String filter = appliedFilter.toLowerCase();
+        items.clear();
+        for (ItemStack stack : allItems) {
+            if (stack.getHoverName().getString().toLowerCase().contains(filter)) {
                 items.add(stack);
             }
         }
-        items.sort(Comparator.comparing(s -> s.getHoverName().getString()));
-
+        scrollOffset = 0;
         int totalSlots = GRID_COLS * GRID_ROWS;
         maxScrollOffset = Math.max(0, (int) Math.ceil((items.size() - totalSlots) / (double) GRID_COLS));
     }

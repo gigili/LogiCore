@@ -11,7 +11,7 @@ import org.jetbrains.annotations.NotNull;
 public class GeneratorScreen extends MyAbstractContainerScreen<GeneratorMenu> {
     public GeneratorScreen(GeneratorMenu menu, Inventory playerInventory, Component title) {
         super(menu, playerInventory, title);
-        this.titleLabelX = leftPos + 80;
+        this.titleLabelX = leftPos + 90;
         this.titleLabelY = topPos + 14;
         setTexture("textures/gui/generator_ui.png");
         renderInventoryLabel = false;
