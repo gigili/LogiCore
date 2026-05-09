@@ -15,8 +15,20 @@
 	  "model": "logicore:block/server_rack",
 	  "y": 90
 	},
-	"": {
+	"facing=north,half=upper": {
 	  "model": "logicore:block/server_rack"
+	},
+	"facing=south,half=upper": {
+	  "model": "logicore:block/server_rack",
+	  "y": 180
+	},
+	"facing=west,half=upper": {
+	  "model": "logicore:block/server_rack",
+	  "y": 270
+	},
+	"facing=east,half=upper": {
+	  "model": "logicore:block/server_rack",
+	  "y": 90
 	}
   }
 }

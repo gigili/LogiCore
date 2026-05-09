@@ -5,7 +5,7 @@
   "texture_size": [32, 32],
   "textures": {
 	"0": "logicore:item/server_rack_item",
-	"particle": "logicore:item/server_rack_item"
+	"particle": "logicore:block/server_rack"
   },
   "elements": [
 	{
