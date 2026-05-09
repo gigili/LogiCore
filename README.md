@@ -98,13 +98,14 @@ machine and mechanic.
 ## 📦 Dependencies
 
 * **Minecraft:** 1.21.1
-* **NeoForge:** 21.1.215.
+* **NeoForge:** 21.1.220.
 * Optional dependencies / compatibilities:
     * **Patchouli**
     * **Jade**
     * **JEI** / **EMI**
     * **AE2**
-  * **GuidMe**
+    * **GuidMe**
+    * **FTB Teams**
 
 -----
 
