@@ -7,22 +7,27 @@
 	  "type": "patchouli:spotlight",
 	  "item": "logicore:processor_unit_basic",
 	  "title": "Processor Unit",
-	  "text": "The silicon heart of your operations. The Processor Unit is the primary component responsible for generating $(l:logicore:architecture/cycles)Cycles$().$(br)$(br)It must be installed in $(l:logicore:machines/server_rack)Server Racks$() or $(l:logicore:machines/computer)Computers$(). Without a processor, these machines are inert—producing nothing even if connected to power."
+	  "text": "The silicon heart of your operations. The Processor Unit (CPU) is the primary component responsible for generating $(l:logicore:architecture/cycles)Cycles$().$(br)$(br)CPUs come in three tiers: Basic, Advance, and Ultimate. Higher tiers produce significantly more cycles per operation."
+	},
+	{
+	  "type": "patchouli:text",
+	  "title": "Tier Compatibility",
+	  "text": "CPUs can be installed in $(l:logicore:machines/server)Servers$() or $(l:logicore:machines/computer)Computers$().$(br)$(br)$(l)Server:$() Accepts all three tiers (Basic, Advance, Ultimate). Up to 9 CPUs per Server, and 9 Servers per $(l:logicore:machines/server_rack)Server Rack$().$(br)$(br)$(l)Computer:$() Accepts Basic and Advance tiers only."
 	},
 	{
 	  "type": "patchouli:crafting",
 	  "recipe": "logicore:processor_unit_basic",
-	  "text": "Basic version of the processor capable of producing 1000 $(l:logicore:architecture/cycles)Cycles$() per processor."
+	  "text": "The entry-level processor. Capable of producing $(1)1,000$() $(l:logicore:architecture/cycles)Cycles$() per operation. $(6)Tier: Basic$()."
 	},
 	{
 	  "type": "patchouli:crafting",
 	  "recipe": "logicore:processor_unit_advance",
-	  "text": "Advanced version of the processor capable of producing 5000 $(l:logicore:architecture/cycles)Cycles$() per processor."
+	  "text": "A mid-tier processor. Capable of producing $(2)2,500$() $(l:logicore:architecture/cycles)Cycles$() per operation. $(a)Tier: Advance$()."
 	},
 	{
 	  "type": "patchouli:crafting",
 	  "recipe": "logicore:processor_unit_ultimate",
-	  "text": "Ultimate version of the processor capable of producing 10000 $(l:logicore:architecture/cycles)Cycles$() per processor."
+	  "text": "The pinnacle of processing technology. Capable of producing $(5)5,000$() $(l:logicore:architecture/cycles)Cycles$() per operation. $(d)Tier: Ultimate$()."
 	}
   ]
 }

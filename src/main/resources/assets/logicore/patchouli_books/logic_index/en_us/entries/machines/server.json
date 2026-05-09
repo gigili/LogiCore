@@ -1,0 +1,28 @@
+{
+  "name": "Server",
+  "icon": "logicore:server",
+  "category": "logicore:machines_category",
+  "pages": [
+	{
+	  "type": "patchouli:spotlight",
+	  "item": "logicore:server",
+	  "title": "Server",
+	  "text": "A portable computing unit that houses up to 9 $(l:logicore:components/processor_units)Processor Units$() in a hot-swappable chassis.$(br)$(br)Servers are the primary processing modules for the $(l:logicore:machines/server_rack)Server Rack$(), allowing dense CPU configurations in a compact form."
+	},
+	{
+	  "type": "patchouli:text",
+	  "title": "Configuration",
+	  "text": "Right-click the Server in your hand to open its configuration panel. Insert Processor Units (CPUs) into the 9 available slots to populate the server.$(br)$(br)The Server's tooltip will display a breakdown of installed CPUs by tier and the total $(l:logicore:architecture/cycles)Cycle$() generation rate."
+	},
+	{
+	  "type": "patchouli:text",
+	  "title": "Usage",
+	  "text": "Once populated with CPUs, insert the Server into a $(l:logicore:machines/server_rack)Server Rack$() by right-clicking the rack while holding the Server.$(br)$(br)Servers can be removed via the Server Rack's GUI. Each Server accepts all three CPU tiers: Basic, Advance, and Ultimate."
+	},
+	{
+	  "type": "patchouli:crafting",
+	  "recipe": "logicore:server",
+	  "text": "A hot-swappable blade chassis for high-density processor deployment."
+	}
+  ]
+}

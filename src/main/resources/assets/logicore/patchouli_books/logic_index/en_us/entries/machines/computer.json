@@ -12,12 +12,7 @@
     {
       "type": "patchouli:text",
       "title": "System Requirements",
-	  "text": "To function, the Computer requires a valid $(l:logicore:components/processor_units)Processor Unit$() installed in its chassis and a connection to a power source via $(l:logicore:components/data_cable)Data Cable$().$(br)$(br)$(l)Performance:$()$(br)Expect lower cycle generation rates compared to industrial hardware."
-    },
-    {
-      "type": "patchouli:text",
-      "title": "Redstone Control",
-      "text": "The Computer features a standard hardware interrupt port.$(br)$(br)Applying a $(l)redstone signal$() will force the system into standby mode. While in standby, the machine stops generating $(l:logicore:architecture/cycles)Cycles$() but also halts all energy consumption."
+	  "text": "To function, the Computer requires $(l:logicore:components/processor_units)Processor Units$() installed in its 9 CPU slots and a connection to a power source via $(l:logicore:components/data_cable)Data Cable$().$(br)$(br)$(l)Compatibility:$() Only $(6)Basic$() and $(a)Advance$() tier CPUs are supported. $(d)Ultimate$() processors are too powerful for the Computer's architecture.$(br)$(br)$(l)Performance:$()$(br)Expect lower cycle generation rates compared to industrial hardware."
     },
     {
       "type": "patchouli:crafting",

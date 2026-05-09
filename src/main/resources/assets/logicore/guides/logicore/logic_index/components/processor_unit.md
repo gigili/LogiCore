@@ -5,6 +5,8 @@ navigation:
   parent: logicore:components_category.md
 item_ids:
   - logicore:processor_unit_basic
+  - logicore:processor_unit_advance
+  - logicore:processor_unit_ultimate
 ---
 
 # Processor Unit
@@ -13,18 +15,30 @@ item_ids:
 
 <ItemImage id="logicore:processor_unit_basic" />
 
-The silicon heart of your operations. The Processor Unit is the primary component responsible for generating [Cycles](../architecture/cycles.md).
+The silicon heart of your operations. The Processor Unit (CPU) is the primary component responsible for
+generating [Cycles](../architecture/cycles.md).
 
-It must be installed in [Server Racks](../machines/server_rack.md) or [Computers](../machines/computer.md). Without a processor, these machines are inert—producing nothing even if connected to power.
+CPUs come in three tiers: Basic, Advance, and Ultimate. Higher tiers produce significantly more cycles per operation.
+
+## Tier Compatibility
+
+CPUs can be installed in [Servers](../machines/server.md) or [Computers](../machines/computer.md).
+
+**Server:** Accepts all three tiers (Basic, Advance, Ultimate). Up to 9 CPUs per Server, and 9 Servers
+per [Server Rack](../machines/server_rack.md).
+
+**Computer:** Accepts Basic and Advance tiers only.
 
 <Recipe id="logicore:processor_unit_basic" />
 
-Basic version of the processor capable of producing 1000 [Cycles](../architecture/cycles.md) per processor.
+The entry-level processor. Capable of producing **1,000** [Cycles](../architecture/cycles.md) per operation. *Tier:
+Basic.*
 
 <Recipe id="logicore:processor_unit_advance" />
 
-Advanced version of the processor capable of producing 5000 [Cycles](../architecture/cycles.md) per processor.
+A mid-tier processor. Capable of producing **2,500** [Cycles](../architecture/cycles.md) per operation. *Tier: Advance.*
 
 <Recipe id="logicore:processor_unit_ultimate" />
 
-Ultimate version of the processor capable of producing 10000 [Cycles](../architecture/cycles.md) per processor.
+The pinnacle of processing technology. Capable of producing **5,000** [Cycles](../architecture/cycles.md) per operation.
+*Tier: Ultimate.*

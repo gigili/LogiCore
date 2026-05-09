@@ -17,18 +17,15 @@ The personal workstation of the LogiCore network. While it lacks the raw paralle
 
 ## System Requirements
 
-To function, the Computer requires a valid [Processor Unit](../components/processor_unit.md) installed in its chassis and a connection to a power source via [Data Cable](../components/data_cable.md).
+To function, the Computer requires [Processor Units](../components/processor_unit.md) installed in its 9 CPU slots and a
+connection to a power source via [Data Cable](../components/data_cable.md).
+
+**Compatibility:** Only **Basic** and **Advance** tier CPUs are supported. **Ultimate** processors are too powerful for
+the Computer's architecture.
 
 **Performance:**
 Expect lower cycle generation rates compared to industrial hardware.
 
-## Redstone Control
-
-The Computer features a standard hardware interrupt port.
-
-Applying a **redstone signal** will force the system into standby mode. While in standby, the machine stops generating [Cycles](../architecture/cycles.md) but also halts all energy consumption.
-
 A compact chassis capable of housing standard processor units.
 
 <Recipe id="logicore:computer" />
-
