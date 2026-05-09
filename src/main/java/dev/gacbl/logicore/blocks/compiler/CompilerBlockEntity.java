@@ -7,15 +7,14 @@ import dev.gacbl.logicore.blocks.compiler.ui.CompilerMenu;
 import dev.gacbl.logicore.blocks.datacable.DataCableBlockEntity;
 import dev.gacbl.logicore.blocks.datacable.cable_network.NetworkManager;
 import dev.gacbl.logicore.client.ClientKnowledgeData;
+import dev.gacbl.logicore.core.Utils;
 import dev.gacbl.logicore.items.stack_upgrade.StackUpgradeItem;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.HolderLookup;
-import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.Containers;
 import net.minecraft.world.MenuProvider;
 import net.minecraft.world.entity.player.Inventory;
@@ -91,8 +90,7 @@ public class CompilerBlockEntity extends BlockEntity implements ICycleConsumer, 
 
         @Override
         public boolean isItemValid(int slot, @NotNull ItemStack stack) {
-            ResourceLocation itemRes = BuiltInRegistries.ITEM.getKey(stack.getItem());
-            return slot == INPUT_SLOT && CycleValueManager.hasCycleValue(stack) && ClientKnowledgeData.isUnlocked(itemRes.toString());
+            return slot == INPUT_SLOT && CycleValueManager.hasCycleValue(stack) && ClientKnowledgeData.isUnlocked(Utils.getItemKey(stack));
         }
 
         @Override
@@ -205,11 +203,8 @@ public class CompilerBlockEntity extends BlockEntity implements ICycleConsumer, 
                 be.currentCycles -= cost;
                 int upgradeCount = be.upgradeItemHandler.getStackInSlot(0).getCount();
                 ItemStack result = template.copy();
-                if (upgradeCount > 0) {
-                    result.setCount(upgradeCount * 4);
-                } else {
-                    result.setCount(1);
-                }
+                int targetCount = upgradeCount > 0 ? upgradeCount * 4 : 1;
+                result.setCount(Math.min(targetCount, template.getMaxStackSize()));
                 be.addToOutput(result);
 
                 be.progress = 0;
@@ -249,7 +244,9 @@ public class CompilerBlockEntity extends BlockEntity implements ICycleConsumer, 
         if (existing.isEmpty()) {
             itemHandler.setStackInSlot(OUTPUT_SLOT, result);
         } else {
-            existing.grow(result.getCount());
+            ItemStack combined = existing.copy();
+            combined.grow(result.getCount());
+            itemHandler.setStackInSlot(OUTPUT_SLOT, combined);
         }
     }
 

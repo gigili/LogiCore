@@ -8,16 +8,15 @@ import dev.gacbl.logicore.blocks.datacable.DataCableBlockEntity;
 import dev.gacbl.logicore.blocks.datacable.cable_network.NetworkManager;
 import dev.gacbl.logicore.blocks.research_station.ui.ResearchStationMenu;
 import dev.gacbl.logicore.client.ClientKnowledgeData;
+import dev.gacbl.logicore.core.Utils;
 import dev.gacbl.logicore.network.PacketHandler;
 import dev.gacbl.logicore.network.payload.NotifyResearchCompletePayload;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.HolderLookup;
-import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.Containers;
@@ -67,8 +66,7 @@ public class ResearchStationBlockEntity extends BlockEntity implements MenuProvi
 
         @Override
         public boolean isItemValid(int slot, @NotNull ItemStack stack) {
-            ResourceLocation itemRes = BuiltInRegistries.ITEM.getKey(stack.getItem());
-            return CycleValueManager.hasCycleValue(stack) && !ClientKnowledgeData.isUnlocked(itemRes.toString());
+            return CycleValueManager.hasCycleValue(stack) && !ClientKnowledgeData.isUnlocked(Utils.getItemKey(stack));
         }
 
         @Override
@@ -194,8 +192,7 @@ public class ResearchStationBlockEntity extends BlockEntity implements MenuProvi
                 be.setResearchingState(blockPos, blockState, false);
                 ItemStack resultItem = be.itemHandler.getStackInSlot(0);
                 String ownerKey = CycleSavedData.getKey((ServerLevel) level, be.getOwner());
-                ResourceLocation itemRes = BuiltInRegistries.ITEM.getKey(resultItem.getItem());
-                CycleSavedData.get((ServerLevel) level).unlockItem((ServerLevel) level, ownerKey, itemRes);
+                CycleSavedData.get((ServerLevel) level).unlockItem((ServerLevel) level, ownerKey, resultItem);
                 if (be.ownerUUID != null) {
                     ServerPlayer player = level.getServer().getPlayerList().getPlayer(be.ownerUUID);
                     if (player != null) {

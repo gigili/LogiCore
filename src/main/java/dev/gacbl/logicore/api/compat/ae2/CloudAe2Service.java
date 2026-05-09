@@ -16,6 +16,7 @@ import dev.gacbl.logicore.LogiCore;
 import dev.gacbl.logicore.api.cycles.CycleSavedData;
 import dev.gacbl.logicore.api.cycles.CycleValueManager;
 import dev.gacbl.logicore.blocks.cloud_interface.CloudInterfaceBlockEntity;
+import dev.gacbl.logicore.core.Utils;
 import net.minecraft.core.Direction;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.core.registries.BuiltInRegistries;
@@ -24,6 +25,7 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.Level;
 import org.jetbrains.annotations.NotNull;
@@ -32,6 +34,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 public class CloudAe2Service implements IGridNodeService, IGridNodeListener<CloudAe2Service>, IInWorldGridNodeHost, IActionHost, IStorageProvider {
 
@@ -229,9 +232,34 @@ public class CloudAe2Service implements IGridNodeService, IGridNodeListener<Clou
                         continue;
                     }
 
+                    Set<String> knowledgeSet = savedData.getKnowledge(ownerKey);
+                    String baseKey = resLoc.toString();
+                    boolean exactUnlocked = knowledgeSet.contains(baseKey);
+                    boolean hasNbtVariants = knowledgeSet.stream().anyMatch(k -> k.startsWith(baseKey + "#"));
+                    if (!exactUnlocked && hasNbtVariants) {
+                        continue;
+                    }
+
                     long count = totalCycles / entry.cost;
                     if (count > 0) {
                         out.add(entry.key, count);
+                    }
+                }
+            }
+
+            // Add researched NBT variants (potions, enchanted books, etc.)
+            for (String unlockedKey : savedData.getKnowledge(ownerKey)) {
+                int sep = unlockedKey.indexOf('#');
+                if (sep == -1) continue;
+                ItemStack variant = Utils.getItemStackFromKey(unlockedKey);
+                if (variant == null || variant.isEmpty()) continue;
+                int cost = CycleValueManager.getCycleValue(variant);
+                if (cost <= 0) continue;
+                long count = totalCycles / cost;
+                if (count > 0) {
+                    AEItemKey aeKey = AEItemKey.of(variant);
+                    if (aeKey != null) {
+                        out.add(aeKey, count);
                     }
                 }
             }
@@ -251,11 +279,17 @@ public class CloudAe2Service implements IGridNodeService, IGridNodeListener<Clou
 
             String ownerKey = CycleSavedData.getKey(sl, host.getOwner());
             CycleSavedData data = CycleSavedData.get(sl);
-            ResourceLocation itemRes = BuiltInRegistries.ITEM.getKey(itemKey.getItem());
 
             long costPerItem = CycleValueManager.getCycleValue(itemKey.toStack());
             if (costPerItem <= 0) return 0;
-            if (!data.isUnlocked(ownerKey, itemRes)) return 0;
+
+            ItemStack stack = itemKey.toStack();
+            if (!stack.getComponentsPatch().isEmpty()) {
+                if (!data.isUnlocked(ownerKey, stack)) return 0;
+            } else {
+                ResourceLocation itemRes = BuiltInRegistries.ITEM.getKey(itemKey.getItem());
+                if (!data.isUnlocked(ownerKey, itemRes)) return 0;
+            }
 
             long totalValueToAdd = costPerItem * amount;
 
@@ -274,11 +308,17 @@ public class CloudAe2Service implements IGridNodeService, IGridNodeListener<Clou
 
             String ownerKey = CycleSavedData.getKey(sl, host.getOwner());
             CycleSavedData data = CycleSavedData.get(sl);
-            ResourceLocation itemRes = BuiltInRegistries.ITEM.getKey(itemKey.getItem());
 
             long costPerItem = CycleValueManager.getCycleValue(itemKey.toStack());
             if (costPerItem <= 0) return 0;
-            if (!data.isUnlocked(ownerKey, itemRes)) return 0;
+
+            ItemStack stack = itemKey.toStack();
+            if (!stack.getComponentsPatch().isEmpty()) {
+                if (!data.isUnlocked(ownerKey, stack)) return 0;
+            } else {
+                ResourceLocation itemRes = BuiltInRegistries.ITEM.getKey(itemKey.getItem());
+                if (!data.isUnlocked(ownerKey, itemRes)) return 0;
+            }
 
             long totalCycles = CycleSavedData.get(sl).getCyclesByKeyString(ownerKey);
 

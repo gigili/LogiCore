@@ -1,6 +1,7 @@
 package dev.gacbl.logicore.api.cycles;
 
 import dev.gacbl.logicore.core.IntegrationUtils;
+import dev.gacbl.logicore.core.Utils;
 import dev.gacbl.logicore.network.PacketHandler;
 import dev.gacbl.logicore.network.payload.SyncPlayerCyclesPayload;
 import dev.gacbl.logicore.network.payload.SyncPlayerKnowledgePayload;
@@ -11,6 +12,7 @@ import net.minecraft.nbt.Tag;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.saveddata.SavedData;
 import org.jetbrains.annotations.NotNull;
 
@@ -109,9 +111,9 @@ public class CycleSavedData extends SavedData {
         return tag;
     }
 
-    public synchronized void unlockItem(ServerLevel level, String key, ResourceLocation itemPayload) {
+    public synchronized void unlockItem(ServerLevel level, String key, ItemStack stack) {
         Set<String> unlocked = knowledge.computeIfAbsent(key, k -> new HashSet<>());
-        String itemKey = itemPayload.toString();
+        String itemKey = Utils.getItemKey(stack);
 
         if (unlocked.add(itemKey)) {
             setDirty();
@@ -129,7 +131,15 @@ public class CycleSavedData extends SavedData {
 
     public boolean isUnlocked(String key, ResourceLocation item) {
         Set<String> unlocked = knowledge.get(key);
-        return unlocked != null && unlocked.contains(item.toString());
+        if (unlocked == null) return false;
+        String baseKey = item.toString();
+        if (unlocked.contains(baseKey)) return true;
+        return unlocked.stream().anyMatch(k -> k.startsWith(baseKey + "#"));
+    }
+
+    public boolean isUnlocked(String key, ItemStack stack) {
+        Set<String> unlocked = knowledge.get(key);
+        return unlocked != null && unlocked.contains(Utils.getItemKey(stack));
     }
 
     public Set<String> getKnowledge(String playerKey) {

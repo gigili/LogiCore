@@ -22,4 +22,8 @@ public class ClientKnowledgeData {
     public static void addAll(List<String> itemKeys) {
         UNLOCKED_ITEMS.addAll(itemKeys);
     }
+
+    public static Set<String> getUnlockedItems() {
+        return Set.copyOf(UNLOCKED_ITEMS);
+    }
 }

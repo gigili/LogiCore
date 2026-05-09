@@ -27,6 +27,8 @@ import dev.gacbl.logicore.blocks.research_station.ui.ResearchStationScreen;
 import dev.gacbl.logicore.blocks.serverrack.ServerRackBlockEntityRenderer;
 import dev.gacbl.logicore.blocks.serverrack.ServerRackModule;
 import dev.gacbl.logicore.blocks.serverrack.ui.ServerRackScreen;
+import dev.gacbl.logicore.client.ui.KnowledgeModule;
+import dev.gacbl.logicore.client.ui.KnowledgeScreen;
 import dev.gacbl.logicore.core.IntegrationUtils;
 import dev.gacbl.logicore.core.ModDataMaps;
 import dev.gacbl.logicore.core.MyCommands;
@@ -90,6 +92,7 @@ public class LogiCore {
         RepairStationModule.register(modEventBus);
         RecyclerModule.register(modEventBus);
         ServerModule.register(modEventBus);
+        KnowledgeModule.register(modEventBus);
 
         IntegrationUtils.registerEvents();
         PacketHandler.register(modEventBus);
@@ -139,6 +142,7 @@ public class LogiCore {
             event.register(RecyclerModule.RECYCLER_MENU.get(), RecyclerScreen::new);
             event.register(DatacenterModule.DATACENTER_CONTROLLER_MENU.get(), DatacenterControllerScreen::new);
             event.register(ServerModule.SERVER_MENU.get(), ServerScreen::new);
+            event.register(KnowledgeModule.KNOWLEDGE_MENU.get(), KnowledgeScreen::new);
         }
 
         @SubscribeEvent

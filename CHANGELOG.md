@@ -1,5 +1,20 @@
 # Changelog
 
+## 1.0.0
+
+# **BREAKING CHANGES**
+
+**You will probally need to run `logicore knowledge clear` command which will DELETE all your learned items, and you
+will need to learn them again.**
+
+**You will probally need to remove your `config/logicore/cache/cycle_cache.json` so that it can regenerate the new
+values.**
+
+* Changed NeoForge version to be `21.1.220`
+* Updated documentation
+* Fixed server rack texture missing particles
+* Fixed AE2 integration to now handle potions and enchanted books
+
 ## 0.0.9
 
 * Created new GeckoLib texture for server rack

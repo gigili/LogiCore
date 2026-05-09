@@ -11,7 +11,6 @@ import net.minecraft.ChatFormatting;
 import net.minecraft.advancements.AdvancementHolder;
 import net.minecraft.advancements.AdvancementProgress;
 import net.minecraft.client.Minecraft;
-import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
@@ -48,7 +47,7 @@ public class ClientEvents {
         if (CycleValueManager.hasCycleValue(event.getItemStack())) {
             int value = CycleValueManager.getCycleValue(event.getItemStack());
             event.getToolTip().add(Component.translatable("tooltip.logicore.items.cycles", value).withStyle(ChatFormatting.AQUA));
-            boolean isResearched = ClientKnowledgeData.isUnlocked(BuiltInRegistries.ITEM.getKey(event.getItemStack().getItem()).toString());
+            boolean isResearched = ClientKnowledgeData.isUnlocked(Utils.getItemKey(event.getItemStack()));
             event.getToolTip().add(Component.translatable(isResearched ? "tooltip.logicore.items.researched" : "tooltip.logicore.items.not_researched").withStyle(isResearched ? ChatFormatting.GREEN : ChatFormatting.RED));
         }
     }

@@ -7,6 +7,7 @@ import dev.gacbl.logicore.api.cycles.CycleSavedData;
 import dev.gacbl.logicore.blocks.datacable.cable_network.ComputationNetwork;
 import dev.gacbl.logicore.blocks.datacable.cable_network.NetworkManager;
 import dev.gacbl.logicore.client.ClientKnowledgeData;
+import dev.gacbl.logicore.client.ui.KnowledgeMenu;
 import net.minecraft.commands.CommandBuildContext;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
@@ -14,6 +15,8 @@ import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.SimpleMenuProvider;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.neoforged.fml.common.Mod;
@@ -49,6 +52,11 @@ public class MyCommands {
         knowledgeCommand.then(
                 Commands.literal("clear")
                         .executes(ctx -> clearKnowledge(ctx.getSource()))
+        );
+
+        knowledgeCommand.then(
+                Commands.literal("show")
+                        .executes(ctx -> showKnowledge(ctx.getSource()))
         );
 
         rootCommand.then(networksCommand);
@@ -108,6 +116,16 @@ public class MyCommands {
         ClientKnowledgeData.clear();
 
         source.sendSuccess(() -> Component.literal("Knowledge database has been cleared"), false);
+        return 1;
+    }
+
+    private static int showKnowledge(CommandSourceStack source) {
+        if (source.getPlayer() == null) return 0;
+        ServerPlayer player = source.getPlayer();
+        player.openMenu(new SimpleMenuProvider(
+                (id, inv, p) -> new KnowledgeMenu(id, inv),
+                Component.translatable("ui.logicore.knowledge.title")
+        ));
         return 1;
     }
 }
