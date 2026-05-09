@@ -11,6 +11,7 @@ group = mod_group_id
 def mavenUrl = System.getenv("MAVEN_URL")
 def mavenUser = System.getenv("MAVEN_USERNAME")
 def mavenPass = System.getenv("MAVEN_TOKEN")
+def mc_version = "neoforge_${minecraft_version}"
 
 repositories {
     mavenLocal()
@@ -144,8 +145,6 @@ neoForge {
             sourceSet(sourceSets.main)
         }
     }
-
-    def mc_version = "neoforge_${minecraft_version}"
 
     jar {
         archiveBaseName.set(mod_id)
@@ -293,6 +292,7 @@ publishing {
     publications {
         register('mavenJava', MavenPublication) {
             from components.java
+            artifactId = "${mod_id}-${mc_version}"
         }
     }
 

@@ -15,6 +15,7 @@ values.**
 * Fixed server rack texture missing particles
 * Fixed AE2 integration to now handle potions
 * Added `logicore knowledge show` command which opens up a UI that shows all the researched items
+* Added Knowledge orb item which allows you to unlock all the researchable items (creative only)
 
 ## 0.0.9
 

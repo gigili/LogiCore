@@ -33,6 +33,7 @@ import dev.gacbl.logicore.core.IntegrationUtils;
 import dev.gacbl.logicore.core.ModDataMaps;
 import dev.gacbl.logicore.core.MyCommands;
 import dev.gacbl.logicore.data.CreativeTabModule;
+import dev.gacbl.logicore.items.knowledge_orb.KnowledgeOrbModule;
 import dev.gacbl.logicore.items.pickaxe.CyclePickModule;
 import dev.gacbl.logicore.items.processorunit.ProcessorUnitModule;
 import dev.gacbl.logicore.items.server.ServerModule;
@@ -92,6 +93,7 @@ public class LogiCore {
         RepairStationModule.register(modEventBus);
         RecyclerModule.register(modEventBus);
         ServerModule.register(modEventBus);
+        KnowledgeOrbModule.register(modEventBus);
         KnowledgeModule.register(modEventBus);
 
         IntegrationUtils.registerEvents();

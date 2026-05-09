@@ -47,12 +47,14 @@
   "item.logicore.processor_unit_basic": "Basic processor unit",
   "item.logicore.processor_unit_ultimate": "Ultimate processor unit",
   "item.logicore.stack_upgrade": "Stack upgrade",
+  "item.logicore.knowledge_orb": "Knowledge Orb",
   "item.logicore.wrench": "Wrench",
   "logicore.toast.research_complete": "Research completed!",
   "message.logicore.datacenter.formed": "Datacenter is active",
   "message.logicore.drone_died_at": "Drone %s died at %s",
   "sounds.logicore.datacenter.ambient": "Datacenter hum",
   "tooltip.item.logicore.stack_upgrade": "Increases number of compiled items and cost by 4",
+  "tooltip.item.logicore.knowledge_orb": "Unlocks all the knowledge",
   "tooltip.logicore.battery_capacity": "Max capacity: %s FE",
   "tooltip.logicore.infinite": "Infinite",
   "tooltip.logicore.battery_transfer_rate": "Max I/O: %s FE",
@@ -92,5 +94,6 @@
   "cpu.tooltip.logicore.advance_tier_count": "§2Advance CPUs: %d",
   "cpu.tooltip.logicore.ultimate_tier_count": "§5Ultimate CPUs: %d",
   "item.processorunit.cycle_generation_tooltip": "Generates: %d cycles",
-  "item.logicore.server.total_generation_tooltip": "Generates: %d cycles"
+  "item.logicore.server.total_generation_tooltip": "Generates: %d cycles",
+  "item.logicore.knowledge_orb.unlocked_all": "You have unlocked all the knowledge"
 }

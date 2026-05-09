@@ -13,6 +13,7 @@ import dev.gacbl.logicore.blocks.recycler.RecyclerModule;
 import dev.gacbl.logicore.blocks.repair_station.RepairStationModule;
 import dev.gacbl.logicore.blocks.research_station.ResearchStationModule;
 import dev.gacbl.logicore.blocks.serverrack.ServerRackModule;
+import dev.gacbl.logicore.items.knowledge_orb.KnowledgeOrbModule;
 import dev.gacbl.logicore.items.pickaxe.CyclePickModule;
 import dev.gacbl.logicore.items.processorunit.ProcessorUnitModule;
 import dev.gacbl.logicore.items.server.ServerModule;
@@ -57,6 +58,7 @@ public class CreativeTabModule {
                         output.accept(RepairStationModule.REPAIR_STATION.get());
                         output.accept(RecyclerModule.RECYCLER.get());
                         output.accept(ServerModule.SERVER.get());
+                        output.accept(KnowledgeOrbModule.KNOWLEDGE_ORB.get());
                     })
                     .build());
 

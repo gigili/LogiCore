@@ -13,6 +13,7 @@ import dev.gacbl.logicore.blocks.recycler.RecyclerModule;
 import dev.gacbl.logicore.blocks.repair_station.RepairStationModule;
 import dev.gacbl.logicore.blocks.research_station.ResearchStationModule;
 import dev.gacbl.logicore.blocks.serverrack.ServerRackModule;
+import dev.gacbl.logicore.items.knowledge_orb.KnowledgeOrbModule;
 import dev.gacbl.logicore.items.pickaxe.CyclePickModule;
 import dev.gacbl.logicore.items.processorunit.ProcessorUnitModule;
 import dev.gacbl.logicore.items.stack_upgrade.StackUpgradeModule;
@@ -35,6 +36,7 @@ public class ModItemModelProvider extends ItemModelProvider {
         basicItem(WrenchModule.WRENCH.get());
         basicItem(StackUpgradeModule.STACK_UPGRADE.get());
         basicItem(CyclePickModule.CYCLE_PICK.get());
+        basicItem(KnowledgeOrbModule.KNOWLEDGE_ORB.get());
 
         withExistingParent(CompilerModule.COMPILER_ITEM.getId().getPath(), "logicore:block/" + CompilerModule.COMPILER_ITEM.getId().getPath());
         withExistingParent(ComputerModule.COMPUTER_ITEM.getId().getPath(), "logicore:block/" + ComputerModule.COMPUTER_ITEM.getId().getPath());
