@@ -5,15 +5,16 @@ import dev.gacbl.logicore.api.cycles.CycleValueManager;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.InteractionHand;
-import net.minecraft.world.InteractionResultHolder;
+import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
+import net.minecraft.world.item.component.TooltipDisplay;
 import net.minecraft.world.level.Level;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.List;
+import java.util.function.Consumer;
 
 public class KnowledgeOrbItem extends Item {
     public KnowledgeOrbItem(Properties properties) {
@@ -21,9 +22,9 @@ public class KnowledgeOrbItem extends Item {
     }
 
     @Override
-    public @NotNull InteractionResultHolder<ItemStack> use(@NotNull Level level, @NotNull Player player, @NotNull InteractionHand usedHand) {
+    public @NotNull InteractionResult use(@NotNull Level level, @NotNull Player player, @NotNull InteractionHand usedHand) {
         ItemStack stack = player.getItemInHand(usedHand);
-        if (!level.isClientSide) {
+        if (!level.isClientSide()) {
             ServerLevel serverLevel = (ServerLevel) level;
             String key = CycleSavedData.getKey(serverLevel, player.getUUID());
             CycleSavedData data = CycleSavedData.get(serverLevel);
@@ -34,14 +35,14 @@ public class KnowledgeOrbItem extends Item {
 
             stack.shrink(1);
             player.sendSystemMessage(Component.translatable("item.logicore.knowledge_orb.unlocked_all"));
-            return InteractionResultHolder.consume(stack);
+            return InteractionResult.CONSUME;
         }
-        return InteractionResultHolder.success(stack);
+        return InteractionResult.SUCCESS;
     }
 
     @Override
-    public void appendHoverText(@NotNull ItemStack stack, @NotNull TooltipContext context, @NotNull List<Component> tooltipComponents, @NotNull TooltipFlag tooltipFlag) {
-        tooltipComponents.add(Component.translatable("tooltip.item.logicore.knowledge_orb"));
-        super.appendHoverText(stack, context, tooltipComponents, tooltipFlag);
+    public void appendHoverText(@NotNull ItemStack stack, @NotNull Item.TooltipContext context, @NotNull TooltipDisplay display, @NotNull Consumer<Component> tooltipComponents, @NotNull TooltipFlag tooltipFlag) {
+        tooltipComponents.accept(Component.translatable("tooltip.item.logicore.knowledge_orb"));
+        super.appendHoverText(stack, context, display, tooltipComponents, tooltipFlag);
     }
 }

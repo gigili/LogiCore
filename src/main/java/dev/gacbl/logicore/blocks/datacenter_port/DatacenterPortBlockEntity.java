@@ -9,6 +9,8 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.storage.ValueInput;
+import net.minecraft.world.level.storage.ValueOutput;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -158,10 +160,10 @@ public class DatacenterPortBlockEntity extends BlockEntity implements ICycleProv
     }
 
     @Override
-    protected void saveAdditional(@NotNull CompoundTag tag, @NotNull HolderLookup.Provider registries) {
-        super.saveAdditional(tag, registries);
+    protected void saveAdditional(@NotNull ValueOutput output) {
+        super.saveAdditional(output);
         if (controllerPos != null) {
-            tag.putLong("ControllerPos", controllerPos.asLong());
+            output.putLong("ControllerPos", controllerPos.asLong());
         }
     }
 
@@ -170,10 +172,10 @@ public class DatacenterPortBlockEntity extends BlockEntity implements ICycleProv
     }
 
     @Override
-    public void loadAdditional(@NotNull CompoundTag tag, @NotNull HolderLookup.Provider registries) {
-        super.loadAdditional(tag, registries);
-        if (tag.contains("ControllerPos")) {
-            controllerPos = BlockPos.of(tag.getLong("ControllerPos"));
+    public void loadAdditional(@NotNull ValueInput input) {
+        super.loadAdditional(input);
+        if (input.getLong("ControllerPos").isPresent()) {
+            controllerPos = BlockPos.of(input.getLongOr("ControllerPos", 0L));
         } else {
             controllerPos = null;
         }

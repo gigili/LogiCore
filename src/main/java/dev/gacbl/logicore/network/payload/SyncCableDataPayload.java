@@ -9,7 +9,7 @@ import net.minecraft.core.UUIDUtil;
 import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.neoforged.neoforge.network.handling.IPayloadHandler;
 
@@ -18,7 +18,7 @@ import java.util.UUID;
 
 public record SyncCableDataPayload(BlockPos pos, Optional<UUID> networkUUID) implements CustomPacketPayload {
 
-    public static final Type<SyncCableDataPayload> TYPE = new Type<>(ResourceLocation.fromNamespaceAndPath(LogiCore.MOD_ID, "sync_cable_data"));
+    public static final Type<SyncCableDataPayload> TYPE = new Type<>(Identifier.fromNamespaceAndPath(LogiCore.MOD_ID, "sync_cable_data"));
 
     public static final StreamCodec<ByteBuf, SyncCableDataPayload> STREAM_CODEC = StreamCodec.composite(
             BlockPos.STREAM_CODEC, SyncCableDataPayload::pos,

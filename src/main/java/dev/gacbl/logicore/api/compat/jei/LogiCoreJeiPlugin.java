@@ -13,11 +13,10 @@ import mezz.jei.api.registration.IGuiHandlerRegistration;
 import mezz.jei.api.registration.IRecipeCatalystRegistration;
 import mezz.jei.api.registration.IRecipeCategoryRegistration;
 import mezz.jei.api.registration.IRecipeRegistration;
-import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.Rect2i;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.item.ItemStack;
-import net.neoforged.neoforge.network.PacketDistributor;
+import net.neoforged.neoforge.client.network.ClientPacketDistributor;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
@@ -28,8 +27,8 @@ public class LogiCoreJeiPlugin implements IModPlugin {
     public static IDrawableStatic slotDrawable;
 
     @Override
-    public @NotNull ResourceLocation getPluginUid() {
-        return ResourceLocation.fromNamespaceAndPath(LogiCore.MOD_ID, "jei_plugin");
+    public @NotNull Identifier getPluginUid() {
+        return Identifier.fromNamespaceAndPath(LogiCore.MOD_ID, "jei_plugin");
     }
 
     @Override
@@ -45,9 +44,7 @@ public class LogiCoreJeiPlugin implements IModPlugin {
 
     @Override
     public void registerRecipes(@NotNull IRecipeRegistration registration) {
-        if (Minecraft.getInstance().level == null) return;
-        final var recipeManager = Minecraft.getInstance().level.getRecipeManager();
-        //registration.addRecipes(CompilerRecipeCategory.TYPE, recipeManager.getAllRecipesFor(CompilerModule.COMPILER_TYPE.get()).stream().map(RecipeHolder::value).toList());
+        //registration.addRecipes(CompilerRecipeCategory.TYPE, ...);
     }
 
     @Override
@@ -71,7 +68,7 @@ public class LogiCoreJeiPlugin implements IModPlugin {
                         @Override
                         public void accept(@NotNull I ingredient) {
                             ItemStack stack = (ItemStack) ingredient;
-                            PacketDistributor.sendToServer(new SetAutoCraftingTemplatePayload(
+                            ClientPacketDistributor.sendToServer(new SetAutoCraftingTemplatePayload(
                                     gui.getMenu().getBlockEntity().getBlockPos(),
                                     stack
                             ));

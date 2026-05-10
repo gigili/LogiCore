@@ -4,16 +4,21 @@ import com.mojang.serialization.MapCodec;
 import dev.gacbl.logicore.items.processorunit.ProcessorUnitModule;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.core.HolderGetter;
 import net.minecraft.data.recipes.RecipeCategory;
 import net.minecraft.data.recipes.ShapedRecipeBuilder;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.tags.ItemTags;
+import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.block.BaseEntityBlock;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.RenderShape;
@@ -24,7 +29,7 @@ import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
-import net.minecraft.world.level.block.state.properties.DirectionProperty;
+import net.minecraft.world.level.block.state.properties.EnumProperty;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
@@ -33,7 +38,7 @@ import org.jetbrains.annotations.Nullable;
 
 public class RepairStationBlock extends BaseEntityBlock {
     public static final VoxelShape SHAPE = Block.box(0.0D, 0.0D, 0.0D, 16.0D, 16.0D, 16.0D);
-    public static final DirectionProperty FACING = BlockStateProperties.HORIZONTAL_FACING;
+    public static final EnumProperty<Direction> FACING = BlockStateProperties.HORIZONTAL_FACING;
     public static final MapCodec<RepairStationBlock> CODEC = simpleCodec(RepairStationBlock::new);
 
     protected RepairStationBlock(Properties properties) {
@@ -44,12 +49,12 @@ public class RepairStationBlock extends BaseEntityBlock {
         );
     }
 
-    public static ShapedRecipeBuilder getRecipe() {
-        return ShapedRecipeBuilder.shaped(RecipeCategory.REDSTONE, RepairStationModule.REPAIR_STATION.get())
+    public static ShapedRecipeBuilder getRecipe(HolderGetter<Item> items) {
+        return ShapedRecipeBuilder.shaped(items, RecipeCategory.REDSTONE, RepairStationModule.REPAIR_STATION.get())
                 .pattern("GRG")
                 .pattern("EPE")
                 .pattern("GRG")
-                .define('R', ItemTags.create(ResourceLocation.fromNamespaceAndPath("c", "dusts/redstone")))
+                .define('R', ItemTags.create(Identifier.fromNamespaceAndPath("c", "dusts/redstone")))
                 .define('E', Items.EMERALD)
                 .define('G', Items.GOLD_INGOT)
                 .define('P', ProcessorUnitModule.PROCESSOR_UNIT_BASIC.get());
@@ -104,13 +109,8 @@ public class RepairStationBlock extends BaseEntityBlock {
     }
 
     @Override
-    public boolean propagatesSkylightDown(@NotNull BlockState blockState, @NotNull BlockGetter blockGetter, @NotNull BlockPos blockPos) {
-        return true;
-    }
-
-    @Override
     protected @NotNull InteractionResult useWithoutItem(@NotNull BlockState state, Level level, @NotNull BlockPos pos, @NotNull Player player, @NotNull BlockHitResult hit) {
-        if (!level.isClientSide) {
+        if (!level.isClientSide()) {
             BlockEntity be = level.getBlockEntity(pos);
 
             if (be instanceof RepairStationBlockEntity serverRack) {
@@ -122,14 +122,23 @@ public class RepairStationBlock extends BaseEntityBlock {
     }
 
     @Override
-    public void onRemove(@NotNull BlockState state, @NotNull Level level, @NotNull BlockPos pos, @NotNull BlockState newState, boolean isMoving) {
-        if (!state.is(newState.getBlock())) {
-            BlockEntity blockEntity = level.getBlockEntity(pos);
+    protected @NotNull InteractionResult useItemOn(@NotNull ItemStack stack, @NotNull BlockState state, @NotNull Level level, @NotNull BlockPos pos, @NotNull Player player, @NotNull InteractionHand hand, @NotNull BlockHitResult hitResult) {
+        InteractionResult result = super.useItemOn(stack, state, level, pos, player, hand, hitResult);
+        if (result != InteractionResult.PASS) {
+            return result;
+        }
+        return this.useWithoutItem(state, level, pos, player, hitResult);
+    }
+
+    @Override
+    public void destroy(@NotNull LevelAccessor level, @NotNull BlockPos pos, @NotNull BlockState state) {
+        if (level instanceof Level l) {
+            BlockEntity blockEntity = l.getBlockEntity(pos);
             if (blockEntity instanceof RepairStationBlockEntity be) {
                 be.dropContents();
             }
-            super.onRemove(state, level, pos, newState, isMoving);
         }
+        super.destroy(level, pos, state);
     }
 
     @Nullable

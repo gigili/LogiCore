@@ -29,7 +29,10 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
-import net.neoforged.neoforge.items.ItemStackHandler;
+import net.minecraft.world.level.storage.ValueInput;
+import net.minecraft.world.level.storage.ValueOutput;
+import net.neoforged.neoforge.transfer.item.ItemResource;
+import net.neoforged.neoforge.transfer.item.ItemStacksResourceHandler;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -55,28 +58,30 @@ public class ResearchStationBlockEntity extends BlockEntity implements MenuProvi
         return ownerUUID;
     }
 
-    private final ItemStackHandler itemHandler = new ItemStackHandler(1) {
+    private final ItemStacksResourceHandler itemHandler = new ItemStacksResourceHandler(1) {
         @Override
-        protected void onContentsChanged(int slot) {
+        protected void onContentsChanged(int slot, ItemStack stack) {
             setChanged();
-            if (!this.getStackInSlot(0).isEmpty()) {
+            if (!stack.isEmpty()) {
                 requestCycles();
             }
         }
 
         @Override
-        public boolean isItemValid(int slot, @NotNull ItemStack stack) {
+        public boolean isValid(int slot, @NotNull ItemResource resource) {
+            if (resource == null || resource.isEmpty()) return false;
+            ItemStack stack = resource.toStack();
             return CycleValueManager.hasCycleValue(stack) && !ClientKnowledgeData.isUnlocked(Utils.getItemKey(stack));
         }
 
         @Override
-        public int getSlotLimit(int slot) {
+        protected int getCapacity(int slot, ItemResource resource) {
             return 1;
         }
     };
 
     private void requestCycles() {
-        if (level == null || level.isClientSide || level.getServer() == null) return;
+        if (level == null || level.isClientSide() || level.getServer() == null) return;
         NetworkManager manager = NetworkManager.get(level.getServer().overworld());
         for (Direction dir : Direction.values()) {
             BlockPos neighborPos = this.worldPosition.relative(dir);
@@ -90,7 +95,7 @@ public class ResearchStationBlockEntity extends BlockEntity implements MenuProvi
         }
     }
 
-    public ItemStackHandler getItemHandler() {
+    public ItemStacksResourceHandler getItemHandler() {
         return itemHandler;
     }
 
@@ -125,39 +130,40 @@ public class ResearchStationBlockEntity extends BlockEntity implements MenuProvi
     };
 
     @Override
-    protected void saveAdditional(@NotNull CompoundTag tag, @NotNull HolderLookup.Provider registries) {
-        super.saveAdditional(tag, registries);
-        tag.put("inventory", itemHandler.serializeNBT(registries));
-        tag.putInt("progress", progress);
-        tag.putLong("currentCycles", currentCycles);
+    protected void saveAdditional(@NotNull ValueOutput output) {
+        super.saveAdditional(output);
+        itemHandler.serialize(output.child("inventory"));
+        output.putInt("progress", progress);
+        output.putLong("currentCycles", currentCycles);
         if (ownerUUID != null) {
-            tag.putUUID("Owner", ownerUUID);
+            output.putLong("OwnerMost", ownerUUID.getMostSignificantBits());
+            output.putLong("OwnerLeast", ownerUUID.getLeastSignificantBits());
         }
     }
 
     @Override
-    protected void loadAdditional(@NotNull CompoundTag tag, @NotNull HolderLookup.Provider registries) {
-        super.loadAdditional(tag, registries);
-        if (tag.contains("inventory")) {
-            itemHandler.deserializeNBT(registries, tag.getCompound("inventory"));
+    protected void loadAdditional(@NotNull ValueInput input) {
+        super.loadAdditional(input);
+        input.child("inventory").ifPresent(itemHandler::deserialize);
+        long ownerMost = input.getLongOr("OwnerMost", 0L);
+        long ownerLeast = input.getLongOr("OwnerLeast", 0L);
+        if (ownerMost != 0L || ownerLeast != 0L) {
+            this.ownerUUID = new UUID(ownerMost, ownerLeast);
         }
-        if (tag.hasUUID("Owner")) {
-            this.ownerUUID = tag.getUUID("Owner");
-        }
-        progress = tag.getInt("progress");
-        currentCycles = tag.getLong("currentCycles");
+        progress = input.getIntOr("progress", 0);
+        currentCycles = input.getLongOr("currentCycles", 0);
     }
 
     public void setResearchingState(BlockPos blockPos, BlockState blockState, Boolean isResearching) {
-        if (level == null || level.isClientSide) return;
+        if (level == null || level.isClientSide()) return;
         level.setBlock(blockPos, blockState.setValue(ResearchStationModule.RESEARCHING, isResearching), 3);
         setChanged();
     }
 
     public static void serverTick(Level level, BlockPos blockPos, BlockState blockState, ResearchStationBlockEntity be) {
-        if (level.isClientSide) return;
+        if (level.isClientSide()) return;
 
-        ItemStack template = be.itemHandler.getStackInSlot(0);
+        ItemStack template = be.itemHandler.copyToList().get(0);
         if (template.isEmpty() || !CycleValueManager.hasCycleValue(template)) {
             if (be.progress > 0) {
                 be.progress = 0;
@@ -190,7 +196,7 @@ public class ResearchStationBlockEntity extends BlockEntity implements MenuProvi
                 be.currentCycles -= cost;
                 be.progress = 0;
                 be.setResearchingState(blockPos, blockState, false);
-                ItemStack resultItem = be.itemHandler.getStackInSlot(0);
+                ItemStack resultItem = be.itemHandler.copyToList().get(0);
                 String ownerKey = CycleSavedData.getKey((ServerLevel) level, be.getOwner());
                 CycleSavedData.get((ServerLevel) level).unlockItem((ServerLevel) level, ownerKey, resultItem);
                 if (be.ownerUUID != null) {
@@ -199,7 +205,7 @@ public class ResearchStationBlockEntity extends BlockEntity implements MenuProvi
                         PacketHandler.sendToPlayer(player, new NotifyResearchCompletePayload(resultItem));
                     }
                 }
-                be.itemHandler.setStackInSlot(0, ItemStack.EMPTY);
+                be.itemHandler.set(0, ItemResource.EMPTY, 0);
                 be.setResearchingState(blockPos, blockState, false);
             }
             be.setChanged();
@@ -224,12 +230,12 @@ public class ResearchStationBlockEntity extends BlockEntity implements MenuProvi
 
     public void dropContents() {
         if (this.level == null) return;
-        Containers.dropItemStack(this.level, this.worldPosition.getX(), this.worldPosition.getY(), this.worldPosition.getZ(), itemHandler.getStackInSlot(0));
+        Containers.dropItemStack(this.level, this.worldPosition.getX(), this.worldPosition.getY(), this.worldPosition.getZ(), itemHandler.copyToList().get(0));
     }
 
     @Override
     public long getCycleDemand() {
-        ItemStack stack = itemHandler.getStackInSlot(0);
+        ItemStack stack = itemHandler.copyToList().get(0);
         if (stack.isEmpty()) return 0;
         return CycleValueManager.getCycleValue(stack) + 1000L;
     }

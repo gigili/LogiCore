@@ -4,21 +4,23 @@ import dev.gacbl.logicore.Config;
 import dev.gacbl.logicore.items.processorunit.ProcessorUnitModule;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.core.HolderGetter;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.data.recipes.RecipeCategory;
 import net.minecraft.data.recipes.ShapedRecipeBuilder;
 import net.minecraft.network.chat.Component;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.util.RandomSource;
+import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
-import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.EntityBlock;
 import net.minecraft.world.level.block.Mirror;
@@ -30,15 +32,13 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.level.block.state.properties.BooleanProperty;
-import net.minecraft.world.level.block.state.properties.DirectionProperty;
+import net.minecraft.world.level.block.state.properties.EnumProperty;
 import net.minecraft.world.phys.BlockHitResult;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.List;
-
 public class DatacenterControllerBlock extends Block implements EntityBlock {
-    public static final DirectionProperty FACING = BlockStateProperties.FACING;
+    public static final EnumProperty<Direction> FACING = BlockStateProperties.FACING;
     public static final BooleanProperty FORMED = BooleanProperty.create("formed");
 
     public DatacenterControllerBlock(Properties properties) {
@@ -46,8 +46,8 @@ public class DatacenterControllerBlock extends Block implements EntityBlock {
         this.registerDefaultState(this.stateDefinition.any().setValue(FACING, Direction.NORTH).setValue(FORMED, false));
     }
 
-    public static ShapedRecipeBuilder getRecipe() {
-        return ShapedRecipeBuilder.shaped(RecipeCategory.REDSTONE, DatacenterModule.DATACENTER_CONTROLLER.get())
+    public static ShapedRecipeBuilder getRecipe(HolderGetter<Item> items) {
+        return ShapedRecipeBuilder.shaped(items, RecipeCategory.REDSTONE, DatacenterModule.DATACENTER_CONTROLLER.get())
                 .pattern("III")
                 .pattern("OPO")
                 .pattern("III")
@@ -78,16 +78,12 @@ public class DatacenterControllerBlock extends Block implements EntityBlock {
     }
 
     @Override
-    public void onRemove(@NotNull BlockState state, @NotNull Level level, @NotNull BlockPos pos, @NotNull BlockState newState, boolean isMoving) {
-        if (state.is(newState.getBlock())) {
-            return;
-        }
-
+    public void destroy(@NotNull LevelAccessor level, @NotNull BlockPos pos, @NotNull BlockState state) {
         BlockEntity blockEntity = level.getBlockEntity(pos);
         if (blockEntity instanceof DatacenterControllerBlockEntity be) {
             be.dropContents();
         }
-        super.onRemove(state, level, pos, newState, isMoving);
+        super.destroy(level, pos, state);
     }
 
     @Override
@@ -104,21 +100,29 @@ public class DatacenterControllerBlock extends Block implements EntityBlock {
                     BlockState newState = level.getBlockState(pos);
                     if (level.getServer() != null) {
                         if (newState.getValue(FORMED)) {
-                            Component msg = Component.translatable("message.logicore.datacenter.formed");
-                            player.displayClientMessage(msg, true);
+                            player.sendSystemMessage(Component.translatable("message.logicore.datacenter.formed"));
                         } else {
                             String errorPos = controller.lastException != null && controller.lastException.pos != null ? controller.lastException.pos.toShortString() : "";
                             Component msg = controller.lastException != null ? Component.translatable(controller.lastException.message, errorPos) : Component.translatable("errors.logicore.datacenter.invalid_form");
-                            player.displayClientMessage(msg, true);
+                            player.sendSystemMessage(msg);
                         }
                     }
                 } else {
-                    player.displayClientMessage(Component.translatable("message.logicore.datacenter.formed"), true);
+                    player.sendSystemMessage(Component.translatable("message.logicore.datacenter.formed"));
                 }
                 return InteractionResult.SUCCESS;
             }
         }
         return InteractionResult.SUCCESS;
+    }
+
+    @Override
+    protected @NotNull InteractionResult useItemOn(@NotNull ItemStack stack, @NotNull BlockState state, @NotNull Level level, @NotNull BlockPos pos, @NotNull Player player, @NotNull InteractionHand hand, @NotNull BlockHitResult hitResult) {
+        InteractionResult result = super.useItemOn(stack, state, level, pos, player, hand, hitResult);
+        if (result != InteractionResult.PASS) {
+            return result;
+        }
+        return this.useWithoutItem(state, level, pos, player, hitResult);
     }
 
     @Nullable
@@ -130,7 +134,7 @@ public class DatacenterControllerBlock extends Block implements EntityBlock {
     @Nullable
     @Override
     public <T extends BlockEntity> BlockEntityTicker<T> getTicker(Level level, @NotNull BlockState state, @NotNull BlockEntityType<T> type) {
-        return level.isClientSide ? null : (lvl, pos, st, be) -> {
+        return level.isClientSide() ? null : (lvl, pos, st, be) -> {
             if (be instanceof DatacenterControllerBlockEntity controller) {
                 controller.tick(lvl, pos, st);
             }
@@ -174,9 +178,4 @@ public class DatacenterControllerBlock extends Block implements EntityBlock {
         }
     }
 
-    @Override
-    public void appendHoverText(@NotNull ItemStack stack, Item.@NotNull TooltipContext context, @NotNull List<Component> tooltipComponents, @NotNull TooltipFlag tooltipFlag) {
-        super.appendHoverText(stack, context, tooltipComponents, tooltipFlag);
-        tooltipComponents.add(Component.translatable("tooltip.logicore.datacenter.tooltip"));
-    }
 }

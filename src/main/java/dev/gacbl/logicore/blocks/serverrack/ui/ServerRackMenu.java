@@ -16,7 +16,7 @@ import net.minecraft.world.inventory.SimpleContainerData;
 import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.entity.BlockEntity;
-import net.neoforged.neoforge.items.SlotItemHandler;
+import net.neoforged.neoforge.transfer.item.ResourceHandlerSlot;
 import org.jetbrains.annotations.NotNull;
 
 public class ServerRackMenu extends MyAbstractContainerMenu {
@@ -31,13 +31,10 @@ public class ServerRackMenu extends MyAbstractContainerMenu {
         int startX = 36;
         int startY = 133;
 
-        for (int row = 0; row < 9; row++) {
-            this.addSlot(new SlotItemHandler(((CoreCycleProviderBlockEntity) this.blockEntity).getItemHandler(), row, startX + row * slotSize, startY) {
-                @Override
-                public boolean mayPlace(@NotNull ItemStack stack) {
-                    return super.mayPlace(stack);
-                }
+        var handler = ((CoreCycleProviderBlockEntity) this.blockEntity).getItemHandler();
 
+        for (int row = 0; row < 9; row++) {
+            this.addSlot(new ResourceHandlerSlot(handler, handler::set, row, startX + row * slotSize, startY) {
                 @Override
                 public int getMaxStackSize() {
                     return 1;

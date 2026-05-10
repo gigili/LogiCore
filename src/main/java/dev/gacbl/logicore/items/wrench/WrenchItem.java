@@ -3,10 +3,11 @@ package dev.gacbl.logicore.items.wrench;
 import dev.gacbl.logicore.LogiCore;
 import dev.gacbl.logicore.items.processorunit.ProcessorUnitModule;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.HolderGetter;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.data.recipes.RecipeCategory;
 import net.minecraft.data.recipes.ShapedRecipeBuilder;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.tags.ItemTags;
@@ -26,14 +27,14 @@ public class WrenchItem extends Item {
         super(properties);
     }
 
-    public static ShapedRecipeBuilder getRecipe() {
-        return ShapedRecipeBuilder.shaped(RecipeCategory.REDSTONE, WrenchModule.WRENCH.get())
+    public static ShapedRecipeBuilder getRecipe(HolderGetter<Item> items) {
+        return ShapedRecipeBuilder.shaped(items, RecipeCategory.REDSTONE, WrenchModule.WRENCH.get())
                 .pattern(" QP")
                 .pattern(" SI")
                 .pattern("S  ")
-                .define('S', ItemTags.create(ResourceLocation.fromNamespaceAndPath("c", "rods/wooden")))
+                .define('S', ItemTags.create(Identifier.fromNamespaceAndPath("c", "rods/wooden")))
                 .define('I', Items.IRON_INGOT)
-                .define('Q', ItemTags.create(ResourceLocation.fromNamespaceAndPath("c", "gems/quartz")))
+                .define('Q', ItemTags.create(Identifier.fromNamespaceAndPath("c", "gems/quartz")))
                 .define('P', ProcessorUnitModule.PROCESSOR_UNIT_BASIC.get());
     }
 
@@ -44,13 +45,13 @@ public class WrenchItem extends Item {
 
         if (player == null) return InteractionResult.PASS;
 
-        if (level.isClientSide) {
+        if (level.isClientSide()) {
             return InteractionResult.SUCCESS;
         }
 
         BlockPos pos = context.getClickedPos();
         BlockState state = level.getBlockState(pos);
-        ResourceLocation blockKey = BuiltInRegistries.BLOCK.getKey(state.getBlock());
+        Identifier blockKey = BuiltInRegistries.BLOCK.getKey(state.getBlock());
 
         if (!blockKey.getNamespace().equals(LogiCore.MOD_ID)) {
             return InteractionResult.PASS;

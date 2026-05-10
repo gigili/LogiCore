@@ -1,10 +1,12 @@
 package dev.gacbl.logicore.blocks.serverrack.client;
 
+import com.geckolib.renderer.GeoBlockRenderer;
 import dev.gacbl.logicore.blocks.serverrack.ServerRackBlockEntity;
-import software.bernie.geckolib.renderer.GeoBlockRenderer;
+import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
+import net.minecraft.client.renderer.blockentity.state.BlockEntityRenderState;
 
-public class ServerRackBlockRenderer extends GeoBlockRenderer<ServerRackBlockEntity> {
-    public ServerRackBlockRenderer() {
-        super(new ServerRackBlockModel());
+public class ServerRackBlockRenderer extends GeoBlockRenderer<ServerRackBlockEntity, BlockEntityRenderState> {
+    public ServerRackBlockRenderer(BlockEntityRendererProvider.Context context) {
+        super(context, new ServerRackBlockModel());
     }
 }

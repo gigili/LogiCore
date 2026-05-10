@@ -7,7 +7,7 @@ import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.level.block.entity.BlockEntity;
@@ -21,7 +21,7 @@ public record SyncMultiblockPortsPayload(BlockPos controllerPos, boolean formed,
         implements CustomPacketPayload {
 
     public static final Type<SyncMultiblockPortsPayload> TYPE =
-            new Type<>(ResourceLocation.fromNamespaceAndPath(LogiCore.MOD_ID, "sync_multiblock_ports"));
+            new Type<>(Identifier.fromNamespaceAndPath(LogiCore.MOD_ID, "sync_multiblock_ports"));
 
     public static final StreamCodec<FriendlyByteBuf, SyncMultiblockPortsPayload> STREAM_CODEC =
             StreamCodec.composite(
@@ -40,7 +40,7 @@ public record SyncMultiblockPortsPayload(BlockPos controllerPos, boolean formed,
                 return;
             }
 
-            ServerLevel level = serverPlayer.serverLevel();
+            ServerLevel level = (ServerLevel) serverPlayer.level();
             BlockEntity blockEntity = level.getBlockEntity(payload.controllerPos());
 
             if (blockEntity instanceof DatacenterControllerBlockEntity controllerBlockEntity) {

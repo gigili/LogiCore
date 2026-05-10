@@ -9,7 +9,7 @@ import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.inventory.ContainerData;
 import net.minecraft.world.inventory.SimpleContainerData;
 import net.minecraft.world.level.block.entity.BlockEntity;
-import net.neoforged.neoforge.items.SlotItemHandler;
+import net.neoforged.neoforge.transfer.item.ResourceHandlerSlot;
 
 public class GeneratorMenu extends MyAbstractContainerMenu {
     public GeneratorMenu(int containerId, Inventory playerInventory, BlockPos pos) {
@@ -24,8 +24,9 @@ public class GeneratorMenu extends MyAbstractContainerMenu {
         super(GeneratorModule.GENERATOR_MENU.get(), containerId, playerInventory, entity, data);
         this.TE_INVENTORY_SLOT_COUNT = 3;
 
+        var handler = ((GeneratorBlockEntity) this.blockEntity).getItemHandler(null);
         for (int row = 0; row < 3; row++) {
-            this.addSlot(new SlotItemHandler(((GeneratorBlockEntity) this.blockEntity).getItemHandler(null), row, 90 + row * 18, 103));
+            this.addSlot(new ResourceHandlerSlot(handler, handler::set, row, 90 + row * 18, 103));
         }
     }
 

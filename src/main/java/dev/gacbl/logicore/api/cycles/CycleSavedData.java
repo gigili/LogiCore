@@ -5,16 +5,16 @@ import dev.gacbl.logicore.core.Utils;
 import dev.gacbl.logicore.network.PacketHandler;
 import dev.gacbl.logicore.network.payload.SyncPlayerCyclesPayload;
 import dev.gacbl.logicore.network.payload.SyncPlayerKnowledgePayload;
-import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
+import net.minecraft.nbt.StringTag;
 import net.minecraft.nbt.Tag;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.saveddata.SavedData;
-import org.jetbrains.annotations.NotNull;
+import net.minecraft.world.level.saveddata.SavedDataType;
 
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
@@ -23,12 +23,14 @@ public class CycleSavedData extends SavedData {
     private final Map<String, Long> storage = new ConcurrentHashMap<>();
     private final Map<String, Set<String>> knowledge = new ConcurrentHashMap<>();
 
+    public static final SavedDataType<CycleSavedData> TYPE = new SavedDataType<>(
+            Identifier.fromNamespaceAndPath("logicore", "cloud_cycles"),
+            CycleSavedData::new,
+            CompoundTag.CODEC.xmap(CycleSavedData::fromTag, CycleSavedData::toTag)
+    );
+
     public static CycleSavedData get(ServerLevel level) {
-        return level.getServer().overworld().getDataStorage().computeIfAbsent(new Factory<>(
-                CycleSavedData::new,
-                CycleSavedData::load,
-                null
-        ), "logicore_cloud_cycles");
+        return level.getServer().overworld().getDataStorage().computeIfAbsent(TYPE);
     }
 
     public static String getKey(ServerLevel level, UUID uuid) {
@@ -58,26 +60,26 @@ public class CycleSavedData extends SavedData {
         return storage.getOrDefault(key, 0L);
     }
 
-    public static CycleSavedData load(CompoundTag tag, HolderLookup.Provider provider) {
+    public static CycleSavedData fromTag(CompoundTag tag) {
         CycleSavedData data = new CycleSavedData();
         if (tag.contains("cycles")) {
-            ListTag list = tag.getList("cycles", Tag.TAG_COMPOUND);
+            ListTag list = tag.getListOrEmpty("cycles");
             for (Tag t : list) {
                 CompoundTag entry = (CompoundTag) t;
-                data.storage.put(entry.getString("key"), entry.getLong("val"));
+                data.storage.put(entry.getStringOr("key", ""), entry.getLongOr("val", 0L));
             }
         }
 
         if (tag.contains("knowledge")) {
-            ListTag knowledgeList = tag.getList("knowledge", Tag.TAG_COMPOUND);
+            ListTag knowledgeList = tag.getListOrEmpty("knowledge");
             for (Tag t : knowledgeList) {
                 CompoundTag entry = (CompoundTag) t;
-                String key = entry.getString("key");
-                ListTag items = entry.getList("items", Tag.TAG_STRING);
+                String key = entry.getStringOr("key", "");
+                ListTag items = entry.getListOrEmpty("items");
 
                 Set<String> itemSet = new HashSet<>();
                 for (Tag itemTag : items) {
-                    itemSet.add(itemTag.getAsString());
+                    itemSet.add(((StringTag) itemTag).value());
                 }
                 data.knowledge.put(key, itemSet);
             }
@@ -85,8 +87,8 @@ public class CycleSavedData extends SavedData {
         return data;
     }
 
-    @Override
-    public @NotNull CompoundTag save(CompoundTag tag, HolderLookup.@NotNull Provider provider) {
+    public CompoundTag toTag() {
+        CompoundTag tag = new CompoundTag();
         ListTag list = new ListTag();
         storage.forEach((k, v) -> {
             CompoundTag entry = new CompoundTag();
@@ -102,7 +104,7 @@ public class CycleSavedData extends SavedData {
             entry.putString("key", k);
 
             ListTag items = new ListTag();
-            v.forEach(itemStr -> items.add(net.minecraft.nbt.StringTag.valueOf(itemStr)));
+            v.forEach(itemStr -> items.add(StringTag.valueOf(itemStr)));
 
             entry.put("items", items);
             knowledgeList.add(entry);
@@ -129,7 +131,7 @@ public class CycleSavedData extends SavedData {
         }
     }
 
-    public boolean isUnlocked(String key, ResourceLocation item) {
+    public boolean isUnlocked(String key, Identifier item) {
         Set<String> unlocked = knowledge.get(key);
         if (unlocked == null) return false;
         String baseKey = item.toString();

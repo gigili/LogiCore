@@ -8,9 +8,7 @@ import net.minecraft.core.registries.Registries;
 import net.minecraft.world.inventory.MenuType;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.Item;
-import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntityType;
-import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.block.state.properties.BooleanProperty;
 import net.minecraft.world.level.material.MapColor;
 import net.neoforged.bus.api.IEventBus;
@@ -29,19 +27,14 @@ public class ResearchStationModule {
 
     public static final BooleanProperty RESEARCHING = BooleanProperty.create("researching");
 
-    public static final DeferredBlock<Block> RESEARCH_STATION = BLOCKS.register("research_station",
-            () -> new ResearchStationBlock(BlockBehaviour.Properties.of()
-                    .mapColor(MapColor.METAL)
-                    .strength(3.0F, 3.0F)
-                    .requiresCorrectToolForDrops()
-                    .noOcclusion()));
+    public static final DeferredBlock<ResearchStationBlock> RESEARCH_STATION = BLOCKS.registerBlock("research_station", ResearchStationBlock::new,
+            props -> props.mapColor(MapColor.METAL).strength(3.0F, 3.0F).requiresCorrectToolForDrops().noOcclusion());
 
-    public static final DeferredHolder<Item, BlockItem> RESEARCH_STATION_ITEM = ITEMS.register("research_station",
-            () -> new BlockItem(RESEARCH_STATION.get(), new Item.Properties()));
+    public static final DeferredHolder<Item, BlockItem> RESEARCH_STATION_ITEM = ITEMS.registerItem("research_station", props -> new BlockItem(RESEARCH_STATION.get(), props));
 
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<ResearchStationBlockEntity>> RESEARCH_STATION_BE =
             BLOCK_ENTITIES.register("research_station",
-                    () -> BlockEntityType.Builder.of(ResearchStationBlockEntity::new, RESEARCH_STATION.get()).build(null));
+                    () -> new BlockEntityType<>(ResearchStationBlockEntity::new, RESEARCH_STATION.get()));
 
     public static final DeferredHolder<MenuType<?>, MenuType<ResearchStationMenu>> RESEARCH_STATION_MENU =
             MENUS.register("research_station_menu", () -> IMenuTypeExtension.create(ResearchStationMenu::new));
@@ -62,7 +55,7 @@ public class ResearchStationModule {
         );
 
         event.registerBlockEntity(
-                Capabilities.ItemHandler.BLOCK,
+                Capabilities.Item.BLOCK,
                 RESEARCH_STATION_BE.get(),
                 (be, context) -> be.getItemHandler()
         );

@@ -6,15 +6,17 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.item.ItemStack;
 import net.neoforged.neoforge.network.handling.IPayloadHandler;
+import net.neoforged.neoforge.transfer.item.ItemResource;
+import net.neoforged.neoforge.transfer.transaction.Transaction;
 import org.jetbrains.annotations.NotNull;
 
 public record SetAutoCraftingTemplatePayload(BlockPos pos, ItemStack stack) implements CustomPacketPayload {
 
-    public static final Type<SetAutoCraftingTemplatePayload> TYPE = new Type<>(ResourceLocation.fromNamespaceAndPath(LogiCore.MOD_ID, "set_auto_crafting_template"));
+    public static final Type<SetAutoCraftingTemplatePayload> TYPE = new Type<>(Identifier.fromNamespaceAndPath(LogiCore.MOD_ID, "set_auto_crafting_template"));
 
     public static final StreamCodec<RegistryFriendlyByteBuf, SetAutoCraftingTemplatePayload> STREAM_CODEC = StreamCodec.composite(
             BlockPos.STREAM_CODEC, SetAutoCraftingTemplatePayload::pos,
@@ -35,13 +37,24 @@ public record SetAutoCraftingTemplatePayload(BlockPos pos, ItemStack stack) impl
 
                     if (!template.isEmpty()) {
                         template.setCount(1);
-                    } else {
-                        be.getItemHandler(null).getStackInSlot(0).copyAndClear();
-                        be.setChanged();
+                    }
+
+                    ItemResource resource = be.getInternalItemHandler().getResource(0);
+                    if (resource != null) {
+                        try (Transaction tx = Transaction.openRoot()) {
+                            be.getInternalItemHandler().extract(0, resource, 64, tx);
+                            tx.commit();
+                        }
+                    }
+
+                    if (template.isEmpty()) {
                         return;
                     }
 
-                    be.getItemHandler(null).insertItem(CompilerBlockEntity.INPUT_SLOT, template, false);
+                    try (Transaction tx = Transaction.openRoot()) {
+                        be.getInternalItemHandler().insert(CompilerBlockEntity.INPUT_SLOT, ItemResource.of(template), template.getCount(), tx);
+                        tx.commit();
+                    }
                     be.setChanged();
                 }
             }

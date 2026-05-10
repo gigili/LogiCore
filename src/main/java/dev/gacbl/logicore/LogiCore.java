@@ -41,6 +41,7 @@ import dev.gacbl.logicore.items.server.ui.ServerScreen;
 import dev.gacbl.logicore.items.stack_upgrade.StackUpgradeModule;
 import dev.gacbl.logicore.items.wrench.WrenchModule;
 import dev.gacbl.logicore.network.PacketHandler;
+import net.minecraft.resources.Identifier;
 import net.minecraft.server.level.ServerLevel;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.IEventBus;
@@ -102,9 +103,15 @@ public class LogiCore {
         modContainer.registerConfig(ModConfig.Type.COMMON, Config.SPEC, "logicore/logicore.toml");
         modEventBus.addListener(this::registerDataMaps);
 
-        if (net.neoforged.fml.ModList.get().isLoaded("guideme")) {
-            dev.gacbl.logicore.api.compat.GuideMeSupport.setupGuide();
-        }
+        // GuideMe integration disabled during 26.1 port.
+        // To re-enable: uncomment below and ensure GuideMe is available on the classpath.
+        // if (net.neoforged.fml.ModList.get().isLoaded("guideme")) {
+        //     dev.gacbl.logicore.api.compat.GuideMeSupport.setupGuide();
+        // }
+    }
+
+    public static Identifier identifier(String path) {
+        return Identifier.fromNamespaceAndPath(MOD_ID, path);
     }
 
     private void registerDataMaps(RegisterDataMapTypesEvent event) {
@@ -153,7 +160,7 @@ public class LogiCore {
             event.registerBlockEntityRenderer(ResearchStationModule.RESEARCH_STATION_BE.get(), ResearchStationBlockEntityRenderer::new);
             event.registerBlockEntityRenderer(BatteryModule.BATTERY_BE.get(), BatteryFillRenderer::new);
             event.registerBlockEntityRenderer(RepairStationModule.REPAIR_STATION_BE.get(), RepairStationBlockEntityRenderer::new);
-            event.registerBlockEntityRenderer(RecyclerModule.RECYCLER_BE.get(), context -> new RecyclerBlockRenderer());
+            event.registerBlockEntityRenderer(RecyclerModule.RECYCLER_BE.get(), RecyclerBlockRenderer::new);
             event.registerBlockEntityRenderer(ServerRackModule.SERVER_RACK_BLOCK_ENTITY.get(), ServerRackBlockEntityRenderer::new);
         }
 

@@ -9,7 +9,7 @@ import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.inventory.ContainerData;
 import net.minecraft.world.inventory.SimpleContainerData;
 import net.minecraft.world.level.block.entity.BlockEntity;
-import net.neoforged.neoforge.items.SlotItemHandler;
+import net.neoforged.neoforge.transfer.item.ResourceHandlerSlot;
 
 public class RecyclerMenu extends MyAbstractContainerMenu {
     public RecyclerMenu(int containerId, Inventory playerInventory, BlockPos pos) {
@@ -19,8 +19,9 @@ public class RecyclerMenu extends MyAbstractContainerMenu {
     public RecyclerMenu(int containerId, Inventory playerInventory, BlockEntity entity, ContainerData data) {
         super(RecyclerModule.RECYCLER_MENU.get(), containerId, playerInventory, entity, data);
         this.TE_INVENTORY_SLOT_COUNT = 2;
-        this.addSlot(new SlotItemHandler(((RecyclerBlockEntity) this.blockEntity).getItemHandler(), 0, 90, 82));
-        this.addSlot(new SlotItemHandler(((RecyclerBlockEntity) this.blockEntity).getItemHandler(), 1, 125, 82));
+        var handler = ((RecyclerBlockEntity) this.blockEntity).getItemHandler();
+        this.addSlot(new ResourceHandlerSlot(handler, handler::set, 0, 90, 82));
+        this.addSlot(new ResourceHandlerSlot(handler, handler::set, 1, 125, 82));
     }
 
     public RecyclerMenu(int i, Inventory inventory, RegistryFriendlyByteBuf registryFriendlyByteBuf) {

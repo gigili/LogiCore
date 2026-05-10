@@ -1,17 +1,19 @@
 package dev.gacbl.logicore.api.multiblock;
 
+import com.mojang.serialization.Codec;
 import dev.gacbl.logicore.core.CoreCycleProviderBlockEntity;
 import dev.gacbl.logicore.network.PacketHandler;
 import dev.gacbl.logicore.network.payload.SyncMultiblockDataPayload;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.nbt.NbtUtils;
 import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.storage.ValueInput;
+import net.minecraft.world.level.storage.ValueOutput;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -42,7 +44,7 @@ public abstract class AbstractSealedController extends BlockEntity {
     protected abstract void onStructureBroken();
 
     public void tick(Level level, BlockPos pos, BlockState state) {
-        if (level.isClientSide) return;
+        if (level.isClientSide()) return;
 
         if (isFormed) {
             if (this.lastTickCheck % 300 == 0) {
@@ -152,7 +154,7 @@ public abstract class AbstractSealedController extends BlockEntity {
     }
 
     public void syncData() {
-        if (level != null && !level.isClientSide) {
+        if (level != null && !level.isClientSide()) {
             String errorMsg = "";
             BlockPos errorPos = BlockPos.ZERO;
 
@@ -182,43 +184,41 @@ public abstract class AbstractSealedController extends BlockEntity {
     }
 
     @Override
-    protected void saveAdditional(@NotNull CompoundTag tag, HolderLookup.@NotNull Provider registries) {
-        super.saveAdditional(tag, registries);
-        tag.putBoolean("Formed", isFormed);
+    protected void saveAdditional(@NotNull ValueOutput output) {
+        super.saveAdditional(output);
+        output.store("Formed", Codec.BOOL, isFormed);
         if (isFormed) {
-            tag.putLong("MinPos", minPos.asLong());
-            tag.putLong("MaxPos", maxPos.asLong());
+            output.store("MinPos", Codec.LONG, minPos.asLong());
+            output.store("MaxPos", Codec.LONG, maxPos.asLong());
         }
 
         if (lastException != null) {
-            tag.putString("lastExceptionMessage", lastException.message);
+            output.store("lastExceptionMessage", Codec.STRING, lastException.message);
             if (lastException.pos != null) {
-                tag.put("lastExceptionBlockPos", NbtUtils.writeBlockPos(lastException.pos));
+                output.store("lastExceptionX", Codec.LONG, lastException.pos.asLong());
             }
         }
     }
 
     @Override
-    public void loadAdditional(@NotNull CompoundTag tag, HolderLookup.@NotNull Provider registries) {
-        super.loadAdditional(tag, registries);
-        isFormed = tag.getBoolean("Formed");
+    public void loadAdditional(@NotNull ValueInput input) {
+        super.loadAdditional(input);
+        isFormed = input.read("Formed", Codec.BOOL).orElse(false);
         if (isFormed) {
-            minPos = BlockPos.of(tag.getLong("MinPos"));
-            maxPos = BlockPos.of(tag.getLong("MaxPos"));
+            minPos = BlockPos.of(input.read("MinPos", Codec.LONG).orElse(0L));
+            maxPos = BlockPos.of(input.read("MaxPos", Codec.LONG).orElse(0L));
         }
 
-        if (tag.contains("lastExceptionMessage")) {
-            String msg = tag.getString("lastExceptionMessage");
-            BlockPos p = tag.contains("lastExceptionBlockPos") ? NbtUtils.readBlockPos(tag, "lastExceptionBlockPos").orElse(null) : null;
+        String msg = input.read("lastExceptionMessage", Codec.STRING).orElse(null);
+        if (msg != null) {
+            BlockPos p = input.read("lastExceptionX", Codec.LONG).map(BlockPos::of).orElse(null);
             lastException = new MultiblockValidationException(msg, p, null);
         }
     }
 
     @Override
     public @NotNull CompoundTag getUpdateTag(HolderLookup.@NotNull Provider registries) {
-        CompoundTag tag = new CompoundTag();
-        saveAdditional(tag, registries);
-        return tag;
+        return saveWithoutMetadata(registries);
     }
 
     @Override

@@ -2,14 +2,8 @@ package dev.gacbl.logicore.blocks.battery;
 
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
-import dev.gacbl.logicore.Config;
-import dev.gacbl.logicore.core.Utils;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
-import net.minecraft.network.chat.Component;
-import net.minecraft.world.item.Item;
-import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.BaseEntityBlock;
@@ -22,15 +16,14 @@ import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
-import net.minecraft.world.level.block.state.properties.DirectionProperty;
+import net.minecraft.world.level.block.state.properties.EnumProperty;
 import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nullable;
-import java.util.List;
 
 public class BatteryBlock extends BaseEntityBlock {
     private final BatteryTier tier;
-    public static final DirectionProperty FACING = BlockStateProperties.HORIZONTAL_FACING;
+    public static final EnumProperty<Direction> FACING = BlockStateProperties.HORIZONTAL_FACING;
     public static final MapCodec<BatteryBlock> CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
             propertiesCodec(),
             BatteryTier.CODEC.fieldOf("tier").forGetter(BatteryBlock::getTier)
@@ -83,38 +76,4 @@ public class BatteryBlock extends BaseEntityBlock {
         return createTickerHelper(type, BatteryModule.BATTERY_BE.get(), BaseBatteryEntity::serverTick);
     }
 
-    @Override
-    public void appendHoverText(@NotNull ItemStack stack, Item.@NotNull TooltipContext context, @NotNull List<Component> tooltipComponents, @NotNull TooltipFlag tooltipFlag) {
-        super.appendHoverText(stack, context, tooltipComponents, tooltipFlag);
-
-        int capacity = 0;
-        int transferRate = 0;
-
-        switch (tier) {
-            case SMALL -> {
-                capacity = Config.SMALL_BATTERY_CAPACITY.get();
-                transferRate = Config.SMALL_BATTERY_TRANSFER_RATE.get();
-            }
-            case MEDIUM -> {
-                capacity = Config.MEDIUM_BATTERY_CAPACITY.get();
-                transferRate = Config.MEDIUM_BATTERY_TRANSFER_RATE.get();
-            }
-            case LARGE -> {
-                capacity = Config.LARGE_BATTERY_CAPACITY.get();
-                transferRate = Config.LARGE_BATTERY_TRANSFER_RATE.get();
-            }
-            case CREATIVE -> {
-                capacity = Config.CREATIVE_BATTERY_CAPACITY.get();
-                transferRate = Config.CREATIVE_BATTERY_TRANSFER_RATE.get();
-            }
-        }
-
-        if (tier == BatteryTier.CREATIVE) {
-            tooltipComponents.add(Component.translatable("tooltip.logicore.battery_capacity", Component.translatable("tooltip.logicore.infinite")));
-            tooltipComponents.add(Component.translatable("tooltip.logicore.battery_transfer_rate", Component.translatable("tooltip.logicore.infinite")));
-        } else {
-            tooltipComponents.add(Component.translatable("tooltip.logicore.battery_capacity", Utils.formatValues(capacity)));
-            tooltipComponents.add(Component.translatable("tooltip.logicore.battery_transfer_rate", Utils.formatValues(transferRate)));
-        }
-    }
 }

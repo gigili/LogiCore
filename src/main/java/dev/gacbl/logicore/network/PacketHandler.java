@@ -85,7 +85,7 @@ public class PacketHandler {
 
     public static <MSG extends CustomPacketPayload> void sendToClientsTrackingChunk(Level level, BlockPos pos, MSG packet) {
         if (level instanceof ServerLevel serverLevel) {
-            PacketDistributor.sendToPlayersTrackingChunk(serverLevel, new ChunkPos(pos), packet);
+            PacketDistributor.sendToPlayersTrackingChunk(serverLevel, ChunkPos.containing(pos), packet);
         }
     }
 

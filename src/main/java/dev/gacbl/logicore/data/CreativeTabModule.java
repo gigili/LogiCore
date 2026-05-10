@@ -36,29 +36,29 @@ public class CreativeTabModule {
                     .title(Component.translatable("creativetab.logicore.tab"))
                     .icon(() -> new ItemStack(ProcessorUnitModule.PROCESSOR_UNIT_BASIC.get()))
                     .displayItems((params, output) -> {
-                        output.accept(ServerRackModule.SERVER_RACK_ITEM.get());
-                        output.accept(DataCableModule.DATA_CABLE_ITEM.get());
-                        output.accept(ProcessorUnitModule.PROCESSOR_UNIT_BASIC.get());
-                        output.accept(ProcessorUnitModule.PROCESSOR_UNIT_ADVANCE.get());
-                        output.accept(ProcessorUnitModule.PROCESSOR_UNIT_ULTIMATE.get());
-                        output.accept(ComputerModule.COMPUTER_ITEM.get());
-                        output.accept(DatacenterModule.DATACENTER_CONTROLLER.get());
-                        output.accept(CompilerModule.COMPILER_ITEM.get());
-                        output.accept(DatacenterPortModule.DATACENTER_PORT.get());
-                        output.accept(GeneratorModule.GENERATOR.get());
-                        output.accept(CloudInterfaceModule.CLOUD_INTERFACE.get());
-                        output.accept(WrenchModule.WRENCH.get());
-                        output.accept(BatteryModule.BATTERY_SMALL.get());
-                        output.accept(BatteryModule.BATTERY_MEDIUM.get());
-                        output.accept(BatteryModule.BATTERY_LARGE.get());
-                        output.accept(BatteryModule.BATTERY_CREATIVE.get());
-                        output.accept(StackUpgradeModule.STACK_UPGRADE.get());
-                        output.accept(ResearchStationModule.RESEARCH_STATION.get());
-                        output.accept(CyclePickModule.CYCLE_PICK.get());
-                        output.accept(RepairStationModule.REPAIR_STATION.get());
-                        output.accept(RecyclerModule.RECYCLER.get());
-                        output.accept(ServerModule.SERVER.get());
-                        output.accept(KnowledgeOrbModule.KNOWLEDGE_ORB.get());
+                        output.accept(new ItemStack(ServerRackModule.SERVER_RACK.get()));
+                        output.accept(new ItemStack(DataCableModule.DATA_CABLE_ITEM.get()));
+                        output.accept(new ItemStack(ProcessorUnitModule.PROCESSOR_UNIT_BASIC.get()));
+                        output.accept(new ItemStack(ProcessorUnitModule.PROCESSOR_UNIT_ADVANCE.get()));
+                        output.accept(new ItemStack(ProcessorUnitModule.PROCESSOR_UNIT_ULTIMATE.get()));
+                        output.accept(new ItemStack(ComputerModule.COMPUTER_ITEM.get()));
+                        output.accept(new ItemStack(DatacenterModule.DATACENTER_CONTROLLER.get()));
+                        output.accept(new ItemStack(CompilerModule.COMPILER_ITEM.get()));
+                        output.accept(new ItemStack(DatacenterPortModule.DATACENTER_PORT.get()));
+                        output.accept(new ItemStack(GeneratorModule.GENERATOR.get()));
+                        output.accept(new ItemStack(CloudInterfaceModule.CLOUD_INTERFACE.get()));
+                        output.accept(new ItemStack(WrenchModule.WRENCH.get()));
+                        output.accept(new ItemStack(BatteryModule.BATTERY_SMALL.get()));
+                        output.accept(new ItemStack(BatteryModule.BATTERY_MEDIUM.get()));
+                        output.accept(new ItemStack(BatteryModule.BATTERY_LARGE.get()));
+                        output.accept(new ItemStack(BatteryModule.BATTERY_CREATIVE.get()));
+                        output.accept(new ItemStack(StackUpgradeModule.STACK_UPGRADE.get()));
+                        output.accept(new ItemStack(ResearchStationModule.RESEARCH_STATION.get()));
+                        output.accept(new ItemStack(CyclePickModule.CYCLE_PICK.get()));
+                        output.accept(new ItemStack(RepairStationModule.REPAIR_STATION.get()));
+                        output.accept(new ItemStack(RecyclerModule.RECYCLER.get()));
+                        output.accept(new ItemStack(ServerModule.SERVER.get()));
+                        output.accept(new ItemStack(KnowledgeOrbModule.KNOWLEDGE_ORB.get()));
                     })
                     .build());
 

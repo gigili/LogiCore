@@ -4,8 +4,6 @@ import dev.gacbl.logicore.blocks.generator.ui.GeneratorMenu;
 import dev.gacbl.logicore.blocks.serverrack.ServerRackBlock;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
-import net.minecraft.core.HolderLookup;
-import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.tags.ItemTags;
 import net.minecraft.world.Containers;
@@ -19,19 +17,21 @@ import net.minecraft.world.item.Items;
 import net.minecraft.world.item.crafting.RecipeType;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.level.block.entity.FuelValues;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.storage.ValueInput;
+import net.minecraft.world.level.storage.ValueOutput;
 import net.neoforged.neoforge.capabilities.Capabilities;
-import net.neoforged.neoforge.energy.EnergyStorage;
-import net.neoforged.neoforge.energy.IEnergyStorage;
-import net.neoforged.neoforge.items.IItemHandler;
-import net.neoforged.neoforge.items.ItemStackHandler;
+import net.neoforged.neoforge.transfer.energy.EnergyHandler;
+import net.neoforged.neoforge.transfer.energy.SimpleEnergyHandler;
+import net.neoforged.neoforge.transfer.item.ItemResource;
+import net.neoforged.neoforge.transfer.item.ItemStacksResourceHandler;
+import net.neoforged.neoforge.transfer.transaction.Transaction;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.Objects;
-
 public class GeneratorBlockEntity extends BlockEntity implements MenuProvider {
-    private final EnergyStorage energyStorage = new EnergyStorage(1_000_000, 10000, 10000);
+    private final SimpleEnergyHandler energyHandler = new SimpleEnergyHandler(1_000_000, 10000, 10000);
 
     public int[] burnDuration = new int[]{0, 0, 0};
     public int[] maxBurnDuration = new int[]{0, 0, 0};
@@ -43,28 +43,31 @@ public class GeneratorBlockEntity extends BlockEntity implements MenuProvider {
         super(GeneratorModule.GENERATOR_BE.get(), pos, blockState);
     }
 
-    public EnergyStorage getEnergyStorage() {
-        return energyStorage;
+    public SimpleEnergyHandler getEnergyHandler() {
+        return energyHandler;
     }
 
-    private final ItemStackHandler itemHandler = new ItemStackHandler(3) {
+    private final ItemStacksResourceHandler itemHandler = new ItemStacksResourceHandler(3) {
         @Override
-        protected void onContentsChanged(int slot) {
+        protected void onContentsChanged(int slot, ItemStack stack) {
             setChanged();
         }
 
         @Override
-        public boolean isItemValid(int slot, @NotNull ItemStack stack) {
-            return stack.getBurnTime(RecipeType.SMELTING) > 0;
+        public boolean isValid(int slot, @NotNull ItemResource resource) {
+            if (resource == null || resource.isEmpty()) return false;
+            ItemStack stack = resource.toStack();
+            Level level = GeneratorBlockEntity.this.level;
+            return level != null && stack.getBurnTime(RecipeType.SMELTING, level.fuelValues()) > 0;
         }
 
         @Override
-        public int getSlotLimit(int slot) {
+        protected int getCapacity(int slot, ItemResource resource) {
             return 64;
         }
     };
 
-    public IItemHandler getItemHandler(@Nullable Direction side) {
+    public ItemStacksResourceHandler getItemHandler(@Nullable Direction side) {
         if (side == null || side == Direction.UP) return itemHandler;
         return null;
     }
@@ -80,33 +83,28 @@ public class GeneratorBlockEntity extends BlockEntity implements MenuProvider {
     }
 
     @Override
-    protected void saveAdditional(@NotNull CompoundTag tag, @NotNull HolderLookup.Provider registries) {
-        super.saveAdditional(tag, registries);
-        tag.put("inventory", itemHandler.serializeNBT(registries));
-        tag.put("energyStorage", energyStorage.serializeNBT(registries));
-        tag.putBoolean("isGenerating", isGenerating);
+    protected void saveAdditional(@NotNull ValueOutput output) {
+        super.saveAdditional(output);
+        itemHandler.serialize(output.child("inventory"));
+        energyHandler.serialize(output.child("energyStorage"));
+        output.putBoolean("isGenerating", isGenerating);
 
-        tag.putIntArray("burnDuration", burnDuration);
-        tag.putIntArray("maxBurnDuration", maxBurnDuration);
-        tag.putIntArray("feGenerationRate", feGenerationRate);
+        output.putIntArray("burnDuration", burnDuration);
+        output.putIntArray("maxBurnDuration", maxBurnDuration);
+        output.putIntArray("feGenerationRate", feGenerationRate);
     }
 
     @Override
-    protected void loadAdditional(@NotNull CompoundTag tag, @NotNull HolderLookup.Provider registries) {
-        super.loadAdditional(tag, registries);
-        if (tag.contains("inventory")) {
-            itemHandler.deserializeNBT(registries, tag.getCompound("inventory"));
-        }
+    protected void loadAdditional(@NotNull ValueInput input) {
+        super.loadAdditional(input);
+        input.child("inventory").ifPresent(itemHandler::deserialize);
+        input.child("energyStorage").ifPresent(energyHandler::deserialize);
 
-        if (tag.contains("energyStorage", 3) && tag.get("energyStorage") != null) {
-            this.energyStorage.deserializeNBT(registries, Objects.requireNonNull(tag.get("energyStorage")));
-        }
+        isGenerating = input.getBooleanOr("isGenerating", false);
 
-        isGenerating = tag.getBoolean("isGenerating");
-
-        if (tag.contains("burnDuration")) burnDuration = tag.getIntArray("burnDuration");
-        if (tag.contains("maxBurnDuration")) maxBurnDuration = tag.getIntArray("maxBurnDuration");
-        if (tag.contains("feGenerationRate")) feGenerationRate = tag.getIntArray("feGenerationRate");
+        burnDuration = input.getIntArray("burnDuration").orElse(new int[]{0, 0, 0});
+        maxBurnDuration = input.getIntArray("maxBurnDuration").orElse(new int[]{0, 0, 0});
+        feGenerationRate = input.getIntArray("feGenerationRate").orElse(new int[]{0, 0, 0});
 
         if (burnDuration.length != 3) burnDuration = new int[]{0, 0, 0};
         if (maxBurnDuration.length != 3) maxBurnDuration = new int[]{0, 0, 0};
@@ -115,8 +113,9 @@ public class GeneratorBlockEntity extends BlockEntity implements MenuProvider {
 
     public void dropContents() {
         if (this.level == null) return;
-        for (int i = 0; i < itemHandler.getSlots(); i++) {
-            Containers.dropItemStack(this.level, this.worldPosition.getX(), this.worldPosition.getY(), this.worldPosition.getZ(), itemHandler.getStackInSlot(i));
+        var slots = itemHandler.copyToList();
+        for (int i = 0; i < slots.size(); i++) {
+            Containers.dropItemStack(this.level, this.worldPosition.getX(), this.worldPosition.getY(), this.worldPosition.getZ(), slots.get(i));
         }
     }
 
@@ -128,7 +127,7 @@ public class GeneratorBlockEntity extends BlockEntity implements MenuProvider {
 
         distributeEnergy(level, pos, be);
 
-        if (be.energyStorage.getEnergyStored() >= be.energyStorage.getMaxEnergyStored()) {
+        if (be.energyHandler.getAmountAsLong() >= be.energyHandler.getCapacityAsLong()) {
             currentlyGenerating = false;
             setChanged(level, pos, state);
             be.isGenerating = currentlyGenerating;
@@ -136,35 +135,47 @@ public class GeneratorBlockEntity extends BlockEntity implements MenuProvider {
             return;
         }
 
+        var slots = be.itemHandler.copyToList();
         for (int i = 0; i < 3; i++) {
             if (be.burnDuration[i] > 0) {
-                be.energyStorage.receiveEnergy(be.feGenerationRate[i], false);
+                try (Transaction tx = Transaction.openRoot()) {
+                    be.energyHandler.insert(be.feGenerationRate[i], tx);
+                    tx.commit();
+                }
                 be.burnDuration[i]--;
                 currentlyGenerating = true;
                 setChanged(level, pos, state);
             }
 
             if (be.burnDuration[i] <= 0) {
-                ItemStack stack = be.itemHandler.getStackInSlot(i);
+                ItemStack stack = slots.get(i);
 
                 if (!stack.isEmpty()) {
-                    int potentialFe = getFePerTick(stack);
-                    int maxStorage = be.energyStorage.getMaxEnergyStored();
-                    int currentStorage = be.energyStorage.getEnergyStored();
+                    int potentialFe = getFePerTick(stack, level);
+                    long maxStorage = be.energyHandler.getCapacityAsLong();
+                    long currentStorage = be.energyHandler.getAmountAsLong();
 
                     if (currentStorage + potentialFe <= maxStorage) {
-                        int burnTime = stack.getBurnTime(RecipeType.SMELTING);
+                        int burnTime = stack.getBurnTime(RecipeType.SMELTING, level.fuelValues());
 
                         if (burnTime > 0) {
                             be.burnDuration[i] = burnTime;
                             be.maxBurnDuration[i] = burnTime;
                             be.feGenerationRate[i] = potentialFe;
 
-                            stack.shrink(1);
-                            be.itemHandler.setStackInSlot(i, stack);
+                            ItemStack newStack = stack.copy();
+                            newStack.shrink(1);
+                            if (newStack.isEmpty()) {
+                                be.itemHandler.set(i, ItemResource.EMPTY, 0);
+                            } else {
+                                be.itemHandler.set(i, ItemResource.of(newStack), newStack.getCount());
+                            }
 
                             // Immediately generate for this tick so there is no gap
-                            be.energyStorage.receiveEnergy(potentialFe, false);
+                            try (Transaction tx = Transaction.openRoot()) {
+                                be.energyHandler.insert(potentialFe, tx);
+                                tx.commit();
+                            }
                             be.burnDuration[i]--;
                             currentlyGenerating = true;
                             setChanged(level, pos, state);
@@ -187,7 +198,7 @@ public class GeneratorBlockEntity extends BlockEntity implements MenuProvider {
     }
 
     private static void distributeEnergy(Level level, BlockPos pos, GeneratorBlockEntity be) {
-        if (be.energyStorage.getEnergyStored() <= 0) return;
+        if (be.energyHandler.getAmountAsLong() <= 0) return;
 
         Direction facing = be.getBlockState().getValue(GeneratorBlock.FACING);
 
@@ -195,25 +206,32 @@ public class GeneratorBlockEntity extends BlockEntity implements MenuProvider {
             if (direction == Direction.UP || direction == facing) continue;
 
             BlockPos neighborPos = pos.relative(direction);
-            IEnergyStorage neighborEnergy = level.getCapability(Capabilities.EnergyStorage.BLOCK, neighborPos, direction.getOpposite());
+            EnergyHandler neighborEnergy = level.getCapability(Capabilities.Energy.BLOCK, neighborPos, direction.getOpposite());
 
-            if (neighborEnergy != null && neighborEnergy.canReceive()) {
-                int extracted = be.energyStorage.extractEnergy(be.energyStorage.getMaxEnergyStored(), true);
-                int accepted = neighborEnergy.receiveEnergy(extracted, false);
-                be.energyStorage.extractEnergy(accepted, false);
-                if (be.energyStorage.getEnergyStored() <= 0) break;
+            if (neighborEnergy != null && neighborEnergy.getAmountAsLong() < neighborEnergy.getCapacityAsLong()) {
+                try (Transaction tx = Transaction.openRoot()) {
+                    int extracted = be.energyHandler.extract(be.energyHandler.getCapacityAsInt(), tx);
+                    int accepted = neighborEnergy.insert(extracted, tx);
+                    // Roll back what wasn't accepted
+                    if (accepted < extracted) {
+                        be.energyHandler.insert(extracted - accepted, tx);
+                    }
+                    tx.commit();
+                }
+                if (be.energyHandler.getAmountAsLong() <= 0) break;
             }
         }
     }
 
-    private static int getFePerTick(ItemStack stack) {
+    private static int getFePerTick(ItemStack stack, Level level) {
         if (stack.is(ItemTags.COALS)) return 120; // Coal/Charcoal
         if (stack.is(Items.COAL_BLOCK)) return 1200;
         if (stack.is(ItemTags.LOGS)) return 60;   // Logs
         if (stack.is(ItemTags.PLANKS)) return 40; // Planks
         if (stack.is(Items.BLAZE_ROD)) return 200;
 
-        int burnTime = stack.getBurnTime(RecipeType.SMELTING);
+        FuelValues fuelValues = level.fuelValues();
+        int burnTime = stack.getBurnTime(RecipeType.SMELTING, fuelValues);
         return Math.max(10, burnTime / 10);
     }
 
@@ -221,8 +239,8 @@ public class GeneratorBlockEntity extends BlockEntity implements MenuProvider {
         @Override
         public int get(int index) {
             return switch (index) {
-                case 0 -> GeneratorBlockEntity.this.energyStorage.getEnergyStored();
-                case 1 -> GeneratorBlockEntity.this.energyStorage.getMaxEnergyStored();
+                case 0 -> GeneratorBlockEntity.this.energyHandler.getAmountAsInt();
+                case 1 -> GeneratorBlockEntity.this.energyHandler.getCapacityAsInt();
                 case 2 -> GeneratorBlockEntity.this.isGenerating ? 1 : 0;
                 case 3 -> GeneratorBlockEntity.this.burnDuration[0];
                 case 4 -> GeneratorBlockEntity.this.maxBurnDuration[0];

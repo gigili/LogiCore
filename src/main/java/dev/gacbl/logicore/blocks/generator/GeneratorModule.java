@@ -7,9 +7,7 @@ import net.minecraft.core.registries.Registries;
 import net.minecraft.world.inventory.MenuType;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.Item;
-import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntityType;
-import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.material.MapColor;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.neoforge.capabilities.Capabilities;
@@ -25,19 +23,14 @@ public class GeneratorModule {
     public static final DeferredRegister<BlockEntityType<?>> BLOCK_ENTITIES = DeferredRegister.create(Registries.BLOCK_ENTITY_TYPE, LogiCore.MOD_ID);
     public static final DeferredRegister<MenuType<?>> MENUS = DeferredRegister.create(BuiltInRegistries.MENU, LogiCore.MOD_ID);
 
-    public static final DeferredBlock<Block> GENERATOR = BLOCKS.register("generator",
-            () -> new GeneratorBlock(BlockBehaviour.Properties.of()
-                    .mapColor(MapColor.METAL)
-                    .strength(3.0F, 3.0F)
-                    .requiresCorrectToolForDrops()
-                    .noOcclusion()));
+    public static final DeferredBlock<GeneratorBlock> GENERATOR = BLOCKS.registerBlock("generator", GeneratorBlock::new,
+            props -> props.mapColor(MapColor.METAL).strength(3.0F, 3.0F).requiresCorrectToolForDrops().noOcclusion());
 
-    public static final DeferredHolder<Item, BlockItem> GENERATOR_ITEM = ITEMS.register("generator",
-            () -> new BlockItem(GENERATOR.get(), new Item.Properties()));
+    public static final DeferredHolder<Item, BlockItem> GENERATOR_ITEM = ITEMS.registerItem("generator", props -> new BlockItem(GENERATOR.get(), props));
 
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<GeneratorBlockEntity>> GENERATOR_BE =
             BLOCK_ENTITIES.register("generator",
-                    () -> BlockEntityType.Builder.of(GeneratorBlockEntity::new, GENERATOR.get()).build(null));
+                    () -> new BlockEntityType<>(GeneratorBlockEntity::new, GENERATOR.get()));
 
     public static final net.neoforged.neoforge.registries.DeferredHolder<MenuType<?>, MenuType<GeneratorMenu>> GENERATOR_MENU =
             MENUS.register("generator_menu", () -> IMenuTypeExtension.create(GeneratorMenu::new));
@@ -52,15 +45,15 @@ public class GeneratorModule {
 
     private static void registerCapabilities(RegisterCapabilitiesEvent event) {
         event.registerBlockEntity(
-                Capabilities.ItemHandler.BLOCK,
+                Capabilities.Item.BLOCK,
                 GeneratorModule.GENERATOR_BE.get(),
-                GeneratorBlockEntity::getItemHandler
+                (be, context) -> be.getItemHandler(context)
         );
 
         event.registerBlockEntity(
-                Capabilities.EnergyStorage.BLOCK,
+                Capabilities.Energy.BLOCK,
                 GeneratorModule.GENERATOR_BE.get(),
-                (be, context) -> be.getEnergyStorage()
+                (be, context) -> be.getEnergyHandler()
         );
     }
 }

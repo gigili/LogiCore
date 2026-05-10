@@ -16,23 +16,23 @@ import dev.gacbl.logicore.core.ModTags;
 import dev.gacbl.logicore.items.processorunit.ProcessorUnitModule;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.core.HolderGetter;
 import net.minecraft.data.recipes.RecipeCategory;
 import net.minecraft.data.recipes.ShapedRecipeBuilder;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.tags.ItemTags;
+import net.minecraft.util.RandomSource;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.item.context.BlockPlaceContext;
-import net.minecraft.world.level.BlockGetter;
-import net.minecraft.world.level.Level;
-import net.minecraft.world.level.LevelAccessor;
-import net.minecraft.world.level.LevelReader;
+import net.minecraft.world.level.*;
 import net.minecraft.world.level.block.*;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.level.block.state.properties.BooleanProperty;
-import net.minecraft.world.level.block.state.properties.DirectionProperty;
+import net.minecraft.world.level.block.state.properties.EnumProperty;
 import net.minecraft.world.level.material.FluidState;
 import net.minecraft.world.level.material.Fluids;
 import net.minecraft.world.phys.shapes.CollisionContext;
@@ -61,7 +61,7 @@ public class DataCableBlock extends BaseEntityBlock implements SimpleWaterlogged
     public static final BooleanProperty UP = PipeBlock.UP;
     public static final BooleanProperty DOWN = PipeBlock.DOWN;
     public static final MapCodec<DataCableBlock> CODEC = simpleCodec(DataCableBlock::new);
-    public static final DirectionProperty FACING = HorizontalDirectionalBlock.FACING;
+    public static final EnumProperty<Direction> FACING = HorizontalDirectionalBlock.FACING;
 
     public static final BooleanProperty WATERLOGGED;
 
@@ -78,13 +78,13 @@ public class DataCableBlock extends BaseEntityBlock implements SimpleWaterlogged
         );
     }
 
-    public static ShapedRecipeBuilder getRecipe() {
-        return ShapedRecipeBuilder.shaped(RecipeCategory.REDSTONE, DataCableModule.DATA_CABLE_ITEM.get())
+    public static ShapedRecipeBuilder getRecipe(HolderGetter<Item> items) {
+        return ShapedRecipeBuilder.shaped(items, RecipeCategory.REDSTONE, DataCableModule.DATA_CABLE_ITEM.get())
                 .pattern("GGG")
                 .pattern("RPR")
                 .pattern("GGG")
-                .define('G', ItemTags.create(ResourceLocation.fromNamespaceAndPath("c", "glass_blocks")))
-                .define('R', ItemTags.create(ResourceLocation.fromNamespaceAndPath("c", "dusts/redstone")))
+                .define('G', ItemTags.create(Identifier.fromNamespaceAndPath("c", "glass_blocks")))
+                .define('R', ItemTags.create(Identifier.fromNamespaceAndPath("c", "dusts/redstone")))
                 .define('P', ProcessorUnitModule.PROCESSOR_UNIT_BASIC.get());
     }
 
@@ -140,12 +140,12 @@ public class DataCableBlock extends BaseEntityBlock implements SimpleWaterlogged
     }
 
     @Override
-    public @NotNull BlockState updateShape(@NotNull BlockState state, @NotNull Direction direction, @NotNull BlockState neighborState, @NotNull LevelAccessor level, @NotNull BlockPos currentPos, @NotNull BlockPos neighborPos) {
+    protected @NotNull BlockState updateShape(@NotNull BlockState state, @NotNull LevelReader level, @NotNull ScheduledTickAccess ticks, @NotNull BlockPos currentPos, @NotNull Direction direction, @NotNull BlockPos neighborPos, @NotNull BlockState neighborState, @NotNull RandomSource random) {
         BooleanProperty property = PipeBlock.PROPERTY_BY_DIRECTION.get(direction);
 
         boolean canConnectTo = this.canConnectTo(level, neighborPos, direction);
 
-        if (!level.isClientSide() && level instanceof ServerLevel server && canConnectTo) {
+        if (level instanceof ServerLevel server && canConnectTo) {
             DataCableBlockEntity blockEntity = (DataCableBlockEntity) level.getBlockEntity(currentPos);
             if (blockEntity != null && blockEntity.getNetworkUUID() != null) {
                 NetworkManager.get(server).neighborChanged(server, currentPos, neighborPos);
@@ -183,8 +183,8 @@ public class DataCableBlock extends BaseEntityBlock implements SimpleWaterlogged
         );
         if (level instanceof ServerLevel server) {
             Block block = server.getBlockState(pos).getBlock();
-            var cap = server.getCapability(Capabilities.EnergyStorage.BLOCK, pos, null);
-            boolean isAllowed = allowedBlocks.contains(block.getClass()) || (cap != null && cap.getMaxEnergyStored() > 0);
+            var cap = server.getCapability(Capabilities.Energy.BLOCK, pos, null);
+            boolean isAllowed = allowedBlocks.contains(block.getClass()) || (cap != null && cap.getCapacityAsLong() > 0);
 
             if (server.getBlockEntity(pos) instanceof GeneratorBlockEntity) {
                 BlockState state = server.getBlockState(pos);
@@ -201,13 +201,13 @@ public class DataCableBlock extends BaseEntityBlock implements SimpleWaterlogged
     }
 
     @Override
-    public void onRemove(BlockState state, @NotNull Level level, @NotNull BlockPos pos, BlockState newState, boolean isMoving) {
-        if (!state.is(newState.getBlock())) {
-            if (!level.isClientSide) {
-                NetworkManager.get((ServerLevel) level).onCableRemoved(level, pos);
+    public void destroy(@NotNull LevelAccessor level, @NotNull BlockPos pos, @NotNull BlockState state) {
+        if (!level.isClientSide()) {
+            if (level instanceof ServerLevel server) {
+                NetworkManager.get(server).onCableRemoved(server, pos);
             }
-            super.onRemove(state, level, pos, newState, isMoving);
         }
+        super.destroy(level, pos, state);
     }
 
     @Override
@@ -215,14 +215,15 @@ public class DataCableBlock extends BaseEntityBlock implements SimpleWaterlogged
         return new DataCableBlockEntity(blockPos, blockState);
     }
 
-    @Override
-    public void onNeighborChange(@NotNull BlockState state, @NotNull LevelReader level, @NotNull BlockPos pos, @NotNull BlockPos neighbor) {
-        super.onNeighborChange(state, level, pos, neighbor);
-        DataCableBlockEntity blockEntity = (DataCableBlockEntity) level.getBlockEntity(pos);
-        if (level instanceof ServerLevel server && (blockEntity != null && blockEntity.getNetworkUUID() != null)) {
-            NetworkManager.get(server).neighborChanged(server, pos, neighbor);
-        }
-    }
+    // onNeighborChange removed in MC 26.1
+    // @Override
+    // public void onNeighborChange(@NotNull BlockState state, @NotNull LevelReader level, @NotNull BlockPos pos, @NotNull BlockPos neighbor) {
+    //     super.onNeighborChange(state, level, pos, neighbor);
+    //     DataCableBlockEntity blockEntity = (DataCableBlockEntity) level.getBlockEntity(pos);
+    //     if (level instanceof ServerLevel server && (blockEntity != null && blockEntity.getNetworkUUID() != null)) {
+    //         NetworkManager.get(server).neighborChanged(server, pos, neighbor);
+    //     }
+    // }
 
     @Override
     public float getShadeBrightness(@NotNull BlockState blockState, @NotNull BlockGetter blockGetter, @NotNull BlockPos blockPos) {
@@ -230,7 +231,7 @@ public class DataCableBlock extends BaseEntityBlock implements SimpleWaterlogged
     }
 
     @Override
-    public boolean propagatesSkylightDown(@NotNull BlockState blockState, @NotNull BlockGetter blockGetter, @NotNull BlockPos blockPos) {
+    public boolean propagatesSkylightDown(@NotNull BlockState blockState) {
         return true;
     }
 

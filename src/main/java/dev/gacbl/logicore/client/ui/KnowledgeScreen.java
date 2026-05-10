@@ -4,13 +4,13 @@ import dev.gacbl.logicore.client.ClientKnowledgeData;
 import dev.gacbl.logicore.core.Utils;
 import dev.gacbl.logicore.core.ui.MyAbstractContainerScreen;
 import net.minecraft.ChatFormatting;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.components.EditBox;
+import net.minecraft.client.input.KeyEvent;
+import net.minecraft.client.renderer.RenderPipelines;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.item.ItemStack;
-import org.jetbrains.annotations.NotNull;
-import org.lwjgl.glfw.GLFW;
 
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -106,8 +106,8 @@ public class KnowledgeScreen extends MyAbstractContainerScreen<KnowledgeMenu> {
     }
 
     @Override
-    public void render(@NotNull GuiGraphics graphics, int mouseX, int mouseY, float partialTicks) {
-        super.render(graphics, mouseX, mouseY, partialTicks);
+    public void extractRenderState(GuiGraphicsExtractor graphics, int mouseX, int mouseY, float partialTicks) {
+        super.extractRenderState(graphics, mouseX, mouseY, partialTicks);
 
         int startIndex = scrollOffset * GRID_COLS;
         int totalVisible = GRID_COLS * GRID_ROWS;
@@ -120,20 +120,20 @@ public class KnowledgeScreen extends MyAbstractContainerScreen<KnowledgeMenu> {
 
             int slotX = leftPos + GRID_LEFT + col * SLOT_SPACING;
             int slotY = topPos + GRID_TOP + row * SLOT_SPACING;
-            graphics.renderItem(items.get(itemIndex), slotX + 1, slotY + 1);
+            graphics.item(items.get(itemIndex), slotX + 1, slotY + 1);
         }
 
         if (maxScrollOffset > 0) {
             int trackHeight = SCROLL_BAR_TRACK_HEIGHT - SCROLL_BAR_THUMB_HEIGHT;
             int thumbY = topPos + SCROLL_BAR_TOP + (scrollOffset * trackHeight) / maxScrollOffset;
-            graphics.blit(TEXTURE, leftPos + SCROLL_BAR_LEFT, thumbY,
-                    SCROLL_BAR_TEX_X, SCROLL_BAR_TEX_Y,
+            graphics.blit(RenderPipelines.GUI_TEXTURED, TEXTURE, leftPos + SCROLL_BAR_LEFT, thumbY,
+                    (float) SCROLL_BAR_TEX_X, (float) SCROLL_BAR_TEX_Y,
                     SCROLL_BAR_THUMB_WIDTH, SCROLL_BAR_THUMB_HEIGHT, 256, 256);
         }
 
         ItemStack hoveredStack = getHoveredItem(mouseX, mouseY);
         if (hoveredStack != null) {
-            graphics.renderTooltip(font, hoveredStack, mouseX, mouseY);
+            graphics.setTooltipForNextFrame(font, hoveredStack, mouseX, mouseY);
         }
     }
 
@@ -174,17 +174,17 @@ public class KnowledgeScreen extends MyAbstractContainerScreen<KnowledgeMenu> {
     }
 
     @Override
-    public boolean keyPressed(int keyCode, int scanCode, int modifiers) {
-        if (keyCode == GLFW.GLFW_KEY_ESCAPE) {
-            return super.keyPressed(keyCode, scanCode, modifiers);
+    public boolean keyPressed(KeyEvent event) {
+        if (event.isEscape()) {
+            return super.keyPressed(event);
         }
 
         if (searchBox.isFocused()) {
-            if (searchBox.keyPressed(keyCode, scanCode, modifiers) || searchBox.canConsumeInput()) {
+            if (searchBox.keyPressed(event) || searchBox.canConsumeInput()) {
                 return true;
             }
         }
 
-        return super.keyPressed(keyCode, scanCode, modifiers);
+        return super.keyPressed(event);
     }
 }

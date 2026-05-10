@@ -1,10 +1,12 @@
 package dev.gacbl.logicore.blocks.recycler.client;
 
+import com.geckolib.renderer.GeoBlockRenderer;
 import dev.gacbl.logicore.blocks.recycler.RecyclerBlockEntity;
-import software.bernie.geckolib.renderer.GeoBlockRenderer;
+import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
+import net.minecraft.client.renderer.blockentity.state.BlockEntityRenderState;
 
-public class RecyclerBlockRenderer extends GeoBlockRenderer<RecyclerBlockEntity> {
-    public RecyclerBlockRenderer() {
-        super(new RecyclerBlockModel());
+public class RecyclerBlockRenderer extends GeoBlockRenderer<RecyclerBlockEntity, BlockEntityRenderState> {
+    public RecyclerBlockRenderer(BlockEntityRendererProvider.Context context) {
+        super(context, new RecyclerBlockModel());
     }
 }

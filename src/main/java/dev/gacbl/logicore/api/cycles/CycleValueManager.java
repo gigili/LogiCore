@@ -10,9 +10,10 @@ import dev.gacbl.logicore.core.ModDataMaps;
 import net.minecraft.core.RegistryAccess;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.tags.TagKey;
+import net.minecraft.util.context.ContextMap;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.Ingredient;
@@ -111,7 +112,7 @@ public class CycleValueManager {
     private static void calculateValues(RecipeManager recipeManager, RegistryAccess registryAccess, File customFile) {
         if (!Config.CLEAN_SLATE.get()) {
             try {
-                registryAccess.registryOrThrow(Registries.ITEM).holders().forEach(holder -> {
+                registryAccess.lookupOrThrow(Registries.ITEM).listElements().forEach(holder -> {
                     Integer value = holder.getData(ModDataMaps.ITEM_CYCLES);
                     if (value != null) {
                         CYCLE_VALUES.put(holder.value(), value);
@@ -136,7 +137,7 @@ public class CycleValueManager {
             for (RecipeHolder<?> holder : recipeManager.getRecipes()) {
                 try {
                     Recipe<?> recipe = holder.value();
-                    ItemStack result = recipe.getResultItem(registryAccess);
+                    ItemStack result = recipe.display().isEmpty() ? ItemStack.EMPTY : recipe.display().getFirst().result().resolveForFirstStack(ContextMap.EMPTY);
 
                     if (result.isEmpty() || CYCLE_VALUES.containsKey(result.getItem())) continue;
 
@@ -167,20 +168,22 @@ public class CycleValueManager {
 
                     if (key.startsWith("#")) {
                         try {
-                            TagKey<Item> tagKey = TagKey.create(Registries.ITEM, ResourceLocation.parse(key.substring(1)));
-                            registryAccess.registryOrThrow(Registries.ITEM).getTag(tagKey).ifPresent(tag -> {
-                                tag.stream().forEach(holder -> CYCLE_VALUES.put(holder.value(), value));
+                            TagKey<Item> tagKey = TagKey.create(Registries.ITEM, Identifier.parse(key.substring(1)));
+                            registryAccess.lookupOrThrow(Registries.ITEM).get(tagKey).ifPresent(tag -> {
+                                tag.forEach(holder -> CYCLE_VALUES.put(holder.value(), value));
                             });
                         } catch (Exception e) {
                             LogiCore.LOGGER.warn("Invalid tag in custom_cycles.json: {}", key);
                         }
                     } else {
-                        ResourceLocation id = ResourceLocation.tryParse(key);
+                        Identifier id = Identifier.tryParse(key);
                         if (id != null) {
-                            Item item = BuiltInRegistries.ITEM.get(id);
-                            if (item != net.minecraft.world.item.Items.AIR || id.getPath().equals("air")) {
-                                CYCLE_VALUES.put(item, value);
-                            }
+                            BuiltInRegistries.ITEM.get(id).ifPresent(holder -> {
+                                Item item = holder.value();
+                                if (item != net.minecraft.world.item.Items.AIR || id.getPath().equals("air")) {
+                                    CYCLE_VALUES.put(item, value);
+                                }
+                            });
                         }
                     }
                 }
@@ -193,11 +196,11 @@ public class CycleValueManager {
 
     private static int calculateRecipeCost(Recipe<?> recipe) {
         int totalCost = 0;
-        for (Ingredient ingredient : recipe.getIngredients()) {
+        for (Ingredient ingredient : recipe.placementInfo().ingredients()) {
             if (ingredient.isEmpty()) continue;
             int minIngredientCost = Integer.MAX_VALUE;
             boolean foundValue = false;
-            for (ItemStack stack : ingredient.getItems()) {
+            for (ItemStack stack : ingredient.items().map(holder -> new ItemStack(holder.value())).toList()) {
                 if (CYCLE_VALUES.containsKey(stack.getItem())) {
                     int val = CYCLE_VALUES.get(stack.getItem());
                     if (val < minIngredientCost) {
@@ -233,12 +236,14 @@ public class CycleValueManager {
             JsonObject json = GSON.fromJson(reader, JsonObject.class);
 
             for (Map.Entry<String, JsonElement> entry : json.entrySet()) {
-                ResourceLocation id = ResourceLocation.tryParse(entry.getKey());
+                Identifier id = Identifier.tryParse(entry.getKey());
                 if (id != null) {
-                    Item item = BuiltInRegistries.ITEM.get(id);
-                    if (item != net.minecraft.world.item.Items.AIR || id.getPath().equals("air")) {
-                        CYCLE_VALUES.put(item, entry.getValue().getAsInt());
-                    }
+                    BuiltInRegistries.ITEM.get(id).ifPresent(holder -> {
+                        Item item = holder.value();
+                        if (item != net.minecraft.world.item.Items.AIR || id.getPath().equals("air")) {
+                            CYCLE_VALUES.put(item, entry.getValue().getAsInt());
+                        }
+                    });
                 }
             }
             LogiCore.LOGGER.info("Loaded {} cycle values from cache.", CYCLE_VALUES.size());
@@ -255,7 +260,7 @@ public class CycleValueManager {
             CYCLE_VALUES.entrySet().stream()
                     .sorted((e1, e2) -> BuiltInRegistries.ITEM.getKey(e1.getKey()).compareTo(BuiltInRegistries.ITEM.getKey(e2.getKey())))
                     .forEach(entry -> {
-                        ResourceLocation key = BuiltInRegistries.ITEM.getKey(entry.getKey());
+                        Identifier key = BuiltInRegistries.ITEM.getKey(entry.getKey());
                         json.addProperty(key.toString(), entry.getValue());
                     });
 

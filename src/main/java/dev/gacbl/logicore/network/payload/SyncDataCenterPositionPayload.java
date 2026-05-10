@@ -7,14 +7,14 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.neoforged.neoforge.network.handling.IPayloadHandler;
 import org.jetbrains.annotations.NotNull;
 
 public record SyncDataCenterPositionPayload(BlockPos controllerPos, BlockPos entityPos) implements CustomPacketPayload {
 
-    public static final Type<SyncDataCenterPositionPayload> TYPE = new Type<>(ResourceLocation.fromNamespaceAndPath(LogiCore.MOD_ID, "sync_datacenter_position"));
+    public static final Type<SyncDataCenterPositionPayload> TYPE = new Type<>(Identifier.fromNamespaceAndPath(LogiCore.MOD_ID, "sync_datacenter_position"));
 
     public static final StreamCodec<ByteBuf, SyncDataCenterPositionPayload> STREAM_CODEC = StreamCodec.composite(
             BlockPos.STREAM_CODEC, SyncDataCenterPositionPayload::controllerPos,
@@ -30,7 +30,7 @@ public record SyncDataCenterPositionPayload(BlockPos controllerPos, BlockPos ent
     public static final IPayloadHandler<SyncDataCenterPositionPayload> HANDLER = (payload, context) -> {
         context.enqueueWork(() -> {
             var level = Minecraft.getInstance().level;
-            if (level != null && !level.isClientSide) {
+            if (level != null && !level.isClientSide()) {
                 BlockEntity be = level.getBlockEntity(payload.entityPos());
                 if (be instanceof CoreCycleProviderBlockEntity cycleBe) {
                     if (cycleBe.dataCenterController != payload.controllerPos()) {

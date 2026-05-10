@@ -4,16 +4,21 @@ import com.mojang.serialization.MapCodec;
 import dev.gacbl.logicore.blocks.serverrack.ServerRackBlock;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.core.HolderGetter;
 import net.minecraft.data.recipes.RecipeCategory;
 import net.minecraft.data.recipes.ShapedRecipeBuilder;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.tags.ItemTags;
+import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.block.BaseEntityBlock;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.RenderShape;
@@ -24,7 +29,7 @@ import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
-import net.minecraft.world.level.block.state.properties.DirectionProperty;
+import net.minecraft.world.level.block.state.properties.EnumProperty;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
@@ -33,8 +38,8 @@ import org.jetbrains.annotations.Nullable;
 
 public class GeneratorBlock extends BaseEntityBlock {
     public static final VoxelShape SHAPE = Block.box(0.0D, 0.0D, 0.0D, 16.0D, 16.0D, 16.0D);
-    public static final DirectionProperty FACING = BlockStateProperties.HORIZONTAL_FACING;
-    public static final MapCodec<ServerRackBlock> CODEC = simpleCodec(ServerRackBlock::new);
+    public static final EnumProperty<Direction> FACING = BlockStateProperties.HORIZONTAL_FACING;
+    public static final MapCodec<GeneratorBlock> CODEC = simpleCodec(GeneratorBlock::new);
 
     protected GeneratorBlock(Properties properties) {
         super(properties);
@@ -43,12 +48,12 @@ public class GeneratorBlock extends BaseEntityBlock {
                 .setValue(ServerRackBlock.GENERATING, false));
     }
 
-    public static ShapedRecipeBuilder getRecipe() {
-        return ShapedRecipeBuilder.shaped(RecipeCategory.REDSTONE, GeneratorModule.GENERATOR.get())
+    public static ShapedRecipeBuilder getRecipe(HolderGetter<Item> items) {
+        return ShapedRecipeBuilder.shaped(items, RecipeCategory.REDSTONE, GeneratorModule.GENERATOR.get())
                 .pattern("INI")
                 .pattern("NFN")
                 .pattern("SSS")
-                .define('S', ItemTags.create(ResourceLocation.fromNamespaceAndPath("c", "stones")))
+                .define('S', ItemTags.create(Identifier.fromNamespaceAndPath("c", "stones")))
                 .define('N', Items.SMOOTH_STONE)
                 .define('I', Items.IRON_INGOT)
                 .define('F', Items.FURNACE);
@@ -92,16 +97,14 @@ public class GeneratorBlock extends BaseEntityBlock {
     }
 
     @Override
-    public void onRemove(@NotNull BlockState state, @NotNull Level level, @NotNull BlockPos pos, @NotNull BlockState newState, boolean isMoving) {
-        if (state.is(newState.getBlock())) {
-            return;
+    public void destroy(@NotNull LevelAccessor level, @NotNull BlockPos pos, @NotNull BlockState state) {
+        if (level instanceof Level l) {
+            BlockEntity blockEntity = l.getBlockEntity(pos);
+            if (blockEntity instanceof GeneratorBlockEntity be) {
+                be.dropContents();
+            }
         }
-
-        BlockEntity blockEntity = level.getBlockEntity(pos);
-        if (blockEntity instanceof GeneratorBlockEntity be) {
-            be.dropContents();
-        }
-        super.onRemove(state, level, pos, newState, isMoving);
+        super.destroy(level, pos, state);
     }
 
     @Nullable
@@ -121,7 +124,7 @@ public class GeneratorBlock extends BaseEntityBlock {
 
     @Override
     protected @NotNull InteractionResult useWithoutItem(@NotNull BlockState state, Level level, @NotNull BlockPos bePos, @NotNull Player player, @NotNull BlockHitResult hit) {
-        if (!level.isClientSide) {
+        if (!level.isClientSide()) {
             BlockEntity be = level.getBlockEntity(bePos);
 
             if (be instanceof GeneratorBlockEntity blockEntity) {
@@ -130,5 +133,14 @@ public class GeneratorBlock extends BaseEntityBlock {
             }
         }
         return InteractionResult.SUCCESS;
+    }
+
+    @Override
+    protected @NotNull InteractionResult useItemOn(@NotNull ItemStack stack, @NotNull BlockState state, @NotNull Level level, @NotNull BlockPos pos, @NotNull Player player, @NotNull InteractionHand hand, @NotNull BlockHitResult hitResult) {
+        InteractionResult result = super.useItemOn(stack, state, level, pos, player, hand, hitResult);
+        if (result != InteractionResult.PASS) {
+            return result;
+        }
+        return this.useWithoutItem(state, level, pos, player, hitResult);
     }
 }

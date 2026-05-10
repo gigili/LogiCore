@@ -6,8 +6,6 @@ import dev.gacbl.logicore.core.CoreCycleProviderBlockEntity;
 import dev.gacbl.logicore.items.processorunit.ProcessorUnitItem;
 import dev.gacbl.logicore.items.processorunit.ProcessorUnitTier;
 import net.minecraft.core.BlockPos;
-import net.minecraft.core.HolderLookup;
-import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.Containers;
 import net.minecraft.world.MenuProvider;
@@ -16,7 +14,10 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.state.BlockState;
-import net.neoforged.neoforge.items.ItemStackHandler;
+import net.minecraft.world.level.storage.ValueInput;
+import net.minecraft.world.level.storage.ValueOutput;
+import net.neoforged.neoforge.transfer.item.ItemResource;
+import net.neoforged.neoforge.transfer.item.ItemStacksResourceHandler;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -57,27 +58,29 @@ public class ComputerBlockEntity extends CoreCycleProviderBlockEntity implements
     }
 
     @Override
-    protected void saveAdditional(@NotNull CompoundTag tag, @NotNull HolderLookup.Provider registries) {
-        super.saveAdditional(tag, registries);
-        tag.put("inventory", itemHandler.serializeNBT(registries));
+    protected void saveAdditional(@NotNull ValueOutput output) {
+        super.saveAdditional(output);
+        itemHandler.serialize(output.child("inventory"));
     }
 
     @Override
-    protected void loadAdditional(@NotNull CompoundTag tag, @NotNull HolderLookup.Provider registries) {
-        super.loadAdditional(tag, registries);
-        itemHandler.deserializeNBT(registries, tag.getCompound("inventory"));
+    protected void loadAdditional(@NotNull ValueInput input) {
+        super.loadAdditional(input);
+        input.child("inventory").ifPresent(itemHandler::deserialize);
         updateProcessorCountCache();
     }
 
-    private final ItemStackHandler itemHandler = new ItemStackHandler(COMPUTER_CPU_CAPACITY) {
+    private final ItemStacksResourceHandler itemHandler = new ItemStacksResourceHandler(COMPUTER_CPU_CAPACITY) {
         @Override
-        protected void onContentsChanged(int slot) {
+        protected void onContentsChanged(int slot, ItemStack stack) {
             updateProcessorCountCache();
             setChanged();
         }
 
         @Override
-        public boolean isItemValid(int slot, @NotNull ItemStack stack) {
+        public boolean isValid(int slot, @NotNull ItemResource resource) {
+            if (resource == null || resource.isEmpty()) return false;
+            ItemStack stack = resource.toStack();
             if (stack.getItem() instanceof ProcessorUnitItem p) {
                 return p.tier == ProcessorUnitTier.BASIC || p.tier == ProcessorUnitTier.ADVANCED;
             }
@@ -85,26 +88,29 @@ public class ComputerBlockEntity extends CoreCycleProviderBlockEntity implements
         }
 
         @Override
-        public int getSlotLimit(int slot) {
+        protected int getCapacity(int slot, ItemResource resource) {
             return 1;
         }
     };
 
-    public ItemStackHandler getItemHandler() {
+    @Override
+    public ItemStacksResourceHandler getItemHandler() {
         return this.itemHandler;
     }
 
     public void dropContents() {
         if (this.level == null) return;
-        for (int i = 0; i < itemHandler.getSlots(); i++) {
-            Containers.dropItemStack(this.level, this.worldPosition.getX(), this.worldPosition.getY(), this.worldPosition.getZ(), itemHandler.getStackInSlot(i));
+        var slots = itemHandler.copyToList();
+        for (int i = 0; i < slots.size(); i++) {
+            Containers.dropItemStack(this.level, this.worldPosition.getX(), this.worldPosition.getY(), this.worldPosition.getZ(), slots.get(i));
         }
     }
 
     private void updateProcessorCountCache() {
         int count = 0;
-        for (int i = 0; i < itemHandler.getSlots(); i++) {
-            if (!itemHandler.getStackInSlot(i).isEmpty()) {
+        var slots = itemHandler.copyToList();
+        for (int i = 0; i < slots.size(); i++) {
+            if (!slots.get(i).isEmpty()) {
                 count++;
             }
         }

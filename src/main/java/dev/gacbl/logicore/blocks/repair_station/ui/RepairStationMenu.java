@@ -9,7 +9,7 @@ import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.inventory.ContainerData;
 import net.minecraft.world.inventory.SimpleContainerData;
 import net.minecraft.world.level.block.entity.BlockEntity;
-import net.neoforged.neoforge.items.SlotItemHandler;
+import net.neoforged.neoforge.transfer.item.ResourceHandlerSlot;
 
 public class RepairStationMenu extends MyAbstractContainerMenu {
     public RepairStationMenu(int containerId, Inventory playerInventory, BlockPos pos) {
@@ -19,7 +19,8 @@ public class RepairStationMenu extends MyAbstractContainerMenu {
     public RepairStationMenu(int containerId, Inventory playerInventory, BlockEntity entity, ContainerData data) {
         super(RepairStationModule.REPAIR_STATION_MENU.get(), containerId, playerInventory, entity, data);
         this.TE_INVENTORY_SLOT_COUNT = 1;
-        this.addSlot(new SlotItemHandler(((RepairStationBlockEntity) this.blockEntity).getItemHandler(), 0, 107, 82));
+        var handler = ((RepairStationBlockEntity) this.blockEntity).getItemHandler();
+        this.addSlot(new ResourceHandlerSlot(handler, handler::set, 0, 107, 82));
     }
 
     public RepairStationMenu(int i, Inventory inventory, RegistryFriendlyByteBuf registryFriendlyByteBuf) {

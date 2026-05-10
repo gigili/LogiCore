@@ -1,56 +1,57 @@
 package dev.gacbl.logicore.core.ui;
 
 import dev.gacbl.logicore.LogiCore;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
+import net.minecraft.client.renderer.RenderPipelines;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
+import net.minecraft.world.MenuProvider;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.inventory.AbstractContainerMenu;
-import org.jetbrains.annotations.NotNull;
 
 public class MyAbstractContainerScreen<T extends AbstractContainerMenu> extends AbstractContainerScreen<T> {
-    protected static ResourceLocation TEXTURE;
+    protected static Identifier TEXTURE;
     protected boolean renderInventoryLabel = true;
     protected boolean renderTitleLabel = true;
-    protected int titleLabelColor = 10461087;
-    protected int inventoryLabelColor = 7303023;
+    protected int titleLabelColor = 0xFF9F9F9F;
+    protected int inventoryLabelColor = 0xFF6F6F6F;
 
     public MyAbstractContainerScreen(T menu, Inventory playerInventory, Component title) {
-        super(menu, playerInventory, title);
-        this.imageWidth = 231;
-        this.imageHeight = 243;
+        super(menu, playerInventory, title, 231, 243);
     }
 
-    public static ResourceLocation getTexture() {
+    public static Identifier getTexture() {
         return TEXTURE;
     }
 
     public static void setTexture(String texture) {
-        MyAbstractContainerScreen.TEXTURE = ResourceLocation.fromNamespaceAndPath(LogiCore.MOD_ID, texture);
+        MyAbstractContainerScreen.TEXTURE = Identifier.fromNamespaceAndPath(LogiCore.MOD_ID, texture);
     }
 
     @Override
-    public void render(@NotNull GuiGraphics graphics, int mouseX, int mouseY, float partialTicks) {
-        super.render(graphics, mouseX, mouseY, partialTicks);
-        this.renderTooltip(graphics, mouseX, mouseY);
-    }
-
-    @Override
-    protected void renderBg(GuiGraphics graphics, float partialTicks, int mouseX, int mouseY) {
+    public void extractContents(GuiGraphicsExtractor graphics, int mouseX, int mouseY, float partialTicks) {
         int x = (this.width - this.imageWidth) / 2;
         int y = (this.height - this.imageHeight) / 2;
-        graphics.blit(TEXTURE, x, y, 0, 0, imageWidth, imageHeight);
+        graphics.blit(RenderPipelines.GUI_TEXTURED, TEXTURE, x, y, 0.0f, 0.0f, imageWidth, imageHeight, 256, 256);
+        super.extractContents(graphics, mouseX, mouseY, partialTicks);
     }
 
     @Override
-    protected void renderLabels(@NotNull GuiGraphics graphics, int mouseX, int mouseY) {
+    protected void extractLabels(GuiGraphicsExtractor graphics, int mouseX, int mouseY) {
+        Component screenTitle = this.title;
+        if (screenTitle.getString().isBlank()
+                && this.menu instanceof MyAbstractContainerMenu modMenu
+                && modMenu.getBlockEntity() instanceof MenuProvider menuProvider) {
+            screenTitle = menuProvider.getDisplayName();
+        }
+
         if (renderTitleLabel) {
-            graphics.drawString(this.font, this.title.copy(), this.titleLabelX, this.titleLabelY, titleLabelColor, true);
+            graphics.text(this.font, screenTitle.copy(), this.titleLabelX, this.titleLabelY, titleLabelColor, true);
         }
 
         if (renderInventoryLabel) {
-            graphics.drawString(this.font, this.playerInventoryTitle, this.inventoryLabelX, this.inventoryLabelY, inventoryLabelColor, false);
+            graphics.text(this.font, this.playerInventoryTitle, this.inventoryLabelX, this.inventoryLabelY, inventoryLabelColor, false);
         }
     }
 }

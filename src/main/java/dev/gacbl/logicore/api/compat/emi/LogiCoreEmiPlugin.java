@@ -1,5 +1,12 @@
 package dev.gacbl.logicore.api.compat.emi;
 
+// ============================================================
+// EMI Plugin - DISABLED during 26.1 port
+// To re-enable: Remove the /* and */ comment markers below,
+// ensure EMI is available on the classpath with the correct
+// API for Minecraft 26.1.
+// ============================================================
+/*
 import dev.emi.emi.api.EmiDragDropHandler;
 import dev.emi.emi.api.EmiEntrypoint;
 import dev.emi.emi.api.EmiPlugin;
@@ -60,3 +67,4 @@ public class LogiCoreEmiPlugin implements EmiPlugin {
         }
     }
 }
+*/

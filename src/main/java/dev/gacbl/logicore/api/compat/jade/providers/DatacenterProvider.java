@@ -5,54 +5,46 @@ import dev.gacbl.logicore.blocks.datacenter_port.DatacenterPortBlockEntity;
 import dev.gacbl.logicore.core.Utils;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
-import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.resources.Identifier;
 import snownee.jade.api.BlockAccessor;
 import snownee.jade.api.IBlockComponentProvider;
-import snownee.jade.api.IServerDataProvider;
 import snownee.jade.api.ITooltip;
 import snownee.jade.api.config.IPluginConfig;
 
-public class DatacenterProvider implements IBlockComponentProvider, IServerDataProvider<BlockAccessor> {
-    public static final DatacenterProvider INSTANCE = new DatacenterProvider();
+public enum DatacenterProvider implements IBlockComponentProvider {
+    INSTANCE;
+
+    static final String STORED_KEY = "StoredCycles";
+    static final String CAPACITY_KEY = "CycleCapacity";
+    static final String CPU_KEY = "CpuCount";
+    static final String CPU_MAX_KEY = "CpuMaxCount";
 
     @Override
     public void appendTooltip(ITooltip tooltip, BlockAccessor accessor, IPluginConfig config) {
-        long cyclesCapacity = accessor.getServerData().getLong("CyclesCapacity");
-        long cyclesAvailable = accessor.getServerData().getLong("CyclesAvailable");
+        long stored = 0;
+        long capacity = 0;
+        long cpuCount = 0;
+        long cpuMaxCount = 0;
 
-        long cpuCapacity = accessor.getServerData().getLong("CpuCapacity");
-        long cpuAvailable = accessor.getServerData().getLong("CpuAvailable");
-        if (accessor.getPlayer().isCrouching()) {
-            tooltip.add(Component.translatable("tooltip.logicore.cycles", cyclesAvailable, cyclesCapacity));
-            tooltip.add(Component.translatable("tooltip.logicore.cpus", cpuAvailable, cpuCapacity));
-        } else {
-            tooltip.add(Component.translatable("tooltip.logicore.cycles", Utils.formatValues(cyclesAvailable), Utils.formatValues(cyclesCapacity)));
-            tooltip.add(Component.translatable("tooltip.logicore.cpus", Utils.formatValues(cpuAvailable), Utils.formatValues(cpuCapacity)));
+        if (accessor.getBlockEntity() instanceof DatacenterPortBlockEntity be) {
+            stored = be.getCyclesAvailable();
+            capacity = be.getCycleCapacity();
+            cpuCount = be.getCpuCount();
+            cpuMaxCount = be.getCpuMaxCount();
         }
 
+        CompoundTag serverData = accessor.getServerData();
+        stored = serverData.getLong(STORED_KEY).orElse(stored);
+        capacity = serverData.getLong(CAPACITY_KEY).orElse(capacity);
+        cpuCount = serverData.getLong(CPU_KEY).orElse(cpuCount);
+        cpuMaxCount = serverData.getLong(CPU_MAX_KEY).orElse(cpuMaxCount);
+
+        tooltip.add(Component.translatable("tooltip.logicore.cycles", Utils.formatValues(stored), Utils.formatValues(capacity)));
+        tooltip.add(Component.translatable("tooltip.logicore.cpus", Utils.formatValues(cpuCount), Utils.formatValues(cpuMaxCount)));
     }
 
     @Override
-    public boolean shouldRequestData(BlockAccessor accessor) {
-        BlockEntity be = accessor.getLevel().getBlockEntity(accessor.getPosition());
-        return be instanceof DatacenterPortBlockEntity;
-    }
-
-    @Override
-    public void appendServerData(CompoundTag data, BlockAccessor accessor) {
-        DatacenterPortBlockEntity blockEntity = (DatacenterPortBlockEntity) accessor.getBlockEntity();
-
-        if (blockEntity == null) return;
-
-        data.putLong("CyclesCapacity", blockEntity.getCycleCapacity());
-        data.putLong("CyclesAvailable", blockEntity.getCyclesAvailable());
-        data.putLong("CpuAvailable", blockEntity.getCpuCount());
-        data.putLong("CpuCapacity", blockEntity.getCpuMaxCount());
-    }
-
-    @Override
-    public ResourceLocation getUid() {
-        return ResourceLocation.fromNamespaceAndPath(LogiCore.MOD_ID, "datacenter_port");
+    public Identifier getUid() {
+        return LogiCore.identifier("datacenter_port");
     }
 }

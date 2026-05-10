@@ -2,7 +2,7 @@ package dev.gacbl.logicore.blocks.datacenter.ui;
 
 import dev.gacbl.logicore.Config;
 import dev.gacbl.logicore.core.ui.MyAbstractContainerScreen;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.player.Inventory;
 import org.jetbrains.annotations.NotNull;
@@ -17,8 +17,8 @@ public class DatacenterControllerScreen extends MyAbstractContainerScreen<Datace
     }
 
     @Override
-    public void render(@NotNull GuiGraphics graphics, int mouseX, int mouseY, float partialTicks) {
-        super.render(graphics, mouseX, mouseY, partialTicks);
+    protected void extractLabels(@NotNull GuiGraphicsExtractor graphics, int mouseX, int mouseY) {
+        super.extractLabels(graphics, mouseX, mouseY);
         if (Config.RENDER_MACHINE_INFORMATION_IN_UI.get()) {
             /*Component text;
             if (menu.getIsFormed()) {
@@ -28,7 +28,11 @@ public class DatacenterControllerScreen extends MyAbstractContainerScreen<Datace
                 text = Component.translatable(menu.getLastException().message, errorPos);
             } else {
                 text = Component.translatable("errors.logicore.datacenter.invalid_form");
+
+            graphics.text(this.font, text, leftPos + 8, topPos + 78, 0xFFFFFF);
             }
+        }
+    }
             graphics.drawString(this.font, text, leftPos + 65, topPos + 120, this.titleLabelColor);*/
         }
     }

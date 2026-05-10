@@ -4,14 +4,12 @@ import dev.gacbl.logicore.LogiCore;
 import dev.gacbl.logicore.blocks.datacenter.ui.DatacenterControllerMenu;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.world.inventory.MenuType;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.Item;
-import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntityType;
-import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.material.MapColor;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.neoforge.capabilities.Capabilities;
@@ -30,25 +28,22 @@ public class DatacenterModule {
     public static final DeferredRegister<SoundEvent> SOUND_EVENTS = DeferredRegister.create(BuiltInRegistries.SOUND_EVENT, LogiCore.MOD_ID);
     public static final DeferredRegister<MenuType<?>> MENUS = DeferredRegister.create(BuiltInRegistries.MENU, LogiCore.MOD_ID);
 
-    public static final DeferredBlock<Block> DATACENTER_CONTROLLER = BLOCKS.register("datacenter_controller",
-            () -> new DatacenterControllerBlock(BlockBehaviour.Properties.of()
-                    .mapColor(MapColor.METAL)
-                    .strength(3.0F, 3.0F)
-                    .requiresCorrectToolForDrops()));
+    public static final DeferredBlock<DatacenterControllerBlock> DATACENTER_CONTROLLER = BLOCKS.registerBlock(
+            "datacenter_controller", DatacenterControllerBlock::new,
+            props -> props.mapColor(MapColor.METAL).strength(3.0F, 3.0F).requiresCorrectToolForDrops());
 
-    public static final DeferredHolder<Item, BlockItem> DATACENTER_CONTROLLER_ITEM = ITEMS.register("datacenter_controller",
-            () -> new BlockItem(DATACENTER_CONTROLLER.get(), new Item.Properties()));
+    public static final DeferredHolder<Item, BlockItem> DATACENTER_CONTROLLER_ITEM = ITEMS.registerItem("datacenter_controller", props -> new BlockItem(DATACENTER_CONTROLLER.get(), props));
 
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<DatacenterControllerBlockEntity>> DATACENTER_CONTROLLER_BE =
             BLOCK_ENTITIES.register("datacenter_controller",
-                    () -> BlockEntityType.Builder.of(DatacenterControllerBlockEntity::new, DATACENTER_CONTROLLER.get()).build(null));
+                    () -> new BlockEntityType<>(DatacenterControllerBlockEntity::new, DATACENTER_CONTROLLER.get()));
 
     public static final DeferredHolder<MenuType<?>, MenuType<DatacenterControllerMenu>> DATACENTER_CONTROLLER_MENU = MENUS.register("datacenter_controller_menu", () -> IMenuTypeExtension.create(DatacenterControllerMenu::new));
 
     public static final Supplier<SoundEvent> DATACENTER_AMBIENT = registerSoundEvent("datacenter_ambient");
 
     private static Supplier<SoundEvent> registerSoundEvent(String name) {
-        ResourceLocation id = ResourceLocation.fromNamespaceAndPath(LogiCore.MOD_ID, name);
+        Identifier id = Identifier.fromNamespaceAndPath(LogiCore.MOD_ID, name);
         return SOUND_EVENTS.register(name, () -> SoundEvent.createVariableRangeEvent(id));
     }
 
@@ -63,7 +58,7 @@ public class DatacenterModule {
 
     private static void registerCapabilities(RegisterCapabilitiesEvent event) {
         event.registerBlockEntity(
-                Capabilities.ItemHandler.BLOCK,
+                Capabilities.Item.BLOCK,
                 DATACENTER_CONTROLLER_BE.get(),
                 (be, context) -> be.getItemHandler()
         );

@@ -1,7 +1,7 @@
 package dev.gacbl.logicore.core;
 
 import dev.gacbl.logicore.LogiCore;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.level.block.Block;
@@ -16,7 +16,7 @@ public class ModTags {
         public static final TagKey<Block> RECYCLER_BLACKLIST = createTag("recycler_blacklist");
 
         private static TagKey<Block> createTag(String name) {
-            return BlockTags.create(ResourceLocation.fromNamespaceAndPath(LogiCore.MOD_ID, name));
+            return BlockTags.create(Identifier.fromNamespaceAndPath(LogiCore.MOD_ID, name));
         }
     }
 }

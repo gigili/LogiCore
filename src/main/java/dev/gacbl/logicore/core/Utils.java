@@ -4,9 +4,12 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonParser;
 import com.mojang.serialization.DataResult;
 import com.mojang.serialization.JsonOps;
+import dev.gacbl.logicore.LogiCore;
 import net.minecraft.core.component.DataComponentPatch;
 import net.minecraft.core.registries.BuiltInRegistries;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.core.registries.Registries;
+import net.minecraft.resources.Identifier;
+import net.minecraft.resources.ResourceKey;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import org.jetbrains.annotations.Nullable;
@@ -46,8 +49,10 @@ public class Utils {
         if (key.isEmpty()) return null;
         int sep = key.indexOf('#');
         String itemId = sep == -1 ? key : key.substring(0, sep);
-        Item item = BuiltInRegistries.ITEM.get(ResourceLocation.tryParse(itemId));
-        if (item == null || item == net.minecraft.world.item.Items.AIR) return null;
+        var optItem = BuiltInRegistries.ITEM.get(Identifier.tryParse(itemId));
+        if (optItem.isEmpty()) return null;
+        Item item = optItem.get().value();
+        if (item == net.minecraft.world.item.Items.AIR) return null;
         ItemStack stack = new ItemStack(item);
         if (sep == -1) return stack;
         try {
@@ -59,5 +64,9 @@ public class Utils {
         } catch (Exception ignored) {
         }
         return stack.isEmpty() ? null : stack;
+    }
+
+    public static ResourceKey<Item> createID(String name) {
+        return ResourceKey.create(Registries.ITEM, LogiCore.identifier(name));
     }
 }

@@ -8,9 +8,7 @@ import net.minecraft.core.registries.Registries;
 import net.minecraft.world.inventory.MenuType;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.Item;
-import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntityType;
-import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.block.state.properties.BooleanProperty;
 import net.minecraft.world.level.material.MapColor;
 import net.neoforged.bus.api.IEventBus;
@@ -29,19 +27,14 @@ public class RepairStationModule {
 
     public static final BooleanProperty REPAIRING = BooleanProperty.create("repairing");
 
-    public static final DeferredBlock<Block> REPAIR_STATION = BLOCKS.register("repair_station",
-            () -> new RepairStationBlock(BlockBehaviour.Properties.of()
-                    .mapColor(MapColor.METAL)
-                    .strength(3.0F, 3.0F)
-                    .requiresCorrectToolForDrops()
-                    .noOcclusion()));
+    public static final DeferredBlock<RepairStationBlock> REPAIR_STATION = BLOCKS.registerBlock("repair_station", RepairStationBlock::new,
+            props -> props.mapColor(MapColor.METAL).strength(3.0F, 3.0F).requiresCorrectToolForDrops().noOcclusion());
 
-    public static final DeferredHolder<Item, BlockItem> REPAIR_STATION_ITEM = ITEMS.register("repair_station",
-            () -> new BlockItem(REPAIR_STATION.get(), new Item.Properties()));
+    public static final DeferredHolder<Item, BlockItem> REPAIR_STATION_ITEM = ITEMS.registerItem("repair_station", props -> new BlockItem(REPAIR_STATION.get(), props));
 
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<RepairStationBlockEntity>> REPAIR_STATION_BE =
             BLOCK_ENTITIES.register("repair_station",
-                    () -> BlockEntityType.Builder.of(RepairStationBlockEntity::new, REPAIR_STATION.get()).build(null));
+                    () -> new BlockEntityType<>(RepairStationBlockEntity::new, REPAIR_STATION.get()));
 
     public static final DeferredHolder<MenuType<?>, MenuType<RepairStationMenu>> REPAIR_STATION_MENU =
             MENUS.register("repair_station_menu", () -> IMenuTypeExtension.create(RepairStationMenu::new));
@@ -62,7 +55,7 @@ public class RepairStationModule {
         );
 
         event.registerBlockEntity(
-                Capabilities.ItemHandler.BLOCK,
+                Capabilities.Item.BLOCK,
                 REPAIR_STATION_BE.get(),
                 (be, context) -> be.getItemHandler()
         );

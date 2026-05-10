@@ -9,13 +9,12 @@ import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.crafting.RecipeSerializer;
 import net.minecraft.world.item.crafting.RecipeType;
-import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntityType;
-import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.neoforge.capabilities.Capabilities;
 import net.neoforged.neoforge.capabilities.RegisterCapabilitiesEvent;
 import net.neoforged.neoforge.common.extensions.IMenuTypeExtension;
+import net.neoforged.neoforge.registries.DeferredBlock;
 import net.neoforged.neoforge.registries.DeferredHolder;
 import net.neoforged.neoforge.registries.DeferredRegister;
 
@@ -25,15 +24,16 @@ public class CompilerModule {
     public static final DeferredRegister<BlockEntityType<?>> BLOCK_ENTITIES = DeferredRegister.create(BuiltInRegistries.BLOCK_ENTITY_TYPE, LogiCore.MOD_ID);
     public static final DeferredRegister<MenuType<?>> MENUS = DeferredRegister.create(BuiltInRegistries.MENU, LogiCore.MOD_ID);
 
-    public static final DeferredHolder<Block, CompilerBlock> COMPILER_BLOCK =
-            BLOCKS.register("compiler", () -> new CompilerBlock(BlockBehaviour.Properties.of().requiresCorrectToolForDrops().strength(0.5f).noOcclusion()));
+    public static final DeferredBlock<CompilerBlock> COMPILER_BLOCK =
+            BLOCKS.registerBlock("compiler", CompilerBlock::new,
+                    props -> props.requiresCorrectToolForDrops().strength(0.5f).noOcclusion());
 
     public static final DeferredHolder<Item, BlockItem> COMPILER_ITEM =
-            ITEMS.register("compiler", () -> new BlockItem(COMPILER_BLOCK.get(), new Item.Properties()));
+            ITEMS.registerItem("compiler", props -> new BlockItem(COMPILER_BLOCK.get(), props));
 
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<CompilerBlockEntity>> COMPILER_BLOCK_ENTITY =
-            BLOCK_ENTITIES.register("compiler", () -> BlockEntityType.Builder.of(
-                    CompilerBlockEntity::new, COMPILER_BLOCK.get()).build(null));
+            BLOCK_ENTITIES.register("compiler", () -> new BlockEntityType<>(
+                    CompilerBlockEntity::new, COMPILER_BLOCK.get()));
 
     public static final DeferredHolder<MenuType<?>, MenuType<CompilerMenu>> COMPILER_MENU =
             MENUS.register("compiler_menu", () -> IMenuTypeExtension.create(CompilerMenu::new));
@@ -57,14 +57,14 @@ public class CompilerModule {
     private static void registerCapabilities(RegisterCapabilitiesEvent event) {
         event.registerBlockEntity(
                 ModCapabilities.CYCLE_CONSUMER,
-                CompilerModule.COMPILER_BLOCK_ENTITY.get(),
+                COMPILER_BLOCK_ENTITY.get(),
                 (be, context) -> be.getCycleStorage()
         );
 
         event.registerBlockEntity(
-                Capabilities.ItemHandler.BLOCK,
-                CompilerModule.COMPILER_BLOCK_ENTITY.get(),
-                CompilerBlockEntity::getItemHandler
+                Capabilities.Item.BLOCK,
+                COMPILER_BLOCK_ENTITY.get(),
+                (be, context) -> be.getItemHandler(context)
         );
     }
 }

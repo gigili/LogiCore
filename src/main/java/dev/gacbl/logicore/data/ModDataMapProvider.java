@@ -4,11 +4,11 @@ import dev.gacbl.logicore.core.ModDataMaps;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.data.PackOutput;
-import net.minecraft.resources.ResourceKey;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.tags.ItemTags;
 import net.minecraft.tags.TagKey;
-import net.minecraft.world.item.*;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.Items;
 import net.neoforged.neoforge.common.Tags;
 import net.neoforged.neoforge.common.data.DataMapProvider;
 import org.jetbrains.annotations.NotNull;
@@ -98,7 +98,7 @@ public class ModDataMapProvider extends DataMapProvider {
         addBase(builder, Items.SMALL_DRIPLEAF, 24);
         addBase(builder, Items.BIG_DRIPLEAF, 32);
         addTag(builder, ItemTags.SMALL_FLOWERS, 16);
-        addTag(builder, ItemTags.TALL_FLOWERS, 32);
+        addTag(builder, ItemTags.FLOWERS, 32);
         addBase(builder, Items.RED_MUSHROOM, 32);
         addBase(builder, Items.BROWN_MUSHROOM, 32);
         addBase(builder, Items.SUGAR_CANE, 32);
@@ -188,16 +188,7 @@ public class ModDataMapProvider extends DataMapProvider {
         addBase(builder, Items.EGG, 32);
         addBase(builder, Items.TURTLE_SCUTE, 96);
         addBase(builder, Items.TURTLE_EGG, 192);
-        //Regular horns
-        addBase(builder, horn(provider, Instruments.PONDER_GOAT_HORN).getItem(), 96);
-        addBase(builder, horn(provider, Instruments.SING_GOAT_HORN).getItem(), 96);
-        addBase(builder, horn(provider, Instruments.SEEK_GOAT_HORN).getItem(), 96);
-        addBase(builder, horn(provider, Instruments.FEEL_GOAT_HORN).getItem(), 96);
-        //Screaming horns
-        addBase(builder, horn(provider, Instruments.ADMIRE_GOAT_HORN).getItem(), 192);
-        addBase(builder, horn(provider, Instruments.CALL_GOAT_HORN).getItem(), 192);
-        addBase(builder, horn(provider, Instruments.YEARN_GOAT_HORN).getItem(), 192);
-        addBase(builder, horn(provider, Instruments.DREAM_GOAT_HORN).getItem(), 192);
+        addBase(builder, Items.GOAT_HORN, 96);
         addBase(builder, Items.FEATHER, 48);
         addBase(builder, Items.RABBIT_HIDE, 16);
         addBase(builder, Items.RABBIT_FOOT, 128);
@@ -279,11 +270,7 @@ public class ModDataMapProvider extends DataMapProvider {
         addBase(builder, Items.SNOUT_ARMOR_TRIM_SMITHING_TEMPLATE, 7_533);
         addBase(builder, Items.FLOW_ARMOR_TRIM_SMITHING_TEMPLATE, 30_528);
         addBase(builder, Items.BOLT_ARMOR_TRIM_SMITHING_TEMPLATE, 10_176);
-        addTag(builder, ItemTags.create(ResourceLocation.fromNamespaceAndPath("ae2", "sky_dust")), 16);
-    }
-
-    private ItemStack horn(HolderLookup.Provider registries, ResourceKey<Instrument> instrument) {
-        return InstrumentItem.create(Items.GOAT_HORN, registries.holderOrThrow(instrument));
+        addTag(builder, ItemTags.create(Identifier.fromNamespaceAndPath("ae2", "sky_dust")), 16);
     }
 
     private void addBase(Builder<Integer, Item> builder, Item item, int value) {

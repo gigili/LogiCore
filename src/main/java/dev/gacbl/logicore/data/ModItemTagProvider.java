@@ -5,26 +5,23 @@ import dev.gacbl.logicore.items.pickaxe.CyclePickModule;
 import dev.gacbl.logicore.items.wrench.WrenchModule;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.data.PackOutput;
-import net.minecraft.data.tags.ItemTagsProvider;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.tags.ItemTags;
-import net.minecraft.world.level.block.Block;
-import net.neoforged.neoforge.common.data.ExistingFileHelper;
+import net.neoforged.neoforge.common.data.ItemTagsProvider;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import java.util.concurrent.CompletableFuture;
 
 public class ModItemTagProvider extends ItemTagsProvider {
-    public ModItemTagProvider(PackOutput packOutput, CompletableFuture<HolderLookup.Provider> lookupProvider, CompletableFuture<TagLookup<Block>> blockTags, @Nullable ExistingFileHelper existingFileHelper) {
-        super(packOutput, lookupProvider, blockTags, LogiCore.MOD_ID, existingFileHelper);
+    public ModItemTagProvider(PackOutput packOutput, CompletableFuture<HolderLookup.Provider> lookupProvider) {
+        super(packOutput, lookupProvider, LogiCore.MOD_ID);
     }
 
     @Override
     protected void addTags(HolderLookup.@NotNull Provider provider) {
-        tag(ItemTags.create(ResourceLocation.fromNamespaceAndPath("c", "tools/wrench"))).add(WrenchModule.WRENCH.get());
+        tag(ItemTags.create(Identifier.fromNamespaceAndPath("c", "tools/wrench"))).add(WrenchModule.WRENCH.get());
         tag(ItemTags.PICKAXES).add(CyclePickModule.CYCLE_PICK.get());
-        tag(ItemTags.create(ResourceLocation.withDefaultNamespace("enchantable/mining_tool"))).add(CyclePickModule.CYCLE_PICK.get());
-        tag(ItemTags.create(ResourceLocation.withDefaultNamespace("enchantable/durability"))).add(CyclePickModule.CYCLE_PICK.get());
+        tag(ItemTags.MINING_ENCHANTABLE).add(CyclePickModule.CYCLE_PICK.get());
+        tag(ItemTags.DURABILITY_ENCHANTABLE).add(CyclePickModule.CYCLE_PICK.get());
     }
 }

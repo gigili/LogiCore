@@ -1,7 +1,6 @@
 package dev.gacbl.logicore.blocks.cloud_interface;
 
 import dev.gacbl.logicore.Config;
-import dev.gacbl.logicore.api.compat.ae2.IGridNodeService;
 import dev.gacbl.logicore.api.computation.ICycleProvider;
 import dev.gacbl.logicore.api.cycles.CycleSavedData;
 import dev.gacbl.logicore.blocks.datacable.DataCableBlockEntity;
@@ -10,14 +9,13 @@ import dev.gacbl.logicore.blocks.datacable.cable_network.NetworkManager;
 import dev.gacbl.logicore.core.ModCapabilities;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
-import net.minecraft.core.HolderLookup;
-import net.minecraft.nbt.CompoundTag;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
-import net.neoforged.fml.ModList;
+import net.minecraft.world.level.storage.ValueInput;
+import net.minecraft.world.level.storage.ValueOutput;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.UUID;
@@ -27,15 +25,15 @@ public class CloudInterfaceBlockEntity extends BlockEntity {
     private final ICycleProvider DOWNLOAD_HANDLER = new DownloadHandler();
 
     private UUID ownerUUID;
-    private IGridNodeService ae2Service;
     private ItemStack buffer = ItemStack.EMPTY;
     private long bufferedCycles = 0;
 
+    // AE2 integration disabled during 26.1 port.
+
     public CloudInterfaceBlockEntity(BlockPos pos, BlockState state) {
         super(CloudInterfaceModule.CLOUD_INTERFACE_BE.get(), pos, state);
-        if (ModList.get().isLoaded("ae2") && Config.ENABLE_AE2_INTEGRATION.get()) {
-            this.ae2Service = dev.gacbl.logicore.api.compat.ae2.Ae2Helper.createService(this);
-        }
+        // AE2 integration disabled during 26.1 port. To re-enable, restore the
+        // ae2Service initialization that was in the original constructor.
     }
 
     public ItemStack extract() {
@@ -54,12 +52,10 @@ public class CloudInterfaceBlockEntity extends BlockEntity {
         setChanged();
     }
 
+    // AE2 getAe2Service disabled during 26.1 port
+
     public UUID getOwner() {
         return ownerUUID;
-    }
-
-    public IGridNodeService getAe2Service() {
-        return ae2Service;
     }
 
     public static void serverTick(Level level, BlockPos pos, BlockState state, CloudInterfaceBlockEntity be) {
@@ -107,13 +103,14 @@ public class CloudInterfaceBlockEntity extends BlockEntity {
             }
         }
 
-        if (be.ae2Service != null) {
-            be.ae2Service.serverTick();
-        }
+        /* AE2 tick disabled during 26.1 port */
+        //if (be.ae2Service != null) {
+        //    be.ae2Service.serverTick();
+        //}
     }
 
     public ICycleProvider getCycleCapability(Direction ctx) {
-        if (level == null || level.isClientSide) return null;
+        if (level == null || level.isClientSide()) return null;
 
         Direction facing = getBlockState().getValue(CloudInterfaceBlock.FACING);
         Direction opposite = facing.getOpposite();
@@ -218,32 +215,27 @@ public class CloudInterfaceBlockEntity extends BlockEntity {
     }
 
     @Override
-    protected void loadAdditional(@NotNull CompoundTag tag, HolderLookup.@NotNull Provider registries) {
-        super.loadAdditional(tag, registries);
-        if (tag.hasUUID("Owner")) {
-            this.ownerUUID = tag.getUUID("Owner");
+    protected void loadAdditional(@NotNull ValueInput input) {
+        super.loadAdditional(input);
+        if (input.getLong("OwnerMost").isPresent() && input.getLong("OwnerLeast").isPresent()) {
+            this.ownerUUID = new UUID(input.getLongOr("OwnerMost", 0L), input.getLongOr("OwnerLeast", 0L));
         }
-        if (ae2Service != null) {
-            ae2Service.load(tag, registries);
-        }
+        /* AE2 disabled during 26.1 port */
     }
 
     @Override
-    protected void saveAdditional(@NotNull CompoundTag tag, HolderLookup.@NotNull Provider registries) {
-        super.saveAdditional(tag, registries);
+    protected void saveAdditional(@NotNull ValueOutput output) {
+        super.saveAdditional(output);
         if (ownerUUID != null) {
-            tag.putUUID("Owner", ownerUUID);
+            output.putLong("OwnerMost", ownerUUID.getMostSignificantBits());
+            output.putLong("OwnerLeast", ownerUUID.getLeastSignificantBits());
         }
-        if (ae2Service != null) {
-            ae2Service.save(tag, registries);
-        }
+        /* AE2 disabled during 26.1 port */
     }
 
     @Override
     public void setRemoved() {
         super.setRemoved();
-        if (ae2Service != null) {
-            ae2Service.onRemove();
-        }
+        /* AE2 disabled during 26.1 port */
     }
 }

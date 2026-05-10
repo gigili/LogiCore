@@ -13,7 +13,7 @@ import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.SimpleMenuProvider;
@@ -28,7 +28,7 @@ import java.util.Set;
 public class MyCommands {
     public static void register(CommandDispatcher<CommandSourceStack> dispatcher, CommandBuildContext context, net.minecraft.commands.Commands.CommandSelection selection) {
         LiteralArgumentBuilder<CommandSourceStack> rootCommand = Commands.literal("logicore")
-                .requires(source -> source.hasPermission(2));
+                .requires(Commands.hasPermission(Commands.LEVEL_GAMEMASTERS));
 
         LiteralArgumentBuilder<CommandSourceStack> networksCommand = Commands.literal("networks");
 
@@ -98,7 +98,7 @@ public class MyCommands {
         Set<String> knowledge = data.getKnowledge(ownerKey);
         Set<String> items = new HashSet<>();
         for (String kn : knowledge) {
-            Item item = BuiltInRegistries.ITEM.get(ResourceLocation.parse(kn)).asItem();
+            Item item = BuiltInRegistries.ITEM.get(Identifier.parse(kn)).get().value();
             ItemStack stack = new ItemStack(item);
             items.add(item.getName(stack).getString());
         }

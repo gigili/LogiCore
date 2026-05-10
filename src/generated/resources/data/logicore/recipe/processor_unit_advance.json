@@ -2,18 +2,10 @@
   "type": "minecraft:crafting_shaped",
   "category": "redstone",
   "key": {
-	"G": {
-	  "item": "logicore:processor_unit_basic"
-	},
-	"I": {
-	  "item": "minecraft:emerald"
-	},
-	"Q": {
-	  "tag": "c:gems/quartz"
-	},
-	"R": {
-	  "tag": "c:storage_blocks/redstone"
-	}
+	"G": "logicore:processor_unit_basic",
+	"I": "minecraft:emerald",
+	"Q": "#c:gems/quartz",
+	"R": "#c:storage_blocks/redstone"
   },
   "pattern": [
 	"QRQ",
@@ -21,7 +13,6 @@
 	"QRQ"
   ],
   "result": {
-	"count": 1,
 	"id": "logicore:processor_unit_advance"
   }
 }

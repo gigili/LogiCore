@@ -18,40 +18,43 @@ import dev.gacbl.logicore.items.pickaxe.CyclePickModule;
 import dev.gacbl.logicore.items.processorunit.ProcessorUnitModule;
 import dev.gacbl.logicore.items.stack_upgrade.StackUpgradeModule;
 import dev.gacbl.logicore.items.wrench.WrenchModule;
+import net.minecraft.client.data.models.BlockModelGenerators;
+import net.minecraft.client.data.models.ItemModelGenerators;
+import net.minecraft.client.data.models.ModelProvider;
+import net.minecraft.client.data.models.model.ModelTemplates;
 import net.minecraft.data.PackOutput;
-import net.neoforged.neoforge.client.model.generators.ItemModelProvider;
-import net.neoforged.neoforge.common.data.ExistingFileHelper;
+import org.jspecify.annotations.NonNull;
 
-public class ModItemModelProvider extends ItemModelProvider {
+public class ModItemModelProvider extends ModelProvider {
 
-    public ModItemModelProvider(PackOutput output, ExistingFileHelper existingFileHelper) {
-        super(output, LogiCore.MOD_ID, existingFileHelper);
+    public ModItemModelProvider(PackOutput output) {
+        super(output, LogiCore.MOD_ID);
     }
 
     @Override
-    protected void registerModels() {
-        basicItem(ProcessorUnitModule.PROCESSOR_UNIT_BASIC.get());
-        basicItem(ProcessorUnitModule.PROCESSOR_UNIT_ADVANCE.get());
-        basicItem(ProcessorUnitModule.PROCESSOR_UNIT_ULTIMATE.get());
-        basicItem(WrenchModule.WRENCH.get());
-        basicItem(StackUpgradeModule.STACK_UPGRADE.get());
-        basicItem(CyclePickModule.CYCLE_PICK.get());
-        basicItem(KnowledgeOrbModule.KNOWLEDGE_ORB.get());
+    protected void registerModels(@NonNull BlockModelGenerators blockModels, @NonNull ItemModelGenerators itemModels) {
+        itemModels.generateFlatItem(ProcessorUnitModule.PROCESSOR_UNIT_BASIC.get(), ModelTemplates.FLAT_ITEM);
+        itemModels.generateFlatItem(ProcessorUnitModule.PROCESSOR_UNIT_ADVANCE.get(), ModelTemplates.FLAT_ITEM);
+        itemModels.generateFlatItem(ProcessorUnitModule.PROCESSOR_UNIT_ULTIMATE.get(), ModelTemplates.FLAT_ITEM);
+        itemModels.generateFlatItem(WrenchModule.WRENCH.get(), ModelTemplates.FLAT_ITEM);
+        itemModels.generateFlatItem(StackUpgradeModule.STACK_UPGRADE.get(), ModelTemplates.FLAT_ITEM);
+        itemModels.generateFlatItem(CyclePickModule.CYCLE_PICK.get(), ModelTemplates.FLAT_ITEM);
+        itemModels.generateFlatItem(KnowledgeOrbModule.KNOWLEDGE_ORB.get(), ModelTemplates.FLAT_ITEM);
 
-        withExistingParent(CompilerModule.COMPILER_ITEM.getId().getPath(), "logicore:block/" + CompilerModule.COMPILER_ITEM.getId().getPath());
-        withExistingParent(ComputerModule.COMPUTER_ITEM.getId().getPath(), "logicore:block/" + ComputerModule.COMPUTER_ITEM.getId().getPath());
-        withExistingParent(DataCableModule.DATA_CABLE_ITEM.getId().getPath(), "logicore:block/data_cable_core");
-        withExistingParent(DatacenterModule.DATACENTER_CONTROLLER_ITEM.getId().getPath(), "logicore:block/" + DatacenterModule.DATACENTER_CONTROLLER_ITEM.getId().getPath());
-        withExistingParent(DatacenterPortModule.DATACENTER_PORT_ITEM.getId().getPath(), "logicore:block/" + DatacenterPortModule.DATACENTER_PORT_ITEM.getId().getPath());
-        withExistingParent(ServerRackModule.SERVER_RACK.getId().getPath(), "logicore:block/" + ServerRackModule.SERVER_RACK.getId().getPath());
-        withExistingParent(GeneratorModule.GENERATOR_ITEM.getId().getPath(), "logicore:block/" + GeneratorModule.GENERATOR_ITEM.getId().getPath());
-        withExistingParent(CloudInterfaceModule.CLOUD_INTERFACE.getId().getPath(), "logicore:block/" + CloudInterfaceModule.CLOUD_INTERFACE.getId().getPath());
-        withExistingParent(ResearchStationModule.RESEARCH_STATION.getId().getPath(), "logicore:block/" + ResearchStationModule.RESEARCH_STATION.getId().getPath());
-        withExistingParent(RepairStationModule.REPAIR_STATION.getId().getPath(), "logicore:block/" + RepairStationModule.REPAIR_STATION.getId().getPath());
-        withExistingParent(RecyclerModule.RECYCLER.getId().getPath(), "logicore:block/" + RecyclerModule.RECYCLER.getId().getPath());
+        itemModels.generateFlatItem(CompilerModule.COMPILER_ITEM.get(), ModelTemplates.FLAT_ITEM);
+        itemModels.generateFlatItem(ComputerModule.COMPUTER_ITEM.get(), ModelTemplates.FLAT_ITEM);
+        itemModels.generateFlatItem(DataCableModule.DATA_CABLE_ITEM.get(), ModelTemplates.FLAT_ITEM);
+        itemModels.generateFlatItem(DatacenterModule.DATACENTER_CONTROLLER_ITEM.get(), ModelTemplates.FLAT_ITEM);
+        itemModels.generateFlatItem(DatacenterPortModule.DATACENTER_PORT_ITEM.get(), ModelTemplates.FLAT_ITEM);
+        itemModels.generateFlatItem(ServerRackModule.SERVER_RACK_ITEM.get(), ModelTemplates.FLAT_ITEM);
+        itemModels.generateFlatItem(GeneratorModule.GENERATOR_ITEM.get(), ModelTemplates.FLAT_ITEM);
+        itemModels.generateFlatItem(CloudInterfaceModule.CLOUD_INTERFACE_ITEM.get(), ModelTemplates.FLAT_ITEM);
+        itemModels.generateFlatItem(ResearchStationModule.RESEARCH_STATION_ITEM.get(), ModelTemplates.FLAT_ITEM);
+        itemModels.generateFlatItem(RepairStationModule.REPAIR_STATION_ITEM.get(), ModelTemplates.FLAT_ITEM);
+        itemModels.generateFlatItem(RecyclerModule.RECYCLER_ITEM.get(), ModelTemplates.FLAT_ITEM);
 
-        BatteryModule.BLOCKS.getEntries().forEach(blockHolder -> {
-            withExistingParent(blockHolder.getId().getPath(), "logicore:block/" + blockHolder.getId().getPath());
+        BatteryModule.ITEMS.getEntries().forEach(holder -> {
+            itemModels.generateFlatItem(holder.get(), ModelTemplates.FLAT_ITEM);
         });
     }
 }

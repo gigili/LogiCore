@@ -1,18 +1,22 @@
 package dev.gacbl.logicore.items.recycler;
 
+import com.geckolib.animatable.GeoItem;
+import com.geckolib.animatable.SingletonGeoAnimatable;
+import com.geckolib.animatable.client.GeoRenderProvider;
+import com.geckolib.animatable.instance.AnimatableInstanceCache;
+import com.geckolib.animatable.manager.AnimatableManager;
+import com.geckolib.animation.AnimationController;
+import com.geckolib.animation.RawAnimation;
+import com.geckolib.animation.object.LoopType;
+import com.geckolib.animation.object.PlayState;
+import com.geckolib.animation.state.AnimationTest;
+import com.geckolib.model.DefaultedBlockGeoModel;
+import com.geckolib.renderer.GeoItemRenderer;
+import com.geckolib.util.GeckoLibUtil;
 import dev.gacbl.logicore.LogiCore;
-import net.minecraft.client.renderer.BlockEntityWithoutLevelRenderer;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.level.block.Block;
-import software.bernie.geckolib.animatable.GeoItem;
-import software.bernie.geckolib.animatable.SingletonGeoAnimatable;
-import software.bernie.geckolib.animatable.client.GeoRenderProvider;
-import software.bernie.geckolib.animatable.instance.AnimatableInstanceCache;
-import software.bernie.geckolib.animation.*;
-import software.bernie.geckolib.model.DefaultedBlockGeoModel;
-import software.bernie.geckolib.renderer.GeoItemRenderer;
-import software.bernie.geckolib.util.GeckoLibUtil;
 
 import java.util.function.Consumer;
 
@@ -30,9 +34,9 @@ public class RecyclerBlockItem extends BlockItem implements GeoItem {
             private GeoItemRenderer<RecyclerBlockItem> renderer;
 
             @Override
-            public BlockEntityWithoutLevelRenderer getGeoItemRenderer() {
+            public GeoItemRenderer<RecyclerBlockItem> getGeoItemRenderer() {
                 if (this.renderer == null) {
-                    this.renderer = new GeoItemRenderer<>(new DefaultedBlockGeoModel<>(ResourceLocation.fromNamespaceAndPath(LogiCore.MOD_ID, "recycler")));
+                    this.renderer = new GeoItemRenderer<>(new DefaultedBlockGeoModel<>(Identifier.fromNamespaceAndPath(LogiCore.MOD_ID, "recycler")));
                 }
 
                 return this.renderer;
@@ -42,11 +46,11 @@ public class RecyclerBlockItem extends BlockItem implements GeoItem {
 
     @Override
     public void registerControllers(AnimatableManager.ControllerRegistrar controllers) {
-        controllers.add(new AnimationController<>(this, "controller", 0, this::predicate));
+        controllers.add(new AnimationController<>("controller", 0, this::predicate));
     }
 
-    private PlayState predicate(AnimationState<RecyclerBlockItem> recyclerBlockItemAnimationState) {
-        recyclerBlockItemAnimationState.setAndContinue(RawAnimation.begin().then("idle", Animation.LoopType.LOOP));
+    private PlayState predicate(AnimationTest<RecyclerBlockItem> state) {
+        state.setAndContinue(RawAnimation.begin().then("idle", LoopType.LOOP));
         return PlayState.CONTINUE;
     }
 

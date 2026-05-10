@@ -15,9 +15,6 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.nbt.ListTag;
-import net.minecraft.nbt.LongTag;
-import net.minecraft.nbt.Tag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.Containers;
 import net.minecraft.world.MenuProvider;
@@ -32,7 +29,8 @@ import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.level.block.state.properties.DoubleBlockHalf;
-import net.neoforged.neoforge.items.ItemStackHandler;
+import net.neoforged.neoforge.transfer.item.ItemResource;
+import net.neoforged.neoforge.transfer.item.ItemStacksResourceHandler;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -70,7 +68,7 @@ public class DatacenterControllerBlockEntity extends AbstractSealedController im
     }
 
     public void attemptFormation() {
-        if (level == null || level.isClientSide) return;
+        if (level == null || level.isClientSide()) return;
 
         Direction facing = this.getBlockState().getValue(BlockStateProperties.FACING);
 
@@ -127,45 +125,38 @@ public class DatacenterControllerBlockEntity extends AbstractSealedController im
     }
 
     @Override
-    protected void saveAdditional(@NotNull CompoundTag tag, HolderLookup.@NotNull Provider registries) {
-        super.saveAdditional(tag, registries);
+    protected void saveAdditional(@NotNull net.minecraft.world.level.storage.ValueOutput output) {
+        super.saveAdditional(output);
 
-        tag.putBoolean("Formed", isFormed);
+        output.putBoolean("Formed", isFormed);
 
-        ListTag portsTag = new ListTag();
-        for (BlockPos portPos : ports) {
-            portsTag.add(LongTag.valueOf(portPos.asLong()));
-        }
-        tag.put("Ports", portsTag);
+        java.util.List<Long> portsList = new java.util.ArrayList<>();
+        for (BlockPos portPos : ports) portsList.add(portPos.asLong());
+        output.store("Ports", com.mojang.serialization.Codec.LONG.listOf(), portsList);
 
-        ListTag providersTag = new ListTag();
-        for (BlockPos provider : interiorProviders) {
-            providersTag.add(LongTag.valueOf(provider.asLong()));
-        }
-        tag.put("Providers", providersTag);
-        tag.put("inventory", itemHandler.serializeNBT(registries));
+        java.util.List<Long> providersList = new java.util.ArrayList<>();
+        for (BlockPos provider : interiorProviders) providersList.add(provider.asLong());
+        output.store("Providers", com.mojang.serialization.Codec.LONG.listOf(), providersList);
+
+        itemHandler.serialize(output.child("inventory"));
     }
 
     @Override
-    public void loadAdditional(@NotNull CompoundTag tag, HolderLookup.@NotNull Provider registries) {
-        super.loadAdditional(tag, registries);
+    public void loadAdditional(@NotNull net.minecraft.world.level.storage.ValueInput input) {
+        super.loadAdditional(input);
 
-        isFormed = tag.getBoolean("Formed");
+        isFormed = input.getBooleanOr("Formed", false);
         ports.clear();
+        interiorProviders.clear();
 
-        ListTag portsTag = tag.getList("Ports", Tag.TAG_LONG);
-        for (Tag value : portsTag) {
-            ports.add(BlockPos.of(((LongTag) value).getAsLong()));
-        }
+        input.read("Ports", com.mojang.serialization.Codec.LONG.listOf()).ifPresent(list -> {
+            for (long v : list) ports.add(BlockPos.of(v));
+        });
+        input.read("Providers", com.mojang.serialization.Codec.LONG.listOf()).ifPresent(list -> {
+            for (long v : list) interiorProviders.add(BlockPos.of(v));
+        });
 
-        ListTag providersTag = tag.getList("Providers", Tag.TAG_LONG);
-        for (Tag value : providersTag) {
-            interiorProviders.add(BlockPos.of(((LongTag) value).getAsLong()));
-        }
-
-        if (tag.contains("inventory")) {
-            itemHandler.deserializeNBT(registries, tag.getCompound("inventory"));
-        }
+        input.child("inventory").ifPresent(itemHandler::deserialize);
     }
 
     @Override
@@ -175,7 +166,7 @@ public class DatacenterControllerBlockEntity extends AbstractSealedController im
             this.cacheDirty = true;
             validateCacheIfNeeded();
         }
-        if (!itemHandler.getStackInSlot(0).isEmpty()) {
+        if (!itemHandler.copyToList().get(0).isEmpty()) {
             this.distributeProcessorsAndServers();
         }
     }
@@ -204,12 +195,21 @@ public class DatacenterControllerBlockEntity extends AbstractSealedController im
                     pos = srv.getBlockState().getValue(HALF) == DoubleBlockHalf.LOWER ? pos : pos.below();
                 }
 
-                ItemStackHandler handler = providerEntity.getItemHandler();
+                ItemStacksResourceHandler handler = providerEntity.getItemHandler();
                 if (handler != null && providerEntity.getProcessorCount() < providerEntity.getMaxProcessorCount()) {
-                    for (int index = 0; index < handler.getSlots(); index++) {
-                        if (handler.getStackInSlot(index).isEmpty() && !itemHandler.getStackInSlot(0).isEmpty() && handler.isItemValid(0, itemHandler.getStackInSlot(0))) {
-                            handler.insertItem(index, itemHandler.getStackInSlot(0).copyWithCount(1), false);
-                            itemHandler.getStackInSlot(0).shrink(1);
+                    var slots = handler.copyToList();
+                    for (int index = 0; index < slots.size(); index++) {
+                        ItemStack currentUpgrade = itemHandler.copyToList().get(0);
+                        if (slots.get(index).isEmpty() && !currentUpgrade.isEmpty() && handler.isValid(0, ItemResource.of(currentUpgrade))) {
+                            try (net.neoforged.neoforge.transfer.transaction.Transaction tx = net.neoforged.neoforge.transfer.transaction.Transaction.openRoot()) {
+                                handler.insert(index, ItemResource.of(currentUpgrade), 1, tx);
+                                tx.commit();
+                            }
+                            // Also extract from our own inventory
+                            try (net.neoforged.neoforge.transfer.transaction.Transaction tx = net.neoforged.neoforge.transfer.transaction.Transaction.openRoot()) {
+                                itemHandler.extract(0, ItemResource.of(currentUpgrade), 1, tx);
+                                tx.commit();
+                            }
                         }
                     }
                 }
@@ -233,7 +233,7 @@ public class DatacenterControllerBlockEntity extends AbstractSealedController im
         setChanged();
 
         Level level = getLevel();
-        if (level != null && !level.isClientSide) {
+        if (level != null && !level.isClientSide()) {
             BlockState state = getBlockState();
             level.sendBlockUpdated(worldPosition, state, state, 3);
 
@@ -246,30 +246,32 @@ public class DatacenterControllerBlockEntity extends AbstractSealedController im
         }
     }
 
-    private final ItemStackHandler itemHandler = new ItemStackHandler(1) {
+    private final ItemStacksResourceHandler itemHandler = new ItemStacksResourceHandler(1) {
         @Override
-        protected void onContentsChanged(int slot) {
+        protected void onContentsChanged(int slot, ItemStack stack) {
             setChanged();
         }
 
         @Override
-        public boolean isItemValid(int slot, @NotNull ItemStack stack) {
+        public boolean isValid(int slot, @NotNull ItemResource resource) {
+            if (resource == null || resource.isEmpty()) return false;
+            ItemStack stack = resource.toStack();
             return stack.getItem() instanceof ProcessorUnitItem || stack.getItem() instanceof ServerItem;
         }
 
         @Override
-        public int getSlotLimit(int slot) {
+        protected int getCapacity(int slot, ItemResource resource) {
             return 64;
         }
     };
 
-    public ItemStackHandler getItemHandler() {
+    public ItemStacksResourceHandler getItemHandler() {
         return itemHandler;
     }
 
     public void dropContents() {
         if (this.level == null) return;
-        Containers.dropItemStack(this.level, this.worldPosition.getX(), this.worldPosition.getY(), this.worldPosition.getZ(), itemHandler.getStackInSlot(0));
+        Containers.dropItemStack(this.level, this.worldPosition.getX(), this.worldPosition.getY(), this.worldPosition.getZ(), itemHandler.copyToList().get(0));
     }
 
     @Override

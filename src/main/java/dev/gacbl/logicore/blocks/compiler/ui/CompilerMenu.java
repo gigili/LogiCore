@@ -13,12 +13,11 @@ import net.minecraft.world.inventory.SimpleContainerData;
 import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.entity.BlockEntity;
-import net.neoforged.neoforge.items.SlotItemHandler;
+import net.neoforged.neoforge.transfer.item.ResourceHandlerSlot;
 import org.jetbrains.annotations.NotNull;
 
 public class CompilerMenu extends MyAbstractContainerMenu {
-    public static final int TEMPLATE_SLOT_INDEX = 36;
-
+    public static final int TEMPLATE_SLOT_INDEX = 0;
     public CompilerMenu(int containerId, Inventory playerInventory, BlockPos pos) {
         this(containerId, playerInventory, playerInventory.player.level().getBlockEntity(pos), new SimpleContainerData(3));
     }
@@ -27,25 +26,28 @@ public class CompilerMenu extends MyAbstractContainerMenu {
         super(CompilerModule.COMPILER_MENU.get(), containerId, playerInventory, entity, data);
         this.TE_INVENTORY_SLOT_COUNT = 3;
 
-        this.addSlot(new SlotItemHandler(((CompilerBlockEntity) this.blockEntity).getItemHandler(null), 0, 72, 82) {
+        var handler = ((CompilerBlockEntity) this.blockEntity).getInternalItemHandler();
+
+        this.addSlot(new ResourceHandlerSlot(handler, handler::set, CompilerBlockEntity.INPUT_SLOT, 72, 82) {
             @Override
-            public boolean mayPickup(@NotNull Player playerIn) {
+            public boolean mayPickup(Player playerIn) {
                 return false;
             }
             @Override
-            public boolean mayPlace(@NotNull ItemStack stack) {
+            public boolean mayPlace(ItemStack stack) {
                 return false;
             }
         });
 
-        this.addSlot(new SlotItemHandler(((CompilerBlockEntity) this.blockEntity).getItemHandler(null), 1, 144, 82) {
+        this.addSlot(new ResourceHandlerSlot(handler, handler::set, CompilerBlockEntity.OUTPUT_SLOT, 144, 82) {
             @Override
-            public boolean mayPlace(@NotNull ItemStack stack) {
+            public boolean mayPlace(ItemStack stack) {
                 return false;
             }
         });
 
-        this.addSlot(new SlotItemHandler(((CompilerBlockEntity) this.blockEntity).getUpgradeItemHandler(null), 0, 108, 118));
+        var upgradeHandler = ((CompilerBlockEntity) this.blockEntity).getUpgradeItemHandler(null);
+        this.addSlot(new ResourceHandlerSlot(upgradeHandler, upgradeHandler::set, 0, 108, 118));
     }
 
     public CompilerMenu(int i, Inventory inventory, RegistryFriendlyByteBuf registryFriendlyByteBuf) {

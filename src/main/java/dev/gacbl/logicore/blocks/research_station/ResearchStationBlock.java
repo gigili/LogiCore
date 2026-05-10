@@ -4,18 +4,22 @@ import com.mojang.serialization.MapCodec;
 import dev.gacbl.logicore.items.processorunit.ProcessorUnitModule;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.core.HolderGetter;
 import net.minecraft.data.recipes.RecipeCategory;
 import net.minecraft.data.recipes.ShapedRecipeBuilder;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.tags.ItemTags;
+import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.block.BaseEntityBlock;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.RenderShape;
@@ -26,7 +30,7 @@ import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
-import net.minecraft.world.level.block.state.properties.DirectionProperty;
+import net.minecraft.world.level.block.state.properties.EnumProperty;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
@@ -35,7 +39,7 @@ import org.jetbrains.annotations.Nullable;
 
 public class ResearchStationBlock extends BaseEntityBlock {
     public static final VoxelShape SHAPE = Block.box(0.0D, 0.0D, 0.0D, 16.0D, 16.0D, 16.0D);
-    public static final DirectionProperty FACING = BlockStateProperties.HORIZONTAL_FACING;
+    public static final EnumProperty<Direction> FACING = BlockStateProperties.HORIZONTAL_FACING;
     public static final MapCodec<ResearchStationBlock> CODEC = simpleCodec(ResearchStationBlock::new);
 
     protected ResearchStationBlock(Properties properties) {
@@ -46,12 +50,12 @@ public class ResearchStationBlock extends BaseEntityBlock {
         );
     }
 
-    public static ShapedRecipeBuilder getRecipe() {
-        return ShapedRecipeBuilder.shaped(RecipeCategory.REDSTONE, ResearchStationModule.RESEARCH_STATION.get())
+    public static ShapedRecipeBuilder getRecipe(HolderGetter<Item> items) {
+        return ShapedRecipeBuilder.shaped(items, RecipeCategory.REDSTONE, ResearchStationModule.RESEARCH_STATION.get())
                 .pattern("GIG")
                 .pattern("IPI")
                 .pattern("SSS")
-                .define('S', ItemTags.create(ResourceLocation.fromNamespaceAndPath("c", "stones")))
+                .define('S', ItemTags.create(Identifier.fromNamespaceAndPath("c", "stones")))
                 .define('I', Items.IRON_INGOT)
                 .define('G', Items.GOLD_INGOT)
                 .define('P', ProcessorUnitModule.PROCESSOR_UNIT_BASIC.get());
@@ -105,13 +109,8 @@ public class ResearchStationBlock extends BaseEntityBlock {
     }
 
     @Override
-    public boolean propagatesSkylightDown(@NotNull BlockState blockState, @NotNull BlockGetter blockGetter, @NotNull BlockPos blockPos) {
-        return true;
-    }
-
-    @Override
     protected @NotNull InteractionResult useWithoutItem(@NotNull BlockState state, Level level, @NotNull BlockPos pos, @NotNull Player player, @NotNull BlockHitResult hit) {
-        if (!level.isClientSide) {
+        if (!level.isClientSide()) {
             BlockEntity be = level.getBlockEntity(pos);
 
             if (be instanceof ResearchStationBlockEntity serverRack) {
@@ -123,14 +122,23 @@ public class ResearchStationBlock extends BaseEntityBlock {
     }
 
     @Override
-    public void onRemove(@NotNull BlockState state, @NotNull Level level, @NotNull BlockPos pos, @NotNull BlockState newState, boolean isMoving) {
-        if (!state.is(newState.getBlock())) {
-            BlockEntity blockEntity = level.getBlockEntity(pos);
+    protected @NotNull InteractionResult useItemOn(@NotNull ItemStack stack, @NotNull BlockState state, @NotNull Level level, @NotNull BlockPos pos, @NotNull Player player, @NotNull InteractionHand hand, @NotNull BlockHitResult hitResult) {
+        InteractionResult result = super.useItemOn(stack, state, level, pos, player, hand, hitResult);
+        if (result != InteractionResult.PASS) {
+            return result;
+        }
+        return this.useWithoutItem(state, level, pos, player, hitResult);
+    }
+
+    @Override
+    public void destroy(@NotNull LevelAccessor level, @NotNull BlockPos pos, @NotNull BlockState state) {
+        if (level instanceof Level l) {
+            BlockEntity blockEntity = l.getBlockEntity(pos);
             if (blockEntity instanceof ResearchStationBlockEntity be) {
                 be.dropContents();
             }
-            super.onRemove(state, level, pos, newState, isMoving);
         }
+        super.destroy(level, pos, state);
     }
 
     @Nullable
@@ -145,7 +153,7 @@ public class ResearchStationBlock extends BaseEntityBlock {
     @Override
     public void setPlacedBy(@NotNull Level level, @NotNull BlockPos pos, @NotNull BlockState state, @Nullable LivingEntity placer, @NotNull ItemStack stack) {
         super.setPlacedBy(level, pos, state, placer, stack);
-        if (!level.isClientSide && placer instanceof Player player) {
+        if (!level.isClientSide() && placer instanceof Player player) {
             BlockEntity blockEntity = level.getBlockEntity(pos);
             if (blockEntity instanceof ResearchStationBlockEntity be) {
                 be.setOwner(player.getUUID());

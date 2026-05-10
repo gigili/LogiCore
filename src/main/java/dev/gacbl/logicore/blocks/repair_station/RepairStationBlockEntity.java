@@ -21,7 +21,10 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
-import net.neoforged.neoforge.items.ItemStackHandler;
+import net.minecraft.world.level.storage.ValueInput;
+import net.minecraft.world.level.storage.ValueOutput;
+import net.neoforged.neoforge.transfer.item.ItemResource;
+import net.neoforged.neoforge.transfer.item.ItemStacksResourceHandler;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -37,28 +40,29 @@ public class RepairStationBlockEntity extends BlockEntity implements MenuProvide
         super(RepairStationModule.REPAIR_STATION_BE.get(), pos, blockState);
     }
 
-    private final ItemStackHandler itemHandler = new ItemStackHandler(1) {
+    private final ItemStacksResourceHandler itemHandler = new ItemStacksResourceHandler(1) {
         @Override
-        protected void onContentsChanged(int slot) {
+        protected void onContentsChanged(int slot, ItemStack stack) {
             setChanged();
-            if (!this.getStackInSlot(0).isEmpty()) {
+            if (!stack.isEmpty()) {
                 requestCycles();
             }
         }
 
         @Override
-        public boolean isItemValid(int slot, @NotNull ItemStack stack) {
-            return stack.isDamaged();
+        public boolean isValid(int slot, @NotNull ItemResource resource) {
+            if (resource == null || resource.isEmpty()) return false;
+            return resource.toStack().isDamaged();
         }
 
         @Override
-        public int getSlotLimit(int slot) {
+        protected int getCapacity(int slot, ItemResource resource) {
             return 1;
         }
     };
 
     private void requestCycles() {
-        if (level == null || level.isClientSide || level.getServer() == null) return;
+        if (level == null || level.isClientSide() || level.getServer() == null) return;
 
         long demand = getCycleDemand();
         if (demand <= 0) return;
@@ -76,7 +80,7 @@ public class RepairStationBlockEntity extends BlockEntity implements MenuProvide
         }
     }
 
-    public ItemStackHandler getItemHandler() {
+    public ItemStacksResourceHandler getItemHandler() {
         return itemHandler;
     }
 
@@ -111,39 +115,37 @@ public class RepairStationBlockEntity extends BlockEntity implements MenuProvide
     };
 
     @Override
-    protected void saveAdditional(@NotNull CompoundTag tag, @NotNull HolderLookup.Provider registries) {
-        super.saveAdditional(tag, registries);
-        tag.put("inventory", itemHandler.serializeNBT(registries));
-        tag.putInt("progress", progress);
-        tag.putLong("currentCycles", currentCycles);
-        tag.putInt("requestCooldown", requestCooldown);
+    protected void saveAdditional(@NotNull ValueOutput output) {
+        super.saveAdditional(output);
+        itemHandler.serialize(output.child("inventory"));
+        output.putInt("progress", progress);
+        output.putLong("currentCycles", currentCycles);
+        output.putInt("requestCooldown", requestCooldown);
     }
 
     @Override
-    protected void loadAdditional(@NotNull CompoundTag tag, @NotNull HolderLookup.Provider registries) {
-        super.loadAdditional(tag, registries);
-        if (tag.contains("inventory")) {
-            itemHandler.deserializeNBT(registries, tag.getCompound("inventory"));
-        }
-        progress = tag.getInt("progress");
-        currentCycles = tag.getLong("currentCycles");
-        requestCooldown = tag.getInt("requestCooldown");
+    protected void loadAdditional(@NotNull ValueInput input) {
+        super.loadAdditional(input);
+        input.child("inventory").ifPresent(itemHandler::deserialize);
+        progress = input.getIntOr("progress", 0);
+        currentCycles = input.getLongOr("currentCycles", 0);
+        requestCooldown = input.getIntOr("requestCooldown", 0);
     }
 
     public void setRepairing(BlockPos blockPos, BlockState blockState, Boolean isRepairing) {
-        if (level == null || level.isClientSide) return;
+        if (level == null || level.isClientSide()) return;
         level.setBlock(blockPos, blockState.setValue(RepairStationModule.REPAIRING, isRepairing), 3);
         setChanged();
     }
 
     public static void serverTick(Level level, BlockPos blockPos, BlockState blockState, RepairStationBlockEntity be) {
-        if (level.isClientSide) return;
+        if (level.isClientSide()) return;
 
         if (be.requestCooldown > 0) {
             be.requestCooldown--;
         }
 
-        ItemStack stack = be.itemHandler.getStackInSlot(0);
+        ItemStack stack = be.itemHandler.copyToList().get(0);
         if (stack.isEmpty() || !stack.isDamaged()) {
             if (blockState.getValue(RepairStationModule.REPAIRING)) {
                 be.setRepairing(blockPos, blockState, false);
@@ -154,7 +156,9 @@ public class RepairStationBlockEntity extends BlockEntity implements MenuProvide
         long costPerTick = be.baseRepairCost;
         if (be.currentCycles >= costPerTick) {
             be.currentCycles -= costPerTick;
-            stack.setDamageValue(stack.getDamageValue() - 1);
+            ItemStack newStack = stack.copy();
+            newStack.setDamageValue(newStack.getDamageValue() - 1);
+            be.itemHandler.set(0, ItemResource.of(newStack), newStack.getCount());
             level.sendBlockUpdated(blockPos, blockState, blockState, 3);
             if (!blockState.getValue(RepairStationModule.REPAIRING)) {
                 be.setRepairing(blockPos, blockState, true);
@@ -180,12 +184,12 @@ public class RepairStationBlockEntity extends BlockEntity implements MenuProvide
 
     public void dropContents() {
         if (this.level == null) return;
-        Containers.dropItemStack(this.level, this.worldPosition.getX(), this.worldPosition.getY(), this.worldPosition.getZ(), itemHandler.getStackInSlot(0));
+        Containers.dropItemStack(this.level, this.worldPosition.getX(), this.worldPosition.getY(), this.worldPosition.getZ(), itemHandler.copyToList().get(0));
     }
 
     @Override
     public long getCycleDemand() {
-        ItemStack stack = itemHandler.getStackInSlot(0);
+        ItemStack stack = itemHandler.copyToList().get(0);
         if (stack.isEmpty()) return 0;
         return ((long) stack.getDamageValue() * baseRepairCost);
     }
@@ -215,13 +219,13 @@ public class RepairStationBlockEntity extends BlockEntity implements MenuProvide
     }
 
     public int getProgress() {
-        ItemStack stack = itemHandler.getStackInSlot(0);
+        ItemStack stack = itemHandler.copyToList().get(0);
         if (stack.isEmpty() || !stack.isDamaged()) return 0;
         return stack.getMaxDamage() - stack.getDamageValue();
     }
 
     public int getMaxProgress() {
-        ItemStack stack = itemHandler.getStackInSlot(0);
+        ItemStack stack = itemHandler.copyToList().get(0);
         if (stack.isEmpty() || !stack.isDamaged()) return 0;
         return stack.getMaxDamage();
     }

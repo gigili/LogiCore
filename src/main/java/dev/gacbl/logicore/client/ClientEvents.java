@@ -12,7 +12,7 @@ import net.minecraft.advancements.AdvancementHolder;
 import net.minecraft.advancements.AdvancementProgress;
 import net.minecraft.client.Minecraft;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.player.Player;
@@ -20,7 +20,7 @@ import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.client.event.ClientPlayerNetworkEvent;
-import net.neoforged.neoforge.client.event.RecipesUpdatedEvent;
+// RecipesUpdatedEvent was removed in NeoForge 26.1
 import net.neoforged.neoforge.client.event.RegisterGuiLayersEvent;
 import net.neoforged.neoforge.event.entity.player.ItemTooltipEvent;
 import net.neoforged.neoforge.event.entity.player.PlayerEvent;
@@ -33,16 +33,6 @@ import static dev.gacbl.logicore.LogiCore.*;
 @EventBusSubscriber(modid = LogiCore.MOD_ID, value = Dist.CLIENT)
 public class ClientEvents {
     @SubscribeEvent
-    public static void onRecipesUpdated(RecipesUpdatedEvent event) {
-        assert net.minecraft.client.Minecraft.getInstance().level != null;
-        CycleValueManager.reload(
-                event.getRecipeManager(),
-                net.minecraft.client.Minecraft.getInstance().level.registryAccess(),
-                false
-        );
-    }
-
-    @SubscribeEvent
     public static void onItemTooltip(ItemTooltipEvent event) {
         if (CycleValueManager.hasCycleValue(event.getItemStack())) {
             int value = CycleValueManager.getCycleValue(event.getItemStack());
@@ -54,18 +44,18 @@ public class ClientEvents {
 
     @SubscribeEvent
     public static void registerOverlays(RegisterGuiLayersEvent event) {
-        event.registerAboveAll(ResourceLocation.fromNamespaceAndPath(LogiCore.MOD_ID, "cycle_hud"), (gui, deltaTracker) -> {
+        event.registerAboveAll(Identifier.fromNamespaceAndPath(LogiCore.MOD_ID, "cycle_hud"), (gui, deltaTracker) -> {
             long cycles = ClientCycleData.getCycles();
 
             Player player = Minecraft.getInstance().player;
             if (player != null && player.isShiftKeyDown()) {
-                gui.drawString(
+                gui.text(
                         Minecraft.getInstance().font,
                         Component.translatable("tooltip.logicore.ui.cloud_cycles", cycles),
                         10, 10, 0xFFFFFF
                 );
             } else {
-                gui.drawString(
+                gui.text(
                         Minecraft.getInstance().font,
                         Component.translatable("tooltip.logicore.ui.cloud_cycles", Utils.formatValues(cycles)),
                         10, 10, 0xFFFFFF
@@ -101,7 +91,7 @@ public class ClientEvents {
 
     @SubscribeEvent
     public static void onItemCrafted(PlayerEvent.ItemCraftedEvent event) {
-        if (event.getEntity().level().isClientSide) return;
+        if (event.getEntity().level().isClientSide()) return;
         if (!(event.getEntity() instanceof ServerPlayer player)) return;
 
         if (event.getCrafting().is(ProcessorUnitModule.PROCESSOR_UNIT_BASIC.get())) {
@@ -113,8 +103,8 @@ public class ClientEvents {
 
     private static void grantDevAdvancement(ServerPlayer player) {
         String username = player.getName().getString().toLowerCase();
-        ResourceLocation advId = ResourceLocation.fromNamespaceAndPath(LogiCore.MOD_ID, username);
-        AdvancementHolder advancement = player.server.getAdvancements().get(advId);
+        Identifier advId = Identifier.fromNamespaceAndPath(LogiCore.MOD_ID, username);
+        AdvancementHolder advancement = ((ServerLevel) player.level()).getServer().getAdvancements().get(advId);
 
         if (advancement != null) {
             AdvancementProgress progress = player.getAdvancements().getOrStartProgress(advancement);

@@ -5,8 +5,8 @@ import dev.gacbl.logicore.api.cycles.CycleSavedData;
 import dev.gacbl.logicore.api.cycles.CycleValueManager;
 import dev.gacbl.logicore.core.ModTags;
 import net.minecraft.core.registries.Registries;
+import net.minecraft.resources.Identifier;
 import net.minecraft.resources.ResourceKey;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.item.ItemStack;
@@ -16,14 +16,14 @@ import net.minecraft.world.item.enchantment.Enchantments;
 import net.minecraft.world.level.block.Block;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
-import net.neoforged.neoforge.event.level.BlockEvent;
+import net.neoforged.neoforge.event.level.block.BreakBlockEvent;
 
 @EventBusSubscriber(modid = LogiCore.MOD_ID)
 public class RecyclerEnchantmentModule {
-    public static final ResourceKey<Enchantment> RECYCLER = ResourceKey.create(Registries.ENCHANTMENT, ResourceLocation.fromNamespaceAndPath(LogiCore.MOD_ID, "recycler"));
+    public static final ResourceKey<Enchantment> RECYCLER = ResourceKey.create(Registries.ENCHANTMENT, Identifier.fromNamespaceAndPath(LogiCore.MOD_ID, "recycler"));
 
     @SubscribeEvent
-    public static void onBlockBreak(BlockEvent.BreakEvent event) {
+    public static void onBlockBreak(BreakBlockEvent event) {
         if (event.getLevel().isClientSide()) return;
         if (!(event.getPlayer() instanceof ServerPlayer player)) return;
         if (player.isShiftKeyDown()) return;
@@ -31,9 +31,9 @@ public class RecyclerEnchantmentModule {
         ItemStack tool = player.getMainHandItem();
         if (tool.isEmpty()) return;
 
-        ServerLevel level = player.serverLevel();
-        var enchantmentRegistry = level.registryAccess().registryOrThrow(Registries.ENCHANTMENT);
-        var recyclerEnchantment = enchantmentRegistry.getHolderOrThrow(RECYCLER);
+        ServerLevel level = (ServerLevel) player.level();
+        var enchantmentRegistry = level.registryAccess().lookup(Registries.ENCHANTMENT).orElseThrow();
+        var recyclerEnchantment = enchantmentRegistry.getOrThrow(RECYCLER);
 
         if (EnchantmentHelper.getTagEnchantmentLevel(recyclerEnchantment, tool) <= 0) return;
 
@@ -44,9 +44,9 @@ public class RecyclerEnchantmentModule {
             int cyclesValue = CycleValueManager.getCycleValue(dropStack);
 
             // Respect Fortune/Looting
-            int bonusLevel = EnchantmentHelper.getTagEnchantmentLevel(enchantmentRegistry.getHolderOrThrow(Enchantments.FORTUNE), tool);
+            int bonusLevel = EnchantmentHelper.getTagEnchantmentLevel(enchantmentRegistry.getOrThrow(Enchantments.FORTUNE), tool);
             if (bonusLevel == 0) {
-                bonusLevel = EnchantmentHelper.getTagEnchantmentLevel(enchantmentRegistry.getHolderOrThrow(Enchantments.LOOTING), tool);
+                bonusLevel = EnchantmentHelper.getTagEnchantmentLevel(enchantmentRegistry.getOrThrow(Enchantments.LOOTING), tool);
             }
 
             if (bonusLevel > 0) {

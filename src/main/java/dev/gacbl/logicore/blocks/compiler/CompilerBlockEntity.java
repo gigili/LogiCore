@@ -25,9 +25,13 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
-import net.neoforged.neoforge.items.IItemHandler;
-import net.neoforged.neoforge.items.ItemStackHandler;
-import net.neoforged.neoforge.items.wrapper.RangedWrapper;
+import net.minecraft.world.level.storage.ValueInput;
+import net.minecraft.world.level.storage.ValueOutput;
+import net.neoforged.neoforge.transfer.RangedResourceHandler;
+import net.neoforged.neoforge.transfer.ResourceHandler;
+import net.neoforged.neoforge.transfer.item.ItemResource;
+import net.neoforged.neoforge.transfer.item.ItemStacksResourceHandler;
+import net.neoforged.neoforge.transfer.transaction.TransactionContext;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -55,7 +59,7 @@ public class CompilerBlockEntity extends BlockEntity implements ICycleConsumer, 
             return switch (pIndex) {
                 case 0 -> CompilerBlockEntity.this.progress;
                 case 1 -> CompilerBlockEntity.this.maxProgress;
-                case 2 -> CompilerBlockEntity.this.upgradeItemHandler.getStackInSlot(0).getCount();
+                case 2 -> CompilerBlockEntity.this.upgradeItemHandler.copyToList().get(0).getCount();
                 default -> 0;
             };
         }
@@ -79,56 +83,68 @@ public class CompilerBlockEntity extends BlockEntity implements ICycleConsumer, 
         super(CompilerModule.COMPILER_BLOCK_ENTITY.get(), pos, blockState);
     }
 
-    private final ItemStackHandler itemHandler = new ItemStackHandler(2) {
+    private final ItemStacksResourceHandler itemHandler = new ItemStacksResourceHandler(2) {
         @Override
-        protected void onContentsChanged(int slot) {
+        protected void onContentsChanged(int slot, ItemStack stack) {
             setChanged();
-            if (slot == INPUT_SLOT && !this.getStackInSlot(INPUT_SLOT).isEmpty()) {
+            if (slot == INPUT_SLOT && !stack.isEmpty()) {
                 requestCycles();
             }
         }
 
         @Override
-        public boolean isItemValid(int slot, @NotNull ItemStack stack) {
-            return slot == INPUT_SLOT && CycleValueManager.hasCycleValue(stack) && ClientKnowledgeData.isUnlocked(Utils.getItemKey(stack));
+        protected int getCapacity(int slot, ItemResource resource) {
+            return slot == INPUT_SLOT ? 1 : 64;
         }
 
         @Override
-        public int getSlotLimit(int slot) {
-            return slot == INPUT_SLOT ? 1 : super.getSlotLimit(slot);
+        public boolean isValid(int slot, @NotNull ItemResource resource) {
+            if (resource == null || resource.isEmpty()) return false;
+            ItemStack stack = resource.toStack();
+            return slot == INPUT_SLOT && CycleValueManager.hasCycleValue(stack) && ClientKnowledgeData.isUnlocked(Utils.getItemKey(stack));
         }
     };
 
-    private final ItemStackHandler upgradeItemHandler = new ItemStackHandler(1) {
+    private final ItemStacksResourceHandler upgradeItemHandler = new ItemStacksResourceHandler(1) {
         @Override
-        protected void onContentsChanged(int slot) {
+        protected void onContentsChanged(int slot, ItemStack stack) {
             setChanged();
         }
 
         @Override
-        public boolean isItemValid(int slot, @NotNull ItemStack stack) {
-            return stack.getItem() instanceof StackUpgradeItem;
-        }
-
-        @Override
-        public int getSlotLimit(int slot) {
+        protected int getCapacity(int slot, ItemResource resource) {
             return 16;
         }
-    };
 
-    private final IItemHandler automationOutputHandler = new RangedWrapper(itemHandler, OUTPUT_SLOT, OUTPUT_SLOT + 1) {
         @Override
-        public @NotNull ItemStack insertItem(int slot, @NotNull ItemStack stack, boolean simulate) {
-            return stack;
+        public boolean isValid(int slot, @NotNull ItemResource resource) {
+            if (resource == null || resource.isEmpty()) return false;
+            return resource.toStack().getItem() instanceof StackUpgradeItem;
         }
     };
 
-    public IItemHandler getItemHandler(@Nullable Direction side) {
+    private final ResourceHandler<ItemResource> automationOutputHandler = new RangedResourceHandler<>(itemHandler, OUTPUT_SLOT, OUTPUT_SLOT + 1) {
+        @Override
+        public int insert(ItemResource resource, int amount, TransactionContext tx) {
+            return 0; // Prevent insertion into output via automation
+        }
+
+        @Override
+        public int insert(int slot, ItemResource resource, int amount, TransactionContext tx) {
+            return 0;
+        }
+    };
+
+    public ItemStacksResourceHandler getInternalItemHandler() {
+        return itemHandler;
+    }
+
+    public ResourceHandler<ItemResource> getItemHandler(@Nullable Direction side) {
         if (side == null) return itemHandler;
         return automationOutputHandler;
     }
 
-    public IItemHandler getUpgradeItemHandler(@Nullable Direction side) {
+    public ItemStacksResourceHandler getUpgradeItemHandler(@Nullable Direction side) {
         return upgradeItemHandler;
     }
 
@@ -139,14 +155,14 @@ public class CompilerBlockEntity extends BlockEntity implements ICycleConsumer, 
 
     @Override
     public long getCycleDemand() {
-        ItemStack template = itemHandler.getStackInSlot(INPUT_SLOT);
+        ItemStack template = itemHandler.copyToList().get(INPUT_SLOT);
         if (template.isEmpty()) return 0;
 
         int cost = CycleValueManager.getCycleValue(template);
         if (cost <= 0) return 0;
 
         if (canInsertOutput(template)) {
-            int upgradeCount = upgradeItemHandler.getStackInSlot(0).getCount();
+            int upgradeCount = upgradeItemHandler.copyToList().get(0).getCount();
             return cost * ((upgradeCount > 0) ? (upgradeCount * 4L) : 1);
         }
         return 0;
@@ -171,11 +187,11 @@ public class CompilerBlockEntity extends BlockEntity implements ICycleConsumer, 
     }
 
     public static void serverTick(Level level, BlockPos pos, BlockState state, CompilerBlockEntity be) {
-        if (level.isClientSide) return;
+        if (level.isClientSide()) return;
 
         boolean wasWorking = be.progress > 0;
 
-        ItemStack template = be.itemHandler.getStackInSlot(INPUT_SLOT);
+        ItemStack template = be.itemHandler.copyToList().get(INPUT_SLOT);
         if (template.isEmpty() || !CycleValueManager.hasCycleValue(template)) {
             if (be.progress > 0) {
                 be.progress = 0;
@@ -201,7 +217,7 @@ public class CompilerBlockEntity extends BlockEntity implements ICycleConsumer, 
 
             if (be.progress >= be.maxProgress) {
                 be.currentCycles -= cost;
-                int upgradeCount = be.upgradeItemHandler.getStackInSlot(0).getCount();
+                int upgradeCount = be.upgradeItemHandler.copyToList().get(0).getCount();
                 ItemStack result = template.copy();
                 int targetCount = upgradeCount > 0 ? upgradeCount * 4 : 1;
                 result.setCount(Math.min(targetCount, template.getMaxStackSize()));
@@ -224,13 +240,13 @@ public class CompilerBlockEntity extends BlockEntity implements ICycleConsumer, 
     }
 
     private boolean canInsertOutput(ItemStack template) {
-        ItemStack outputStack = itemHandler.getStackInSlot(OUTPUT_SLOT);
+        ItemStack outputStack = itemHandler.copyToList().get(OUTPUT_SLOT);
         if (outputStack.isEmpty()) return true;
 
         if (!ItemStack.isSameItemSameComponents(outputStack, template)) return false;
 
         int outputCount = outputStack.getCount();
-        int upgradeCount = upgradeItemHandler.getStackInSlot(0).getCount();
+        int upgradeCount = upgradeItemHandler.copyToList().get(0).getCount();
 
         if (upgradeCount == 0) {
             return outputCount < outputStack.getMaxStackSize();
@@ -240,42 +256,38 @@ public class CompilerBlockEntity extends BlockEntity implements ICycleConsumer, 
     }
 
     private void addToOutput(ItemStack result) {
-        ItemStack existing = itemHandler.getStackInSlot(OUTPUT_SLOT);
+        ItemStack existing = itemHandler.copyToList().get(OUTPUT_SLOT);
         if (existing.isEmpty()) {
-            itemHandler.setStackInSlot(OUTPUT_SLOT, result);
+            itemHandler.set(OUTPUT_SLOT, ItemResource.of(result), result.getCount());
         } else {
             ItemStack combined = existing.copy();
             combined.grow(result.getCount());
-            itemHandler.setStackInSlot(OUTPUT_SLOT, combined);
+            itemHandler.set(OUTPUT_SLOT, ItemResource.of(combined), combined.getCount());
         }
     }
 
     public void dropContents() {
         if (this.level == null) return;
-        Containers.dropItemStack(this.level, this.worldPosition.getX(), this.worldPosition.getY(), this.worldPosition.getZ(), itemHandler.getStackInSlot(OUTPUT_SLOT));
-        Containers.dropItemStack(this.level, this.worldPosition.getX(), this.worldPosition.getY(), this.worldPosition.getZ(), upgradeItemHandler.getStackInSlot(0));
+        Containers.dropItemStack(this.level, this.worldPosition.getX(), this.worldPosition.getY(), this.worldPosition.getZ(), itemHandler.copyToList().get(OUTPUT_SLOT));
+        Containers.dropItemStack(this.level, this.worldPosition.getX(), this.worldPosition.getY(), this.worldPosition.getZ(), upgradeItemHandler.copyToList().get(0));
     }
 
     @Override
-    protected void saveAdditional(@NotNull CompoundTag tag, @NotNull HolderLookup.Provider registries) {
-        super.saveAdditional(tag, registries);
-        tag.put("inventory", itemHandler.serializeNBT(registries));
-        tag.put("upgrades", upgradeItemHandler.serializeNBT(registries));
-        tag.putInt("progress", progress);
-        tag.putLong("currentCycles", currentCycles);
+    protected void saveAdditional(@NotNull ValueOutput output) {
+        super.saveAdditional(output);
+        itemHandler.serialize(output.child("inventory"));
+        upgradeItemHandler.serialize(output.child("upgrades"));
+        output.putInt("progress", progress);
+        output.putLong("currentCycles", currentCycles);
     }
 
     @Override
-    protected void loadAdditional(@NotNull CompoundTag tag, @NotNull HolderLookup.Provider registries) {
-        super.loadAdditional(tag, registries);
-        if (tag.contains("inventory")) {
-            itemHandler.deserializeNBT(registries, tag.getCompound("inventory"));
-        }
-        if (tag.contains("upgrades")) {
-            upgradeItemHandler.deserializeNBT(registries, tag.getCompound("upgrades"));
-        }
-        progress = tag.getInt("progress");
-        currentCycles = tag.getLong("currentCycles");
+    protected void loadAdditional(@NotNull ValueInput input) {
+        super.loadAdditional(input);
+        input.child("inventory").ifPresent(itemHandler::deserialize);
+        input.child("upgrades").ifPresent(upgradeItemHandler::deserialize);
+        progress = input.getIntOr("progress", 0);
+        currentCycles = input.getLongOr("currentCycles", 0);
     }
 
     @Override
@@ -303,7 +315,7 @@ public class CompilerBlockEntity extends BlockEntity implements ICycleConsumer, 
     }
 
     private void requestCycles() {
-        if (level == null || level.isClientSide || level.getServer() == null) return;
+        if (level == null || level.isClientSide() || level.getServer() == null) return;
         NetworkManager manager = NetworkManager.get(level.getServer().overworld());
         for (Direction dir : Direction.values()) {
             BlockPos neighborPos = this.worldPosition.relative(dir);
@@ -335,7 +347,7 @@ public class CompilerBlockEntity extends BlockEntity implements ICycleConsumer, 
 
     private void sendUpdatePacket() {
         setChanged();
-        if (level != null && !level.isClientSide) {
+        if (level != null && !level.isClientSide()) {
             level.sendBlockUpdated(worldPosition, getBlockState(), getBlockState(), 3);
         }
     }

@@ -30,7 +30,7 @@ public class CommonModEvents {
 
     private static void syncCycleData(net.minecraft.world.entity.player.Player playerEntity) {
         if (playerEntity instanceof ServerPlayer serverPlayer) {
-            ServerLevel level = serverPlayer.serverLevel();
+            ServerLevel level = (ServerLevel) serverPlayer.level();
             CycleSavedData data = CycleSavedData.get(level);
 
             String key = IntegrationUtils.getStorageKey(level, serverPlayer.getUUID());

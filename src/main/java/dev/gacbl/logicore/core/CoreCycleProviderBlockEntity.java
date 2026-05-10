@@ -11,7 +11,6 @@ import dev.gacbl.logicore.network.payload.SyncCycleDataPayload;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.nbt.NbtUtils;
 import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket;
 import net.minecraft.world.inventory.ContainerData;
 import net.minecraft.world.level.Level;
@@ -19,29 +18,25 @@ import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.DoubleBlockHalf;
-import net.neoforged.neoforge.energy.EnergyStorage;
-import net.neoforged.neoforge.energy.IEnergyStorage;
-import net.neoforged.neoforge.items.ItemStackHandler;
+import net.minecraft.world.level.storage.ValueInput;
+import net.minecraft.world.level.storage.ValueOutput;
+import net.neoforged.neoforge.transfer.energy.SimpleEnergyHandler;
+import net.neoforged.neoforge.transfer.item.ItemStacksResourceHandler;
+import net.neoforged.neoforge.transfer.transaction.Transaction;
 import org.jetbrains.annotations.NotNull;
-
-import java.util.Objects;
 
 public abstract class CoreCycleProviderBlockEntity extends BlockEntity implements ICycleProvider {
     protected int BASE_CYCLE_GENERATION;
     protected int CYCLES_PER_PROCESSOR;
     protected int FE_PER_CYCLE;
 
-    protected EnergyStorage energyStorage;
+    protected SimpleEnergyHandler energyHandler;
     protected CycleStorage cycleStorage;
 
     public boolean isGenerating = false;
-
     public BlockPos dataCenterController = null;
-
     protected boolean hasDataCenterBoost = false;
-
     protected int dataCenterBoost = 0;
-
     protected int cachedProcessorCount = 0;
 
     public CoreCycleProviderBlockEntity(BlockEntityType<?> type, BlockPos pos, BlockState blockState) {
@@ -53,7 +48,7 @@ public abstract class CoreCycleProviderBlockEntity extends BlockEntity implement
         BASE_CYCLE_GENERATION = baseCycleGeneration;
         CYCLES_PER_PROCESSOR = cyclePerProcessor;
         FE_PER_CYCLE = fePerCycle;
-        energyStorage = new EnergyStorage(feCapacity, 100_000, 100_000);
+        energyHandler = new SimpleEnergyHandler(feCapacity, 100_000, 100_000);
         cycleStorage = new CycleStorage(cycleCapacity);
         this.dataCenterBoost = dataCenterBoost;
     }
@@ -62,8 +57,8 @@ public abstract class CoreCycleProviderBlockEntity extends BlockEntity implement
         @Override
         public int get(int index) {
             return (int) switch (index) {
-                case 0 -> CoreCycleProviderBlockEntity.this.energyStorage.getEnergyStored();
-                case 1 -> CoreCycleProviderBlockEntity.this.energyStorage.getMaxEnergyStored();
+                case 0 -> CoreCycleProviderBlockEntity.this.energyHandler.getAmountAsInt();
+                case 1 -> CoreCycleProviderBlockEntity.this.energyHandler.getCapacityAsInt();
                 case 2 -> CoreCycleProviderBlockEntity.this.cycleStorage.getCyclesAvailable();
                 case 3 -> CoreCycleProviderBlockEntity.this.cycleStorage.getCycleCapacity();
                 case 4 -> CoreCycleProviderBlockEntity.this.calculateBaseCycleGeneration();
@@ -88,10 +83,11 @@ public abstract class CoreCycleProviderBlockEntity extends BlockEntity implement
 
     public int calculateBaseCycleGeneration() {
         long cyclesToGenerate = BASE_CYCLE_GENERATION;
-        ItemStackHandler handler = getItemHandler();
+        ItemStacksResourceHandler handler = getItemHandler();
         if (handler != null) {
-            for (int i = 0; i < handler.getSlots(); i++) {
-                var stack = handler.getStackInSlot(i);
+            var slots = handler.copyToList();
+            for (int i = 0; i < slots.size(); i++) {
+                var stack = slots.get(i);
                 if (stack.getItem() instanceof ProcessorUnitItem processor) {
                     cyclesToGenerate += processor.tier.cycleRate.get();
                 }
@@ -120,45 +116,43 @@ public abstract class CoreCycleProviderBlockEntity extends BlockEntity implement
     }
 
     @Override
-    public long receiveCycles(long receive, boolean simulate) {
-        return this.cycleStorage.receiveCycles(receive, simulate);
+    public long receiveCycles(long maxReceive, boolean simulate) {
+        return this.cycleStorage.receiveCycles(maxReceive, simulate);
     }
 
+    public SimpleEnergyHandler getEnergyHandler() {
+        return this.energyHandler;
+    }
+
+    public abstract ItemStacksResourceHandler getItemHandler();
+
     @Override
-    protected void saveAdditional(@NotNull CompoundTag tag, @NotNull HolderLookup.Provider registries) {
-        super.saveAdditional(tag, registries);
-        tag.put("energy", this.energyStorage.serializeNBT(registries));
-        tag.put("cycles", this.cycleStorage.serializeNBT(registries));
-        tag.putBoolean("isGenerating", isGenerating);
+    protected void saveAdditional(@NotNull ValueOutput output) {
+        super.saveAdditional(output);
+        energyHandler.serialize(output.child("energy"));
+        output.putLong("cycles", cycleStorage.getCyclesAvailable());
+        output.putBoolean("isGenerating", isGenerating);
         if (dataCenterController != null) {
-            tag.put("dataCenterController", NbtUtils.writeBlockPos(dataCenterController));
+            output.putLong("dataCenterController", dataCenterController.asLong());
         }
-        tag.putBoolean("hasDataCenterBoost", hasDataCenterBoost);
+        output.putBoolean("hasDataCenterBoost", hasDataCenterBoost);
     }
 
     @Override
-    protected void loadAdditional(@NotNull CompoundTag tag, @NotNull HolderLookup.Provider registries) {
-        super.loadAdditional(tag, registries);
-        if (tag.contains("energy", 3) && tag.get("energy") != null) {
-            this.energyStorage.deserializeNBT(registries, Objects.requireNonNull(tag.get("energy")));
+    protected void loadAdditional(@NotNull ValueInput input) {
+        super.loadAdditional(input);
+        input.child("energy").ifPresent(energyHandler::deserialize);
+        cycleStorage.receiveCycles(input.getLongOr("cycles", 0L), false);
+        isGenerating = input.getBooleanOr("isGenerating", false);
+        long dataCenterControllerLong = input.getLongOr("dataCenterController", 0L);
+        if (dataCenterControllerLong != 0L) {
+            dataCenterController = BlockPos.of(dataCenterControllerLong);
         }
-        if (tag.contains("cycles", 10)) {
-            this.cycleStorage.deserializeNBT(registries, (CompoundTag) tag.get("cycles"));
-        }
-
-        if (tag.contains("isGenerating")) {
-            isGenerating = tag.getBoolean("isGenerating");
-        }
-
-        if (tag.contains("dataCenterController")) {
-            dataCenterController = NbtUtils.readBlockPos(tag, "dataCenterController").orElse(null);
-        }
-
-        hasDataCenterBoost = tag.getBoolean("hasDataCenterBoost");
+        hasDataCenterBoost = input.getBooleanOr("hasDataCenterBoost", false);
     }
 
     public static void serverTick(Level level, BlockPos pos, BlockState state, CoreCycleProviderBlockEntity be) {
-        if (level.isClientSide) return;
+        if (level.isClientSide()) return;
         be.hasDataCenterBoost = false;
         if (be.dataCenterController != null) {
             if (level.getBlockEntity(be.dataCenterController) instanceof AbstractSealedController abc) {
@@ -197,7 +191,7 @@ public abstract class CoreCycleProviderBlockEntity extends BlockEntity implement
     }
 
     private void generateCycles() {
-        if (this.level == null || this.level.isClientSide || !canGenerate()) {
+        if (this.level == null || this.level.isClientSide() || !canGenerate()) {
             isGenerating = false;
             return;
         }
@@ -205,9 +199,8 @@ public abstract class CoreCycleProviderBlockEntity extends BlockEntity implement
         if (this.cycleStorage.getCyclesAvailable() >= this.cycleStorage.getCycleCapacity()) {
             isGenerating = false;
             return;
-
         }
-        if (this.energyStorage.getEnergyStored() < FE_PER_CYCLE) {
+        if (this.energyHandler.getAmountAsLong() < FE_PER_CYCLE) {
             isGenerating = false;
             return;
         }
@@ -228,9 +221,12 @@ public abstract class CoreCycleProviderBlockEntity extends BlockEntity implement
 
         boolean prevGenerating = isGenerating;
 
-        if (this.energyStorage.extractEnergy((int) feCost, true) == feCost) {
+        if (this.energyHandler.getAmountAsLong() >= feCost) {
             isGenerating = true;
-            this.energyStorage.extractEnergy((int) feCost, false);
+            try (Transaction tx = Transaction.openRoot()) {
+                this.energyHandler.extract((int) feCost, tx);
+                tx.commit();
+            }
             this.cycleStorage.receiveCycles(cyclesToGenerate, false);
             setChanged();
         } else {
@@ -246,19 +242,25 @@ public abstract class CoreCycleProviderBlockEntity extends BlockEntity implement
         return this.cycleStorage;
     }
 
-    public IEnergyStorage getEnergyStorage() {
-        return this.energyStorage;
-    }
-
-    abstract public ItemStackHandler getItemHandler();
-
     public void setDataCenterController(BlockPos controllerPos) {
         this.dataCenterController = controllerPos;
         setChanged();
     }
 
     public void setClientData(int energy, long cycles, boolean isGenerating) {
-        this.energyStorage.receiveEnergy(energy - this.energyStorage.getEnergyStored(), false);
+        int diff = energy - this.energyHandler.getAmountAsInt();
+        if (diff > 0) {
+            try (Transaction tx = Transaction.openRoot()) {
+                this.energyHandler.insert(diff, tx);
+                tx.commit();
+            }
+        } else if (diff < 0) {
+            try (Transaction tx = Transaction.openRoot()) {
+                this.energyHandler.extract(-diff, tx);
+                tx.commit();
+            }
+        }
+        
         long currentCycles = this.cycleStorage.getCyclesAvailable();
         if (cycles > currentCycles) {
             this.cycleStorage.receiveCycles(cycles - currentCycles, false);
@@ -270,11 +272,11 @@ public abstract class CoreCycleProviderBlockEntity extends BlockEntity implement
     }
 
     public void syncData() {
-        if (this.level != null && !this.level.isClientSide) {
+        if (this.level != null && !this.level.isClientSide()) {
             PacketHandler.sendToClientsTrackingChunk(
-                    this.level,
+                    (net.minecraft.server.level.ServerLevel) this.level,
                     this.getBlockPos(),
-                    new SyncCycleDataPayload(this.worldPosition, this.energyStorage.getEnergyStored(), this.cycleStorage.getCyclesAvailable(), this.isGenerating)
+                    new SyncCycleDataPayload(this.worldPosition, this.energyHandler.getAmountAsInt(), this.cycleStorage.getCyclesAvailable(), this.isGenerating)
             );
         }
     }

@@ -1,5 +1,6 @@
 package dev.gacbl.logicore.blocks.datacable;
 
+import com.mojang.serialization.Codec;
 import dev.gacbl.logicore.blocks.datacable.cable_network.NetworkManager;
 import dev.gacbl.logicore.network.PacketHandler;
 import dev.gacbl.logicore.network.payload.SyncCableDataPayload;
@@ -11,6 +12,8 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.storage.ValueInput;
+import net.minecraft.world.level.storage.ValueOutput;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Optional;
@@ -31,27 +34,23 @@ public class DataCableBlockEntity extends BlockEntity {
     @Override
     public void onLoad() {
         super.onLoad();
-        if (level != null && !level.isClientSide && NETWORK_UUID == null) {
+        if (level != null && !level.isClientSide() && NETWORK_UUID == null) {
             NetworkManager.get((ServerLevel) this.level).onCablePlaced(this.level, this.worldPosition);
         }
     }
 
     @Override
-    protected void saveAdditional(@NotNull CompoundTag tag, @NotNull HolderLookup.Provider registries) {
-        super.saveAdditional(tag, registries);
+    protected void saveAdditional(@NotNull ValueOutput output) {
+        super.saveAdditional(output);
         if (NETWORK_UUID != null) {
-            tag.putUUID("network_uuid", NETWORK_UUID);
-        } else if (tag.contains("network_uuid")) {
-            tag.remove("network_uuid");
+            output.store("network_uuid", Codec.STRING, NETWORK_UUID.toString());
         }
     }
 
     @Override
-    protected void loadAdditional(@NotNull CompoundTag tag, @NotNull HolderLookup.Provider registries) {
-        super.loadAdditional(tag, registries);
-        if (tag.contains("network_uuid")) {
-            NETWORK_UUID = tag.getUUID("network_uuid");
-        }
+    protected void loadAdditional(@NotNull ValueInput input) {
+        super.loadAdditional(input);
+        input.read("network_uuid", Codec.STRING).ifPresent(uuid -> NETWORK_UUID = UUID.fromString(uuid));
     }
 
     public UUID getNetworkUUID() {
@@ -69,16 +68,14 @@ public class DataCableBlockEntity extends BlockEntity {
     }
 
     public void syncData() {
-        if (level != null && !level.isClientSide) {
+        if (level != null && !level.isClientSide()) {
             PacketHandler.sendToClientsTrackingChunk(level, this.worldPosition, new SyncCableDataPayload(this.worldPosition, Optional.ofNullable(this.NETWORK_UUID)));
         }
     }
 
     @Override
     public @NotNull CompoundTag getUpdateTag(HolderLookup.@NotNull Provider registries) {
-        CompoundTag tag = new CompoundTag();
-        saveAdditional(tag, registries);
-        return tag;
+        return saveWithoutMetadata(registries);
     }
 
     @Override

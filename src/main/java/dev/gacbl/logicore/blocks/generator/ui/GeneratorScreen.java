@@ -1,12 +1,10 @@
 package dev.gacbl.logicore.blocks.generator.ui;
 
-import dev.gacbl.logicore.core.Utils;
 import dev.gacbl.logicore.core.ui.MyAbstractContainerScreen;
-import net.minecraft.ChatFormatting;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
+import net.minecraft.client.renderer.RenderPipelines;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.player.Inventory;
-import org.jetbrains.annotations.NotNull;
 
 public class GeneratorScreen extends MyAbstractContainerScreen<GeneratorMenu> {
     public GeneratorScreen(GeneratorMenu menu, Inventory playerInventory, Component title) {
@@ -18,8 +16,8 @@ public class GeneratorScreen extends MyAbstractContainerScreen<GeneratorMenu> {
     }
 
     @Override
-    protected void renderBg(GuiGraphics graphics, float partialTicks, int mouseX, int mouseY) {
-        super.renderBg(graphics, partialTicks, mouseX, mouseY);
+    public void extractContents(GuiGraphicsExtractor graphics, int mouseX, int mouseY, float partialTicks) {
+        super.extractContents(graphics, mouseX, mouseY, partialTicks);
 
         renderMainPowerBar(graphics);
         renderSidePowerBarAnimation(graphics);
@@ -27,7 +25,7 @@ public class GeneratorScreen extends MyAbstractContainerScreen<GeneratorMenu> {
         renderFlames(graphics);
     }
 
-    private void renderMainPowerBar(GuiGraphics graphics) {
+    public void renderMainPowerBar(GuiGraphicsExtractor graphics) {
         int energy = this.menu.getEnergy();
         int maxEnergy = this.menu.getMaxEnergy();
 
@@ -42,9 +40,9 @@ public class GeneratorScreen extends MyAbstractContainerScreen<GeneratorMenu> {
                 int yOffset = barHeight - filledHeight;
                 int vOffset = textureTotalHeight - filledHeight;
 
-                graphics.blit(TEXTURE,
+                graphics.blit(RenderPipelines.GUI_TEXTURED, TEXTURE,
                         leftPos + 36, topPos + 70 + yOffset, // Screen Position (X, Y)
-                        237, 61 + vOffset,                       // Texture Coordinates (U, V)
+                        237.f, 61.f + vOffset,                   // Texture Coordinates (U, V)
                         barWidth, filledHeight,             // Size (Width, Height)
                         256, 256                            // Texture Sheet Size
                 );
@@ -52,7 +50,7 @@ public class GeneratorScreen extends MyAbstractContainerScreen<GeneratorMenu> {
         }
     }
 
-    private void renderSidePowerBarAnimation(GuiGraphics graphics) {
+    private void renderSidePowerBarAnimation(GuiGraphicsExtractor graphics) {
         int energy = this.menu.getEnergy();
         int maxEnergy = this.menu.getMaxEnergy();
 
@@ -71,9 +69,9 @@ public class GeneratorScreen extends MyAbstractContainerScreen<GeneratorMenu> {
                 int yOffset = barHeight - filledHeight;
                 int vOffset = textureTotalHeight - filledHeight + 56;
 
-                graphics.blit(TEXTURE,
+                graphics.blit(RenderPipelines.GUI_TEXTURED, TEXTURE,
                         leftPos + 16, topPos + 61 + yOffset,
-                        232, vOffset,
+                        232.f, (float) vOffset,
                         barWidth, filledHeight,
                         256, 256
                 );
@@ -81,7 +79,7 @@ public class GeneratorScreen extends MyAbstractContainerScreen<GeneratorMenu> {
         }
     }
 
-    private void renderSideHorizontalPowerBarAnimation(GuiGraphics graphics) {
+    private void renderSideHorizontalPowerBarAnimation(GuiGraphicsExtractor graphics) {
         int energy = this.menu.getEnergy();
         int maxEnergy = this.menu.getMaxEnergy();
 
@@ -99,9 +97,9 @@ public class GeneratorScreen extends MyAbstractContainerScreen<GeneratorMenu> {
                 int filledHeightCpu = (int) (scaledRatioCpu * cpuSize);
 
                 if (filledHeightCpu > 0) {
-                    graphics.blit(TEXTURE,
+                    graphics.blit(RenderPipelines.GUI_TEXTURED, TEXTURE,
                             leftPos + 11, topPos + 46 + 15 - filledHeightCpu,  // X, Y (Fixed position)
-                            232, 211 + 15 - filledHeightCpu,                    // U, V (Start of texture)
+                            232.f, 211.f + 15 - filledHeightCpu,               // U, V (Start of texture)
                             cpuSize, filledHeightCpu,
                             256, 256
                     );
@@ -119,10 +117,10 @@ public class GeneratorScreen extends MyAbstractContainerScreen<GeneratorMenu> {
                 int filledWidth = (int) (scaledRatio * barWidth);
 
                 if (filledWidth > 0) {
-                    graphics.blit(TEXTURE,
+                    graphics.blit(RenderPipelines.GUI_TEXTURED, TEXTURE,
                             leftPos + 26, topPos + 51,  // X, Y (Fixed position)
-                            237, 56,                    // U, V (Start of texture)
-                            filledWidth, barHeight,     // Width grows, Height is fixed
+                            237.f, 56.f,                // U, V (Start of texture)
+                            filledWidth, barHeight, // Width grows, Height is fixed
                             256, 256
                     );
                 }
@@ -130,7 +128,7 @@ public class GeneratorScreen extends MyAbstractContainerScreen<GeneratorMenu> {
         }
     }
 
-    private void renderFlames(GuiGraphics graphics) {
+    private void renderFlames(GuiGraphicsExtractor graphics) {
         int maxHeight = 13;
 
         int[] xOffsets = {91, 110, 127};
@@ -140,69 +138,23 @@ public class GeneratorScreen extends MyAbstractContainerScreen<GeneratorMenu> {
                 int remainingHeight = this.menu.getBurnProgress(i, maxHeight);
 
                 if (remainingHeight > 0) {
-                    graphics.blit(
-                            TEXTURE,
+                    graphics.blit(RenderPipelines.GUI_TEXTURED, TEXTURE,
                             getGuiLeft() + xOffsets[i],
                             getGuiTop() + 87 + 11 - remainingHeight,
-                            232,
-                            12 - remainingHeight,
+                            232.f,
+                            12.f - remainingHeight,
                             13,
-                            remainingHeight
+                            remainingHeight,
+                            256,
+                            256
                     );
                 }
             }
         }
     }
 
-    @Override
-    protected void renderTooltip(@NotNull GuiGraphics guiGraphics, int mouseX, int mouseY) {
-        super.renderTooltip(guiGraphics, mouseX, mouseY);
-
-        if (this.hoveredSlot != null && this.hoveredSlot.hasItem() && !hasShiftDown()) {
-            guiGraphics.renderTooltip(this.font, this.hoveredSlot.getItem(), mouseX, mouseY);
-            return;
-        }
-
-        int powerSectionX = leftPos + 36;
-        int powerSectionY = topPos + 70;
-
-        if (mouseX >= powerSectionX && mouseY >= powerSectionY && mouseX <= powerSectionX + 16 && mouseY <= powerSectionY + 75) {
-            int current = this.menu.getEnergy();
-            int max = this.menu.getMaxEnergy();
-
-            java.util.List<Component> tooltip = new java.util.ArrayList<>();
-            tooltip.add(Component.translatable("tooltip.logicore.energy_stored", Utils.formatValues(current), Utils.formatValues(max)));
-
-            if (hasShiftDown()) {
-                int genRate = this.menu.getCurrentGenerationRate();
-                tooltip.add(Component.translatable("tooltip.logicore.generating_fe_per_tick", Utils.formatValues(genRate)).withStyle(ChatFormatting.GRAY));
-            }
-
-            guiGraphics.renderComponentTooltip(this.font, tooltip, mouseX, mouseY);
-            return;
-        }
-
-        if (hasShiftDown()) {
-            if (mouseX >= leftPos + 90 && mouseY >= topPos + 103 && mouseX <= leftPos + 105 && mouseY <= topPos + 118) {
-                int genRate = this.menu.getCurrentGenerationRateForSlot(0);
-                guiGraphics.renderTooltip(this.font, Component.translatable("tooltip.logicore.generating_fe_per_tick", Utils.formatValues(genRate)).withStyle(ChatFormatting.GRAY), mouseX, mouseY - 12);
-                return;
-            }
-
-            if (mouseX >= leftPos + 108 && mouseY >= topPos + 103 && mouseX <= leftPos + 123 && mouseY <= topPos + 118) {
-                int genRate = this.menu.getCurrentGenerationRateForSlot(1);
-                guiGraphics.renderTooltip(this.font, Component.translatable("tooltip.logicore.generating_fe_per_tick", Utils.formatValues(genRate)).withStyle(ChatFormatting.GRAY), mouseX, mouseY - 12);
-                return;
-            }
-
-            if (mouseX >= leftPos + 126 && mouseY >= topPos + 103 && mouseX <= leftPos + 141 && mouseY <= topPos + 118) {
-                int genRate = this.menu.getCurrentGenerationRateForSlot(2);
-                guiGraphics.renderTooltip(this.font, Component.translatable("tooltip.logicore.generating_fe_per_tick", Utils.formatValues(genRate)).withStyle(ChatFormatting.GRAY), mouseX, mouseY - 12);
-                return;
-            }
-            return;
-        }
-
-        super.renderTooltip(guiGraphics, mouseX, mouseY);
-    }
+    // TODO: Re-enable custom tooltip rendering for the new 26.1 API
+    // Tooltip rendering was reworked in MC 1.21.5. The old renderTooltip(GuiGraphics, int, int)
+    // override has been replaced with a new ActiveTextCollector-based system in GuiGraphicsExtractor.
+    // Custom tooltips for energy bars and generation rates need to be ported to the new API.
 }

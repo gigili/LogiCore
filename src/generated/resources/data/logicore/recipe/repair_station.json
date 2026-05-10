@@ -2,18 +2,10 @@
   "type": "minecraft:crafting_shaped",
   "category": "redstone",
   "key": {
-	"E": {
-	  "item": "minecraft:emerald"
-	},
-	"G": {
-	  "item": "minecraft:gold_ingot"
-	},
-	"P": {
-	  "item": "logicore:processor_unit_basic"
-	},
-	"R": {
-	  "tag": "c:dusts/redstone"
-	}
+	"E": "minecraft:emerald",
+	"G": "minecraft:gold_ingot",
+	"P": "logicore:processor_unit_basic",
+	"R": "#c:dusts/redstone"
   },
   "pattern": [
 	"GRG",
@@ -21,7 +13,6 @@
 	"GRG"
   ],
   "result": {
-	"count": 1,
 	"id": "logicore:repair_station"
   }
 }

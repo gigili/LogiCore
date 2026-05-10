@@ -9,9 +9,7 @@ import net.minecraft.core.registries.Registries;
 import net.minecraft.world.inventory.MenuType;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.Item;
-import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntityType;
-import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.block.state.properties.BooleanProperty;
 import net.minecraft.world.level.material.MapColor;
 import net.neoforged.bus.api.IEventBus;
@@ -30,20 +28,15 @@ public class RecyclerModule {
 
     public static final BooleanProperty CRUSHING = BooleanProperty.create("crushing");
 
-    public static final DeferredBlock<Block> RECYCLER = BLOCKS.register("recycler",
-            () -> new RecyclerBlock(BlockBehaviour.Properties.of()
-                    .mapColor(MapColor.METAL)
-                    .strength(3.0F, 3.0F)
-                    .requiresCorrectToolForDrops()
-                    .noOcclusion()
-            ));
+    public static final DeferredBlock<RecyclerBlock> RECYCLER = BLOCKS.registerBlock("recycler", RecyclerBlock::new,
+            props -> props.mapColor(MapColor.METAL).strength(3.0F, 3.0F).requiresCorrectToolForDrops().noOcclusion());
 
-    public static final DeferredHolder<Item, BlockItem> RECYCLER_ITEM = ITEMS.register("recycler",
-            () -> new RecyclerBlockItem(RECYCLER.get(), new Item.Properties()));
+    public static final DeferredHolder<Item, BlockItem> RECYCLER_ITEM = ITEMS.registerItem("recycler",
+            props -> new RecyclerBlockItem(RECYCLER.get(), props));
 
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<RecyclerBlockEntity>> RECYCLER_BE =
             BLOCK_ENTITIES.register("recycler",
-                    () -> BlockEntityType.Builder.of(RecyclerBlockEntity::new, RECYCLER.get()).build(null));
+                    () -> new BlockEntityType<>(RecyclerBlockEntity::new, RECYCLER.get()));
 
     public static final DeferredHolder<MenuType<?>, MenuType<RecyclerMenu>> RECYCLER_MENU =
             MENUS.register("recycler_menu", () -> IMenuTypeExtension.create(RecyclerMenu::new));
@@ -59,7 +52,7 @@ public class RecyclerModule {
 
     private static void registerCapabilities(RegisterCapabilitiesEvent event) {
         event.registerBlockEntity(
-                Capabilities.ItemHandler.BLOCK,
+                Capabilities.Item.BLOCK,
                 RECYCLER_BE.get(),
                 (be, context) -> be.getItemHandler()
         );
@@ -71,9 +64,9 @@ public class RecyclerModule {
         );
 
         event.registerBlockEntity(
-                Capabilities.EnergyStorage.BLOCK,
+                Capabilities.Energy.BLOCK,
                 RECYCLER_BE.get(),
-                (be, context) -> be.getEnergyStorage()
+                (be, context) -> be.getEnergyHandler()
         );
     }
 }
