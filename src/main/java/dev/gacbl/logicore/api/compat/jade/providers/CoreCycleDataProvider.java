@@ -19,7 +19,7 @@ public enum CoreCycleDataProvider implements IServerDataProvider<BlockAccessor> 
     public void appendServerData(CompoundTag data, BlockAccessor accessor) {
         CoreCycleProviderBlockEntity be = CoreCycleProvider.resolveProvider(accessor);
         if (be == null) return;
-        data.putLong(CoreCycleProvider.STORED_KEY, be.getCyclesAvailable());
+        data.putLong(CoreCycleProvider.STORED_KEY, be.getCyclesAvailable());  
         data.putLong(CoreCycleProvider.CAPACITY_KEY, be.getCycleCapacity());
         data.putInt(CoreCycleProvider.PROCESSOR_COUNT_KEY, be.getProcessorCount());
         data.putInt(CoreCycleProvider.PROCESSOR_MAX_KEY, be.getMaxProcessorCount());

@@ -37,13 +37,13 @@ public class CreativeTabModule {
                     .icon(() -> new ItemStack(ProcessorUnitModule.PROCESSOR_UNIT_BASIC.get()))
                     .displayItems((params, output) -> {
                         output.accept(new ItemStack(ServerRackModule.SERVER_RACK.get()));
-                        output.accept(new ItemStack(DataCableModule.DATA_CABLE_ITEM.get()));
+                        output.accept(new ItemStack(DataCableModule.DATA_CABLE_BLOCK.get()));
                         output.accept(new ItemStack(ProcessorUnitModule.PROCESSOR_UNIT_BASIC.get()));
                         output.accept(new ItemStack(ProcessorUnitModule.PROCESSOR_UNIT_ADVANCE.get()));
                         output.accept(new ItemStack(ProcessorUnitModule.PROCESSOR_UNIT_ULTIMATE.get()));
-                        output.accept(new ItemStack(ComputerModule.COMPUTER_ITEM.get()));
+                        output.accept(new ItemStack(ComputerModule.COMPUTER_BLOCK.get()));
                         output.accept(new ItemStack(DatacenterModule.DATACENTER_CONTROLLER.get()));
-                        output.accept(new ItemStack(CompilerModule.COMPILER_ITEM.get()));
+                        output.accept(new ItemStack(CompilerModule.COMPILER_BLOCK.get()));
                         output.accept(new ItemStack(DatacenterPortModule.DATACENTER_PORT.get()));
                         output.accept(new ItemStack(GeneratorModule.GENERATOR.get()));
                         output.accept(new ItemStack(CloudInterfaceModule.CLOUD_INTERFACE.get()));

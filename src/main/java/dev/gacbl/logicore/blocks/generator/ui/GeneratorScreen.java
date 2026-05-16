@@ -139,8 +139,8 @@ public class GeneratorScreen extends MyAbstractContainerScreen<GeneratorMenu> {
 
                 if (remainingHeight > 0) {
                     graphics.blit(RenderPipelines.GUI_TEXTURED, TEXTURE,
-                            getGuiLeft() + xOffsets[i],
-                            getGuiTop() + 87 + 11 - remainingHeight,
+                            getLeftPos() + xOffsets[i],
+                            getTopPos() + 87 + 11 - remainingHeight,
                             232.f,
                             12.f - remainingHeight,
                             13,

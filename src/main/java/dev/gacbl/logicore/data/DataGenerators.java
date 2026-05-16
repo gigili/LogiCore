@@ -65,6 +65,8 @@ public class DataGenerators {
                 )
         );
 
+        generator.addProvider(true, new ModModelProvider(packOutput));
+
         generator.addProvider(true, ModRecipeProvider.createRunner(packOutput, lookupProvider));
         generator.addProvider(true, new ModDataMapProvider(packOutput, lookupProvider));
 

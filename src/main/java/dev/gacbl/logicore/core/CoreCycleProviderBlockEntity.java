@@ -6,13 +6,17 @@ import dev.gacbl.logicore.api.computation.ICycleStorage;
 import dev.gacbl.logicore.api.multiblock.AbstractSealedController;
 import dev.gacbl.logicore.blocks.serverrack.ServerRackBlock;
 import dev.gacbl.logicore.items.processorunit.ProcessorUnitItem;
+import dev.gacbl.logicore.items.server.ServerItem;
 import dev.gacbl.logicore.network.PacketHandler;
 import dev.gacbl.logicore.network.payload.SyncCycleDataPayload;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.HolderLookup;
+import net.minecraft.core.component.DataComponents;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket;
 import net.minecraft.world.inventory.ContainerData;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.component.ItemContainerContents;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityType;
@@ -90,6 +94,13 @@ public abstract class CoreCycleProviderBlockEntity extends BlockEntity implement
                 var stack = slots.get(i);
                 if (stack.getItem() instanceof ProcessorUnitItem processor) {
                     cyclesToGenerate += processor.tier.cycleRate.get();
+                } else if (stack.getItem() instanceof ServerItem server) {
+                    ItemContainerContents contents = stack.getOrDefault(DataComponents.CONTAINER, ItemContainerContents.EMPTY);
+                    for (var innerStack : (Iterable<ItemStack>) contents.nonEmptyItemCopyStream()::iterator) {
+                        if (innerStack.getItem() instanceof ProcessorUnitItem processor) {
+                            cyclesToGenerate += processor.tier.cycleRate.get();
+                        }
+                    }
                 }
             }
         }

@@ -102,11 +102,6 @@ public class ServerRackBlock extends BaseEntityBlock implements EntityBlock {
     }
 
     @Override
-    protected @NotNull RenderShape getRenderShape(@NotNull BlockState state) {
-        return RenderShape.MODEL;
-    }
-
-    @Override
     protected @NotNull VoxelShape getShape(@NotNull BlockState state, @NotNull BlockGetter level, @NotNull BlockPos pos, @NotNull CollisionContext context) {
         return SHAPE;
     }
@@ -114,7 +109,7 @@ public class ServerRackBlock extends BaseEntityBlock implements EntityBlock {
     @Override
     public @NotNull BlockState playerWillDestroy(@NotNull Level level, @NotNull BlockPos pos, @NotNull BlockState state, @NotNull Player player) {
         if (!level.isClientSide() && (player.isCreative() || !player.hasCorrectToolForDrops(state, level, pos))) {
-            if (state.getValue(HALF) == DoubleBlockHalf.UPPER) {
+            if (state.getValue(HALF) == DoubleBlockHalf.UPPER) { 
                 BlockPos blockpos = pos.below();
                 BlockState blockstate = level.getBlockState(blockpos);
                 if (blockstate.is(this) && blockstate.getValue(HALF) == DoubleBlockHalf.LOWER) {
