@@ -227,6 +227,17 @@ public class ServerRackBlockEntity extends CoreCycleProviderBlockEntity implemen
         }
     }
 
+    @Override
+    public void setRemoved() {
+        if (this.level != null && !this.level.isClientSide()) {
+            BlockState stateAtPos = this.level.getBlockState(this.worldPosition);
+            if (!stateAtPos.is(this.getBlockState().getBlock())) {
+                dropContents();
+            }
+        }
+        super.setRemoved();
+    }
+
     private void updateProcessorCountCache() {
         int count = 0;
         int currentServerCacheCount = 0;

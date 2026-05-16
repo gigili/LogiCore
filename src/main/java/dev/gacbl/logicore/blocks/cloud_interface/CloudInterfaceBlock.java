@@ -9,7 +9,6 @@ import net.minecraft.data.recipes.RecipeCategory;
 import net.minecraft.data.recipes.ShapedRecipeBuilder;
 import net.minecraft.resources.Identifier;
 import net.minecraft.tags.ItemTags;
-import net.minecraft.world.Containers;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.LivingEntity;
@@ -19,7 +18,6 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.block.BaseEntityBlock;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.RenderShape;
@@ -88,19 +86,6 @@ public class CloudInterfaceBlock extends BaseEntityBlock {
         return RenderShape.MODEL;
     }
 
-    @Override
-    public void destroy(@NotNull LevelAccessor level, @NotNull BlockPos pos, @NotNull BlockState state) {
-        if (level instanceof Level l) {
-            BlockEntity be = l.getBlockEntity(pos);
-            if (be instanceof CloudInterfaceBlockEntity cloudInterfaceBlockEntity) {
-                if (cloudInterfaceBlockEntity.hasItem()) {
-                    ItemStack stack = cloudInterfaceBlockEntity.extract();
-                    Containers.dropItemStack(l, pos.getX(), pos.getY(), pos.getZ(), stack);
-                }
-            }
-        }
-        super.destroy(level, pos, state);
-    }
 
     @Nullable
     @Override

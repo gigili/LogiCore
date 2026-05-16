@@ -134,7 +134,21 @@ public class RecyclerBlockEntity extends BlockEntity implements GeoBlockEntity, 
 
     public void dropContents() {
         if (this.level == null) return;
-        Containers.dropItemStack(this.level, this.worldPosition.getX(), this.worldPosition.getY(), this.worldPosition.getZ(), itemHandler.copyToList().get(0));
+        var slots = itemHandler.copyToList();
+        for (int i = 0; i < slots.size(); i++) {
+            Containers.dropItemStack(this.level, this.worldPosition.getX(), this.worldPosition.getY(), this.worldPosition.getZ(), slots.get(i));
+        }
+    }
+
+    @Override
+    public void setRemoved() {
+        if (this.level != null && !this.level.isClientSide()) {
+            BlockState stateAtPos = this.level.getBlockState(this.worldPosition);
+            if (!stateAtPos.is(this.getBlockState().getBlock())) {
+                dropContents();
+            }
+        }
+        super.setRemoved();
     }
 
     public static void serverTick(Level level, BlockPos blockPos, BlockState blockState, RecyclerBlockEntity recyclerBlockEntity) {

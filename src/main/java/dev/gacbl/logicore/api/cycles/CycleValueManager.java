@@ -200,7 +200,7 @@ public class CycleValueManager {
             if (ingredient.isEmpty()) continue;
             int minIngredientCost = Integer.MAX_VALUE;
             boolean foundValue = false;
-            for (ItemStack stack : ingredient.items().map(holder -> new ItemStack(holder.value())).toList()) {
+            for (ItemStack stack : ingredient.getValues().stream().map(holder -> new ItemStack(holder.value())).toList()) {
                 if (CYCLE_VALUES.containsKey(stack.getItem())) {
                     int val = CYCLE_VALUES.get(stack.getItem());
                     if (val < minIngredientCost) {

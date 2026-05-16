@@ -20,7 +20,6 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.block.BaseEntityBlock;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.RenderShape;
@@ -114,14 +113,6 @@ public class ComputerBlock extends BaseEntityBlock {
         return getShape(state, level, pos, context);
     }
 
-    @Override
-    public void destroy(@NotNull LevelAccessor level, @NotNull BlockPos pos, @NotNull BlockState state) {
-        BlockEntity be = level.getBlockEntity(pos);
-        if (be instanceof ComputerBlockEntity computerBlockEntity) {
-            computerBlockEntity.dropContents();
-        }
-        super.destroy(level, pos, state);
-    }
 
     @Nullable
     @Override

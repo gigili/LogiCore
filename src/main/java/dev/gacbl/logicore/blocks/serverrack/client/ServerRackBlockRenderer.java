@@ -22,6 +22,6 @@ public class ServerRackBlockRenderer extends GeoBlockRenderer<ServerRackBlockEnt
 
     @Override
     public @Nullable RenderType getRenderType(@NonNull ServerRackRenderState renderState, @NonNull Identifier texture) {
-        return RenderTypes.entityCutoutCull(texture);
+        return RenderTypes.entityCutout(texture);
     }
 }

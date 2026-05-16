@@ -188,6 +188,17 @@ public class RepairStationBlockEntity extends BlockEntity implements MenuProvide
     }
 
     @Override
+    public void setRemoved() {
+        if (this.level != null && !this.level.isClientSide()) {
+            BlockState stateAtPos = this.level.getBlockState(this.worldPosition);
+            if (!stateAtPos.is(this.getBlockState().getBlock())) {
+                dropContents();
+            }
+        }
+        super.setRemoved();
+    }
+
+    @Override
     public long getCycleDemand() {
         ItemStack stack = itemHandler.copyToList().get(0);
         if (stack.isEmpty()) return 0;

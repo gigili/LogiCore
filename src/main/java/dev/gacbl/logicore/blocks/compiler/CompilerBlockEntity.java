@@ -268,8 +268,22 @@ public class CompilerBlockEntity extends BlockEntity implements ICycleConsumer, 
 
     public void dropContents() {
         if (this.level == null) return;
-        Containers.dropItemStack(this.level, this.worldPosition.getX(), this.worldPosition.getY(), this.worldPosition.getZ(), itemHandler.copyToList().get(OUTPUT_SLOT));
+        var slots = itemHandler.copyToList();
+        for (int i = 0; i < slots.size(); i++) {
+            Containers.dropItemStack(this.level, this.worldPosition.getX(), this.worldPosition.getY(), this.worldPosition.getZ(), slots.get(i));
+        }
         Containers.dropItemStack(this.level, this.worldPosition.getX(), this.worldPosition.getY(), this.worldPosition.getZ(), upgradeItemHandler.copyToList().get(0));
+    }
+
+    @Override
+    public void setRemoved() {
+        if (this.level != null && !this.level.isClientSide()) {
+            BlockState stateAtPos = this.level.getBlockState(this.worldPosition);
+            if (!stateAtPos.is(this.getBlockState().getBlock())) {
+                dropContents();
+            }
+        }
+        super.setRemoved();
     }
 
     @Override

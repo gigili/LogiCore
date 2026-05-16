@@ -10,6 +10,7 @@ import dev.gacbl.logicore.core.ModCapabilities;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.world.Containers;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
@@ -34,6 +35,13 @@ public class CloudInterfaceBlockEntity extends BlockEntity {
         super(CloudInterfaceModule.CLOUD_INTERFACE_BE.get(), pos, state);
         // AE2 integration disabled during 26.1 port. To re-enable, restore the
         // ae2Service initialization that was in the original constructor.
+    }
+
+    public void dropContents() {
+        if (this.level == null) return;
+        if (!buffer.isEmpty()) {
+            Containers.dropItemStack(this.level, this.worldPosition.getX(), this.worldPosition.getY(), this.worldPosition.getZ(), extract());
+        }
     }
 
     public ItemStack extract() {
@@ -235,6 +243,12 @@ public class CloudInterfaceBlockEntity extends BlockEntity {
 
     @Override
     public void setRemoved() {
+        if (this.level != null && !this.level.isClientSide()) {
+            BlockState stateAtPos = this.level.getBlockState(this.worldPosition);
+            if (!stateAtPos.is(this.getBlockState().getBlock())) {
+                dropContents();
+            }
+        }
         super.setRemoved();
         /* AE2 disabled during 26.1 port */
     }

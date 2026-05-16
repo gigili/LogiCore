@@ -17,7 +17,10 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.context.BlockPlaceContext;
-import net.minecraft.world.level.*;
+import net.minecraft.world.level.BlockGetter;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.LevelReader;
+import net.minecraft.world.level.ScheduledTickAccess;
 import net.minecraft.world.level.block.*;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityTicker;
@@ -34,6 +37,7 @@ import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jspecify.annotations.NonNull;
 
 public class ServerRackBlock extends BaseEntityBlock implements EntityBlock {
     public static final VoxelShape SHAPE = Block.box(0.0D, 0.0D, 0.0D, 16.0D, 16.0D, 16.0D);
@@ -107,6 +111,11 @@ public class ServerRackBlock extends BaseEntityBlock implements EntityBlock {
     }
 
     @Override
+    protected @NonNull RenderShape getRenderShape(@NonNull BlockState state) {
+        return RenderShape.INVISIBLE;
+    }
+
+    @Override
     public @NotNull BlockState playerWillDestroy(@NotNull Level level, @NotNull BlockPos pos, @NotNull BlockState state, @NotNull Player player) {
         if (!level.isClientSide() && (player.isCreative() || !player.hasCorrectToolForDrops(state, level, pos))) {
             if (state.getValue(HALF) == DoubleBlockHalf.UPPER) { 
@@ -153,16 +162,6 @@ public class ServerRackBlock extends BaseEntityBlock implements EntityBlock {
         return InteractionResult.SUCCESS;
     }
 
-    @Override
-    public void destroy(@NotNull LevelAccessor level, @NotNull BlockPos pos, @NotNull BlockState state) {
-        if (state.getValue(HALF) == DoubleBlockHalf.LOWER) {
-            BlockEntity be = level.getBlockEntity(pos);
-            if (be instanceof ServerRackBlockEntity serverRack) {
-                serverRack.dropContents();
-            }
-        }
-        super.destroy(level, pos, state);
-    }
 
     @Override
     protected boolean canSurvive(@NotNull BlockState state, @NotNull LevelReader level, @NotNull BlockPos pos) {

@@ -20,7 +20,6 @@ import net.minecraft.world.item.Items;
 import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.EntityBlock;
 import net.minecraft.world.level.block.Mirror;
@@ -77,14 +76,6 @@ public class DatacenterControllerBlock extends Block implements EntityBlock {
         return state.setValue(FACING, mirror.mirror(state.getValue(FACING)));
     }
 
-    @Override
-    public void destroy(@NotNull LevelAccessor level, @NotNull BlockPos pos, @NotNull BlockState state) {
-        BlockEntity blockEntity = level.getBlockEntity(pos);
-        if (blockEntity instanceof DatacenterControllerBlockEntity be) {
-            be.dropContents();
-        }
-        super.destroy(level, pos, state);
-    }
 
     @Override
     protected @NotNull InteractionResult useWithoutItem(@NotNull BlockState state, Level level, @NotNull BlockPos pos, @NotNull Player player, @NotNull BlockHitResult hitResult) {

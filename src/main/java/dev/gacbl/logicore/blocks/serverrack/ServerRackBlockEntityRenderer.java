@@ -40,7 +40,7 @@ public class ServerRackBlockEntityRenderer extends ServerRackBlockRenderer {
         super.submit(renderState, poseStack, renderTasks, cameraRenderState);
 
         poseStack.pushPose();
-        poseStack.translate(0.5f, 1.1f, 0.5f);
+        poseStack.translate(0.5f, 1.05f, 0.5f);
 
         switch (renderState.facing) {
             case SOUTH -> poseStack.mulPose(Axis.YP.rotationDegrees(180));

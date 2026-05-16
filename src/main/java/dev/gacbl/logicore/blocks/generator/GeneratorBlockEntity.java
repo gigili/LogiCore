@@ -119,6 +119,17 @@ public class GeneratorBlockEntity extends BlockEntity implements MenuProvider {
         }
     }
 
+    @Override
+    public void setRemoved() {
+        if (this.level != null && !this.level.isClientSide()) {
+            BlockState stateAtPos = this.level.getBlockState(this.worldPosition);
+            if (!stateAtPos.is(this.getBlockState().getBlock())) {
+                dropContents();
+            }
+        }
+        super.setRemoved();
+    }
+
     public static void serverTick(Level level, BlockPos pos, BlockState state, GeneratorBlockEntity be) {
         if (level == null) return;
 

@@ -17,7 +17,6 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.block.BaseEntityBlock;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.RenderShape;
@@ -86,16 +85,6 @@ public class CompilerBlock extends BaseEntityBlock {
         return SHAPE;
     }
 
-    @Override
-    public void destroy(@NotNull LevelAccessor level, @NotNull BlockPos pos, @NotNull BlockState state) {
-        if (level instanceof Level l) {
-            BlockEntity be = l.getBlockEntity(pos);
-            if (be instanceof CompilerBlockEntity compilerBlockEntity) {
-                compilerBlockEntity.dropContents();
-            }
-        }
-        super.destroy(level, pos, state);
-    }
 
     @Override
     public @Nullable BlockEntity newBlockEntity(@NotNull BlockPos blockPos, @NotNull BlockState blockState) {
