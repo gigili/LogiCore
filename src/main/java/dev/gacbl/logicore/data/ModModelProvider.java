@@ -23,8 +23,15 @@ import net.minecraft.client.data.models.BlockModelGenerators;
 import net.minecraft.client.data.models.ItemModelGenerators;
 import net.minecraft.client.data.models.ModelProvider;
 import net.minecraft.client.data.models.model.ModelTemplates;
+import net.minecraft.core.Holder;
 import net.minecraft.data.PackOutput;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.level.block.Block;
 import org.jspecify.annotations.NonNull;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.Stream;
 
 public class ModModelProvider extends ModelProvider {
 
@@ -32,8 +39,52 @@ public class ModModelProvider extends ModelProvider {
         super(output, LogiCore.MOD_ID);
     }
 
+    private ItemModelGenerators itemModels = null;
+    private BlockModelGenerators blockModels = null;
+
+    @Override
+    protected @NonNull Stream<? extends Holder<Block>> getKnownBlocks() {
+        List<Holder<Block>> list = new ArrayList<>();
+        list.addAll(BatteryModule.BLOCKS.getEntries().stream().toList());
+        list.addAll(CloudInterfaceModule.BLOCKS.getEntries().stream().toList());
+        list.addAll(CompilerModule.BLOCKS.getEntries().stream().toList());
+        list.addAll(ComputerModule.BLOCKS.getEntries().stream().toList());
+        list.addAll(DataCableModule.BLOCKS.getEntries().stream().toList());
+        list.addAll(DatacenterModule.BLOCKS.getEntries().stream().toList());
+        list.addAll(DatacenterPortModule.BLOCKS.getEntries().stream().toList());
+        list.addAll(GeneratorModule.BLOCKS.getEntries().stream().toList());
+        list.addAll(RecyclerModule.BLOCKS.getEntries().stream().toList());
+        list.addAll(RepairStationModule.BLOCKS.getEntries().stream().toList());
+        list.addAll(ResearchStationModule.BLOCKS.getEntries().stream().toList());
+        list.addAll(ServerRackModule.BLOCKS.getEntries().stream().toList());
+        return list.stream();
+    }
+
+    @Override
+    protected @NonNull Stream<? extends Holder<Item>> getKnownItems() {
+        List<Holder<Item>> list = new ArrayList<>();
+
+        list.addAll(BatteryModule.ITEMS.getEntries().stream().toList());
+        list.addAll(CloudInterfaceModule.ITEMS.getEntries().stream().toList());
+        list.addAll(CompilerModule.ITEMS.getEntries().stream().toList());
+        list.addAll(ComputerModule.ITEMS.getEntries().stream().toList());
+        list.addAll(DataCableModule.ITEMS.getEntries().stream().toList());
+        list.addAll(DatacenterModule.ITEMS.getEntries().stream().toList());
+        list.addAll(DatacenterPortModule.ITEMS.getEntries().stream().toList());
+        list.addAll(GeneratorModule.ITEMS.getEntries().stream().toList());
+        list.addAll(RecyclerModule.ITEMS.getEntries().stream().toList());
+        list.addAll(RepairStationModule.ITEMS.getEntries().stream().toList());
+        list.addAll(ResearchStationModule.ITEMS.getEntries().stream().toList());
+        list.addAll(ServerRackModule.ITEMS.getEntries().stream().toList());
+
+        return list.stream();
+    }
+
     @Override
     protected void registerModels(@NonNull BlockModelGenerators blockModels, @NonNull ItemModelGenerators itemModels) {
+        this.blockModels = blockModels;
+        this.itemModels = itemModels;
+
         itemModels.generateFlatItem(ProcessorUnitModule.PROCESSOR_UNIT_BASIC.get(), ModelTemplates.FLAT_ITEM);
         itemModels.generateFlatItem(ProcessorUnitModule.PROCESSOR_UNIT_ADVANCE.get(), ModelTemplates.FLAT_ITEM);
         itemModels.generateFlatItem(ProcessorUnitModule.PROCESSOR_UNIT_ULTIMATE.get(), ModelTemplates.FLAT_ITEM);
@@ -43,7 +94,7 @@ public class ModModelProvider extends ModelProvider {
         itemModels.generateFlatItem(KnowledgeOrbModule.KNOWLEDGE_ORB.get(), ModelTemplates.FLAT_ITEM);
         itemModels.generateFlatItem(ServerModule.SERVER.get(), ModelTemplates.FLAT_ITEM);
 
-        blockModels.createFlatItemModelWithBlockTexture(CompilerModule.COMPILER_ITEM.get(), CompilerModule.COMPILER_BLOCK.get());
+        /*blockModels.createFlatItemModelWithBlockTexture(CompilerModule.COMPILER_ITEM.get(), CompilerModule.COMPILER_BLOCK.get());
         blockModels.createFlatItemModelWithBlockTexture(ComputerModule.COMPUTER_ITEM.get(), ComputerModule.COMPUTER_BLOCK.get());
         blockModels.createFlatItemModelWithBlockTexture(DataCableModule.DATA_CABLE_ITEM.get(), DataCableModule.DATA_CABLE_BLOCK.get());
         blockModels.createFlatItemModelWithBlockTexture(DatacenterModule.DATACENTER_CONTROLLER_ITEM.get(), DatacenterModule.DATACENTER_CONTROLLER.get());
@@ -57,6 +108,6 @@ public class ModModelProvider extends ModelProvider {
         blockModels.createFlatItemModelWithBlockTexture(BatteryModule.BATTERY_CREATIVE.asItem(), BatteryModule.BATTERY_CREATIVE.get());
         blockModels.createFlatItemModelWithBlockTexture(BatteryModule.BATTERY_LARGE.asItem(), BatteryModule.BATTERY_LARGE.get());
         blockModels.createFlatItemModelWithBlockTexture(BatteryModule.BATTERY_MEDIUM.asItem(), BatteryModule.BATTERY_MEDIUM.get());
-        blockModels.createFlatItemModelWithBlockTexture(BatteryModule.BATTERY_SMALL.asItem(), BatteryModule.BATTERY_SMALL.get());
+        blockModels.createFlatItemModelWithBlockTexture(BatteryModule.BATTERY_SMALL.asItem(), BatteryModule.BATTERY_SMALL.get());*/
     }
 }
