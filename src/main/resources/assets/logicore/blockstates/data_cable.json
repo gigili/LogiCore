@@ -2,7 +2,7 @@
   "multipart": [
     {
       "apply": {
-        "model": "logicore:block/data_cable_core"
+		"model": "logicore:block/data_cable"
       }
     },
     {
