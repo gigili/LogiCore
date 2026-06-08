@@ -1,12 +1,5 @@
 package dev.gacbl.logicore.api.compat.ae2;
 
-// ============================================================
-// AE2 Cloud Service - DISABLED during 26.1 port
-// To re-enable: Remove the /* and */ comment markers below,
-// ensure AE2 (Applied Energistics 2) is available on the
-// classpath with the correct API for Minecraft 26.1.
-// ============================================================
-/*
 import appeng.api.config.Actionable;
 import appeng.api.networking.*;
 import appeng.api.networking.security.IActionHost;
@@ -25,160 +18,320 @@ import dev.gacbl.logicore.api.cycles.CycleValueManager;
 import dev.gacbl.logicore.blocks.cloud_interface.CloudInterfaceBlockEntity;
 import dev.gacbl.logicore.core.Utils;
 import net.minecraft.core.Direction;
-import net.minecraft.core.HolderLookup;
 import net.minecraft.core.registries.BuiltInRegistries;
-import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.storage.ValueInput;
+import net.minecraft.world.level.storage.ValueOutput;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
-import java.util.*;
-import java.util.stream.Collectors;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
-public class CloudAe2Service {
-    private final CloudInterfaceBlockEntity cloudInterface;
-    private IStorageService storageService;
-    private GridConnectionManager gridManager;
+public class CloudAe2Service implements IGridNodeService, IGridNodeListener<CloudAe2Service>, IInWorldGridNodeHost, IActionHost, IStorageProvider {
 
-    public CloudAe2Service(CloudInterfaceBlockEntity cloudInterface) {
-        this.cloudInterface = cloudInterface;
-        this.gridManager = new GridConnectionManager(cloudInterface);
+    private final CloudInterfaceBlockEntity host;
+    private final IManagedGridNode mainNode;
+    private final VirtualCloudStorage virtualStorage;
+    private boolean hasRegistered = false;
+
+    private long lastSyncTick = 0;
+    private long lastSyncedCycles = -1;
+
+    private static final List<CachedEntry> CACHED_ENTRIES = new ArrayList<>();
+    private static boolean cacheInitialized = false;
+
+    private record CachedEntry(AEItemKey key, int cost) {
     }
 
+    public CloudAe2Service(CloudInterfaceBlockEntity host) {
+        this.host = host;
+        this.mainNode = GridHelper.createManagedNode(this, this)
+                .setVisualRepresentation(host.getBlockState().getBlock())
+                .setInWorldNode(true)
+                .setTagName("cloud_interface")
+                .setIdlePowerUsage(5.0d)
+                .setFlags(GridFlags.REQUIRE_CHANNEL)
+                .addService(IStorageProvider.class, this);
+
+        this.virtualStorage = new VirtualCloudStorage();
+
+        if (host.getLevel() instanceof ServerLevel) {
+            mainNode.create(host.getLevel(), host.getBlockPos());
+        }
+    }
+
+    public static void rebuildCache(Level level, CloudInterfaceBlockEntity host) {
+        synchronized (CACHED_ENTRIES) {
+            CACHED_ENTRIES.clear();
+            LogiCore.LOGGER.info("Building Cloud AE2 Storage Cache...");
+
+            for (Map.Entry<Item, Integer> entry : CycleValueManager.CYCLE_VALUES.entrySet()) {
+                Item item = entry.getKey();
+                Identifier itemRes = BuiltInRegistries.ITEM.getKey(item);
+                int cost = entry.getValue();
+
+                if (item == Items.AIR || cost <= 0) continue;
+
+                try {
+                    AEItemKey key = AEItemKey.of(item);
+                    CACHED_ENTRIES.add(new CachedEntry(key, cost));
+                } catch (Exception e) {
+                    LogiCore.LOGGER.warn("Failed to create AE2 key for item: {}", item, e);
+                }
+            }
+            cacheInitialized = true;
+            LogiCore.LOGGER.info("Cloud Cache built with {} items.", CACHED_ENTRIES.size());
+        }
+    }
+
+    /**
+     * Calculates a safe sync interval based on the number of registered items.
+     * Prevents "Death by Update Loop" in large modpacks.
+     */
+    private int getDynamicSyncInterval() {
+        return 20;
+        /*int count;
+        synchronized (CACHED_ENTRIES) {
+            count = CACHED_ENTRIES.size();
+        }
+        if (count < 500) return 20;       // Small pack: 1 second
+        if (count < 2000) return 100;     // Medium pack: 5 seconds
+        if (count < 10000) return 400;    // Large pack: 20 seconds
+        return 2400;                      // Kitchen Sink (ATM, etc): 120 seconds*/
+    }
+
+    @Override
     public void serverTick() {
-        if (cloudInterface.getLevel() == null || cloudInterface.getLevel().isClientSide()) return;
-        if (!(cloudInterface.getLevel() instanceof ServerLevel serverLevel)) return;
+        Level lvl = host.getLevel();
+        if (lvl == null || lvl.isClientSide()) return;
+        if (!(lvl instanceof ServerLevel sl)) return;
 
-        // Check if AE2 is available and we have a valid grid node
-        var gridNode = gridManager.getGridNode();
-        if (gridNode == null) return;
+        if (mainNode.getNode() == null) {
+            mainNode.create(sl, host.getBlockPos());
+        }
 
-        // Get the storage service from the grid
-        storageService = gridNode.getGrid().getStorageService();
-        if (storageService == null) return;
+        if (!mainNode.isActive()) return;
 
-        // Process upload/download operations
-        processOperations();
-    }
+        if (!cacheInitialized) {
+            rebuildCache(lvl, host);
+        }
 
-    private void processOperations() {
-        // Upload items from buffer to AE2 network
-        if (cloudInterface.hasItem()) {
-            ItemStack stack = cloudInterface.extract();
-            if (!stack.isEmpty()) {
-                var insertResult = storageService.getInventory().insert(
-                        AEItemKey.of(stack),
-                        stack.getCount(),
-                        Actionable.SIMULATE,
-                        createActionSource()
-                );
-                // Check if we can insert all items
-                if (insertResult == 0) {
-                    storageService.getInventory().insert(
-                            AEItemKey.of(stack),
-                            stack.getCount(),
-                            Actionable.MODULATE,
-                            createActionSource()
-                    );
+        if (!hasRegistered) {
+            var node = mainNode.getNode();
+            if (node != null && node.getGrid() != null) {
+                IStorageService service = node.getGrid().getService(IStorageService.class);
+                if (service != null) {
+                    service.refreshNodeStorageProvider(node);
+                    hasRegistered = true;
                 }
             }
         }
 
-        // Download items from AE2 network when cycles are available
-        long availableCycles = getAvailableCyclesForDownload();
-        if (availableCycles > 0) {
-            downloadItems(availableCycles);
-        }
-    }
+        if (host.getOwner() != null) {
+            long now = sl.getGameTime();
+            int syncInterval = getDynamicSyncInterval();
+            long timeDiff = now - lastSyncTick;
 
-    private long getAvailableCyclesForDownload() {
-        if (cloudInterface.getLevel() == null) return 0;
-        UUID owner = cloudInterface.getOwner();
-        if (owner == null) return 0;
+            if (timeDiff >= syncInterval) {
+                String ownerKey = CycleSavedData.getKey(sl, host.getOwner());
+                long currentCycles = CycleSavedData.get(sl).getCyclesByKeyString(ownerKey);
 
-        String key = CycleSavedData.getKey((ServerLevel) cloudInterface.getLevel(), owner);
-        return CycleSavedData.get((ServerLevel) cloudInterface.getLevel()).getCyclesByKeyString(key);
-    }
+                if (currentCycles != lastSyncedCycles) {
+                    long delta = Math.abs(currentCycles - lastSyncedCycles);
 
-    private void downloadItems(long maxCycles) {
-        // Scan AE2 network for items with cycle values
-        var availableItems = storageService.getInventory().getAvailableStacks();
-        if (availableItems == null) return;
+                    boolean criticalStateChange = (lastSyncedCycles <= 0 && currentCycles > 0) || (lastSyncedCycles > 0 && currentCycles == 0);
+                    boolean isSignificant = lastSyncedCycles > 0 && ((double) delta / lastSyncedCycles > 0.05);
 
-        List<Map.Entry<AEKey, Long>> cycleItems = new ArrayList<>();
-        availableItems.forEach((key, count) -> {
-            if (key instanceof AEItemKey itemKey) {
-                ItemStack stack = itemKey.toStack((int) Math.min(count, Integer.MAX_VALUE));
-                if (CycleValueManager.hasCycleValue(stack)) {
-                    cycleItems.add(Map.entry(key, count));
-                }
-            }
-        });
+                    if (lastSyncedCycles == -1 || criticalStateChange || isSignificant) {
+                        lastSyncedCycles = currentCycles;
+                        lastSyncTick = now;
 
-        // Extract items and convert to cycles
-        for (var entry : cycleItems) {
-            if (maxCycles <= 0) break;
-
-            AEKey key = entry.getKey();
-            long count = entry.getValue();
-
-            if (key instanceof AEItemKey itemKey) {
-                long extracted = storageService.getInventory().extract(
-                        key,
-                        count,
-                        Actionable.SIMULATE,
-                        createActionSource()
-                );
-
-                if (extracted > 0) {
-                    ItemStack extractedStack = itemKey.toStack((int) Math.min(extracted, Integer.MAX_VALUE));
-                    int cycleValue = CycleValueManager.getCycleValue(extractedStack);
-                    long totalCycles = (long) cycleValue * extracted;
-
-                    if (totalCycles <= maxCycles) {
-                        storageService.getInventory().extract(
-                                key,
-                                extracted,
-                                Actionable.MODULATE,
-                                createActionSource()
-                        );
-
-                        // Credit cycles to player
-                        if (cloudInterface.getOwner() != null) {
-                            String ownerKey = CycleSavedData.getKey(
-                                    (ServerLevel) cloudInterface.getLevel(),
-                                    cloudInterface.getOwner()
-                            );
-                            CycleSavedData.get((ServerLevel) cloudInterface.getLevel())
-                                    .modifyCycles((ServerLevel) cloudInterface.getLevel(), ownerKey, totalCycles);
+                        var node = mainNode.getNode();
+                        if (node != null && node.getGrid() != null) {
+                            IStorageService service = node.getGrid().getService(IStorageService.class);
+                            if (service != null) {
+                                service.refreshNodeStorageProvider(node);
+                            }
                         }
-                        maxCycles -= totalCycles;
                     }
                 }
             }
         }
     }
 
-    private IActionSource createActionSource() {
-        return IActionSource.ofMachine(gridManager.getGridNode());
+    @Override
+    public void onRemove() {
+        mainNode.destroy();
     }
 
-    public void onRemove() {
-        if (gridManager != null) {
-            gridManager.destroy();
+    @Override
+    public void save(ValueOutput output) {
+        mainNode.serialize(output);
+    }
+
+    @Override
+    public void load(ValueInput input) {
+        mainNode.deserialize(input);
+    }
+
+    @Override
+    public void onSaveChanges(CloudAe2Service nodeOwner, IGridNode node) {
+        host.setChanged();
+    }
+
+    @Override
+    public void mountInventories(IStorageMounts mounts) {
+        mounts.mount(virtualStorage, Integer.MAX_VALUE);
+    }
+
+    @Override
+    public AECableType getCableConnectionType(Direction direction) {
+        return AECableType.SMART;
+    }
+
+    @Override
+    public @Nullable IGridNode getActionableNode() {
+        return mainNode.getNode();
+    }
+
+    @Override
+    public @Nullable IGridNode getGridNode(@NotNull Direction dir) {
+        return mainNode.getNode();
+    }
+
+    private class VirtualCloudStorage implements MEStorage {
+
+        @Override
+        public void getAvailableStacks(KeyCounter out) {
+            if (host.isRemoved()) return;
+            if (!(host.getLevel() instanceof ServerLevel sl)) return;
+            if (host.getOwner() == null) return;
+
+            if (!cacheInitialized) return;
+
+            String ownerKey = CycleSavedData.getKey(sl, host.getOwner());
+            CycleSavedData savedData = CycleSavedData.get(sl);
+            long totalCycles = savedData.getCyclesByKeyString(ownerKey);
+
+            if (totalCycles <= 0) return;
+
+            synchronized (CACHED_ENTRIES) {
+                for (CachedEntry entry : CACHED_ENTRIES) {
+                    Identifier resLoc = net.minecraft.core.registries.BuiltInRegistries.ITEM.getKey(entry.key.getItem());
+
+                    if (!savedData.isUnlocked(ownerKey, resLoc)) {
+                        continue;
+                    }
+
+                    Set<String> knowledgeSet = savedData.getKnowledge(ownerKey);
+                    String baseKey = resLoc.toString();
+                    boolean exactUnlocked = knowledgeSet.contains(baseKey);
+                    boolean hasNbtVariants = knowledgeSet.stream().anyMatch(k -> k.startsWith(baseKey + "#"));
+                    if (!exactUnlocked && hasNbtVariants) {
+                        continue;
+                    }
+
+                    long count = totalCycles / entry.cost;
+                    if (count > 0) {
+                        out.add(entry.key, count);
+                    }
+                }
+            }
+
+            // Add researched NBT variants (potions, enchanted books, etc.)
+            for (String unlockedKey : savedData.getKnowledge(ownerKey)) {
+                int sep = unlockedKey.indexOf('#');
+                if (sep == -1) continue;
+                ItemStack variant = Utils.getItemStackFromKey(unlockedKey);
+                if (variant == null || variant.isEmpty()) continue;
+                int cost = CycleValueManager.getCycleValue(variant);
+                if (cost <= 0) continue;
+                long count = totalCycles / cost;
+                if (count > 0) {
+                    AEItemKey aeKey = AEItemKey.of(variant);
+                    if (aeKey != null) {
+                        out.add(aeKey, count);
+                    }
+                }
+            }
+        }
+
+        @Override
+        public Component getDescription() {
+            return Component.translatable("ui.tooltip.logicore.cycles_clean");
+        }
+
+        @Override
+        public long insert(AEKey what, long amount, Actionable mode, IActionSource source) {
+            if (!(what instanceof AEItemKey itemKey)) return 0;
+            if (amount <= 0) return 0;
+            if (!(host.getLevel() instanceof ServerLevel sl)) return 0;
+            if (host.getOwner() == null) return 0;
+
+            String ownerKey = CycleSavedData.getKey(sl, host.getOwner());
+            CycleSavedData data = CycleSavedData.get(sl);
+
+            long costPerItem = CycleValueManager.getCycleValue(itemKey.toStack());
+            if (costPerItem <= 0) return 0;
+
+            ItemStack stack = itemKey.toStack();
+            if (!stack.getComponentsPatch().isEmpty()) {
+                if (!data.isUnlocked(ownerKey, stack)) return 0;
+            } else {
+                Identifier itemRes = BuiltInRegistries.ITEM.getKey(itemKey.getItem());
+                if (!data.isUnlocked(ownerKey, itemRes)) return 0;
+            }
+
+            long totalValueToAdd = costPerItem * amount;
+
+            if (mode == Actionable.MODULATE) {
+                CycleSavedData.get(sl).modifyCycles(sl, ownerKey, totalValueToAdd);
+            }
+            return amount;
+        }
+
+        @Override
+        public long extract(AEKey what, long amount, Actionable mode, IActionSource source) {
+            if (!(what instanceof AEItemKey itemKey)) return 0;
+            if (amount <= 0) return 0;
+            if (!(host.getLevel() instanceof ServerLevel sl)) return 0;
+            if (host.getOwner() == null) return 0;
+
+            String ownerKey = CycleSavedData.getKey(sl, host.getOwner());
+            CycleSavedData data = CycleSavedData.get(sl);
+
+            long costPerItem = CycleValueManager.getCycleValue(itemKey.toStack());
+            if (costPerItem <= 0) return 0;
+
+            ItemStack stack = itemKey.toStack();
+            if (!stack.getComponentsPatch().isEmpty()) {
+                if (!data.isUnlocked(ownerKey, stack)) return 0;
+            } else {
+                Identifier itemRes = BuiltInRegistries.ITEM.getKey(itemKey.getItem());
+                if (!data.isUnlocked(ownerKey, itemRes)) return 0;
+            }
+
+            long totalCycles = CycleSavedData.get(sl).getCyclesByKeyString(ownerKey);
+
+            long maxAffordable = totalCycles / costPerItem;
+            long toExtract = Math.min(amount, maxAffordable);
+
+            if (toExtract <= 0) return 0;
+
+            if (mode == Actionable.MODULATE) {
+                long totalCost = toExtract * costPerItem;
+                CycleSavedData.get(sl).modifyCycles(sl, ownerKey, -totalCost);
+            }
+            return toExtract;
         }
     }
-
-    public void save(CompoundTag tag, HolderLookup.Provider registries) {
-        gridManager.save(tag);
-    }
-
-    public void load(CompoundTag tag, HolderLookup.Provider registries) {
-        gridManager.load(tag);
-    }
 }
-*/

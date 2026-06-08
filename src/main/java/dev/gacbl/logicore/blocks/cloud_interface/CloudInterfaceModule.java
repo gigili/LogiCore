@@ -1,11 +1,14 @@
 package dev.gacbl.logicore.blocks.cloud_interface;
 
 import dev.gacbl.logicore.LogiCore;
+import dev.gacbl.logicore.core.ModCapabilities;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.neoforged.bus.api.IEventBus;
+import net.neoforged.fml.ModList;
+import net.neoforged.neoforge.capabilities.RegisterCapabilitiesEvent;
 import net.neoforged.neoforge.registries.DeferredBlock;
 import net.neoforged.neoforge.registries.DeferredHolder;
 import net.neoforged.neoforge.registries.DeferredRegister;
@@ -30,19 +33,18 @@ public class CloudInterfaceModule {
         BLOCKS.register(modEventBus);
         ITEMS.register(modEventBus);
         BLOCK_ENTITIES.register(modEventBus);
-        //modEventBus.addListener(CloudInterfaceModule::registerCapabilities);
+        modEventBus.addListener(CloudInterfaceModule::registerCapabilities);
     }
 
-    //private static void registerCapabilities(RegisterCapabilitiesEvent event) {
-    //    event.registerBlockEntity(
-    //            ModCapabilities.CYCLE_PROVIDER,
-    //            CLOUD_INTERFACE_BE.get(),
-    //            CloudInterfaceBlockEntity::getCycleCapability
-    //    );
-    //
-    //    // AE2 integration not yet available for NeoForge 26.1
-    //    //if (ModList.get().isLoaded("ae2")) {
-    //    //    dev.gacbl.logicore.api.compat.ae2.Ae2Helper.registerCapabilities(event);
-    //    //}
-    //}
+    private static void registerCapabilities(RegisterCapabilitiesEvent event) {
+        event.registerBlockEntity(
+                ModCapabilities.CYCLE_PROVIDER,
+                CLOUD_INTERFACE_BE.get(),
+                CloudInterfaceBlockEntity::getCycleCapability
+        );
+
+        if (ModList.get().isLoaded("ae2")) {
+            dev.gacbl.logicore.api.compat.ae2.Ae2Helper.registerCapabilities(event);
+        }
+    }
 }

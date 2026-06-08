@@ -103,11 +103,9 @@ public class LogiCore {
         modContainer.registerConfig(ModConfig.Type.COMMON, Config.SPEC, "logicore/logicore.toml");
         modEventBus.addListener(this::registerDataMaps);
 
-        // GuideMe integration disabled during 26.1 port.
-        // To re-enable: uncomment below and ensure GuideMe is available on the classpath.
-        // if (net.neoforged.fml.ModList.get().isLoaded("guideme")) {
-        //     dev.gacbl.logicore.api.compat.GuideMeSupport.setupGuide();
-        // }
+        if (net.neoforged.fml.ModList.get().isLoaded("guideme")) {
+            dev.gacbl.logicore.api.compat.GuideMeSupport.setupGuide();
+        }
     }
 
     public static Identifier identifier(String path) {

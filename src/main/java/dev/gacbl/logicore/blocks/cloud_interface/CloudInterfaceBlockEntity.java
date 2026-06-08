@@ -1,6 +1,7 @@
 package dev.gacbl.logicore.blocks.cloud_interface;
 
 import dev.gacbl.logicore.Config;
+import dev.gacbl.logicore.api.compat.ae2.IGridNodeService;
 import dev.gacbl.logicore.api.computation.ICycleProvider;
 import dev.gacbl.logicore.api.cycles.CycleSavedData;
 import dev.gacbl.logicore.blocks.datacable.DataCableBlockEntity;
@@ -17,6 +18,7 @@ import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.storage.ValueInput;
 import net.minecraft.world.level.storage.ValueOutput;
+import net.neoforged.fml.ModList;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.UUID;
@@ -29,12 +31,13 @@ public class CloudInterfaceBlockEntity extends BlockEntity {
     private ItemStack buffer = ItemStack.EMPTY;
     private long bufferedCycles = 0;
 
-    // AE2 integration disabled during 26.1 port.
+    private IGridNodeService ae2Service;
 
     public CloudInterfaceBlockEntity(BlockPos pos, BlockState state) {
         super(CloudInterfaceModule.CLOUD_INTERFACE_BE.get(), pos, state);
-        // AE2 integration disabled during 26.1 port. To re-enable, restore the
-        // ae2Service initialization that was in the original constructor.
+        if (ModList.get().isLoaded("ae2") && Config.ENABLE_AE2_INTEGRATION.get()) {
+            this.ae2Service = dev.gacbl.logicore.api.compat.ae2.Ae2Helper.createService(this);
+        }
     }
 
     public void dropContents() {
@@ -60,7 +63,9 @@ public class CloudInterfaceBlockEntity extends BlockEntity {
         setChanged();
     }
 
-    // AE2 getAe2Service disabled during 26.1 port
+    public IGridNodeService getAe2Service() {
+        return ae2Service;
+    }
 
     public UUID getOwner() {
         return ownerUUID;
@@ -111,10 +116,9 @@ public class CloudInterfaceBlockEntity extends BlockEntity {
             }
         }
 
-        /* AE2 tick disabled during 26.1 port */
-        //if (be.ae2Service != null) {
-        //    be.ae2Service.serverTick();
-        //}
+        if (be.ae2Service != null) {
+            be.ae2Service.serverTick();
+        }
     }
 
     public ICycleProvider getCycleCapability(Direction ctx) {
@@ -228,7 +232,9 @@ public class CloudInterfaceBlockEntity extends BlockEntity {
         if (input.getLong("OwnerMost").isPresent() && input.getLong("OwnerLeast").isPresent()) {
             this.ownerUUID = new UUID(input.getLongOr("OwnerMost", 0L), input.getLongOr("OwnerLeast", 0L));
         }
-        /* AE2 disabled during 26.1 port */
+        if (ae2Service != null) {
+            ae2Service.load(input);
+        }
     }
 
     @Override
@@ -238,7 +244,9 @@ public class CloudInterfaceBlockEntity extends BlockEntity {
             output.putLong("OwnerMost", ownerUUID.getMostSignificantBits());
             output.putLong("OwnerLeast", ownerUUID.getLeastSignificantBits());
         }
-        /* AE2 disabled during 26.1 port */
+        if (ae2Service != null) {
+            ae2Service.save(output);
+        }
     }
 
     @Override
@@ -250,6 +258,8 @@ public class CloudInterfaceBlockEntity extends BlockEntity {
             }
         }
         super.setRemoved();
-        /* AE2 disabled during 26.1 port */
+        if (ae2Service != null) {
+            ae2Service.onRemove();
+        }
     }
 }
