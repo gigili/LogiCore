@@ -1,14 +1,17 @@
 package dev.gacbl.logicore.network.payload;
 
 import dev.gacbl.logicore.LogiCore;
+import dev.gacbl.logicore.api.cycles.CycleSavedData;
 import dev.gacbl.logicore.blocks.compiler.CompilerBlockEntity;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.minecraft.resources.Identifier;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
 import net.neoforged.neoforge.network.handling.IPayloadHandler;
 import net.neoforged.neoforge.transfer.item.ItemResource;
 import net.neoforged.neoforge.transfer.transaction.Transaction;
@@ -39,8 +42,17 @@ public record SetAutoCraftingTemplatePayload(BlockPos pos, ItemStack stack) impl
                         template.setCount(1);
                     }
 
+                    // Server-side validation: check that the player has unlocked this item
+                    if (!template.isEmpty() && serverPlayer.level() instanceof ServerLevel serverLevel) {
+                        String key = CycleSavedData.getKey(serverLevel, serverPlayer.getUUID());
+                        CycleSavedData data = CycleSavedData.get(serverLevel);
+                        if (!data.isUnlocked(key, template)) {
+                            return;
+                        }
+                    }
+
                     ItemResource resource = be.getInternalItemHandler().getResource(0);
-                    if (resource != null) {
+                    if (resource != null && resource.getItem() != Items.AIR) {
                         try (Transaction tx = Transaction.openRoot()) {
                             be.getInternalItemHandler().extract(0, resource, 64, tx);
                             tx.commit();

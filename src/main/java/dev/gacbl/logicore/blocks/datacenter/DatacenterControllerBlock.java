@@ -32,6 +32,7 @@ import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.level.block.state.properties.BooleanProperty;
 import net.minecraft.world.level.block.state.properties.EnumProperty;
+import net.minecraft.world.level.material.FluidState;
 import net.minecraft.world.phys.BlockHitResult;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -169,4 +170,14 @@ public class DatacenterControllerBlock extends Block implements EntityBlock {
         }
     }
 
+    @Override
+    public boolean onDestroyedByPlayer(@NotNull BlockState state, @NotNull Level level, @NotNull BlockPos pos, @NotNull Player player, @NotNull ItemStack tool, boolean willHarvest, @NotNull FluidState fluidState) {
+        if (!level.isClientSide()) {
+            BlockEntity be = level.getBlockEntity(pos);
+            if (be instanceof DatacenterControllerBlockEntity controller) {
+                controller.dropContents();
+            }
+        }
+        return super.onDestroyedByPlayer(state, level, pos, player, tool, willHarvest, fluidState);
+    }
 }

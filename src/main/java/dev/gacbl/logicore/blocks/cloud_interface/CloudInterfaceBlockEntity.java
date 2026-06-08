@@ -251,12 +251,6 @@ public class CloudInterfaceBlockEntity extends BlockEntity {
 
     @Override
     public void setRemoved() {
-        if (this.level != null && !this.level.isClientSide()) {
-            BlockState stateAtPos = this.level.getBlockState(this.worldPosition);
-            if (!stateAtPos.is(this.getBlockState().getBlock())) {
-                dropContents();
-            }
-        }
         super.setRemoved();
         if (ae2Service != null) {
             ae2Service.onRemove();

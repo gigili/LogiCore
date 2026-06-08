@@ -71,7 +71,15 @@ public class ResearchStationBlockEntity extends BlockEntity implements MenuProvi
         public boolean isValid(int slot, @NotNull ItemResource resource) {
             if (resource == null || resource.isEmpty()) return false;
             ItemStack stack = resource.toStack();
-            return CycleValueManager.hasCycleValue(stack) && !ClientKnowledgeData.isUnlocked(Utils.getItemKey(stack));
+            if (!CycleValueManager.hasCycleValue(stack)) return false;
+
+            if (level instanceof ServerLevel serverLevel && ownerUUID != null) {
+                String key = CycleSavedData.getKey(serverLevel, ownerUUID);
+                CycleSavedData data = CycleSavedData.get(serverLevel);
+                return !data.isUnlocked(key, stack);
+            }
+
+            return !ClientKnowledgeData.isUnlocked(Utils.getItemKey(stack));
         }
 
         @Override
@@ -233,16 +241,6 @@ public class ResearchStationBlockEntity extends BlockEntity implements MenuProvi
         Containers.dropItemStack(this.level, this.worldPosition.getX(), this.worldPosition.getY(), this.worldPosition.getZ(), itemHandler.copyToList().get(0));
     }
 
-    @Override
-    public void setRemoved() {
-        if (this.level != null && !this.level.isClientSide()) {
-            BlockState stateAtPos = this.level.getBlockState(this.worldPosition);
-            if (!stateAtPos.is(this.getBlockState().getBlock())) {
-                dropContents();
-            }
-        }
-        super.setRemoved();
-    }
 
     @Override
     public long getCycleDemand() {

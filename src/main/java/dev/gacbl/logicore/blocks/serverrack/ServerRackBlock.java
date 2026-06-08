@@ -31,6 +31,7 @@ import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.level.block.state.properties.BooleanProperty;
 import net.minecraft.world.level.block.state.properties.DoubleBlockHalf;
 import net.minecraft.world.level.block.state.properties.EnumProperty;
+import net.minecraft.world.level.material.FluidState;
 import net.minecraft.world.level.redstone.Orientation;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.shapes.CollisionContext;
@@ -118,17 +119,33 @@ public class ServerRackBlock extends BaseEntityBlock implements EntityBlock {
     @Override
     public @NotNull BlockState playerWillDestroy(@NotNull Level level, @NotNull BlockPos pos, @NotNull BlockState state, @NotNull Player player) {
         if (!level.isClientSide() && (player.isCreative() || !player.hasCorrectToolForDrops(state, level, pos))) {
-            if (state.getValue(HALF) == DoubleBlockHalf.UPPER) { 
-                BlockPos blockpos = pos.below();
-                BlockState blockstate = level.getBlockState(blockpos);
+            if (state.getValue(HALF) == DoubleBlockHalf.UPPER) {
+                BlockPos bePos = pos.below();
+                BlockState blockstate = level.getBlockState(bePos);
                 if (blockstate.is(this) && blockstate.getValue(HALF) == DoubleBlockHalf.LOWER) {
-                    level.setBlock(blockpos, Blocks.AIR.defaultBlockState(), 35);
-                    level.levelEvent(player, LevelEvent.PARTICLES_DESTROY_BLOCK, blockpos, Block.getId(blockstate));
+                    BlockEntity be = level.getBlockEntity(bePos);
+                    if (be instanceof ServerRackBlockEntity serverRack) {
+                        serverRack.dropContents();
+                    }
+                    level.setBlock(bePos, Blocks.AIR.defaultBlockState(), 35);
+                    level.levelEvent(player, LevelEvent.PARTICLES_DESTROY_BLOCK, bePos, Block.getId(blockstate));
                 }
             }
         }
 
         return super.playerWillDestroy(level, pos, state, player);
+    }
+
+    @Override
+    public boolean onDestroyedByPlayer(@NotNull BlockState state, @NotNull Level level, @NotNull BlockPos pos, @NotNull Player player, @NotNull ItemStack tool, boolean willHarvest, @NotNull FluidState fluidState) {
+        if (!level.isClientSide()) {
+            BlockPos bePos = state.getValue(HALF) == DoubleBlockHalf.LOWER ? pos : pos.below();
+            BlockEntity be = level.getBlockEntity(bePos);
+            if (be instanceof ServerRackBlockEntity serverRack) {
+                serverRack.dropContents();
+            }
+        }
+        return super.onDestroyedByPlayer(state, level, pos, player, tool, willHarvest, fluidState);
     }
 
     @Nullable

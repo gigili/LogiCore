@@ -2,13 +2,13 @@ package dev.gacbl.logicore.blocks.recycler;
 
 import com.geckolib.animatable.GeoBlockEntity;
 import com.geckolib.animatable.instance.AnimatableInstanceCache;
-import com.geckolib.animatable.instance.SingletonAnimatableInstanceCache;
 import com.geckolib.animatable.manager.AnimatableManager;
 import com.geckolib.animation.AnimationController;
 import com.geckolib.animation.RawAnimation;
 import com.geckolib.animation.object.LoopType;
 import com.geckolib.animation.object.PlayState;
 import com.geckolib.animation.state.AnimationTest;
+import com.geckolib.util.GeckoLibUtil;
 import dev.gacbl.logicore.Config;
 import dev.gacbl.logicore.api.computation.CycleStorage;
 import dev.gacbl.logicore.api.computation.ICycleProvider;
@@ -39,9 +39,10 @@ import net.neoforged.neoforge.transfer.item.ItemStacksResourceHandler;
 import net.neoforged.neoforge.transfer.transaction.Transaction;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jspecify.annotations.NonNull;
 
 public class RecyclerBlockEntity extends BlockEntity implements GeoBlockEntity, ICycleProvider, MenuProvider {
-    private final AnimatableInstanceCache cache = new SingletonAnimatableInstanceCache(this);
+    private final AnimatableInstanceCache cache = GeckoLibUtil.createInstanceCache(this);
     private final SimpleEnergyHandler energyHandler = new SimpleEnergyHandler(10_000, 2000, 0);
     private final CycleStorage cycleStorage = new CycleStorage(1_000_000_000, 1_000_000_000, 1_000_000_000);
     private long internalCycleBuffer = 0;
@@ -74,18 +75,18 @@ public class RecyclerBlockEntity extends BlockEntity implements GeoBlockEntity, 
     }
 
     @Override
-    public AnimatableInstanceCache getAnimatableInstanceCache() {
+    public @NonNull AnimatableInstanceCache getAnimatableInstanceCache() {
         return cache;
     }
 
     private final ItemStacksResourceHandler itemHandler = new ItemStacksResourceHandler(2) {
         @Override
-        protected void onContentsChanged(int slot, ItemStack stack) {
+        protected void onContentsChanged(int slot, @NonNull ItemStack stack) {
             setChanged();
         }
 
         @Override
-        protected int getCapacity(int slot, ItemResource resource) {
+        protected int getCapacity(int slot, @NonNull ItemResource resource) {
             return slot == 0 ? 16 : 64;
         }
 
@@ -135,21 +136,12 @@ public class RecyclerBlockEntity extends BlockEntity implements GeoBlockEntity, 
     public void dropContents() {
         if (this.level == null) return;
         var slots = itemHandler.copyToList();
-        for (int i = 0; i < slots.size(); i++) {
-            Containers.dropItemStack(this.level, this.worldPosition.getX(), this.worldPosition.getY(), this.worldPosition.getZ(), slots.get(i));
+        for (ItemStack slot : slots) {
+            Containers.dropItemStack(this.level, this.worldPosition.getX(), this.worldPosition.getY(), this.worldPosition.getZ(), slot);
         }
     }
 
-    @Override
-    public void setRemoved() {
-        if (this.level != null && !this.level.isClientSide()) {
-            BlockState stateAtPos = this.level.getBlockState(this.worldPosition);
-            if (!stateAtPos.is(this.getBlockState().getBlock())) {
-                dropContents();
-            }
-        }
-        super.setRemoved();
-    }
+
 
     public static void serverTick(Level level, BlockPos blockPos, BlockState blockState, RecyclerBlockEntity recyclerBlockEntity) {
         if (level == null || level.isClientSide()) return;
@@ -194,7 +186,7 @@ public class RecyclerBlockEntity extends BlockEntity implements GeoBlockEntity, 
 
         progress++;
 
-        ItemStack upgradeStack = slots.get(0);
+        ItemStack upgradeStack = slots.getFirst();
 
         int maxPerCycle = upgradeStack.isEmpty() ? 1 : (upgradeStack.getCount() * 4);
         int itemsToProcess = Math.min(slot1.getCount(), maxPerCycle);

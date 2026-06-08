@@ -1,7 +1,10 @@
 package dev.gacbl.logicore.blocks.compiler.ui;
 
+import dev.gacbl.logicore.api.cycles.CycleValueManager;
 import dev.gacbl.logicore.blocks.compiler.CompilerBlockEntity;
 import dev.gacbl.logicore.blocks.compiler.CompilerModule;
+import dev.gacbl.logicore.client.ClientKnowledgeData;
+import dev.gacbl.logicore.core.Utils;
 import dev.gacbl.logicore.core.ui.MyAbstractContainerMenu;
 import dev.gacbl.logicore.items.stack_upgrade.StackUpgradeItem;
 import net.minecraft.core.BlockPos;
@@ -28,16 +31,7 @@ public class CompilerMenu extends MyAbstractContainerMenu {
 
         var handler = ((CompilerBlockEntity) this.blockEntity).getInternalItemHandler();
 
-        this.addSlot(new ResourceHandlerSlot(handler, handler::set, CompilerBlockEntity.INPUT_SLOT, 72, 82) {
-            @Override
-            public boolean mayPickup(Player playerIn) {
-                return false;
-            }
-            @Override
-            public boolean mayPlace(ItemStack stack) {
-                return false;
-            }
-        });
+        this.addSlot(new ResourceHandlerSlot(handler, handler::set, CompilerBlockEntity.INPUT_SLOT, 72, 82));
 
         this.addSlot(new ResourceHandlerSlot(handler, handler::set, CompilerBlockEntity.OUTPUT_SLOT, 144, 82) {
             @Override
@@ -68,6 +62,10 @@ public class CompilerMenu extends MyAbstractContainerMenu {
                 // If it's a StackUpgrade, try to move to Slot 38 (The Upgrade Slot)
                 if (sourceStack.getItem() instanceof StackUpgradeItem) {
                     if (!moveItemStackTo(sourceStack, 38, 39, false)) {
+                        return ItemStack.EMPTY;
+                    }
+                } else if (CycleValueManager.hasCycleValue(sourceStack) && ClientKnowledgeData.isUnlocked(Utils.getItemKey(sourceStack))) {
+                    if (!moveItemStackTo(sourceStack, 36, 37, false)) {
                         return ItemStack.EMPTY;
                     }
                 }

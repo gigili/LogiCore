@@ -52,13 +52,13 @@ public class ClientEvents {
                 gui.text(
                         Minecraft.getInstance().font,
                         Component.translatable("tooltip.logicore.ui.cloud_cycles", cycles),
-                        10, 10, 0xFFFFFF
+                        10, 10, 0xFFFFFFFF
                 );
             } else {
                 gui.text(
                         Minecraft.getInstance().font,
                         Component.translatable("tooltip.logicore.ui.cloud_cycles", Utils.formatValues(cycles)),
-                        10, 10, 0xFFFFFF
+                        10, 10, 0xFFFFFFFF
                 );
             }
         });

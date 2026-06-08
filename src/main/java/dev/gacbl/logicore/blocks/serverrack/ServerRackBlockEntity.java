@@ -47,6 +47,7 @@ public class ServerRackBlockEntity extends CoreCycleProviderBlockEntity implemen
     private int totalProcessorCount = 0;
     private int doorTimer = 0;
 
+
     public ServerRackBlockEntity(BlockPos pos, BlockState state) {
         super(
                 0,
@@ -222,20 +223,9 @@ public class ServerRackBlockEntity extends CoreCycleProviderBlockEntity implemen
     public void dropContents() {
         if (this.level == null) return;
         var slots = itemHandler.copyToList();
-        for (int i = 0; i < slots.size(); i++) {
-            Containers.dropItemStack(this.level, this.worldPosition.getX(), this.worldPosition.getY(), this.worldPosition.getZ(), slots.get(i));
+        for (ItemStack slot : slots) {
+            Containers.dropItemStack(this.level, this.worldPosition.getX(), this.worldPosition.getY(), this.worldPosition.getZ(), slot);
         }
-    }
-
-    @Override
-    public void setRemoved() {
-        if (this.level != null && !this.level.isClientSide()) {
-            BlockState stateAtPos = this.level.getBlockState(this.worldPosition);
-            if (!stateAtPos.is(this.getBlockState().getBlock())) {
-                dropContents();
-            }
-        }
-        super.setRemoved();
     }
 
     private void updateProcessorCountCache() {
@@ -276,10 +266,6 @@ public class ServerRackBlockEntity extends CoreCycleProviderBlockEntity implemen
 
     @Override
     public int getMaxProcessorCount() {
-        return RACK_CAPACITY;
-    }
-
-    public int getServerCount() {
-        return serverCacheCount;
+        return RACK_CAPACITY * 9;
     }
 }

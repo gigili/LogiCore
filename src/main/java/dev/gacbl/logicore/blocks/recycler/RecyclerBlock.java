@@ -26,6 +26,7 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.level.block.state.properties.EnumProperty;
+import net.minecraft.world.level.material.FluidState;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
@@ -68,7 +69,7 @@ public class RecyclerBlock extends BaseEntityBlock implements EntityBlock {
     @Nullable
     @Override
     public BlockState getStateForPlacement(BlockPlaceContext context) {
-        return this.defaultBlockState().setValue(FACING, context.getHorizontalDirection().getOpposite());
+        return this.defaultBlockState().setValue(FACING, context.getHorizontalDirection().getOpposite()).setValue(RecyclerModule.CRUSHING, false);
     }
 
     @Override
@@ -121,5 +122,16 @@ public class RecyclerBlock extends BaseEntityBlock implements EntityBlock {
             return result;
         }
         return this.useWithoutItem(state, level, pos, player, hitResult);
+    }
+
+    @Override
+    public boolean onDestroyedByPlayer(@NotNull BlockState state, @NotNull Level level, @NotNull BlockPos pos, @NotNull Player player, @NotNull ItemStack tool, boolean willHarvest, @NotNull FluidState fluidState) {
+        if (!level.isClientSide()) {
+            BlockEntity be = level.getBlockEntity(pos);
+            if (be instanceof RecyclerBlockEntity recycler) {
+                recycler.dropContents();
+            }
+        }
+        return super.onDestroyedByPlayer(state, level, pos, player, tool, willHarvest, fluidState);
     }
 }
