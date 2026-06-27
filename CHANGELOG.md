@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.0.1
+
+* Fixed issue #6 - Crash on a dedicated server
+
 ## 1.0.0
 
 # **BREAKING CHANGES**

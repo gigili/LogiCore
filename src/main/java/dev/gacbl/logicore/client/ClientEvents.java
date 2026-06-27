@@ -1,19 +1,15 @@
 package dev.gacbl.logicore.client;
 
 import dev.gacbl.logicore.LogiCore;
-import dev.gacbl.logicore.api.cycles.CycleSavedData;
 import dev.gacbl.logicore.api.cycles.CycleValueManager;
 import dev.gacbl.logicore.core.Utils;
 import dev.gacbl.logicore.items.processorunit.ProcessorUnitModule;
-import dev.gacbl.logicore.network.PacketHandler;
-import dev.gacbl.logicore.network.payload.SyncPlayerKnowledgePayload;
 import net.minecraft.ChatFormatting;
 import net.minecraft.advancements.AdvancementHolder;
 import net.minecraft.advancements.AdvancementProgress;
 import net.minecraft.client.Minecraft;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.player.Player;
 import net.neoforged.api.distmarker.Dist;
@@ -26,7 +22,6 @@ import net.neoforged.neoforge.event.entity.player.ItemTooltipEvent;
 import net.neoforged.neoforge.event.entity.player.PlayerEvent;
 
 import java.util.List;
-import java.util.Set;
 
 import static dev.gacbl.logicore.LogiCore.*;
 
@@ -72,26 +67,6 @@ public class ClientEvents {
                 );
             }
         });
-    }
-
-    @SubscribeEvent
-    public static void onPlayerLoggedIn(PlayerEvent.PlayerLoggedInEvent event) {
-
-        if (event.getEntity() instanceof ServerPlayer player && player.level() instanceof ServerLevel level) {
-            CycleSavedData data = CycleSavedData.get(level);
-            String playerKey = CycleSavedData.getKey(level, player.getUUID());
-
-            Set<String> unlockedItems = data.getKnowledge(playerKey); // You might need to add a getter for this in CycleSavedData
-
-            // 2. Send a packet for EACH item (Simple approach)
-            // Optimization Note: In the future, you might want to make a "BulkSyncPayload" to send all at once,
-            // but for now, sending individual packets is fine unless they have thousands of items.
-            if (unlockedItems != null) {
-                for (String itemKey : unlockedItems) {
-                    PacketHandler.sendToPlayer(player, new SyncPlayerKnowledgePayload(itemKey));
-                }
-            }
-        }
     }
 
     @SubscribeEvent

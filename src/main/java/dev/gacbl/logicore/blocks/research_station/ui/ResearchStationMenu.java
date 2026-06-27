@@ -8,8 +8,10 @@ import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.inventory.ContainerData;
 import net.minecraft.world.inventory.SimpleContainerData;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.neoforged.neoforge.items.SlotItemHandler;
+import org.jetbrains.annotations.NotNull;
 
 public class ResearchStationMenu extends MyAbstractContainerMenu {
     public ResearchStationMenu(int containerId, Inventory playerInventory, BlockPos pos) {
@@ -19,7 +21,14 @@ public class ResearchStationMenu extends MyAbstractContainerMenu {
     public ResearchStationMenu(int containerId, Inventory playerInventory, BlockEntity entity, ContainerData data) {
         super(ResearchStationModule.RESEARCH_STATION_MENU.get(), containerId, playerInventory, entity, data);
         this.TE_INVENTORY_SLOT_COUNT = 1;
-        this.addSlot(new SlotItemHandler(((ResearchStationBlockEntity) this.blockEntity).getItemHandler(), 0, 107, 82));
+        this.addSlot(new SlotItemHandler(((ResearchStationBlockEntity) this.blockEntity).getItemHandler(), 0, 107, 82) {
+            @Override
+            public boolean mayPlace(@NotNull ItemStack stack) {
+                boolean result = super.mayPlace(stack);
+                System.out.println("[RS_DEBUG] Slot.mayPlace: stack=" + stack + ", result=" + result + ", currentSlotItem=" + this.getItem());
+                return result;
+            }
+        });
     }
 
     public ResearchStationMenu(int i, Inventory inventory, RegistryFriendlyByteBuf registryFriendlyByteBuf) {

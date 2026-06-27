@@ -1,7 +1,9 @@
 package dev.gacbl.logicore.network;
 
 import dev.gacbl.logicore.LogiCore;
-import dev.gacbl.logicore.network.payload.*;
+import dev.gacbl.logicore.network.payload.SetAutoCraftingTemplatePayload;
+import dev.gacbl.logicore.network.payload.SyncDataCenterPositionPayload;
+import dev.gacbl.logicore.network.payload.SyncMultiblockPortsPayload;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.minecraft.server.level.ServerLevel;
@@ -22,24 +24,6 @@ public class PacketHandler {
     private static void onRegisterPayloadHandlers(final RegisterPayloadHandlersEvent event) {
         PayloadRegistrar registrar = event.registrar(LogiCore.MOD_ID).versioned("1.0");
 
-        registrar.playToClient(
-                SyncCycleDataPayload.TYPE,
-                SyncCycleDataPayload.STREAM_CODEC,
-                SyncCycleDataPayload.HANDLER
-        );
-
-        registrar.playToClient(
-                SyncMultiblockDataPayload.TYPE,
-                SyncMultiblockDataPayload.STREAM_CODEC,
-                SyncMultiblockDataPayload.HANDLER
-        );
-
-        registrar.playToClient(
-                SyncCableDataPayload.TYPE,
-                SyncCableDataPayload.STREAM_CODEC,
-                SyncCableDataPayload.HANDLER
-        );
-
         registrar.playToServer(
                 SyncDataCenterPositionPayload.TYPE,
                 SyncDataCenterPositionPayload.STREAM_CODEC,
@@ -56,30 +40,6 @@ public class PacketHandler {
                 SyncMultiblockPortsPayload.TYPE,
                 SyncMultiblockPortsPayload.STREAM_CODEC,
                 SyncMultiblockPortsPayload.HANDLER
-        );
-
-        registrar.playToClient(
-                SyncPlayerCyclesPayload.TYPE,
-                SyncPlayerCyclesPayload.STREAM_CODEC,
-                SyncPlayerCyclesPayload.HANDLER
-        );
-
-        registrar.playToClient(
-                SyncPlayerKnowledgePayload.TYPE,
-                SyncPlayerKnowledgePayload.STREAM_CODEC,
-                SyncPlayerKnowledgePayload.HANDLER
-        );
-
-        registrar.playToClient(
-                SyncAllPlayerKnowledgePayload.TYPE,
-                SyncAllPlayerKnowledgePayload.STREAM_CODEC,
-                SyncAllPlayerKnowledgePayload.HANDLER
-        );
-
-        registrar.playToClient(
-                NotifyResearchCompletePayload.TYPE,
-                NotifyResearchCompletePayload.STREAM_CODEC,
-                NotifyResearchCompletePayload.HANDLER
         );
     }
 

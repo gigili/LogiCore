@@ -3,11 +3,11 @@ package dev.gacbl.logicore.network.payload;
 import dev.gacbl.logicore.LogiCore;
 import dev.gacbl.logicore.core.CoreCycleProviderBlockEntity;
 import io.netty.buffer.ByteBuf;
-import net.minecraft.client.Minecraft;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.neoforged.neoforge.network.handling.IPayloadHandler;
 import org.jetbrains.annotations.NotNull;
@@ -29,8 +29,8 @@ public record SyncDataCenterPositionPayload(BlockPos controllerPos, BlockPos ent
 
     public static final IPayloadHandler<SyncDataCenterPositionPayload> HANDLER = (payload, context) -> {
         context.enqueueWork(() -> {
-            var level = Minecraft.getInstance().level;
-            if (level != null && !level.isClientSide) {
+            if (context.player() instanceof ServerPlayer serverPlayer) {
+                var level = serverPlayer.serverLevel();
                 BlockEntity be = level.getBlockEntity(payload.entityPos());
                 if (be instanceof CoreCycleProviderBlockEntity cycleBe) {
                     if (cycleBe.dataCenterController != payload.controllerPos()) {

@@ -1,13 +1,11 @@
 package dev.gacbl.logicore.network.payload;
 
 import dev.gacbl.logicore.LogiCore;
-import dev.gacbl.logicore.client.ClientCycleData;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.minecraft.resources.ResourceLocation;
-import net.neoforged.neoforge.network.handling.IPayloadHandler;
 import org.jetbrains.annotations.NotNull;
 
 public record SyncPlayerCyclesPayload(long cycles) implements CustomPacketPayload {
@@ -22,10 +20,4 @@ public record SyncPlayerCyclesPayload(long cycles) implements CustomPacketPayloa
     public @NotNull Type<? extends CustomPacketPayload> type() {
         return TYPE;
     }
-
-    public static final IPayloadHandler<SyncPlayerCyclesPayload> HANDLER = (payload, context) -> {
-        context.enqueueWork(() -> {
-            ClientCycleData.setCycles(payload.cycles());
-        });
-    };
 }

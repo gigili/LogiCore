@@ -58,15 +58,29 @@ public class ResearchStationBlockEntity extends BlockEntity implements MenuProvi
     private final ItemStackHandler itemHandler = new ItemStackHandler(1) {
         @Override
         protected void onContentsChanged(int slot) {
+            ItemStack stack = getStackInSlot(0);
             setChanged();
-            if (!this.getStackInSlot(0).isEmpty()) {
+            progress = 0;
+            if (!stack.isEmpty()) {
                 requestCycles();
             }
         }
 
         @Override
         public boolean isItemValid(int slot, @NotNull ItemStack stack) {
-            return CycleValueManager.hasCycleValue(stack) && !ClientKnowledgeData.isUnlocked(Utils.getItemKey(stack));
+            boolean hasVal = CycleValueManager.hasCycleValue(stack);
+            if (!hasVal) {
+                return false;
+            }
+            if (level != null && !level.isClientSide && ownerUUID != null) {
+                ServerLevel serverLevel = (ServerLevel) level;
+                String ownerKey = CycleSavedData.getKey(serverLevel, ownerUUID);
+                boolean unlocked = CycleSavedData.get(serverLevel).isUnlocked(ownerKey, stack);
+                return !unlocked;
+            }
+            String itemKey = Utils.getItemKey(stack);
+            boolean unlocked = ClientKnowledgeData.isUnlocked(itemKey);
+            return !unlocked;
         }
 
         @Override
@@ -162,8 +176,8 @@ public class ResearchStationBlockEntity extends BlockEntity implements MenuProvi
             if (be.progress > 0) {
                 be.progress = 0;
                 be.maxProgress = 20;
-                be.setResearchingState(blockPos, blockState, false);
             }
+            be.setResearchingState(blockPos, blockState, false);
             return;
         }
 
@@ -194,9 +208,11 @@ public class ResearchStationBlockEntity extends BlockEntity implements MenuProvi
                 String ownerKey = CycleSavedData.getKey((ServerLevel) level, be.getOwner());
                 CycleSavedData.get((ServerLevel) level).unlockItem((ServerLevel) level, ownerKey, resultItem);
                 if (be.ownerUUID != null) {
-                    ServerPlayer player = level.getServer().getPlayerList().getPlayer(be.ownerUUID);
-                    if (player != null) {
-                        PacketHandler.sendToPlayer(player, new NotifyResearchCompletePayload(resultItem));
+                    ServerLevel serverLevel = (ServerLevel) level;
+                    for (ServerPlayer player : serverLevel.getServer().getPlayerList().getPlayers()) {
+                        if (CycleSavedData.getKey(serverLevel, player.getUUID()).equals(ownerKey)) {
+                            PacketHandler.sendToPlayer(player, new NotifyResearchCompletePayload(resultItem));
+                        }
                     }
                 }
                 be.itemHandler.setStackInSlot(0, ItemStack.EMPTY);
