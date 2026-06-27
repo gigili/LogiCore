@@ -3,6 +3,9 @@
 ## 1.0.1
 
 * Fixed issue #6 - Crash on a dedicated server
+* Fixed the multiplayer bug where some items wouldn't scan
+* Fixed the bug where the players' knowledge and tooltips wouldn't reset after leaving the team
+* Fixed when the player is part of the team all members receive a toast when research completes
 
 ## 1.0.0
 

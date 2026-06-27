@@ -5,12 +5,14 @@ import dev.ftb.mods.ftbteams.api.Team;
 import dev.ftb.mods.ftbteams.api.event.TeamEvent;
 import dev.gacbl.logicore.api.cycles.CycleSavedData;
 import dev.gacbl.logicore.network.PacketHandler;
+import dev.gacbl.logicore.network.payload.SyncAllPlayerKnowledgePayload;
 import dev.gacbl.logicore.network.payload.SyncPlayerCyclesPayload;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.scores.PlayerTeam;
 import net.neoforged.fml.ModList;
 
+import java.util.ArrayList;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.UUID;
@@ -62,6 +64,7 @@ public class IntegrationUtils {
             long balance = data.getCyclesByKeyString(newKey);
 
             PacketHandler.sendToPlayer(player, new SyncPlayerCyclesPayload(balance));
+            PacketHandler.sendToPlayer(player, new SyncAllPlayerKnowledgePayload(new ArrayList<>(data.getKnowledge(newKey))));
         }
 
         public static String getTeamId(UUID playerUUID) {
